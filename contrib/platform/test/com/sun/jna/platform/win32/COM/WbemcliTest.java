@@ -291,4 +291,22 @@ public class WbemcliTest {
         assertEquals(Variant.VT_BOOL, os.getVtType(OperatingSystemProperty.PRIMARY));
         assertNotNull(os.getValue(OperatingSystemProperty.PRIMARY, 0));
     }
+
+    enum Win32_DiskDrive_Values {
+        CAPTION,
+        CAPABILITIES
+    }
+
+    @Test
+    public void testUnsupportedValues() {
+        WmiQuery<Win32_DiskDrive_Values> serialNumberQuery = new WmiQuery<Win32_DiskDrive_Values>("Win32_DiskDrive", Win32_DiskDrive_Values.class);
+        WmiResult<Win32_DiskDrive_Values> result = serialNumberQuery.execute();
+        assertTrue(result.getResultCount() > 0);
+        for (int i = 0; i < result.getResultCount(); i++) {
+            assertNotNull(result.getValue(Win32_DiskDrive_Values.CAPTION, i));
+            // Capabilities are represented by a SAFEARRAY, this not supported
+            // in the simplified API
+            assertNull(result.getValue(Win32_DiskDrive_Values.CAPABILITIES, i));
+        }
+    }
 }

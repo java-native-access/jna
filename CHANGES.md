@@ -16,6 +16,7 @@ Features
 * [#1068](https://github.com/java-native-access/jna/pull/1068): `c.s.j.p.win32.Advapi32Util.getAccountBySid(String systemName, PSID sid)` ignored parameter instead of passing it to the native function - [@nirud](https://github.com/nirud).
 * [#813](https://github.com/java-native-access/jna/issues/813): Support for default methods on interfaces (experimental) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1073](https://github.com/java-native-access/jna/issues/1073): Support COM setters with multiple parameters using `c.s.j.p.win32.COM.util.ProxyObject` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1083](https://github.com/java-native-access/jna/issues/1083): Prevent access to unsupported values in `c.s.j.p.win32.COM.WbemcliUtil#enumerateProperties` and bind `c.s.j.p.win32.COM.Wbemcli.IWbemClassObject.GetNames` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
