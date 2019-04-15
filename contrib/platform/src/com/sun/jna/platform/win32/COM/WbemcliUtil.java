@@ -41,6 +41,10 @@ import com.sun.jna.platform.win32.COM.Wbemcli.IEnumWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemLocator;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemServices;
+import static com.sun.jna.platform.win32.Variant.VT_ARRAY;
+import static com.sun.jna.platform.win32.Variant.VT_DISPATCH;
+import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
+import static com.sun.jna.platform.win32.Variant.VT_VECTOR;
 import com.sun.jna.ptr.IntByReference;
 
 /**
@@ -271,7 +275,9 @@ public class WbemcliUtil {
          *            will always wait for results.
          *
          * @return A WmiResult object encapsulating an EnumMap which will hold
-         *         the results.
+         *         the results. Values, that are not supported by this helper
+         *         ({@code Dispatch}, {@code Unknown}, {@code SAFEARRAY}) are
+         *         not returned and reported as {@code null}.
          *
          * @throws TimeoutException
          *             if the query times out before completion
@@ -336,12 +342,20 @@ public class WbemcliUtil {
                         case Variant.VT_R8:
                             values.add(vtType, cimType, property, pVal.doubleValue());
                             break;
+                        case Variant.VT_EMPTY:
                         case Variant.VT_NULL:
                             values.add(vtType, cimType, property, null);
                             break;
                         // Unimplemented type. User must cast
                         default:
-                            values.add(vtType, cimType, property, pVal.getValue());
+                            if(((vtType & VT_ARRAY) == VT_ARRAY) ||
+                                ((vtType & VT_UNKNOWN) == VT_UNKNOWN)||
+                                ((vtType & VT_DISPATCH) == VT_DISPATCH)||
+                                ((vtType & VT_VECTOR) == VT_VECTOR)) {
+                                values.add(vtType, cimType, property, null);
+                            } else {
+                                values.add(vtType, cimType, property, pVal.getValue());
+                            }
                     }
                     OleAuto.INSTANCE.VariantClear(pVal);
                 }
