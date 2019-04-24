@@ -46,6 +46,7 @@ import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
 import com.sun.jna.platform.win32.WinNT.NUMA_NODE_RELATIONSHIP;
 import com.sun.jna.platform.win32.WinNT.PROCESSOR_CACHE_TYPE;
 import com.sun.jna.platform.win32.WinNT.PROCESSOR_RELATIONSHIP;
+import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX;
 
 import junit.framework.TestCase;
@@ -365,6 +366,12 @@ public class Kernel32UtilTest extends TestCase {
     public void testExpandEnvironmentStrings() {
         Kernel32.INSTANCE.SetEnvironmentVariable("DemoVariable", "DemoValue");
         assertEquals("DemoValue", Kernel32Util.expandEnvironmentStrings("%DemoVariable%"));
+    }
+
+    public void testGetLogicalProcessorInformation() {
+        SYSTEM_LOGICAL_PROCESSOR_INFORMATION[] procInfo = Kernel32Util
+                .getLogicalProcessorInformation();
+        assertTrue(procInfo.length > 0);
     }
 
     public void testGetLogicalProcessorInformationEx() {
