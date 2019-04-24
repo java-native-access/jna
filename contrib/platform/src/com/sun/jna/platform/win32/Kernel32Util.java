@@ -672,7 +672,7 @@ public abstract class Kernel32Util implements WinDef {
         WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION firstInformation = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION(
                 memory);
         return (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[]) firstInformation
-                .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[0]);
+                .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[((SYSTEM_LOGICAL_PROCESSOR_INFORMATION[])firstInformation).length]);
     }
 
     /**
