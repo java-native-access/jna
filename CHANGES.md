@@ -10,6 +10,7 @@ Features
 
 Bug Fixes
 ---------
+* [#1089](https://github.com/java-native-access/jna/issues/1089): `c.s.j.internal.ReflectionUtils` accesses `java.lang.invoke.MethodType` without reflection, causing `java.lang.NoClassDefFoundError` on android API level < 26 - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.3.0
 =============
