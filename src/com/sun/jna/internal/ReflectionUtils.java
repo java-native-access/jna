@@ -23,7 +23,6 @@
  */
 package com.sun.jna.internal;
 
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -74,7 +73,7 @@ public class ReflectionUtils {
         METHOD_HANDLES_LOOKUP = lookupMethod(methodHandles, "lookup");
         METHOD_HANDLES_LOOKUP_IN = lookupMethod(lookup, "in", Class.class);
         METHOD_HANDLES_LOOKUP_UNREFLECT_SPECIAL = lookupMethod(lookup, "unreflectSpecial", Method.class, Class.class);
-        METHOD_HANDLES_LOOKUP_FIND_SPECIAL = lookupMethod(lookup, "findSpecial", Class.class, String.class, MethodType.class, Class.class);
+        METHOD_HANDLES_LOOKUP_FIND_SPECIAL = lookupMethod(lookup, "findSpecial", Class.class, String.class, methodType, Class.class);
         METHOD_HANDLES_BIND_TO = lookupMethod(methodHandle, "bindTo", Object.class);
         METHOD_HANDLES_INVOKE_WITH_ARGUMENTS = lookupMethod(methodHandle, "invokeWithArguments", Object[].class);
         METHOD_HANDLES_PRIVATE_LOOKUP_IN = lookupMethod(methodHandles, "privateLookupIn", Class.class, lookup);
