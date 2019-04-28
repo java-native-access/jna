@@ -8,11 +8,13 @@ JNA Release Process
 * If native changes have been made, run `ant native` target on each target
   platform, pushing the resulting target-specific jar (in lib/native) file to master.
 
-* Run `ant -Drelease=true clean dist` target on a fully up-to-date checkout with no modifications.
+* Ensure the git repository is in a clean state (e.g. run `git clean -f -x -d`)
 
 * Update versioned links in `README.md` (search for old version and replace with new version)
 
 * Update `CHANGES.md`: remove the `Next release` label and replace it with the final version number. While doing this also check if the version number matches the release: major version should incremented when API incompatible changes are made, minor version should be incremented when features are added, revision should be updated when bugfixes are done.
+
+* Run `ant -Drelease=true -Dmaven-release=true clean dist stage`
 
 * Commit and push generated files in `dist`, `pom-*.xml`, `CHANGES.md`, `README.md` and `src/com/sun/jna/Version.java`.
 
@@ -25,8 +27,6 @@ JNA Release Process
   * Copy latest doc/javadoc into {version}/javadoc
   * Commit and push
 
-* [Release to Maven Central](PublishingToMavenCentral.md)
-
 * Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
 
 * Increment the version in build.xml for the next development iteration
@@ -34,3 +34,5 @@ JNA Release Process
   * Create a new section in CHANGES.md for 'Next Release (x.y.z)'
   * Commit and push
 
+For more nformation about the maven central release process see:
+[Release to Maven Central](PublishingToMavenCentral.md)
