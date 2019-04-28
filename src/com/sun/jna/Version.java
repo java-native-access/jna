@@ -23,6 +23,6 @@
  */
 package com.sun.jna;
 interface Version {
-    String VERSION = "5.3.0";
+    String VERSION = "5.3.1";
     String VERSION_NATIVE = "6.0.0";
 }
