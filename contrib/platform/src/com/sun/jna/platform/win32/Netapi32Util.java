@@ -273,10 +273,10 @@ public abstract class Netapi32Util {
                 for (LMAccess.GROUP_INFO_1 lgpi : groups) {
                     LocalGroup lgp = new LocalGroup();
                     if (lgpi.grpi1_name != null) {
-                        lgp.name = lgpi.grpi1_name.toString();
+                        lgp.name = lgpi.grpi1_name;
                     }
                     if (lgpi.grpi1_comment != null) {
-                        lgp.comment = lgpi.grpi1_comment.toString();
+                        lgp.comment = lgpi.grpi1_comment;
                     }
                     result.add(lgp);
                 }
@@ -506,22 +506,22 @@ public abstract class Netapi32Util {
         }
         DomainController dc = new DomainController();
         if (pdci.dci.DomainControllerAddress != null) {
-            dc.address = pdci.dci.DomainControllerAddress.toString();
+            dc.address = pdci.dci.DomainControllerAddress;
         }
         dc.addressType = pdci.dci.DomainControllerAddressType;
         if (pdci.dci.ClientSiteName != null) {
-            dc.clientSiteName = pdci.dci.ClientSiteName.toString();
+            dc.clientSiteName = pdci.dci.ClientSiteName;
         }
         if (pdci.dci.DnsForestName != null) {
-            dc.dnsForestName = pdci.dci.DnsForestName.toString();
+            dc.dnsForestName = pdci.dci.DnsForestName;
         }
         dc.domainGuid = pdci.dci.DomainGuid;
         if (pdci.dci.DomainName != null) {
-            dc.domainName = pdci.dci.DomainName.toString();
+            dc.domainName = pdci.dci.DomainName;
         }
         dc.flags = pdci.dci.Flags;
         if (pdci.dci.DomainControllerName != null) {
-            dc.name = pdci.dci.DomainControllerName.toString();
+            dc.name = pdci.dci.DomainControllerName;
         }
         rc = Netapi32.INSTANCE.NetApiBufferFree(pdci.dci.getPointer());
         if (LMErr.NERR_Success != rc) {
@@ -696,21 +696,20 @@ public abstract class Netapi32Util {
 
     public static UserInfo getUserInfo(String accountName, String domainName) {
         PointerByReference bufptr = new PointerByReference();
-        int rc = -1;
         try {
-            rc = Netapi32.INSTANCE.NetUserGetInfo(domainName, accountName, (short)23, bufptr);
+            int rc = Netapi32.INSTANCE.NetUserGetInfo(domainName, accountName, (short)23, bufptr);
             if (rc == LMErr.NERR_Success) {
                 USER_INFO_23 info_23 = new USER_INFO_23(bufptr.getValue());
                 UserInfo userInfo = new UserInfo();
                 if (info_23.usri23_comment != null) {
-                    userInfo.comment = info_23.usri23_comment.toString();
+                    userInfo.comment = info_23.usri23_comment;
                 }
                 userInfo.flags = info_23.usri23_flags;
                 if (info_23.usri23_full_name != null) {
-                    userInfo.fullName = info_23.usri23_full_name.toString();
+                    userInfo.fullName = info_23.usri23_full_name;
                 }
                 if (info_23.usri23_name != null) {
-                    userInfo.name = info_23.usri23_name.toString();
+                    userInfo.name = info_23.usri23_name;
                 }
                 if (info_23.usri23_user_sid != null) {
                     userInfo.sidString = Advapi32Util.convertSidToStringSid(info_23.usri23_user_sid);
