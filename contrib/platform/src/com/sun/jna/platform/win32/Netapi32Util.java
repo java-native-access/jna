@@ -219,12 +219,8 @@ public abstract class Netapi32Util {
                 LMAccess.LOCALGROUP_INFO_1[] groups = (LOCALGROUP_INFO_1[]) group.toArray(entriesRead.getValue());
                 for (LOCALGROUP_INFO_1 lgpi : groups) {
                     LocalGroup lgp = new LocalGroup();
-                    if (lgpi.lgrui1_name != null) {
-                        lgp.name = lgpi.lgrui1_name;
-                    }
-                    if (lgpi.lgrui1_comment != null) {
-                        lgp.comment = lgpi.lgrui1_comment;
-                    }
+                    lgp.name = lgpi.lgrui1_name;
+                    lgp.comment = lgpi.lgrui1_comment;
                     result.add(lgp);
                 }
             }
@@ -272,12 +268,8 @@ public abstract class Netapi32Util {
                 LMAccess.GROUP_INFO_1[] groups = (LMAccess.GROUP_INFO_1[]) group.toArray(entriesRead.getValue());
                 for (LMAccess.GROUP_INFO_1 lgpi : groups) {
                     LocalGroup lgp = new LocalGroup();
-                    if (lgpi.grpi1_name != null) {
-                        lgp.name = lgpi.grpi1_name;
-                    }
-                    if (lgpi.grpi1_comment != null) {
-                        lgp.comment = lgpi.grpi1_comment;
-                    }
+                    lgp.name = lgpi.grpi1_name;
+                    lgp.comment = lgpi.grpi1_comment;
                     result.add(lgp);
                 }
             }
@@ -505,24 +497,14 @@ public abstract class Netapi32Util {
             throw new Win32Exception(rc);
         }
         DomainController dc = new DomainController();
-        if (pdci.dci.DomainControllerAddress != null) {
-            dc.address = pdci.dci.DomainControllerAddress;
-        }
+        dc.address = pdci.dci.DomainControllerAddress;
         dc.addressType = pdci.dci.DomainControllerAddressType;
-        if (pdci.dci.ClientSiteName != null) {
-            dc.clientSiteName = pdci.dci.ClientSiteName;
-        }
-        if (pdci.dci.DnsForestName != null) {
-            dc.dnsForestName = pdci.dci.DnsForestName;
-        }
+        dc.clientSiteName = pdci.dci.ClientSiteName;
+        dc.dnsForestName = pdci.dci.DnsForestName;
         dc.domainGuid = pdci.dci.DomainGuid;
-        if (pdci.dci.DomainName != null) {
-            dc.domainName = pdci.dci.DomainName;
-        }
+        dc.domainName = pdci.dci.DomainName;
         dc.flags = pdci.dci.Flags;
-        if (pdci.dci.DomainControllerName != null) {
-            dc.name = pdci.dci.DomainControllerName;
-        }
+        dc.name = pdci.dci.DomainControllerName;
         rc = Netapi32.INSTANCE.NetApiBufferFree(pdci.dci.getPointer());
         if (LMErr.NERR_Success != rc) {
             throw new Win32Exception(rc);
@@ -701,16 +683,10 @@ public abstract class Netapi32Util {
             if (rc == LMErr.NERR_Success) {
                 USER_INFO_23 info_23 = new USER_INFO_23(bufptr.getValue());
                 UserInfo userInfo = new UserInfo();
-                if (info_23.usri23_comment != null) {
-                    userInfo.comment = info_23.usri23_comment;
-                }
+                userInfo.comment = info_23.usri23_comment;
                 userInfo.flags = info_23.usri23_flags;
-                if (info_23.usri23_full_name != null) {
-                    userInfo.fullName = info_23.usri23_full_name;
-                }
-                if (info_23.usri23_name != null) {
-                    userInfo.name = info_23.usri23_name;
-                }
+                userInfo.fullName = info_23.usri23_full_name;
+                userInfo.name = info_23.usri23_name;
                 if (info_23.usri23_user_sid != null) {
                     userInfo.sidString = Advapi32Util.convertSidToStringSid(info_23.usri23_user_sid);
                 }
