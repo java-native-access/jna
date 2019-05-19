@@ -10,6 +10,7 @@ Features
 
 Bug Fixes
 ---------
+* Avoid truncating final character when macOS getXAttr reads a non-null-terminated xattr, e.g. an xattr created using `xattr -w user.sample 1 myfile.txt`.
 * [#1091](https://github.com/java-native-access/jna/issues/1091): Check target number to be greater than zero, before calling `Structure#toArray` in `c.s.j.p.win32.Netapi32Util` - [@trevormagg](https://github.com/trevormaggs), [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.3.1

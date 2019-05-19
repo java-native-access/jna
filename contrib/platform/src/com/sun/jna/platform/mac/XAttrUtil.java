@@ -67,7 +67,7 @@ public class XAttrUtil {
         if (valueLength < 0)
             return null;
 
-        return decodeString(valueBuffer.getByteBuffer(0, valueLength - 1));
+        return decodeString(valueBuffer.getByteBuffer(0, valueLength)).replace("\0","");
     }
 
     public static int setXAttr(String path, String name, String value) {
