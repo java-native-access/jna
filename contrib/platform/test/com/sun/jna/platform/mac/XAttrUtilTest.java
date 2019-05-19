@@ -23,11 +23,14 @@
  */
 package com.sun.jna.platform.mac;
 
-import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
@@ -135,5 +138,27 @@ public class XAttrUtilTest extends TestCase {
         XAttrUtil.setXAttr(testPath, name.toString(), data.toString());
         String value = XAttrUtil.getXAttr(testPath, name.toString());
         assertEquals(data.toString(), value.toString());
+    }
+
+    public void testReadAlignedCliTool() throws IOException {
+        XAttrUtil.setXAttr(testPath, "JNA", "Java Native Access");
+        Process p = Runtime.getRuntime().exec(new String[] {"xattr", "-p", "JNA", testPath});
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int read;
+        InputStream is = p.getInputStream();
+        while(((read = is.read(buffer))) > 0) {
+            baos.write(buffer, 0, read);
+        }
+        String resultString = baos.toString("UTF-8");
+        // Trailing new line is added by command
+        assertEquals("Java Native Access\n", resultString);
+    }
+
+    public void testWriteAlignedCliTool() throws IOException, InterruptedException {
+        Process p = Runtime.getRuntime().exec(new String[] {"xattr", "-w", "JNA", "Java Native Access", testPath});
+        assertTrue(p.waitFor(10, TimeUnit.SECONDS));
+        String resultString = XAttrUtil.getXAttr(testPath, "JNA");
+        assertEquals("Java Native Access", resultString);
     }
 }
