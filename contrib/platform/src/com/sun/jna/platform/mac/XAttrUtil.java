@@ -67,12 +67,12 @@ public class XAttrUtil {
         if (valueLength < 0)
             return null;
 
-        return decodeString(valueBuffer.getByteBuffer(0, valueLength)).replace("\0","");
+        return decodeString(valueBuffer.getByteBuffer(0, valueLength));
     }
 
     public static int setXAttr(String path, String name, String value) {
         Memory valueBuffer = encodeString(value);
-        return XAttr.INSTANCE.setxattr(path, name, valueBuffer, valueBuffer.size(), 0, 0);
+        return XAttr.INSTANCE.setxattr(path, name, valueBuffer, valueBuffer.size() - 1, 0, 0);
     }
 
     public static int removeXAttr(String path, String name) {
