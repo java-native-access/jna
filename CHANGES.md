@@ -7,6 +7,7 @@ Next release (5.4.0)
 
 Features
 --------
+* [#1097](https://github.com/java-native-access/jna/issues/1097): Allow `.ocx` as extension of native libraries on windows - [@dmigowski](https://github.com/dmigowski).
 
 Bug Fixes
 ---------
