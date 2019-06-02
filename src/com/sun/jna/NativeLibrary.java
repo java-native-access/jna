@@ -776,7 +776,7 @@ public class NativeLibrary {
             }
         }
         else if (Platform.isWindows()) {
-            if (libName.endsWith(".drv") || libName.endsWith(".dll")) {
+            if (libName.endsWith(".drv") || libName.endsWith(".dll") || libName.endsWith(".ocx")) {
                 return libName;
             }
         }
