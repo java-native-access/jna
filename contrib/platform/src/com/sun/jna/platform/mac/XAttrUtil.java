@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 
 public class XAttrUtil {
 
@@ -55,19 +56,23 @@ public class XAttrUtil {
         // get required buffer size
         long bufferLength = XAttr.INSTANCE.getxattr(path, name, null, 0, 0, 0);
 
-        if (bufferLength < 0)
+        if (bufferLength < 0) {
             return null;
+        }
 
-        if (bufferLength == 0)
+        if (bufferLength == 0) {
             return "";
+        }
 
         Memory valueBuffer = new Memory(bufferLength);
+        valueBuffer.clear();
         long valueLength = XAttr.INSTANCE.getxattr(path, name, valueBuffer, bufferLength, 0, 0);
 
-        if (valueLength < 0)
+        if (valueLength < 0) {
             return null;
+        }
 
-        return decodeString(valueBuffer.getByteBuffer(0, valueLength - 1));
+        return Native.toString(valueBuffer.getByteArray(0, (int) bufferLength), "UTF-8");
     }
 
     public static int setXAttr(String path, String name, String value) {
@@ -82,9 +87,8 @@ public class XAttrUtil {
     protected static Memory encodeString(String s) {
         // create NULL-terminated UTF-8 String
         byte[] bb = s.getBytes(Charset.forName("UTF-8"));
-        Memory valueBuffer = new Memory(bb.length + 1);
+        Memory valueBuffer = new Memory(bb.length);
         valueBuffer.write(0, bb, 0, bb.length);
-        valueBuffer.setByte(valueBuffer.size() - 1, (byte) 0);
         return valueBuffer;
     }
 
