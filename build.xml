@@ -106,7 +106,7 @@
   </condition>
 
   <condition property="compatibility-check" value="true">
-    <equals arg1="${compatility}" arg2="1.6" />
+    <equals arg1="${compatibility}" arg2="1.6" />
   </condition>
 
   <property name="platform.compatibility" value="${compatibility}" />
