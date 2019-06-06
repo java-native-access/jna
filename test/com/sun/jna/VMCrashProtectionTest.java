@@ -24,6 +24,7 @@
 package com.sun.jna;
 
 import junit.framework.TestCase;
+import org.junit.Assume;
 
 public class VMCrashProtectionTest extends TestCase {
 
@@ -37,6 +38,11 @@ public class VMCrashProtectionTest extends TestCase {
     }
 
     public void testAccessViolation() {
+        if(Platform.ARCH.equals("s390x")) {
+            System.out.println("Skipping VMCrashProtectionTest on s390x");
+            return;
+        }
+
         if (!Native.isProtected())
             return;
 
