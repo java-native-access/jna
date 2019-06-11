@@ -103,7 +103,6 @@ import junit.framework.TestCase;
 public class Advapi32Test extends TestCase {
 
     private static final String EVERYONE = "S-1-1-0";
-    private static final int EVENT_LOG_STARTED = 6005;
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Advapi32Test.class);
@@ -956,13 +955,29 @@ public class Advapi32Test extends TestCase {
         m.setByte(1, (byte) 2);
         m.setByte(2, (byte) 3);
         m.setByte(3, (byte) 4);
-        assertTrue(Advapi32.INSTANCE.ReportEvent(h, WinNT.EVENTLOG_ERROR_TYPE, 0, 0, null, 2, 4, s, m));
+        int eventId = 123 + 0x40000000;
+        assertTrue(Advapi32.INSTANCE.ReportEvent(h, WinNT.EVENTLOG_ERROR_TYPE, 0, eventId, null, 2, 4, s, m));
         IntByReference after = new IntByReference();
         assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, after));
         assertTrue(before.getValue() < after.getValue());
         assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
         assertTrue(Advapi32.INSTANCE.DeregisterEventSource(h));
         Advapi32Util.registryDeleteKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);
+
+        // Test the event record
+        EventLogIterator iter = new EventLogIterator(null, "Application", WinNT.EVENTLOG_BACKWARDS_READ);
+        while (iter.hasNext()) {
+            EventLogRecord record = iter.next();
+            if (record.getRecord().EventID.getLow().intValue() == 123 && record.getStrings().length > 1
+                    && "JNA".equals(record.getStrings()[0]) && "Event".equals(record.getStrings()[1])) {
+                // Test Status Code stripping top 16 bits
+                assertEquals(123, record.getStatusCode());
+                // Test InstanceId
+                assertEquals(123 | 0x40000000, record.getInstanceId());
+                // Test Event ID stripping top 2 bits from InstanceId
+                assertEquals(123, record.getInstanceId() & 0x3FFFFFFF);
+            }
+        }
     }
 
     public void testGetNumberOfEventLogRecords() {
@@ -1065,21 +1080,6 @@ public class Advapi32Test extends TestCase {
                    rc == W32Errors.ERROR_HANDLE_EOF || rc == 0);
         assertTrue("Error closing event log",
                    Advapi32.INSTANCE.CloseEventLog(h));
-    }
-
-    public void testGetInstanceId() {
-        // Iterate System log for "The Event log service was started"
-        EventLogIterator iter = new EventLogIterator("System");
-        while (iter.hasNext()) {
-            EventLogRecord record = iter.next();
-            // Search explicitly using only the low 16 bits
-            if (record.getRecord().EventID.getLow().intValue() == EVENT_LOG_STARTED) {
-                // Test Status Code stripping top 16 bits
-                assertEquals(EVENT_LOG_STARTED, record.getStatusCode());
-                // Test Event ID stripping top 2 bits
-                assertEquals(EVENT_LOG_STARTED, record.getInstanceId() & 0x3FFFFFFF);
-            }
-        }
     }
 
     public void testGetOldestEventLogRecord() {
