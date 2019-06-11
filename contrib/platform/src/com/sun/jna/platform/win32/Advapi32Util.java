@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -92,7 +93,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APITypeMapper;
-import java.util.List;
 
 /**
  * Advapi32 utility API.
@@ -2342,10 +2342,23 @@ public abstract class Advapi32Util {
         }
 
         /**
-         * Event Id.
+         * The Instance ID, a resource identifier that corresponds to a string
+         * definition in the message resource file of the event source. The
+         * Event ID is the Instance ID with the top two bits masked off.
          *
-         * @return Integer.
+         * @return An integer representing the 32-bit Instance ID.
          */
+        public int getInstanceId() {
+            return _record.EventID.intValue();
+        }
+
+        /**
+         * @deprecated As of 5.4.0, replaced by {@link #getInstanceId()}. The
+         *             Event ID displayed in the Windows Event Viewer
+         *             corresponds to {@link #getStatusCode()} for
+         *             system-generated events.
+         */
+        @Deprecated
         public int getEventId() {
             return _record.EventID.intValue();
         }
@@ -2360,9 +2373,11 @@ public abstract class Advapi32Util {
         }
 
         /**
-         * Status code for the facility, part of the Event ID.
+         * Status code, the rightmost 16 bits of the Instance ID. Corresponds to
+         * the Event ID field in the Windows Event Viewer for system-generated
+         * events.
          *
-         * @return Status code.
+         * @return An integer representing the low 16-bits of the Instance ID.
          */
         public int getStatusCode() {
             return _record.EventID.intValue() & 0xFFFF;
