@@ -55,6 +55,8 @@ import java.util.Collection;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
+import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
@@ -101,6 +103,7 @@ import junit.framework.TestCase;
 public class Advapi32Test extends TestCase {
 
     private static final String EVERYONE = "S-1-1-0";
+    private static final int EVENT_LOG_STARTED = 6005;
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Advapi32Test.class);
@@ -1062,6 +1065,21 @@ public class Advapi32Test extends TestCase {
                    rc == W32Errors.ERROR_HANDLE_EOF || rc == 0);
         assertTrue("Error closing event log",
                    Advapi32.INSTANCE.CloseEventLog(h));
+    }
+
+    public void testGetInstanceId() {
+        // Iterate System log for "The Event log service was started"
+        EventLogIterator iter = new EventLogIterator("System");
+        while (iter.hasNext()) {
+            EventLogRecord record = iter.next();
+            // Search explicitly using only the low 16 bits
+            if (record.getRecord().EventID.getLow().intValue() == EVENT_LOG_STARTED) {
+                // Test Status Code stripping top 16 bits
+                assertEquals(EVENT_LOG_STARTED, record.getStatusCode());
+                // Test Event ID stripping top 2 bits
+                assertEquals(EVENT_LOG_STARTED, record.getInstanceId() & 0x3FFFFFFF);
+            }
+        }
     }
 
     public void testGetOldestEventLogRecord() {
