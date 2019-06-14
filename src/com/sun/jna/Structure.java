@@ -1842,10 +1842,10 @@ public abstract class Structure {
      */
     public static <T extends Structure> T newInstance(Class<T> type, Pointer init) throws IllegalArgumentException {
         try {
-            Constructor<T> ctor = type.getConstructor(Pointer.class);
-            return ctor.newInstance(init);
-        }
-        catch(NoSuchMethodException e) {
+            Constructor<T> ctor = getPointerConstructor(type);
+            if (ctor != null) {
+                return ctor.newInstance(init);
+            }
             // Not defined, fall back to the default
         }
         catch(SecurityException e) {
@@ -1896,6 +1896,23 @@ public abstract class Structure {
         if (info != null) {
             return info.typeInfoField;
         }
+        return null;
+    }
+
+    /**
+     * Returns a constructor for the given type with a single Pointer argument, null if no such constructor is found.
+     * @param type the class
+     * @param <T> the type
+     * @return a constructor with a single Pointer argument, null if none is found
+     */
+    private static <T> Constructor<T> getPointerConstructor(Class<T> type) {
+        for (Constructor constructor : type.getConstructors()) {
+            Class[] parameterTypes = constructor.getParameterTypes();
+            if (parameterTypes.length == 1 && parameterTypes[0].equals(Pointer.class)) {
+                return constructor;
+            }
+        }
+
         return null;
     }
 
