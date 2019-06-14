@@ -9,6 +9,7 @@ Features
 --------
 * [#1105](https://github.com/java-native-access/jna/issues/1105): Deprecate `c.s.j.p.win32.Advapi32Util.EventLogRecord#getEventId` in favor of `#getInstanceId` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1097](https://github.com/java-native-access/jna/issues/1097): Allow `.ocx` as extension of native libraries on windows - [@dmigowski](https://github.com/dmigowski).
+* [#1108](https://github.com/java-native-access/jna/pull/1108): Improve performance of `c.s.j.Structure#newInstance` by iteration available constructors instead of exception handling [@bjorndarri](https://github.com/bjorndarri).
 
 Bug Fixes
 ---------
