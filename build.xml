@@ -71,7 +71,7 @@
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="6"/>
-  <property name="jni.minor" value="0"/>
+  <property name="jni.minor" value="1"/>
   <property name="jni.revision" value="0"/>
   <property name="jni.build" value="0"/> <!--${build.number}-->
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
@@ -106,7 +106,7 @@
   </condition>
 
   <condition property="compatibility-check" value="true">
-    <equals arg1="${compatility}" arg2="1.6" />
+    <equals arg1="${compatibility}" arg2="1.6" />
   </condition>
 
   <property name="platform.compatibility" value="${compatibility}" />

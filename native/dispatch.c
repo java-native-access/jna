@@ -243,6 +243,8 @@ static jfieldID FID_Structure_typeInfo;
 static jfieldID FID_IntegerType_value;
 static jfieldID FID_PointerType_pointer;
 
+static int IS_BIG_ENDIAN;
+
 jstring fileEncoding;
 
 /* Forward declarations */
@@ -1771,6 +1773,9 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
             *(jlong *)args[i] = value;
           }
           else {
+            if(IS_BIG_ENDIAN) {
+                value = value << ((sizeof(ffi_arg) - data->cif.arg_types[i]->size) * 8);
+            }
             *(ffi_arg *)args[i] = (ffi_arg)value;
           }
         }
@@ -3027,6 +3032,8 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
       }
       (*env)->SetStaticObjectField(env, cls, fid, newJavaPointer(env, types[i]));
     }
+    short checkValue = 0x0001;
+    IS_BIG_ENDIAN = ((char *) &checkValue)[0] == 1 ? 0 : 1;
   }
 }
 

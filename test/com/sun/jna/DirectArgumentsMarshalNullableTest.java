@@ -32,25 +32,25 @@ public class DirectArgumentsMarshalNullableTest extends ArgumentsMarshalNullable
 
     public static class DirectTestLibrary implements TestLibrary {
 
-        public native Int32NativeMapped returnInt32Argument(Int32NativeMapped i);
+        public native Int16NativeMapped returnInt16Argument(Int16NativeMapped i);
 
-        public native Int32Integer returnInt32Argument(Int32Integer i);
+        public native Int16Integer returnInt16Argument(Int16Integer i);
 
-        public native Int32 returnInt32Argument(Int32 i);
+        public native Int16 returnInt16Argument(Int16 i);
 
         static {
             NativeLibrary library = NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, new TypeMapper() {
                 public FromNativeConverter getFromNativeConverter(Class<?> javaType) {
-                    if (javaType == Int32.class) {
-                        return Int32.fromNative;
+                    if (javaType == Int16.class) {
+                        return Int16.fromNative;
                     } else {
                         return null;
                     }
                 }
 
                 public ToNativeConverter getToNativeConverter(Class<?> javaType) {
-                    if (javaType == Int32.class) {
-                        return Int32.toNative;
+                    if (javaType == Int16.class) {
+                        return Int16.toNative;
                     } else {
                         return null;
                     }

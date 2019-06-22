@@ -14,6 +14,7 @@ Bug Fixes
 ---------
 * [#1095](https://github.com/java-native-access/jna/pull/1095) Align behaviour of com.sun.jna.platform.macXAttrUtil#setXattr and #getXAttr with CLI tool - [@jrobhoward](https://github.com/jrobhoward), [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1091](https://github.com/java-native-access/jna/issues/1091): Check target number to be greater than zero, before calling `Structure#toArray` in `c.s.j.p.win32.Netapi32Util` - [@trevormagg](https://github.com/trevormaggs), [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1103](https://github.com/java-native-access/jna/issues/1103): On big endian architecture IntegerType based values are incorrectly decoded when using direct binding - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.3.1
 =============
