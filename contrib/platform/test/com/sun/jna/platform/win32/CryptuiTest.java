@@ -23,10 +23,8 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
-import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.platform.win32.WinCrypt.*;
+import com.sun.jna.platform.win32.WinDef.BOOL;
 
 import junit.framework.TestCase;
 
@@ -43,5 +41,10 @@ public class CryptuiTest extends TestCase {
         CERT_CONTEXT.ByReference context = Cryptui.INSTANCE.CryptUIDlgSelectCertificateFromStore(null, null, "", "", 2, 0, null);
 
         assertNull("Context should be null as a valid certificate store handle was not provided.", context);
+    }
+    
+    public void testCryptUIWizImport() {
+        BOOL result = Cryptui.INSTANCE.CryptUIWizImport(null, null,null, null, null);
+        assertTrue("Failed to open Import Wizard", result.booleanValue());
     }
 }
