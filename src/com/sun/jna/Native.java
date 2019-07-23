@@ -60,11 +60,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sun.jna.Callback.UncaughtExceptionHandler;
 import com.sun.jna.Structure.FFIType;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /** Provides generation of invocation plumbing for a defined native
  * library interface.  Also provides various utilities for native operations.
@@ -1619,6 +1619,7 @@ public final class Native implements Version {
     private static final int CVT_TYPE_MAPPER_WSTRING = 25;
     private static final int CVT_OBJECT = 26;
     private static final int CVT_JNIENV = 27;
+    private static final int CVT_JSTRING = 28;
 
     private static int getConversion(Class<?> type, TypeMapper mapper, boolean allowObjects) {
         if (type == Void.class) type = void.class;
@@ -1703,6 +1704,9 @@ public final class Native implements Version {
         }
         if (JNIEnv.class == type) {
             return CVT_JNIENV;
+        }
+        if (JString.class == type) {
+            return CVT_JSTRING;
         }
         return allowObjects ? CVT_OBJECT : CVT_UNSUPPORTED;
     }

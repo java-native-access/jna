@@ -620,6 +620,8 @@ public class Function extends Pointer {
         } else if (argClass.isArray()){
             throw new IllegalArgumentException("Unsupported array argument type: "
                                                + argClass.getComponentType());
+        } else if (JString.class == argClass) {
+            return arg.toString();
         } else if (allowObjects) {
             return arg;
         } else if (!Native.isSupportedNativeType(arg.getClass())) {
