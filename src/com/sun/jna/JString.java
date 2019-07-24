@@ -28,7 +28,7 @@ package com.sun.jna;
  */
 public
 class JString implements CharSequence, Comparable {
-    private String string;
+    private final String string;
 
     public JString(String s) {
         if (s == null) {
