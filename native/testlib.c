@@ -1039,6 +1039,12 @@ returnClass(JNIEnv *env, jobject arg) {
   return (*env)->GetObjectClass(env, arg);
 }
 
+EXPORT jboolean
+testJStringArgument(JNIEnv *env, jstring jstr) {
+  int length = (*env)->GetStringUTFLength(env, jstr);
+  return length > 0;
+}
+
 #ifdef __cplusplus
 }
 #endif
