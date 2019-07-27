@@ -26,8 +26,7 @@ package com.sun.jna;
  *
  * @author  Nathan Robinson, nathan@dorkbox.com
  */
-public
-class JString implements CharSequence, Comparable {
+public class JString implements CharSequence, Comparable {
     private final String string;
 
     public JString(String s) {
