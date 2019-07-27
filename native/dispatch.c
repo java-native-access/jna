@@ -1813,7 +1813,7 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         *(void **)args[i] = (void*)env;
         break;
       case CVT_JSTRING:
-        *(void **)args[i] = (jstring)*(void **)args[i];
+        *(void **)args[i] = (*env)->CallObjectMethod(env, *(void **)args[i], MID_Object_toString);
         break;
       case CVT_STRUCTURE:
         objects[i] = *(void **)args[i];
