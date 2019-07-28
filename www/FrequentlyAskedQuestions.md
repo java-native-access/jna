@@ -8,14 +8,14 @@ Make sure you've read [this page](https://github.com/java-native-access/jna/blob
 JNA is missing function XXX in its platform library mappings
 ------------------------------------------------------------
 No, it's not, it's just waiting for you to add it :)
-
-    public interface MyUser32 extends User32 {
-        // DEFAULT_OPTIONS is critical for W32 API functions to simplify ASCII/UNICODE details
-        MyUser32 INSTANCE = (MyUser32)Native.load("user32", W32APIOptions.DEFAULT_OPTIONS);
-        void ThatFunctionYouReallyNeed();
-    }
-    
-That's all it takes.  If you'd like to submit the change back to JNA, make sure you provide a change log entry and corresponding test that invokes the function to prove that the mapping works.  We don't really care what the API actually does, the call can be a very minimal invocation, but should ensure all the parameters are correctly passed and that you get a reasonable return value.
+```java
+public interface MyUser32 extends User32 {
+    // DEFAULT_OPTIONS is critical for W32 API functions to simplify ASCII/UNICODE details
+    MyUser32 INSTANCE = (MyUser32)Native.load("user32", W32APIOptions.DEFAULT_OPTIONS);
+    void ThatFunctionYouReallyNeed();
+}
+```
+That's all it takes. If you'd like to submit the change back to JNA, make sure you provide a change log entry and corresponding test that invokes the function to prove that the mapping works.  We don't really care what the API actually does, the call can be a very minimal invocation, but should ensure all the parameters are correctly passed and that you get a reasonable return value.
 
 Calling `Native.load()` causes an UnsatisfiedLinkError
 ------------------------------------------------------
@@ -48,93 +48,96 @@ When should I use `Structure.ByReference`? `Structure.ByValue`? `Structure[]`?
 ------------------------------------------------------------------------------
 
 Find your corresponding native declaration below:
+```c
+typedef struct _simplestruct {
+  int myfield;
+} simplestruct;
 
-    typedef struct _simplestruct {
-      int myfield;
-    } simplestruct;
+typedef struct _outerstruct {
+  simplestruct nested; // use Structure
+} outerstruct;
 
-    typedef struct _outerstruct {
-      simplestruct nested; // use Structure
-    } outerstruct;
+typedef struct _outerstruct2 {
+  simplestruct *byref; // use Structure.ByReference
+} outerstruct2;
 
-    typedef struct _outerstruct2 {
-      simplestruct *byref; // use Structure.ByReference
-    } outerstruct2;
+typedef struct _outerstruct3 {
+  simplestruct array[4]; // use Structure[]
+} outerstruct3;
 
-    typedef struct _outerstruct3 {
-      simplestruct array[4]; // use Structure[]
-    } outerstruct3;
+typedef struct _outerstruct4 {
+  simplestruct* ptr_array[4]; // use Structure.ByReference[]
+} outerstruct4;
 
-    typedef struct _outerstruct4 {
-      simplestruct* ptr_array[4]; // use Structure.ByReference[]
-    } outerstruct4;
+// Field is a pointer to an array of struct
+typedef struct _outerstruct5 {
+  simplestruct* ptr_to_array; // use Structure.ByReference, and use
+                              // Structure.toArray() to allocate the array, 
+                              // then assign the first array element to the field
+} outerstruct5;
 
-    // Field is a pointer to an array of struct
-    typedef struct _outerstruct5 {
-      simplestruct* ptr_to_array; // use Structure.ByReference, and use
-                                  // Structure.toArray() to allocate the array, 
-                                  // then assign the first array element to the field
-    } outerstruct5;
+// struct pointers as return value or argument
+simplestruct *myfunc(); // use Structure
+void myfunc(simplestruct* data); // use Structure
+void myfunc(simplestruct* data_array, int count); // use Structure[], and use Structure.toArray() to generate the array
+void myfunc(simplestruct** data_array, int count); // use Structure.ByReference[]
 
-    // struct pointers as return value or argument
-    simplestruct *myfunc(); // use Structure
-    void myfunc(simplestruct* data); // use Structure
-    void myfunc(simplestruct* data_array, int count); // use Structure[], and use Structure.toArray() to generate the array
-    void myfunc(simplestruct** data_array, int count); // use Structure.ByReference[]
-
-    // struct (by value) as return value or argument
-    // use Structure.ByValue
-    simplestruct myfunc();
-    void myfunc(simplestruct);
+// struct (by value) as return value or argument
+// use Structure.ByValue
+simplestruct myfunc();
+void myfunc(simplestruct);
+```
 
 If you need a `ByValue` or `ByReference` class, define them within your main `Structure` definition like this:
-
-    public class MyStructure extends Structure {
-      public static class ByValue extends MyStructure implements Structure.ByValue { }
-      public static class ByReference extends MyStructure implements Structure.ByReference { }
-    }
-
+```java
+public class MyStructure extends Structure {
+  public static class ByValue extends MyStructure implements Structure.ByValue { }
+  public static class ByReference extends MyStructure implements Structure.ByReference { }
+}
+```
 How do I read back a function's string result?
 ----------------------------------------------
 
 Suppose you have a function:
+```c
+// Example A: Returns the number of characters written to the buffer
+int getString(char* buffer, int bufsize);
+// Example B: Returns the number of characters written to the buffer
+int getUnicodeString(wchar_t* buffer, int bufsize);
+```
+```java
+// Mapping A:
+int getString(byte[] buf, int bufsize);
+// Mapping B:
+int getUnicodeString(char[] buf, int bufsize);
 
-    // Example A: Returns the number of characters written to the buffer
-    int getString(char* buffer, int bufsize);
-    // Example B: Returns the number of characters written to the buffer
-    int getUnicodeString(wchar_t* buffer, int bufsize);
-    
-    // Mapping A:
-    int getString(byte[] buf, int bufsize);
-    // Mapping B:
-    int getUnicodeString(char[] buf, int bufsize);
-    
-    byte[] buf = new byte[256];
-    int len = getString(buf, buf.length);
-    String normalCString = Native.toString(buf);
-    String embeddedNULs = new String(buf, 0, len);
-
+byte[] buf = new byte[256];
+int len = getString(buf, buf.length);
+String normalCString = Native.toString(buf);
+String embeddedNULs = new String(buf, 0, len);
+```
 The native code is expecting a fixed-size buffer, which it will fill in with the requested data. A Java `String` is not appropriate here, since Strings are immutable. Nor is a Java `StringBuffer`, since the native code only fills the buffer and does not change its size. The appropriate argument type would be either `byte[]`, `Memory`, or an NIO Buffer, with the size of the object passed as the second argument. The method `Native.toString(byte[])` may then be used to convert the array of byte into a Java String.
-
-    // Example A: Returns a C string directly
-    const char* getString();
-    // Example B: Returns a wide character C string directly
-    const wchar_t* getString();
-
+```c
+// Example A: Returns a C string directly
+const char* getString();
+// Example B: Returns a wide character C string directly
+const wchar_t* getString();
+```
+     
 If the string is returned directly, your Java mapping can use the `String` or `WString` type as a return value (as appropriate).
 Note that if the native code allocates memory for the string, you should return `Pointer` instead so that you can free the memory
 at some later point.
-
-    // Mapping A
-    String getString();
-    // Mapping B
-    WString getString();
-    // Mapping C, if native code allocates memory
-    // Use Pointer.getString(0) to extract the String data,
-    // then call the recommended native method with the Pointer
-    // value to free the memory
-    Pointer getString();
-
+```java
+// Mapping A
+String getString();
+// Mapping B
+WString getString();
+// Mapping C, if native code allocates memory
+// Use Pointer.getString(0) to extract the String data,
+// then call the recommended native method with the Pointer
+// value to free the memory
+Pointer getString();
+```
 My library sometimes causes a VM crash
 --------------------------------------
 

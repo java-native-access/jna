@@ -10,21 +10,22 @@ One Time
 * Set up your gpg keys as described [here](http://central.sonatype.org/pages/working-with-pgp-signatures.html). Make sure you distribute your public key.
 * Make sure you have a settings.xml file (in directory: ${user.home}/.m2/).
   For example (Replace *myossrhuser* and *myossrhpwd* with the account credentials):
-
-        <settings>
-        ...
-            <servers>
-            ...
-                <server>
-                    <id>oss.sonatype.org</id>
-                    <username>myossrhuser</username>
-                    <password>myossrhpwd</password>
-                </server>
-            ...
-            </servers>
-        ...
-        <settings>
-
+  ```xml
+  <settings>
+  ...
+      <servers>
+      ...
+          <server>
+              <id>oss.sonatype.org</id>
+              <username>myossrhuser</username>
+              <password>myossrhpwd</password>
+          </server>
+      ...
+      </servers>
+  ...
+  <settings>
+  ```
+  
   The binaries are hosted in the Sonatype OSSRH (OSS Repository Hosting) system,
   and mirrored from there to maven central.
 
