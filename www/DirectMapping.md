@@ -8,22 +8,24 @@ only need register them within the static initializer of the defining class,
 as in the example below. The `Native.register()` method takes the name of your 
 native library, the same as `Native.load()` would.
 
-    import com.sun.jna.*;
+```java
+import com.sun.jna.*;
 
-    public class HelloWorld {
-                
-        public static native double cos(double x);
-        public static native double sin(double x);
-        
-        static {
-            Native.register(Platform.C_LIBRARY_NAME);
-        }
-
-        public static void main(String[] args) {
-            System.out.println("cos(0)=" + cos(0));
-            System.out.println("sin(0)=" + sin(0));
-        }
+public class HelloWorld {
+            
+    public static native double cos(double x);
+    public static native double sin(double x);
+    
+    static {
+        Native.register(Platform.C_LIBRARY_NAME);
     }
+
+    public static void main(String[] args) {
+        System.out.println("cos(0)=" + cos(0));
+        System.out.println("sin(0)=" + sin(0));
+    }
+}
+```
 
 Direct mapping supports the same type mappings as interface mapping, except for 
 arrays of `Pointer`/`Structure`/`String`/`WString`/`NativeMapped` as function 

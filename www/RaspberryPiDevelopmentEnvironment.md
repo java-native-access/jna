@@ -2,7 +2,7 @@ RaspberryPi Development Environment
 ===================================
 
 After installing the [Raspian](http://downloads.raspberrypi.org/raspbian_latest) OS onto your SD card, a few more tools must be installed before you can build JNA on a
-RaspberryPi. The additional tools below are needed as of Raspian, Release date:2015-05-05.
+RaspberryPi. The additional tools below are needed as of Raspian, Release date: 2015-05-05.
 
 * Various build tools and X11 libs:
 
