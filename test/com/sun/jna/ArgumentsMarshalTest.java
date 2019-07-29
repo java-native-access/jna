@@ -29,6 +29,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
+import com.sun.jna.ArgumentsMarshalTest.TestLibrary.MixedUnion1;
+import com.sun.jna.Structure.FieldOrder;
 
 /** Exercise a range of native methods.
  *
@@ -41,6 +43,7 @@ public class ArgumentsMarshalTest extends TestCase {
 
     public static interface TestLibrary extends Library {
 
+        @FieldOrder({ "int8Field", "int16Field", "int32Field", "int64Field", "floatField", "doubleField" })
         class CheckFieldAlignment extends Structure {
             public static class ByValue extends CheckFieldAlignment
                 implements Structure.ByValue { }
@@ -54,10 +57,6 @@ public class ArgumentsMarshalTest extends TestCase {
             public float floatField;
             public double doubleField;
 
-            @Override
-            public List<String> getFieldOrder() {
-                return Arrays.asList(new String[] { "int8Field", "int16Field", "int32Field", "int64Field", "floatField", "doubleField" });
-            }
             public CheckFieldAlignment() {
                 int8Field = (byte)fieldOffset("int8Field");
                 int16Field = (short)fieldOffset("int16Field");
@@ -119,22 +118,17 @@ public class ArgumentsMarshalTest extends TestCase {
         boolean returnBooleanArgument(Object arg);
 
         // Structure
+        @FieldOrder({ "field" })
         class MinTestStructure extends Structure {
             public int field;
-            @Override
-            protected List<String> getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
-            }
         }
         Pointer testStructurePointerArgument(MinTestStructure s);
 
+        @FieldOrder({ "length", "buffer" })
         class VariableSizedStructure extends Structure {
             public int length;
             public byte[] buffer;
-            @Override
-            protected List<String> getFieldOrder() {
-                return Arrays.asList(new String[] { "length", "buffer" });
-            }
+
             public VariableSizedStructure(String arg) {
                 length = arg.length() + 1;
                 buffer = new byte[length];
@@ -142,17 +136,29 @@ public class ArgumentsMarshalTest extends TestCase {
             }
         }
         String returnStringFromVariableSizedStructure(VariableSizedStructure s);
+
+        @FieldOrder({ "cb" })
         class CbStruct extends Structure {
             public static interface TestCallback extends Callback {
                 int callback(int arg1, int arg2);
             }
             public TestCallback cb;
-            @Override
-            protected List<String> getFieldOrder() {
-                return Arrays.asList(new String[] { "cb" });
-            }
         }
         void setCallbackInStruct(CbStruct cbstruct);
+
+        class MixedUnion1 extends Union {
+            public static class ByValue extends MixedUnion1
+                implements Structure.ByValue { }
+
+            public int intValue;
+            public double doubleValue;
+        }
+
+        int stringifyMixedUnion1(
+            byte[] buffer, int bufferLength,
+            int dummyInt1, double dummyDouble1,
+            MixedUnion1.ByValue union1, MixedUnion1.ByValue union2,
+            int dummyInt2, double dummyDouble2);
     }
 
     TestLibrary lib;
@@ -686,6 +692,20 @@ public class ArgumentsMarshalTest extends TestCase {
         s.setAutoRead(false);
         lib.testStructurePointerArgument(s);
         assertEquals("Auto read should be disabled", EXPECTED, s.field);
+    }
+
+    public void testUnionCallstack() {
+        MixedUnion1.ByValue union1 = new MixedUnion1.ByValue();
+        MixedUnion1.ByValue union2 = new MixedUnion1.ByValue();
+        union1.setType("intValue");
+        union1.intValue = 5;
+        union2.setType("doubleValue");
+        union2.doubleValue = 6;
+        byte[] buffer = new byte[256];
+        lib.stringifyMixedUnion1(buffer, buffer.length, 1, 2, union1, union2, 3, 4);
+        String resultString = Native.toString(buffer);
+        String expected = "dummyInt1: 1, dummyDouble1: 2, dummyInt2: 3, dummyDouble2: 4, union1.intValue: 5, union2.doubleValue: 6";
+        assertEquals(expected, resultString);
     }
 
     public static void main(java.lang.String[] argList) {

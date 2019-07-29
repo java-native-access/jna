@@ -946,6 +946,24 @@ returnStringVarArgs2(const char *fmt, ...) {
   return cp;
 }
 
+typedef union _MixedUnion1 {
+  int intValue;
+  double doubleValue;
+} MixedUnion1;
+
+EXPORT
+int stringifyMixedUnion1(
+        char* buffer, int bufferLength,
+        int dummyInt1, double dummyDouble1,
+        MixedUnion1 union1, MixedUnion1 union2,
+        int dummyInt2, double dummyDouble2) {
+    return snprintf(
+            buffer, bufferLength - 1,
+            "dummyInt1: %d, dummyDouble1: %.0f, dummyInt2: %d, dummyDouble2: %.0f, union1.intValue: %d, union2.doubleValue: %.0f",
+            dummyInt1, dummyDouble1, dummyInt2, dummyDouble2,
+            union1.intValue, union2.doubleValue);
+}
+
 #if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
 ///////////////////////////////////////////////////////////////////////
 // stdcall tests
