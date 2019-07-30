@@ -68,54 +68,54 @@ windows.
 This builds the library based on the Visual C++ compiler.
 
 <pre>
-0. Start-Point: A clean Windows 10 Installation with all patches as of 2018-10-12
-1. Install Visual C++ Build Tools 2017 (https://visualstudio.microsoft.com/de/downloads/)
-   (Install "Windows 8.1 SDK", "VC++ 2017 Version 15.7 v14.14 toolset", "Windows Universal CRT SDK")
-2. Install Oracle JDK 8u181 (64 bit)
+0. Start-Point: A clean Windows 10 Installation with all patches as of 2019-07-30
+1. Install Visual C++ Build Tools 2019 (https://visualstudio.microsoft.com/de/downloads/)
+   (Install "Windows 10 SDK", "MSVC v142 - VS 2019 C++-x64/x86-Buildtools", "Windows Universal CRT SDK")
+2. Install AdoptOpen JDK 8.0.222.10 (64 bit) (https://adoptopenjdk.net/index.html)
 3. Install Cygwin 64 Bit (https://cygwin.com/install.html)
 	- make
 	- automake
 	- automake1.15
 	- libtool
-	- mingw64-x86_64-gcc-g++ (Version 7.3.0-1)
-	- mingw64-x86_64-gcc-core (Version 7.3.0-1)
+	- mingw64-x86_64-gcc-g++ (Version 7.4.0-1)
+	- mingw64-x86_64-gcc-core (Version 7.4.0-1)
 	- gcc-g++
         - git
 4. Open a cmd for the following actions
 5. Point JAVA_HOME to the root of a 64 Bit JDK,
-   set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_181
+   set JAVA_HOME=c:\Program Files\AdoptOpenJDK\jdk-8.0.222.10-hotspot
 6. Ensure ant is accessible from the PATH
    set PATH=c:\temp\apache-ant-1.9.11\bin;%PATH%
 7, Include 64 Bit Cygwin in the path
    set PATH=c:\cygwin64\bin\;%PATH%
 8. Setup the Visual Studio build environment for 64 Bit builds
-   "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=amd64
+   "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=amd64
 9. Run native build
 
 For 32bit:
 
-0. Start-Point: A clean Windows 10 Installation with all patches as of 2018-10-12
-1. Install Visual C++ Build Tools 2017 (https://visualstudio.microsoft.com/de/downloads/)
-   (Install "Windows 8.1 SDK", "VC++ 2017 Version 15.7 v14.14 toolset", "Windows Universal CRT SDK")
-2. Install Oracle JDK 8u181 (32 bit)
+0. Start-Point: A clean Windows 10 Installation with all patches as of 2019-07-30
+1. Install Visual C++ Build Tools 2019 (https://visualstudio.microsoft.com/de/downloads/)
+   (Install "Windows 10 SDK", "VC++ 2017 Version 15.7 v14.14 toolset", "Windows Universal CRT SDK")
+2. Install AdoptOpen JDK 8.0.222.10 (32 bit) (https://adoptopenjdk.net/index.html)
 3. Install Cygwin 32 Bit (https://cygwin.com/install.html)
 	- make
 	- automake
 	- automake1.15
 	- libtool
-        - mingw64-i686-gcc-g++ (Version 7.3.0-1)
-        - mingw64-i686-gcc-core (Version 7.3.0-1)
+        - mingw64-i686-gcc-g++ (Version 7.4.0-1)
+        - mingw64-i686-gcc-core (Version 7.4.0-1)
 	- gcc-g++
         - git
 4. Open a cmd for the following actions
 5. Point JAVA_HOME to the root of a 32 Bit JDK,
-   set JAVA_HOME=c:\Program Files (x86)\Java\jdk1.8.0_181
+   set JAVA_HOME=c:\Program Files (x86)\AdoptOpenJDK\jdk-8.0.222.10-hotspot
 6. Ensure ant is accessible from the PATH
    set PATH=c:\temp\apache-ant-1.9.11\bin;%PATH%
 7, Include 32 Bit Cygwin in the path
    set PATH=c:\cygwin\bin\;%PATH%
 8. Setup the Visual Studio build environment for 32 Bit builds
-   "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=x86
+   "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=x86
 9. Run native build
 </pre>
 
