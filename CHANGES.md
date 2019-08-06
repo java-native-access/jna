@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1115](https://github.com/java-native-access/jna/issues/1115): Fix signature for `c.s.j.p.win32.Kernel32#CreateRemoteThread` and bind `VirtualAllocEx`, `VirtualFreeEx`, `GetExitCodeThread` in `c.s.j.p.win32.Kernel32` - [@apangin](https://github.com/apangin), [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.4.0
 =============

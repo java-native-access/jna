@@ -3677,6 +3677,101 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     int MEM_PRIVATE = 0x20000;
 
+    /**
+     * Indicates that data in the memory range specified by lpAddress and dwSize
+     * is no longer of interest. The pages should not be read from or written to
+     * the paging file. However, the memory block will be used again later, so
+     * it should not be decommitted.
+     */
+    int MEM_RESET = 0x00080000;
+
+    /**
+     * MEM_RESET_UNDO should only be called on an address range to which
+     * MEM_RESET was successfully applied earlier. It indicates that the data in
+     * the specified memory range specified by lpAddress and dwSize is of
+     * interest to the caller and attempts to reverse the effects of MEM_RESET.
+     */
+    int MEM_RESET_UNDO = 0x1000000;
+
+    /**
+     * Allocates memory using large page support.
+     * <p>
+     * The size and alignment must be a multiple of the large-page minimum. To
+     * obtain this value, use the GetLargePageMinimum function.
+     * <p>
+     * If you specify this value, you must also specify MEM_RESERVE and
+     * MEM_COMMIT.
+     */
+    int MEM_LARGE_PAGES = 0x20000000;
+
+    /**
+     * Reserves an address range that can be used to map Address Windowing
+     * Extensions (AWE) pages.
+     * <p>
+     * This value must be used with MEM_RESERVE and no other values.
+     */
+    int MEM_PHYSICAL = 0x00400000;
+
+    /**
+     * Allocates memory at the highest possible address. This can be slower than
+     * regular allocations, especially when there are many allocations.
+     */
+    int MEM_TOP_DOWN = 0x00100000;
+
+    /**
+     * To coalesce two adjacent placeholders, specify MEM_RELEASE |
+     * MEM_COALESCE_PLACEHOLDERS. When you coalesce placeholders, lpAddress and
+     * dwSize must exactly match those of the placeholder.
+     */
+    int MEM_COALESCE_PLACEHOLDERS = 0x00000001;
+
+    /**
+     * Frees an allocation back to a placeholder (after you've replaced a
+     * placeholder with a private allocation using VirtualAlloc2 or
+     * Virtual2AllocFromApp).
+     * <p>
+     * To split a placeholder into two placeholders, specify MEM_RELEASE |
+     * MEM_PRESERVE_PLACEHOLDER.</p>
+     */
+    int MEM_PRESERVE_PLACEHOLDER = 0x00000002;
+
+    /**
+     * Decommits the specified region of committed pages. After the operation,
+     * the pages are in the reserved state.
+     * <p>
+     * The function does not fail if you attempt to decommit an uncommitted
+     * page. This means that you can decommit a range of pages without first
+     * determining their current commitment state.
+     * <p>
+     * Do not use this value with MEM_RELEASE.
+     * <p>
+     * The MEM_DECOMMIT value is not supported when the lpAddress parameter
+     * provides the base address for an enclave.
+     */
+    int MEM_DECOMMIT = 0x4000;
+
+    /**
+     * Releases the specified region of pages, or placeholder (for a
+     * placeholder, the address space is released and available for other
+     * allocations). After the operation, the pages are in the free state.
+     * <p>
+     * If you specify this value, dwSize must be 0 (zero), and lpAddress must
+     * point to the base address returned by the VirtualAllocEx function when
+     * the region is reserved. The function fails if either of these conditions
+     * is not met.
+     * <p>
+     * If any pages in the region are committed currently, the function first
+     * decommits, and then releases them.
+     * <p>
+     * The function does not fail if you attempt to release pages that are in
+     * different states, some reserved and some committed. This means that you
+     * can release a range of pages without first determining the current
+     * commitment state.
+     * <p>
+     * Do not use this value with MEM_DECOMMIT.
+     */
+    int MEM_RELEASE = 0x8000;
+
     @FieldOrder({"baseAddress", "allocationBase", "allocationProtect",
                 "regionSize", "state", "protect", "type"})
     public static class MEMORY_BASIC_INFORMATION extends Structure {

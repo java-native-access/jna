@@ -66,22 +66,28 @@ import com.sun.jna.platform.win32.WinBase.FILE_STANDARD_INFO;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
+import static com.sun.jna.platform.win32.WinBase.WAIT_OBJECT_0;
 import com.sun.jna.platform.win32.WinBase.WIN32_FIND_DATA;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.MEM_COMMIT;
+import static com.sun.jna.platform.win32.WinNT.MEM_RESERVE;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
+import static com.sun.jna.platform.win32.WinNT.PAGE_EXECUTE_READWRITE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
+import org.junit.Test;
 
 public class Kernel32Test extends TestCase {
 
@@ -107,7 +113,9 @@ public class Kernel32Test extends TestCase {
         if (dupSet.size() > 0) {
             for (String name : new String[]{
                 // has 2 overloads by design since the API accepts both OSVERSIONINFO and OSVERSIONINFOEX
-                "GetVersionEx"
+                "GetVersionEx",
+                // one version is kind-of broken and retained for compatiblity (deprecated)
+                "CreateRemoteThread"
             }) {
                 dupSet.remove(name);
             }
@@ -1290,10 +1298,43 @@ public class Kernel32Test extends TestCase {
         }
     }
 
-    public final void testCreateRemoteThread() throws IOException {
-        HANDLE hThrd = Kernel32.INSTANCE.CreateRemoteThread(null, null, 0, null, null, null, null);
+    public final void testCreateRemoteThreadInvalid() throws IOException {
+        HANDLE hThrd = Kernel32.INSTANCE.CreateRemoteThread(null, null, 0, (Pointer) null, null, 0, null);
         assertNull(hThrd);
         assertEquals(Kernel32.INSTANCE.GetLastError(), WinError.ERROR_INVALID_HANDLE);
+    }
+
+    @Test
+    public void testCreateRemoteThread() {
+        Pointer addr = Kernel32.INSTANCE.VirtualAllocEx(
+            Kernel32.INSTANCE.GetCurrentProcess(), null, new SIZE_T(4096),
+            MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+
+        // mov eax, ecx; ret; int3
+        Memory localBuffer = new Memory(4096);
+        localBuffer.setInt(0, 0xccc3c18b);
+        IntByReference bytesWritten = new IntByReference();
+        Kernel32.INSTANCE.WriteProcessMemory(Kernel32.INSTANCE.GetCurrentProcess(),
+            addr, localBuffer, 4096, bytesWritten);
+        assertEquals(4096, bytesWritten.getValue());
+
+        DWORDByReference threadId = new DWORDByReference();
+        HANDLE hThread = Kernel32.INSTANCE.CreateRemoteThread(
+            Kernel32.INSTANCE.GetCurrentProcess(),
+            null, 0, addr, new Pointer(12345), 0, threadId);
+        assertNotNull(hThread);
+        assertTrue(threadId.getValue().longValue() > 0);
+
+        int waitResult = Kernel32.INSTANCE.WaitForSingleObject(hThread, 10000);
+        assertEquals(WAIT_OBJECT_0, waitResult);
+
+        IntByReference exitCode = new IntByReference();
+        boolean exitResult = Kernel32.INSTANCE.GetExitCodeThread(hThread, exitCode);
+        assertTrue(exitResult);
+        assertEquals(12345, exitCode.getValue());
+
+        assertTrue(Kernel32.INSTANCE.VirtualFreeEx(Kernel32.INSTANCE.GetCurrentProcess(),
+            addr, new SIZE_T(0), WinNT.MEM_RELEASE));
     }
 
     public void testWriteProcessMemory() {
