@@ -25,8 +25,6 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
-import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -34,6 +32,7 @@ import com.sun.jna.platform.win32.WinCrypt.*;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
+import com.sun.jna.platform.win32.WinDef.*;
 
 /**
  * Crypt32.dll Interface.
@@ -501,4 +500,51 @@ public interface Crypt32 extends StdCallLibrary {
      *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa387314(v=vs.85).aspx">MSDN</a>
      */
     HCERTSTORE PFXImportCertStore(DATA_BLOB pPFX, WTypes.LPWSTR szPassword, int dwFlags);
+    
+    /**
+     * The CertEnumCertificateContextProperties function retrieves the first or
+     * next extended property associated with a certificate context. Used in a
+     * loop, this function can retrieve in sequence all of the extended
+     * properties associated with a certificate context.
+     * 
+     * @param pCertContext A pointer to the CERT_CONTEXT structure of the
+     * certificate containing the properties to be enumerated.
+     * @param dwPropId Property number of the last property enumerated. To get
+     * the first property, dwPropId is zero. To retrieve subsequent properties,
+     * dwPropId is set to the property number returned by the last call to the
+     * function. To enumerate all the properties, function calls continue until
+     * the function returns zero.
+     * 
+     * @return The return value is a DWORD value that identifies a certificate
+     * context's property. The DWORD value returned by one call of the function
+     * can be supplied as the dwPropId in a subsequent call to the function. If
+     * there are no more properties to be enumerated or if the function fails,
+     * zero is returned.
+     */
+    DWORD CertEnumCertificateContextProperties(CERT_CONTEXT pCertContext, DWORD dwPropId);
+
+    /**
+     * The CertGetCertificateContextProperty function retrieves the information
+     * contained in an extended property of a certificate context.
+     * 
+     * @param pCertContext A pointer to the CERT_CONTEXT structure of the
+     * certificate that contains the property to be retrieved.
+     * @param dwPropId The property to be retrieved. Currently defined
+     * identifiers and the data type to be returned in pvData are listed in the
+     * following table.
+     * @param pvData A pointer to a buffer to receive the data as determined by
+     * dwPropId. Structures pointed to by members of a structure returned are
+     * also returned following the base structure. Therefore, the size contained
+     * in pcbData often exceeds the size of the base structure, see WinCrypt
+     * cert context property Id's.
+     * @param pcbData A pointer to a DWORD value that specifies the size, in
+     * bytes, of the buffer pointed to by the pvData parameter. When the
+     * function returns, the DWORD value contains the number of bytes to be
+     * stored in the buffer.
+     * 
+     * @return If the function succeeds, the function returns TRUE. If the
+     * function fails, it returns FALSE. For extended error information, call
+     * GetLastError.
+     */
+    BOOL CertGetCertificateContextProperty(CERT_CONTEXT pCertContext, DWORD dwPropId, Pointer pvData, DWORDByReference pcbData);
 }

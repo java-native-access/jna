@@ -130,7 +130,7 @@ public interface Cryptui extends StdCallLibrary {
             return flag;
         }
     }
-    
+
     public enum CryptuiWizExportFlag implements ICryptuiWizFlag {
         CRYPTUI_WIZ_NO_UI(CryptuiWizFlag.CRYPTUI_WIZ_NO_UI),
         CRYPTUI_WIZ_IGNORE_NO_UI_FLAG_FOR_CSPS(CryptuiWizFlag.CRYPTUI_WIZ_IGNORE_NO_UI_FLAG_FOR_CSPS),
@@ -161,7 +161,7 @@ public interface Cryptui extends StdCallLibrary {
             return flag;
         }
     }
-    
+
     public enum CryptuiWizImportSubjectFlag implements ICryptuiWizFlag {
 
         /**
@@ -196,9 +196,9 @@ public interface Cryptui extends StdCallLibrary {
         public int getFlag() {
             return flag;
         }
-        
+
     }
-    
+
     /**
      * The CryptUIDlgSelectCertificateFromStore function displays a dialog box
      * that allows the selection of a certificate from a specified store.
@@ -215,15 +215,15 @@ public interface Cryptui extends StdCallLibrary {
      * the display.
      * @param dwFlags Currently not used and should be set to 0.
      * @param pvReserved Reserved for future use.
-     *
+     * 
      * @return Returns a pointer to the selected certificate context. If no
      * certificate was selected, NULL is returned. When you have finished using
      * the certificate, free the certificate context by calling the
      * CertFreeCertificateContext function.
      */
-    CERT_CONTEXT.ByReference CryptUIDlgSelectCertificateFromStore(HCERTSTORE hCertStore, HWND hwnd, String pwszTitle, 
+    CERT_CONTEXT.ByReference CryptUIDlgSelectCertificateFromStore(HCERTSTORE hCertStore, HWND hwnd, String pwszTitle,
             String pwszDisplayString, int dwDontUseColumn, int dwFlags, PointerType pvReserved);
-    
+
     /**
      * The CryptUIWizImport function imports a certificate, a certificate trust
      * list (CTL), a certificate revocation list (CRL), or a certificate store
@@ -241,14 +241,14 @@ public interface Cryptui extends StdCallLibrary {
      * @param hDestCertStore A handle to the certificate store to import to. If
      * this parameter is NULL and the CRYPTUI_WIZ_NO_UI flag is not set in
      * dwFlags, the wizard will prompt the user to select a certificate store.
-     *
+     * 
      * @return If the function succeeds, the function returns TRUE. If the
      * function fails, it returns FALSE. For extended error information, call
      * GetLastError function.
      */
     BOOL CryptUIWizImport(DWORD dwFlags, HWND hwndParent, String pwszWizardTitle,
-            CRYPTUI_WIZ_IMPORT_SRC_INFO pImportSrc, HCERTSTORE hDestCertStore);
-    
+                          CRYPTUI_WIZ_IMPORT_SRC_INFO pImportSrc, HCERTSTORE hDestCertStore);
+
     /**
      * The CryptUIWizExport function exports a certificate, a certificate trust
      * list (CTL), a certificate revocation list (CRL), or a certificate store
@@ -261,14 +261,14 @@ public interface Cryptui extends StdCallLibrary {
      * @param pvoid Contains information about how to do the export based on
      * what is being exported. See above table for values, if this is non-NULL
      * the values are displayed to the user as the default choices.
-     *
+     * 
      * @return If the function succeeds, the function returns TRUE. If the
      * function fails, it returns FALSE. For extended error information, call
      * GetLastError function.
      */
-    BOOL CryptUIWizExport(DWORD dwFlags, HWND hwndParent, String pwszWizardTitle, 
-            CRYPTUI_WIZ_EXPORT_INFO pExportInfo, PointerType pvoid);
-    
+    BOOL CryptUIWizExport(DWORDByReference dwFlags, HWND hwndParent, String pwszWizardTitle,
+                          CRYPTUI_WIZ_EXPORT_INFO pExportInfo, PointerType pvoid);
+
     /**
      * The CRYPTUI_WIZ_IMPORT_SRC_INFO structure contains the subject to import
      * into the CryptUIWizImport function. The subject can be a certificate, a
@@ -278,7 +278,7 @@ public interface Cryptui extends StdCallLibrary {
     public static class CRYPTUI_WIZ_IMPORT_SRC_INFO extends Structure {
         public static class ByReference extends CRYPTUI_WIZ_IMPORT_SRC_INFO implements Structure.ByReference {
         }
-        
+
         public static class UNION extends Union {
             public static class ByReference extends UNION implements Structure.ByReference {
             }
@@ -289,7 +289,7 @@ public interface Cryptui extends StdCallLibrary {
             public CERT_CONTEXT.ByReference pCRLContext;
             public HCERTSTORE hCertStore;
         }
-        
+
         public DWORD cbSize;
         public DWORDByReference dwSubjectChoice;
         public UNION certificate;
@@ -299,8 +299,8 @@ public interface Cryptui extends StdCallLibrary {
         public CRYPTUI_WIZ_IMPORT_SRC_INFO() {
             super(W32APITypeMapper.DEFAULT);
         }
-    }    
-    
+    }
+
     /**
      * The CRYPTUI_WIZ_EXPORT_INFO structure contains information that controls
      * the operation of the CryptUIWizExport function.
@@ -309,7 +309,7 @@ public interface Cryptui extends StdCallLibrary {
     public static class CRYPTUI_WIZ_EXPORT_INFO extends Structure {
         public static class ByReference extends CRYPTUI_WIZ_EXPORT_INFO implements Structure.ByReference {
         }
-        
+
         public static class UNION extends Union {
             public static class ByReference extends UNION implements Structure.ByReference {
             }
@@ -319,7 +319,7 @@ public interface Cryptui extends StdCallLibrary {
             public CERT_CONTEXT.ByReference pCRLContext;
             public HCERTSTORE hCertStore;
         }
-        
+
         public DWORD dwSize;
         public String pwszExportFileName;
         public DWORDByReference dwSubjectChoice;
@@ -330,6 +330,6 @@ public interface Cryptui extends StdCallLibrary {
         public CRYPTUI_WIZ_EXPORT_INFO() {
             super(W32APITypeMapper.DEFAULT);
         }
-    } 
-    
+    }
+
 }
