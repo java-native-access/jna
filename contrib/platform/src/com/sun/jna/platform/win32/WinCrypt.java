@@ -1613,7 +1613,7 @@ public interface WinCrypt {
      * called functions. For details, see Remarks.
      */
     int CERT_CLOSE_STORE_CHECK_FLAG = 0x00000002;
-    
+
     // cert context property Id's.
     WinDef.DWORD CERT_KEY_PROV_HANDLE_PROP_ID = new WinDef.DWORD(1);
     WinDef.DWORD CERT_KEY_PROV_INFO_PROP_ID = new WinDef.DWORD(2);

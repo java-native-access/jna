@@ -42,7 +42,7 @@ public class CryptuiTest extends TestCase {
 
         assertNull("Context should be null as a valid certificate store handle was not provided.", context);
     }
-    
+
     public void testCryptUIWizImport() {
         BOOL result = Cryptui.INSTANCE.CryptUIWizImport(null, null,null, null, null);
         assertTrue("Failed to open Import Wizard", result.booleanValue());

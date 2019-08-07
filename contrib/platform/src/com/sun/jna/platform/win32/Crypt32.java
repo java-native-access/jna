@@ -500,13 +500,13 @@ public interface Crypt32 extends StdCallLibrary {
      *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa387314(v=vs.85).aspx">MSDN</a>
      */
     HCERTSTORE PFXImportCertStore(DATA_BLOB pPFX, WTypes.LPWSTR szPassword, int dwFlags);
-    
+
     /**
      * The CertEnumCertificateContextProperties function retrieves the first or
      * next extended property associated with a certificate context. Used in a
      * loop, this function can retrieve in sequence all of the extended
      * properties associated with a certificate context.
-     * 
+     *
      * @param pCertContext A pointer to the CERT_CONTEXT structure of the
      * certificate containing the properties to be enumerated.
      * @param dwPropId Property number of the last property enumerated. To get
@@ -514,7 +514,7 @@ public interface Crypt32 extends StdCallLibrary {
      * dwPropId is set to the property number returned by the last call to the
      * function. To enumerate all the properties, function calls continue until
      * the function returns zero.
-     * 
+     *
      * @return The return value is a DWORD value that identifies a certificate
      * context's property. The DWORD value returned by one call of the function
      * can be supplied as the dwPropId in a subsequent call to the function. If
@@ -526,7 +526,7 @@ public interface Crypt32 extends StdCallLibrary {
     /**
      * The CertGetCertificateContextProperty function retrieves the information
      * contained in an extended property of a certificate context.
-     * 
+     *
      * @param pCertContext A pointer to the CERT_CONTEXT structure of the
      * certificate that contains the property to be retrieved.
      * @param dwPropId The property to be retrieved. Currently defined
@@ -541,7 +541,7 @@ public interface Crypt32 extends StdCallLibrary {
      * bytes, of the buffer pointed to by the pvData parameter. When the
      * function returns, the DWORD value contains the number of bytes to be
      * stored in the buffer.
-     * 
+     *
      * @return If the function succeeds, the function returns TRUE. If the
      * function fails, it returns FALSE. For extended error information, call
      * GetLastError.
