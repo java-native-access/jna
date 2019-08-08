@@ -2693,6 +2693,12 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     boolean FileTimeToSystemTime(FILETIME lpFileTime, SYSTEMTIME lpSystemTime);
 
     /**
+     * @deprecated Use {@link #CreateRemoteThread(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.Pointer) }
+     */
+    @Deprecated
+    HANDLE CreateRemoteThread(HANDLE hProcess, WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, FOREIGN_THREAD_START_ROUTINE lpStartAddress, Pointer lpParameter, DWORD dwCreationFlags, Pointer lpThreadId);
+
+    /**
      * Creates a thread that runs in the virtual address space of another process.
      *
      * @param hProcess A handle to the process in which the thread is to be created.
@@ -2714,7 +2720,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * error information, call {@link #GetLastError()}.
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms682437(v=vs.85).aspx">CreateRemoteThread documentation</a>
      */
-    HANDLE CreateRemoteThread(HANDLE hProcess, WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, FOREIGN_THREAD_START_ROUTINE lpStartAddress, Pointer lpParameter, DWORD dwCreationFlags, Pointer lpThreadId);
+    HANDLE CreateRemoteThread(HANDLE hProcess, SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, Pointer lpStartAddress, Pointer lpParameter, int dwCreationFlags, DWORDByReference lpThreadId);
 
     /**
      * Writes data to an area of memory in a specified process. The entire area
@@ -3932,4 +3938,150 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * execution of any shutdown hooks
      */
     void ExitProcess(int exitCode);
+
+    /**
+     * Reserves, commits, or changes the state of a region of memory within the
+     * virtual address space of a specified process. The function initializes
+     * the memory it allocates to zero.
+     *
+     * @param hProcess         The handle to a process. The function allocates
+     *                         memory within the virtual address space of this
+     *                         process.
+     *
+     * <p>The handle must have the PROCESS_VM_OPERATION access right.</p>
+     * @param lpAddress        The pointer that specifies a desired starting
+     *                         address for the region of pages that you want to
+     *                         allocate.
+     *
+     * <p>
+     * If you are reserving memory, the function rounds this address down to the
+     * nearest multiple of the allocation granularity.</p>
+     *
+     * <p>
+     * If you are committing memory that is already reserved, the function
+     * rounds this address down to the nearest page boundary. To determine the
+     * size of a page and the allocation granularity on the host computer, use
+     * the {@link #GetSystemInfo} function.</p>
+     *
+     * <p>
+     * If lpAddress is {@code NULL}, the function determines where to allocate
+     * the region.</p>
+     *
+     * <p>
+     * If this address is within an enclave that you have not initialized by
+     * calling InitializeEnclave, VirtualAllocEx allocates a page of zeros for
+     * the enclave at that address. The page must be previously uncommitted, and
+     * will not be measured with the EEXTEND instruction of the Intel Software
+     * Guard Extensions programming model.</p>
+     *
+     * <p>
+     * If the address in within an enclave that you initialized, then the
+     * allocation operation fails with the ERROR_INVALID_ADDRESS error.</p>
+     * @param dwSize           The size of the region of memory to allocate, in
+     *                         bytes.
+     *
+     * <p>
+     * If lpAddress is NULL, the function rounds dwSize up to the next page
+     * boundary.</p>
+     *
+     * <p>
+     * If lpAddress is not {@code NULL}, the function allocates all pages that
+     * contain one or more bytes in the range from lpAddress to
+     * lpAddress+dwSize. This means, for example, that a 2-byte range that
+     * straddles a page boundary causes the function to allocate both pages.</p>
+     * @param flAllocationType The type of memory allocation. This parameter
+     *                         must contain one of the following values.
+     *
+     * <ul>
+     * <li>{@link WinNT#MEM_COMMIT}</li>
+     * <li>{@link WinNT#MEM_RESERVE}</li>
+     * <li>{@link WinNT#MEM_RESET}</li>
+     * <li>{@link WinNT#MEM_RESET_UNDO}</li>
+     * </ul>
+     *
+     * <p>
+     * This parameter can also specify the following values as indicated.</p>
+     *
+     * <ul>
+     * <li>{@link WinNT#MEM_LARGE_PAGES}</li>
+     * <li>{@link WinNT#MEM_PHYSICAL}</li>
+     * <li>{@link WinNT#MEM_TOP_DOWN}</li>
+     * </ul>
+     *
+     * @param flProtect        The memory protection for the region of pages to
+     *                         be allocated. If the pages are being committed,
+     *                         you can specify any one of the memory protection
+     *                         constants.
+     * @return If the function succeeds, the return value is the base address of
+     *         the allocated region of pages.
+     * <p>
+     * If the function fails, the return value is NULL. To get extended error
+     * information, call GetLastError.</p>
+     */
+    Pointer VirtualAllocEx(HANDLE hProcess, Pointer lpAddress, SIZE_T dwSize,
+            int flAllocationType, int flProtect);
+
+    /**
+     * Retrieves the termination status of the specified thread.
+     *
+     * @param hThread  A handle to the thread.
+     * <p>
+     * The handle must have the THREAD_QUERY_INFORMATION or
+     * THREAD_QUERY_LIMITED_INFORMATION access right.</p>
+     * <p>
+     * <strong>Windows Server 2003 and Windows XP:</strong> The handle must have the
+     * THREAD_QUERY_INFORMATION access right.</p>
+     * @param exitCode A pointer to a variable to receive the thread termination
+     *                 status. For more information, see Remarks.
+     * @return If the function succeeds, the return value is nonzero.
+     *
+     * <p>If the function fails, the return value is zero.</p>
+     */
+    boolean GetExitCodeThread(HANDLE hThread, IntByReference exitCode);
+
+    /**
+     * Releases, decommits, or releases and decommits a region of memory within
+     * the virtual address space of a specified process.
+     *
+     * @param hProcess   A handle to a process. The function frees memory within
+     *                   the virtual address space of the process.
+     * <p>
+     * The handle must have the PROCESS_VM_OPERATION access right.</p>
+     * @param lpAddress  A pointer to the starting address of the region of
+     *                   memory to be freed.
+     * <p>
+     * If the dwFreeType parameter is MEM_RELEASE, lpAddress must be the base
+     * address returned by the VirtualAllocEx function when the region is
+     * reserved.</p>
+     * @param dwSize     The size of the region of memory to free, in bytes.
+     *
+     * <p>
+     * If the dwFreeType parameter is MEM_RELEASE, dwSize must be 0 (zero). The
+     * function frees the entire region that is reserved in the initial
+     * allocation call to VirtualAllocEx.</p>
+     *
+     * <p>
+     * If dwFreeType is MEM_DECOMMIT, the function decommits all memory pages
+     * that contain one or more bytes in the range from the lpAddress parameter
+     * to (lpAddress+dwSize). This means, for example, that a 2-byte region of
+     * memory that straddles a page boundary causes both pages to be
+     * decommitted. If lpAddress is the base address returned by VirtualAllocEx
+     * and dwSize is 0 (zero), the function decommits the entire region that is
+     * allocated by VirtualAllocEx. After that, the entire region is in the
+     * reserved state.</p>
+     * @param dwFreeType One of the following values:
+     * <ul>
+     * <li>{@link WinNT#MEM_COALESCE_PLACEHOLDERS}</li>
+     * <li>{@link WinNT#MEM_PRESERVE_PLACEHOLDER}</li>
+     * <li>{@link WinNT#MEM_DECOMMIT}</li>
+     * <li>{@link WinNT#MEM_RELEASE}</li>
+     * </ul>
+     *
+     * @return If the function succeeds, the return value is a nonzero value.
+     *
+     * <p>
+     * If the function fails, the return value is 0 (zero). To get extended
+     * error information, call GetLastError.</p>
+     */
+    boolean VirtualFreeEx( HANDLE hProcess, Pointer lpAddress, SIZE_T dwSize, int dwFreeType);
 }
