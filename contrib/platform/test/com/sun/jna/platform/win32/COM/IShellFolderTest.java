@@ -27,12 +27,18 @@ package com.sun.jna.platform.win32.COM;
  */
 
 import com.sun.jna.Pointer;
-import junit.framework.TestCase;
-
-import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.REFIID;
+import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.ShTypes.STRRET;
+import com.sun.jna.platform.win32.Shell32;
+import com.sun.jna.platform.win32.ShlObj;
+import com.sun.jna.platform.win32.Shlwapi;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import junit.framework.TestCase;
 
 public class IShellFolderTest extends TestCase {
     static {
@@ -101,5 +107,21 @@ public class IShellFolderTest extends TestCase {
         }
         peidl.Release();
         assertTrue(sawNames); // We should see at least one item with a name
+    }
+
+    public void testParseDisplayName() throws Exception {
+        String directory = System.getenv("WinDir");
+
+        IntByReference pchEaten = new IntByReference();
+        PointerByReference ppidl = new PointerByReference();
+        IntByReference pdwAttributes = new IntByReference();
+        PointerByReference desktopFolder = new PointerByReference();
+
+        WinNT.HRESULT hResult = Shell32.INSTANCE.SHGetDesktopFolder(desktopFolder);
+        assertEquals(COMUtils.S_OK, hResult.intValue());
+
+        IShellFolder shellFolder = IShellFolder.Converter.PointerToIShellFolder(desktopFolder);
+        hResult = shellFolder.ParseDisplayName(null, null, directory, pchEaten, ppidl, pdwAttributes);
+        assertEquals(COMUtils.S_OK, hResult.intValue());
     }
 }

@@ -27,6 +27,7 @@ package com.sun.jna.platform.win32.COM;
  */
 
 import com.sun.jna.Function;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
@@ -480,7 +481,11 @@ public interface IShellFolder {
                 @Override
                 public WinNT.HRESULT ParseDisplayName(WinDef.HWND hwnd, Pointer pbc, String pszDisplayName, IntByReference pchEaten, PointerByReference ppidl, IntByReference pdwAttributes) {
                     Function f = Function.getFunction(vTable[3], Function.ALT_CONVENTION);
-                    return new WinNT.HRESULT(f.invokeInt(new Object[]{interfacePointer, hwnd, pbc, pszDisplayName, pchEaten, ppidl, pdwAttributes}));
+                    // pszDisplayName is mapped as String but Windows needs
+                    // Wide String. Convert and pass here.
+                    char[] pszDisplayNameNative = Native.toCharArray(pszDisplayName);
+                    return new WinNT.HRESULT(f.invokeInt(new Object[] { interfacePointer, hwnd, pbc,
+                        pszDisplayNameNative, pchEaten, ppidl, pdwAttributes }));
                 }
 
                 @Override
