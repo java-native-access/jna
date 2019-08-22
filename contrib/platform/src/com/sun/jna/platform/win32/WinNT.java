@@ -919,9 +919,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     int KEY_EXECUTE = KEY_READ & (~SYNCHRONIZE);
 
-    int KEY_ALL_ACCESS = STANDARD_RIGHTS_ALL | KEY_QUERY_VALUE | KEY_SET_VALUE
-            | KEY_CREATE_SUB_KEY | KEY_ENUMERATE_SUB_KEYS | KEY_NOTIFY
-            | KEY_CREATE_LINK & (~SYNCHRONIZE);
+    int KEY_ALL_ACCESS = ((STANDARD_RIGHTS_ALL | KEY_QUERY_VALUE | KEY_SET_VALUE
+            | KEY_CREATE_SUB_KEY | KEY_ENUMERATE_SUB_KEYS | KEY_NOTIFY 
+            | KEY_CREATE_LINK) & (~SYNCHRONIZE));
 
     //
     // Open/Create Options
