@@ -12,7 +12,7 @@ Bug Fixes
 ---------
 * [#1115](https://github.com/java-native-access/jna/issues/1115): Fix signature for `c.s.j.p.win32.Kernel32#CreateRemoteThread` and bind `VirtualAllocEx`, `VirtualFreeEx`, `GetExitCodeThread` in `c.s.j.p.win32.Kernel32` - [@apangin](https://github.com/apangin), [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1127](https://github.com/java-native-access/jna/issues/1127): Windows needs a wide string in `c.s.j.p.win32.COM.IShellFolder#ParseDisplayName` - [@dbwiddis](https://github.com/dbwiddis).
-* [#1128](https://github.com/java-native-access/jna/issues/1128): KEY_ALL_ACCESS value is incorrect in c.s.j.p.win32.WinNT.java - [@trevormaggs](https://github.com/trevormaggs).
+* [#1128](https://github.com/java-native-access/jna/issues/1128): KEY_ALL_ACCESS value is incorrect in `c.s.j.p.win32.WinNT.java` - [@trevormaggs](https://github.com/trevormaggs).
 
 Release 5.4.0
 =============
