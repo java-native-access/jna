@@ -23,13 +23,13 @@
  */
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
+
+import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -106,7 +106,7 @@ public class Ole32Test extends TestCase {
                 // aggregation
                 WTypes.CLSCTX_LOCAL_SERVER, riid, pDispatch);
         assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
-        assertTrue(!pDispatch.equals(Pointer.NULL));
+        assertTrue(!pDispatch.getValue().equals(Pointer.NULL));
         // We leak this iUnknown reference because we don't have the JNACOM lib
         // here to wrap the native iUnknown pointer and call iUnknown.release()
         if (W32Errors.SUCCEEDED(hrCI.intValue())) {

@@ -23,6 +23,10 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.WinBase.WAIT_OBJECT_0;
+import static com.sun.jna.platform.win32.WinNT.MEM_COMMIT;
+import static com.sun.jna.platform.win32.WinNT.MEM_RESERVE;
+import static com.sun.jna.platform.win32.WinNT.PAGE_EXECUTE_READWRITE;
 import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_COMPRESSION;
 import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_REPARSE_POINT;
 import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_COMPRESSION;
@@ -47,6 +51,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Test;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -66,7 +74,6 @@ import com.sun.jna.platform.win32.WinBase.FILE_STANDARD_INFO;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
-import static com.sun.jna.platform.win32.WinBase.WAIT_OBJECT_0;
 import com.sun.jna.platform.win32.WinBase.WIN32_FIND_DATA;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -76,18 +83,12 @@ import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
-import static com.sun.jna.platform.win32.WinNT.MEM_COMMIT;
-import static com.sun.jna.platform.win32.WinNT.MEM_RESERVE;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
-import static com.sun.jna.platform.win32.WinNT.PAGE_EXECUTE_READWRITE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
-import org.junit.Test;
 
 public class Kernel32Test extends TestCase {
 
@@ -372,14 +373,14 @@ public class Kernel32Test extends TestCase {
     public void testGetCurrentThread() {
         HANDLE h = Kernel32.INSTANCE.GetCurrentThread();
         assertNotNull("No current thread handle", h);
-        assertFalse("Null current thread handle", h.equals(0));
+        assertFalse("Null current thread handle", h.getPointer().equals(Pointer.NULL));
     }
 
     public void testOpenThread() {
         HANDLE h = Kernel32.INSTANCE.OpenThread(WinNT.THREAD_ALL_ACCESS, false,
                 Kernel32.INSTANCE.GetCurrentThreadId());
         assertNotNull(h);
-        assertFalse(h.equals(0));
+        assertFalse(h.getPointer().equals(Pointer.NULL));
         Kernel32Util.closeHandle(h);
     }
 
@@ -390,7 +391,7 @@ public class Kernel32Test extends TestCase {
     public void testGetCurrentProcess() {
         HANDLE h = Kernel32.INSTANCE.GetCurrentProcess();
         assertNotNull("No current process handle", h);
-        assertFalse("Null current process handle", h.equals(0));
+        assertFalse("Null current process handle", h.getPointer().equals(Pointer.NULL));
     }
 
     public void testOpenProcess() {
