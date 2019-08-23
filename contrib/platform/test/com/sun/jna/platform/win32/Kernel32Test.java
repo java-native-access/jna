@@ -373,14 +373,14 @@ public class Kernel32Test extends TestCase {
     public void testGetCurrentThread() {
         HANDLE h = Kernel32.INSTANCE.GetCurrentThread();
         assertNotNull("No current thread handle", h);
-        assertFalse("Null current thread handle", h.getPointer().equals(Pointer.NULL));
+        assertNotNull("Null current thread handle", h.getPointer());
     }
 
     public void testOpenThread() {
         HANDLE h = Kernel32.INSTANCE.OpenThread(WinNT.THREAD_ALL_ACCESS, false,
                 Kernel32.INSTANCE.GetCurrentThreadId());
         assertNotNull(h);
-        assertFalse(h.getPointer().equals(Pointer.NULL));
+        assertNotNull(h.getPointer());
         Kernel32Util.closeHandle(h);
     }
 
@@ -391,7 +391,7 @@ public class Kernel32Test extends TestCase {
     public void testGetCurrentProcess() {
         HANDLE h = Kernel32.INSTANCE.GetCurrentProcess();
         assertNotNull("No current process handle", h);
-        assertFalse("Null current process handle", h.getPointer().equals(Pointer.NULL));
+        assertNotNull("Null current process handle", h.getPointer());
     }
 
     public void testOpenProcess() {

@@ -31,13 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import junit.framework.TestCase;
-
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Structure.StructureSet;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+
+import junit.framework.TestCase;
 
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net
@@ -1785,6 +1785,7 @@ public class StructureTest extends TestCase {
         assertNotNull("Field should not be null after read", s.field);
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     public void testStructureEquals() {
         class OtherStructure extends Structure {
             public int first;
