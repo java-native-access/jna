@@ -398,6 +398,60 @@ public class Crypt32Test extends TestCase {
         assertTrue("The status would be true since a valid certificate chain was not passed in.", status);
     }
 
+    public void testCertGetCertificateContextProperty() {
+        HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenSystemStore(Pointer.NULL, "MY");
+        assertNotNull(hCertStore);
+
+        CERT_CONTEXT.ByReference pCertContext = Crypt32.INSTANCE.CertFindCertificateInStore(
+                hCertStore,
+                (WinCrypt.PKCS_7_ASN_ENCODING | WinCrypt.X509_ASN_ENCODING),
+                0,
+                WinCrypt.CERT_FIND_SUBJECT_STR,
+                new WTypes.LPWSTR(TESTCERT_CN).getPointer(),
+                null);
+        assertNotNull(pCertContext);
+
+        IntByReference propertyLenght = new IntByReference();
+
+        Crypt32.INSTANCE.CertGetCertificateContextProperty(pCertContext, WinCrypt.CERT_FRIENDLY_NAME_PROP_ID, Pointer.NULL, propertyLenght);
+        assertTrue("The display name was not set", propertyLenght.getValue() > 0);
+
+        Memory mem = new Memory(propertyLenght.getValue() * Native.WCHAR_SIZE);
+        Crypt32.INSTANCE.CertGetCertificateContextProperty(pCertContext, WinCrypt.CERT_FRIENDLY_NAME_PROP_ID, mem, propertyLenght);
+        assertEquals(TESTCERT_CN, mem.getWideString(0));
+    }
+
+    public void testCertSetCertificateContextProperty() {
+        HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenSystemStore(Pointer.NULL, "MY");
+        assertNotNull(hCertStore);
+
+        CERT_CONTEXT.ByReference pCertContext = Crypt32.INSTANCE.CertFindCertificateInStore(
+                hCertStore,
+                (WinCrypt.PKCS_7_ASN_ENCODING | WinCrypt.X509_ASN_ENCODING),
+                0,
+                WinCrypt.CERT_FIND_SUBJECT_STR,
+                new WTypes.LPWSTR(TESTCERT_CN).getPointer(),
+                null);
+        assertNotNull(pCertContext);
+
+        IntByReference propertyLenght = new IntByReference();
+
+        // remove name
+        Crypt32.INSTANCE.CertSetCertificateContextProperty(pCertContext, WinCrypt.CERT_FRIENDLY_NAME_PROP_ID, 0, null);
+        Crypt32.INSTANCE.CertGetCertificateContextProperty(pCertContext, WinCrypt.CERT_FRIENDLY_NAME_PROP_ID, Pointer.NULL, propertyLenght);
+        assertTrue(propertyLenght.getValue() == 0);
+
+        // set name
+        Crypt32.INSTANCE.CertSetCertificateContextProperty(pCertContext, WinCrypt.CERT_FRIENDLY_NAME_PROP_ID, 0, new WinCrypt.DATA_BLOB(TESTCERT_CN));
+
+        Crypt32.INSTANCE.CertGetCertificateContextProperty(pCertContext, WinCrypt.CERT_FRIENDLY_NAME_PROP_ID, Pointer.NULL, propertyLenght);
+        assertTrue("The display name was not set", propertyLenght.getValue() > 0);
+
+        Memory mem = new Memory(propertyLenght.getValue() * Native.WCHAR_SIZE);
+        Crypt32.INSTANCE.CertGetCertificateContextProperty(pCertContext, WinCrypt.CERT_FRIENDLY_NAME_PROP_ID, mem, propertyLenght);
+        assertEquals(TESTCERT_CN, mem.getWideString(0));
+    }
+
     private boolean createTestCertificate() {
         try {
             KeyStore keyStore = KeyStore.getInstance("Windows-MY", "SunMSCAPI");

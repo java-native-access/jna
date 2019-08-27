@@ -24,7 +24,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.platform.win32.WinCrypt.*;
-import com.sun.jna.platform.win32.WinDef.BOOL;
 
 import junit.framework.TestCase;
 
@@ -44,7 +43,7 @@ public class CryptuiTest extends TestCase {
     }
 
     public void testCryptUIWizImport() {
-        BOOL result = Cryptui.INSTANCE.CryptUIWizImport(null, null,null, null, null);
-        assertTrue("Failed to open Import Wizard", result.booleanValue());
+        boolean result = Cryptui.INSTANCE.CryptUIWizImport(Cryptui.CRYPTUI_WIZ_NO_UI, null, null, null, null);
+        assertTrue("Failed to open Import Wizard", result);
     }
 }

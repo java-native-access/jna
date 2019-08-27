@@ -146,7 +146,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377509(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"cbSize", "pBaseCRLContext", "pDeltaCRLContext", "pCrlEntry",
-                "fDeltaCrlEntry"})
+        "fDeltaCrlEntry"})
     public static class CERT_REVOCATION_CRL_INFO extends Structure {
         public static class ByReference extends CERT_REVOCATION_CRL_INFO implements Structure.ByReference {
         }
@@ -230,8 +230,8 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/es-xl/library/windows/desktop/aa381491(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"dwVersion", "SubjectUsage", "ListIdentifier", "SequenceNumber",
-                "ThisUpdate", "NextUpdate", "SubjectAlgorithm", "cCTLEntry",
-                "rgCTLEntry", "cExtension", "rgExtension"})
+        "ThisUpdate", "NextUpdate", "SubjectAlgorithm", "cCTLEntry",
+        "rgCTLEntry", "cExtension", "rgExtension"})
     public static class CTL_INFO extends Structure {
         public static class ByReference extends CTL_INFO implements Structure.ByReference {
         }
@@ -281,8 +281,8 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381486(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"dwMsgAndCertEncodingType", "pbCtlEncoded", "cbCtlEncoded",
-                "pCtlInfo", "hCertStore", "hCryptMsg", "pbCtlContent",
-                "cbCtlContent"})
+        "pCtlInfo", "hCertStore", "hCryptMsg", "pbCtlContent",
+        "cbCtlContent"})
     public static class CTL_CONTEXT extends Structure {
         public static class ByReference extends CTL_CONTEXT implements Structure.ByReference {
         }
@@ -377,9 +377,9 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377186(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"cbSize", "RequestedUsage", "RequestedIssuancePolicy",
-                "dwUrlRetrievalTimeout", "fCheckRevocationFreshnessTime",
-                "dwRevocationFreshnessTime", "pftCacheResync", "pStrongSignPara",
-                "dwStrongSignFlags"})
+        "dwUrlRetrievalTimeout", "fCheckRevocationFreshnessTime",
+        "dwRevocationFreshnessTime", "pftCacheResync", "pStrongSignPara",
+        "dwStrongSignFlags"})
     public static class CERT_CHAIN_PARA extends Structure {
         public static class ByReference extends CERT_CHAIN_PARA implements Structure.ByReference {
         }
@@ -455,7 +455,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377188(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"cbSize", "dwError", "lChainIndex", "lElementIndex",
-                "pvExtraPolicyStatus"})
+        "pvExtraPolicyStatus"})
     public static class CERT_CHAIN_POLICY_STATUS extends Structure {
         public static class ByReference extends CERT_CHAIN_POLICY_STATUS implements Structure.ByReference {
         }
@@ -475,7 +475,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377544(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"cbSize", "TrustStatus", "cElement", "rgpElement", "pTrustListInfo",
-                "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime"})
+        "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime"})
     public static class CERT_SIMPLE_CHAIN extends Structure {
         public static class ByReference extends CERT_SIMPLE_CHAIN implements Structure.ByReference {
         }
@@ -713,7 +713,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379873(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"dwCertEncodingType", "pbCrlEncoded", "cbCrlEncoded",
-                "pCrlInfo", "hCertStore"})
+        "pCrlInfo", "hCertStore"})
     public static class CRL_CONTEXT extends Structure {
         public static class ByReference extends CRL_CONTEXT implements Structure.ByReference {
         }
@@ -872,7 +872,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381420(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"pwszContainerName", "pwszProvName", "dwProvType", "dwFlags",
-                "cProvParam", "rgProvParam", "dwKeySpec"})
+        "cProvParam", "rgProvParam", "dwKeySpec"})
     public static class CRYPT_KEY_PROV_INFO extends Structure {
         public static class ByReference extends CRYPT_KEY_PROV_INFO implements Structure.ByReference {
         }
@@ -928,10 +928,10 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381468(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"cbSize", "dwMsgEncodingType", "pSigningCert", "HashAlgorithm",
-                "pvHashAuxInfo", "cMsgCert", "rgpMsgCert", "cMsgCrl",
-                "rgpMsgCrl", "cAuthAttr", "rgAuthAttr", "cUnauthAttr",
-                "rgUnauthAttr", "dwFlags", "dwInnerContentType",
-                "HashEncryptionAlgorithm", "pvHashEncryptionAuxInfo"})
+        "pvHashAuxInfo", "cMsgCert", "rgpMsgCert", "cMsgCrl",
+        "rgpMsgCrl", "cAuthAttr", "rgAuthAttr", "cUnauthAttr",
+        "rgUnauthAttr", "dwFlags", "dwInnerContentType",
+        "HashEncryptionAlgorithm", "pvHashEncryptionAuxInfo"})
     public static class CRYPT_SIGN_MESSAGE_PARA extends Structure {
         public static class ByReference extends CRYPT_SIGN_MESSAGE_PARA implements Structure.ByReference {
         }
@@ -1033,8 +1033,8 @@ public interface WinCrypt {
          * if a signer certificate is found, {@code null} if the function fails.
          */
         public CERT_CONTEXT.ByReference callback(Pointer pvGetArg, int dwCertEncodingType,
-                              CERT_INFO pSignerId,
-                              HCERTSTORE hMsgCertStore);
+                CERT_INFO pSignerId,
+                HCERTSTORE hMsgCertStore);
     }
 
     /**
@@ -1045,7 +1045,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381477(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"cbSize", "dwMsgAndCertEncodingType", "hCryptProv",
-                "pfnGetSignerCertificate", "pvGetArg", "pStrongSignPara"})
+        "pfnGetSignerCertificate", "pvGetArg", "pStrongSignPara"})
     public static class CRYPT_VERIFY_MESSAGE_PARA extends Structure {
         public static class ByReference extends CRYPT_SIGN_MESSAGE_PARA implements Structure.ByReference {
         }
@@ -1615,40 +1615,40 @@ public interface WinCrypt {
     int CERT_CLOSE_STORE_CHECK_FLAG = 0x00000002;
 
     // cert context property Id's.
-    WinDef.DWORD CERT_KEY_PROV_HANDLE_PROP_ID = new WinDef.DWORD(1);
-    WinDef.DWORD CERT_KEY_PROV_INFO_PROP_ID = new WinDef.DWORD(2);
-    WinDef.DWORD CERT_SHA1_HASH_PROP_ID = new WinDef.DWORD(3);
-    WinDef.DWORD CERT_MD5_HASH_PROP_ID = new WinDef.DWORD(4);
-    WinDef.DWORD CERT_HASH_PROP_ID = CERT_SHA1_HASH_PROP_ID;
-    WinDef.DWORD CERT_KEY_CONTEXT_PROP_ID = new WinDef.DWORD(5);
-    WinDef.DWORD CERT_KEY_SPEC_PROP_ID = new WinDef.DWORD(6);
-    WinDef.DWORD CERT_IE30_RESERVED_PROP_ID = new WinDef.DWORD(7);
-    WinDef.DWORD CERT_PUBKEY_HASH_RESERVED_PROP_ID = new WinDef.DWORD(8);
-    WinDef.DWORD CERT_ENHKEY_USAGE_PROP_ID = new WinDef.DWORD(9);
-    WinDef.DWORD CERT_CTL_USAGE_PROP_ID = CERT_ENHKEY_USAGE_PROP_ID;
-    WinDef.DWORD CERT_NEXT_UPDATE_LOCATION_PROP_ID = new WinDef.DWORD(10);
-    WinDef.DWORD CERT_FRIENDLY_NAME_PROP_ID = new WinDef.DWORD(11);
-    WinDef.DWORD CERT_PVK_FILE_PROP_ID = new WinDef.DWORD(12);
-    WinDef.DWORD CERT_DESCRIPTION_PROP_ID = new WinDef.DWORD(13);
-    WinDef.DWORD CERT_ACCESS_STATE_PROP_ID = new WinDef.DWORD(14);
-    WinDef.DWORD CERT_SIGNATURE_HASH_PROP_ID = new WinDef.DWORD(15);
-    WinDef.DWORD CERT_SMART_CARD_DATA_PROP_ID = new WinDef.DWORD(16);
-    WinDef.DWORD CERT_EFS_PROP_ID = new WinDef.DWORD(17);
-    WinDef.DWORD CERT_FORTEZZA_DATA_PROP_ID = new WinDef.DWORD(18);
-    WinDef.DWORD CERT_ARCHIVED_PROP_ID = new WinDef.DWORD(19);
-    WinDef.DWORD CERT_KEY_IDENTIFIER_PROP_ID = new WinDef.DWORD(20);
-    WinDef.DWORD CERT_AUTO_ENROLL_PROP_ID = new WinDef.DWORD(21);
-    WinDef.DWORD CERT_PUBKEY_ALG_PARA_PROP_ID = new WinDef.DWORD(22);
-    WinDef.DWORD CERT_CROSS_CERT_DIST_POINTS_PROP_ID = new WinDef.DWORD(23);
-    WinDef.DWORD CERT_ISSUER_PUBLIC_KEY_MD5_HASH_PROP_ID = new WinDef.DWORD(24);
-    WinDef.DWORD CERT_SUBJECT_PUBLIC_KEY_MD5_HASH_PROP_ID = new WinDef.DWORD(25);
-    WinDef.DWORD CERT_ENROLLMENT_PROP_ID = new WinDef.DWORD(26);
-    WinDef.DWORD CERT_DATE_STAMP_PROP_ID = new WinDef.DWORD(27);
-    WinDef.DWORD CERT_ISSUER_SERIAL_NUMBER_MD5_HASH_PROP_ID = new WinDef.DWORD(28);
-    WinDef.DWORD CERT_SUBJECT_NAME_MD5_HASH_PROP_ID = new WinDef.DWORD(29);
-    WinDef.DWORD CERT_EXTENDED_ERROR_INFO_PROP_ID = new WinDef.DWORD(30);
-    WinDef.DWORD CERT_RENEWAL_PROP_ID = new WinDef.DWORD(64);
-    WinDef.DWORD CERT_ARCHIVED_KEY_HASH_PROP_ID = new WinDef.DWORD(65);
-    WinDef.DWORD CERT_FIRST_RESERVED_PROP_ID = new WinDef.DWORD(66);
-    WinDef.DWORD CERT_NCRYPT_KEY_HANDLE_PROP_ID = new WinDef.DWORD(78);
+    int CERT_KEY_PROV_HANDLE_PROP_ID = 1;
+    int CERT_KEY_PROV_INFO_PROP_ID = 2;
+    int CERT_SHA1_HASH_PROP_ID = 3;
+    int CERT_MD5_HASH_PROP_ID = 4;
+    int CERT_HASH_PROP_ID = CERT_SHA1_HASH_PROP_ID;
+    int CERT_KEY_CONTEXT_PROP_ID = 5;
+    int CERT_KEY_SPEC_PROP_ID = 6;
+    int CERT_IE30_RESERVED_PROP_ID = 7;
+    int CERT_PUBKEY_HASH_RESERVED_PROP_ID = 8;
+    int CERT_ENHKEY_USAGE_PROP_ID = 9;
+    int CERT_CTL_USAGE_PROP_ID = CERT_ENHKEY_USAGE_PROP_ID;
+    int CERT_NEXT_UPDATE_LOCATION_PROP_ID = 10;
+    int CERT_FRIENDLY_NAME_PROP_ID = 11;
+    int CERT_PVK_FILE_PROP_ID = 12;
+    int CERT_DESCRIPTION_PROP_ID = 13;
+    int CERT_ACCESS_STATE_PROP_ID = 14;
+    int CERT_SIGNATURE_HASH_PROP_ID = 15;
+    int CERT_SMART_CARD_DATA_PROP_ID = 16;
+    int CERT_EFS_PROP_ID = 17;
+    int CERT_FORTEZZA_DATA_PROP_ID = 18;
+    int CERT_ARCHIVED_PROP_ID = 19;
+    int CERT_KEY_IDENTIFIER_PROP_ID = 20;
+    int CERT_AUTO_ENROLL_PROP_ID = 21;
+    int CERT_PUBKEY_ALG_PARA_PROP_ID = 22;
+    int CERT_CROSS_CERT_DIST_POINTS_PROP_ID = 23;
+    int CERT_ISSUER_PUBLIC_KEY_MD5_HASH_PROP_ID = 24;
+    int CERT_SUBJECT_PUBLIC_KEY_MD5_HASH_PROP_ID = 25;
+    int CERT_ENROLLMENT_PROP_ID = 26;
+    int CERT_DATE_STAMP_PROP_ID = 27;
+    int CERT_ISSUER_SERIAL_NUMBER_MD5_HASH_PROP_ID = 28;
+    int CERT_SUBJECT_NAME_MD5_HASH_PROP_ID = 29;
+    int CERT_EXTENDED_ERROR_INFO_PROP_ID = 30;
+    int CERT_RENEWAL_PROP_ID = 64;
+    int CERT_ARCHIVED_KEY_HASH_PROP_ID = 65;
+    int CERT_FIRST_RESERVED_PROP_ID = 66;
+    int CERT_NCRYPT_KEY_HANDLE_PROP_ID = 78;
 }

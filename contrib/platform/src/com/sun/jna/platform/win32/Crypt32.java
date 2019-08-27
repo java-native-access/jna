@@ -32,7 +32,6 @@ import com.sun.jna.platform.win32.WinCrypt.*;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
-import com.sun.jna.platform.win32.WinDef.*;
 
 /**
  * Crypt32.dll Interface.
@@ -521,7 +520,7 @@ public interface Crypt32 extends StdCallLibrary {
      * there are no more properties to be enumerated or if the function fails,
      * zero is returned.
      */
-    DWORD CertEnumCertificateContextProperties(CERT_CONTEXT pCertContext, DWORD dwPropId);
+    int CertEnumCertificateContextProperties(WinCrypt.CERT_CONTEXT pCertContext, int dwPropId);
 
     /**
      * The CertGetCertificateContextProperty function retrieves the information
@@ -546,5 +545,27 @@ public interface Crypt32 extends StdCallLibrary {
      * function fails, it returns FALSE. For extended error information, call
      * GetLastError.
      */
-    BOOL CertGetCertificateContextProperty(CERT_CONTEXT pCertContext, DWORD dwPropId, Pointer pvData, DWORDByReference pcbData);
+    boolean CertGetCertificateContextProperty(CERT_CONTEXT pCertContext, int dwPropId, Pointer pvData, IntByReference pcbData);
+
+    /**
+     * The CertSetCertificateContextProperty function sets an extended property
+     * for a specified certificate context.
+     *
+     * @param pCertContext A pointer to a CERT_CONTEXT structure.
+     * @param dwPropId The property to be set. The value of dwPropId determines
+     * the type and content of the pvData parameter.
+     * @param dwFlags CERT_STORE_NO_CRYPT_RELEASE_FLAG can be set for the
+     * CERT_KEY_PROV_HANDLE_PROP_ID or CERT_KEY_CONTEXT_PROP_ID dwPropId
+     * properties. If the CERT_SET_PROPERTY_IGNORE_PERSIST_ERROR_FLAG value is
+     * set, any provider-write errors are ignored and the cached context's
+     * properties are always set. If CERT_SET_PROPERTY_INHIBIT_PERSIST_FLAG is
+     * set, any context property set is not persisted.
+     * @param pvData A pointer to a data type determined by the value of
+     * dwPropId. For any dwPropId, setting pvData to NULL deletes the property.
+     *
+     * @return If the function succeeds, the function returns TRUE. If the
+     * function fails, it returns FALSE. For extended error information, call
+     * GetLastError.
+     */
+    boolean CertSetCertificateContextProperty(CERT_CONTEXT pCertContext, int dwPropId, int dwFlags, DATA_BLOB pvData);
 }
