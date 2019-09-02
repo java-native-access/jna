@@ -24,7 +24,6 @@
  */
 package com.sun.jna.platform.mac;
 
-import static com.sun.jna.platform.mac.CoreFoundationUtil.ALLOCATOR;
 import static com.sun.jna.platform.mac.CoreFoundationUtil.release;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -87,14 +86,16 @@ public class IOKitTest {
         assertNotEquals(0, platformExpert);
         // Get a single key
         CFStringRef serialKey = CFStringRef.toCFString("IOPlatformSerialNumber");
-        CFTypeRef cfSerial = IO.IORegistryEntryCreateCFProperty(platformExpert, serialKey, ALLOCATOR, 0);
+        CFTypeRef cfSerial = IO.IORegistryEntryCreateCFProperty(platformExpert, serialKey, CF.CFAllocatorGetDefault(),
+                0);
         assertNotNull(cfSerial);
         String serialNumber = CoreFoundationUtil.cfPointerToString(cfSerial);
         release(cfSerial);
         assertEquals(12, serialNumber.length());
         // Get all the keys
         PointerByReference properties = new PointerByReference();
-        assertEquals(0, IO.IORegistryEntryCreateCFProperties(platformExpert, properties, ALLOCATOR, 0));
+        assertEquals(0,
+                IO.IORegistryEntryCreateCFProperties(platformExpert, properties, CF.CFAllocatorGetDefault(), 0));
         dict = new CFMutableDictionaryRef();
         dict.setPointer(properties.getValue());
         assertTrue(CF.CFDictionaryGetValueIfPresent(dict, serialKey, null));
@@ -106,10 +107,10 @@ public class IOKitTest {
         // Get a single key from a nested entry
         long root = IO.IORegistryGetRootEntry(masterPort);
         assertNotEquals(0, root);
-        cfSerial = IO.IORegistryEntrySearchCFProperty(root, "IOService", serialKey, ALLOCATOR, 0);
+        cfSerial = IO.IORegistryEntrySearchCFProperty(root, "IOService", serialKey, CF.CFAllocatorGetDefault(), 0);
         // without recursive search should be null
         assertNull(cfSerial);
-        cfSerial = IO.IORegistryEntrySearchCFProperty(root, "IOService", serialKey, ALLOCATOR,
+        cfSerial = IO.IORegistryEntrySearchCFProperty(root, "IOService", serialKey, CF.CFAllocatorGetDefault(),
                 IOKit.kIORegistryIterateRecursively);
         // with recursive search should return a match
         assertEquals(serialNumber, CoreFoundationUtil.cfPointerToString(cfSerial));

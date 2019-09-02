@@ -29,7 +29,6 @@ import static com.sun.jna.platform.mac.CoreFoundation.kCFStringEncodingUTF8;
 import java.util.Collection;
 
 import com.sun.jna.Memory;
-import com.sun.jna.platform.mac.CoreFoundation.CFAllocatorRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberType;
 import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.ptr.IntByReference;
@@ -41,8 +40,6 @@ import com.sun.jna.ptr.LongByReference;
 public class CoreFoundationUtil {
 
     private static final CoreFoundation CF = CoreFoundation.INSTANCE;
-
-    public static final CFAllocatorRef ALLOCATOR = CF.CFAllocatorGetDefault();
 
     private CoreFoundationUtil() {
     }

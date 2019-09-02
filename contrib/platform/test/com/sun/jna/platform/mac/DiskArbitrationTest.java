@@ -24,7 +24,6 @@
  */
 package com.sun.jna.platform.mac;
 
-import static com.sun.jna.platform.mac.CoreFoundationUtil.ALLOCATOR;
 import static com.sun.jna.platform.mac.CoreFoundationUtil.release;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -63,7 +62,7 @@ public class DiskArbitrationTest {
         CFStringRef daMediaBlockSize = CFStringRef.toCFString("DAMediaBlockSize");
 
         // Open a DiskArbitration session
-        DASessionRef session = DA.DASessionCreate(ALLOCATOR);
+        DASessionRef session = DA.DASessionCreate(CF.CFAllocatorGetDefault());
         assertNotNull(session);
 
         // Get IOMedia objects representing whole drives and save the BSD Name
@@ -76,12 +75,12 @@ public class DiskArbitrationTest {
         long media = IO.IOIteratorNext(iter.getValue());
         while (media != 0) {
             CFStringRef wholeKey = CFStringRef.toCFString("Whole");
-            CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, ALLOCATOR, 0);
+            CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
             CoreFoundationUtil.release(wholeKey);
             assertNotNull(cfWhole);
 
             if (CoreFoundationUtil.cfPointerToBoolean(cfWhole)) {
-                DADiskRef disk = DA.DADiskCreateFromIOMedia(ALLOCATOR, session, media);
+                DADiskRef disk = DA.DADiskCreateFromIOMedia(CF.CFAllocatorGetDefault(), session, media);
                 bsdNames.add(DA.DADiskGetBSDName(disk));
                 release(disk);
             }
@@ -98,7 +97,7 @@ public class DiskArbitrationTest {
             File f = new File(path);
             assertTrue(f.exists());
             // Get the DiskArbitration dictionary for this disk, which has size (capacity)
-            DADiskRef disk = DA.DADiskCreateFromBSDName(ALLOCATOR, session, path);
+            DADiskRef disk = DA.DADiskCreateFromBSDName(CF.CFAllocatorGetDefault(), session, path);
             assertNotNull(disk);
             CFDictionaryRef diskInfo = DA.DADiskCopyDescription(disk);
             assertNotNull(diskInfo);
