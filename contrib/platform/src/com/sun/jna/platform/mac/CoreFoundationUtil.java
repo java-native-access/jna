@@ -29,7 +29,10 @@ import static com.sun.jna.platform.mac.CoreFoundation.kCFStringEncodingUTF8;
 import java.util.Collection;
 
 import com.sun.jna.Memory;
+import com.sun.jna.platform.mac.CoreFoundation.CFBooleanRef;
+import com.sun.jna.platform.mac.CoreFoundation.CFNumberRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberType;
+import com.sun.jna.platform.mac.CoreFoundation.CFStringRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -45,13 +48,18 @@ public class CoreFoundationUtil {
     }
 
     /**
-     * Convert a reference to a Core Foundations LongLong into its {@code long}
+     * Convert a reference to a Core Foundations LongLong into its {@code long}.
+     * <p>
+     * This method assumes a 64-bit number is stored and does not do type checking.
+     * If the argument type differs from the return type, and the conversion is
+     * lossy or the return value is out of range, then this function passes back an
+     * approximate value.
      *
      * @param theLong
      *            The pointer to a 64-bit integer
      * @return The corresponding {@code long}
      */
-    public static long cfPointerToLong(CFTypeRef theLong) {
+    public static long cfPointerToLong(CFNumberRef theLong) {
         LongByReference lbr = new LongByReference();
         CF.CFNumberGetValue(theLong, CFNumberType.kCFNumberLongLongType.ordinal(), lbr);
         return lbr.getValue();
@@ -59,48 +67,53 @@ public class CoreFoundationUtil {
 
     /**
      * Convert a reference to a Core Foundations Int into its {@code int}
+     * <p>
+     * This method assumes a 32-bit number is stored and does not do type checking.
+     * If the argument type differs from the return type, and the conversion is
+     * lossy or the return value is out of range, then this function passes back an
+     * approximate value.
      *
-     * @param p
+     * @param theInt
      *            The pointer to an integer
      * @return The corresponding {@code int}
      */
-    public static int cfPointerToInt(CFTypeRef p) {
+    public static int cfPointerToInt(CFNumberRef theInt) {
         IntByReference ibr = new IntByReference();
-        CF.CFNumberGetValue(p, CFNumberType.kCFNumberIntType.ordinal(), ibr);
+        CF.CFNumberGetValue(theInt, CFNumberType.kCFNumberIntType.ordinal(), ibr);
         return ibr.getValue();
     }
 
     /**
      * Convert a reference to a Core Foundations Boolean into its {@code boolean}
      *
-     * @param cfBoolean
+     * @param theBoolean
      *            The pointer to a boolean
      * @return The corresponding {@code boolean}
      */
-    public static boolean cfPointerToBoolean(CFTypeRef cfBoolean) {
-        return CF.CFBooleanGetValue(cfBoolean);
+    public static boolean cfPointerToBoolean(CFBooleanRef theBoolean) {
+        return CF.CFBooleanGetValue(theBoolean);
     }
 
     /**
      * Convert a reference to a Core Foundations String into its
      * {@link java.lang.String}
      *
-     * @param cfTypeRef
+     * @param theString
      *            The pointer to a CFString
      * @return The corresponding {@link java.lang.String}
      */
-    public static String cfPointerToString(CFTypeRef cfTypeRef) {
-        if (cfTypeRef == null) {
+    public static String cfPointerToString(CFStringRef theString) {
+        if (theString == null) {
             return "null";
         }
-        long length = CF.CFStringGetLength(cfTypeRef);
+        long length = CF.CFStringGetLength(theString);
         long maxSize = CF.CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
         if (maxSize == CoreFoundation.kCFNotFound) {
             maxSize = 4 * (length + 1);
         }
         Memory buf = new Memory(maxSize);
-        CF.CFStringGetCString(cfTypeRef, buf, maxSize, kCFStringEncodingUTF8);
-        return buf.getString(0);
+        CF.CFStringGetCString(theString, buf, maxSize, kCFStringEncodingUTF8);
+        return buf.getString(0, "UTF8");
     }
 
     /**

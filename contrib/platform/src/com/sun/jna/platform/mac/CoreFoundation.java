@@ -70,6 +70,13 @@ public interface CoreFoundation extends Library {
      * Foundation objects.
      */
     class CFTypeRef extends PointerType {
+        public CFTypeRef() {
+            super();
+        }
+
+        public CFTypeRef(Pointer p) {
+            super(p);
+        }
     }
 
     /**
@@ -84,6 +91,13 @@ public interface CoreFoundation extends Library {
      * A reference to a {@code CFNumber} object.
      */
     class CFNumberRef extends CFTypeRef {
+        public CFNumberRef() {
+            super();
+        }
+
+        public CFNumberRef(Pointer p) {
+            super(p);
+        }
     }
 
     /**
@@ -102,6 +116,13 @@ public interface CoreFoundation extends Library {
      * A reference to a {@code CFBoolean} object.
      */
     class CFBooleanRef extends CFTypeRef {
+        public CFBooleanRef() {
+            super();
+        }
+
+        public CFBooleanRef(Pointer p) {
+            super(p);
+        }
     }
 
     /**
@@ -112,24 +133,52 @@ public interface CoreFoundation extends Library {
      * parameter, you can pass in a {@link #CFArrayRef}.
      */
     class CFArrayRef extends CFTypeRef {
+        public CFArrayRef() {
+            super();
+        }
+
+        public CFArrayRef(Pointer p) {
+            super(p);
+        }
     }
 
     /**
      * A reference to an immutable {@code CFData} object.
      */
     class CFDataRef extends CFTypeRef {
+        public CFDataRef() {
+            super();
+        }
+
+        public CFDataRef(Pointer p) {
+            super(p);
+        }
     }
 
     /**
      * A reference to an immutable {@code CFDictionary} object.
      */
     class CFDictionaryRef extends CFTypeRef {
+        public CFDictionaryRef() {
+            super();
+        }
+
+        public CFDictionaryRef(Pointer p) {
+            super(p);
+        }
     }
 
     /**
      * A reference to a mutable {@code CFDictionary} object.
      */
     class CFMutableDictionaryRef extends CFDictionaryRef {
+        public CFMutableDictionaryRef() {
+            super();
+        }
+
+        public CFMutableDictionaryRef(Pointer p) {
+            super(p);
+        }
     }
 
     /**
@@ -138,6 +187,14 @@ public interface CoreFoundation extends Library {
      * the characteristics and behavior of {@code CFString} objects.
      */
     class CFStringRef extends CFTypeRef {
+        public CFStringRef() {
+            super();
+        }
+
+        public CFStringRef(Pointer p) {
+            super(p);
+        }
+
         /**
          * Convenience function which calls {@link #CFStringCreateWithCharacters} to
          * create a new {@code CFString} from the given Java {@link java.lang.String}
@@ -394,7 +451,7 @@ public interface CoreFoundation extends Library {
      *         {@link #CFDictionaryGetValueIfPresent} to distinguish between a value
      *         that is not found, and a {@code null} value.
      */
-    CFTypeRef CFDictionaryGetValue(CFTypeRef theDict, CFStringRef key);
+    Pointer CFDictionaryGetValue(CFTypeRef theDict, PointerType key);
 
     /**
      * Returns a boolean value that indicates whether a given value for a given key
@@ -420,7 +477,7 @@ public interface CoreFoundation extends Library {
      *            was present).
      * @return {@code true} if a matching key was found, otherwise {@code false}.
      */
-    boolean CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, CFStringRef key, PointerType value);
+    boolean CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, PointerType key, PointerByReference value);
 
     /**
      * Sets the value corresponding to a given key.
@@ -447,7 +504,7 @@ public interface CoreFoundation extends Library {
      *            released. {@code value} must be of the type expected by the retain
      *            and release callbacks.
      */
-    void CFDictionarySetValue(CFMutableDictionaryRef theDict, CFTypeRef key, CFTypeRef value);
+    void CFDictionarySetValue(CFMutableDictionaryRef theDict, PointerType key, PointerType value);
 
     /**
      * Copies the character contents of a string to a local C string buffer after
@@ -503,7 +560,7 @@ public interface CoreFoundation extends Library {
      * @return A constant that indicates the data type of the value contained in
      *         number. See {@link CFNumberType} for a list of possible values.
      */
-    int CFNumberGetType(CFTypeRef number);
+    int CFNumberGetType(CFNumberRef number);
 
     /**
      * Obtains the value of a {@code CFNumber} object cast to a specified type.
@@ -515,8 +572,10 @@ public interface CoreFoundation extends Library {
      *            {@link CFNumberType} for a list of possible values.
      * @param On
      *            return, contains the value of {@code number}.
+     * @return {@code true} if the operation was successful, otherwise
+     *         {@code false}.
      */
-    void CFNumberGetValue(CFTypeRef number, int theType, ByReference valuePtr);
+    boolean CFNumberGetValue(CFNumberRef number, int theType, ByReference valuePtr);
 
     /**
      * Returns the number (in terms of UTF-16 code pairs) of Unicode characters in a
@@ -527,7 +586,7 @@ public interface CoreFoundation extends Library {
      * @return The number (in terms of UTF-16 code pairs) of characters stored in
      *         {@code theString}.
      */
-    long CFStringGetLength(CFTypeRef theString);
+    long CFStringGetLength(CFStringRef theString);
 
     /**
      * Returns the maximum number of bytes a string of a specified length (in
@@ -560,7 +619,7 @@ public interface CoreFoundation extends Library {
      *            The {@code CFData} object to examine.
      * @return An index that specifies the number of bytes in {@code theData}.
      */
-    long CFDataGetLength(CFTypeRef theData);
+    long CFDataGetLength(CFDataRef theData);
 
     /**
      * Returns a read-only pointer to the bytes of a {@code CFData} object.
@@ -569,5 +628,5 @@ public interface CoreFoundation extends Library {
      *            The {@code CFData} object to examine.
      * @return A read-only pointer to the bytes associated with {@code theData}.
      */
-    PointerByReference CFDataGetBytePtr(CFTypeRef theData);
+    PointerByReference CFDataGetBytePtr(CFDataRef theData);
 }
