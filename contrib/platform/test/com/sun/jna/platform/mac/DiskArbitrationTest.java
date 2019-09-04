@@ -59,11 +59,11 @@ public class DiskArbitrationTest {
         long masterPort = masterPortPtr.getValue();
 
         // Create some keys we'll need
-        CFStringRef daMediaBSDName = CFStringRef.toCFString("DAMediaBSDName");
-        CFStringRef daMediaWhole = CFStringRef.toCFString("DAMediaWhole");
-        CFStringRef daMediaLeaf = CFStringRef.toCFString("DAMediaLeaf");
-        CFStringRef daMediaSize = CFStringRef.toCFString("DAMediaSize");
-        CFStringRef daMediaBlockSize = CFStringRef.toCFString("DAMediaBlockSize");
+        CFStringRef daMediaBSDName = CFStringRef.createCFString("DAMediaBSDName");
+        CFStringRef daMediaWhole = CFStringRef.createCFString("DAMediaWhole");
+        CFStringRef daMediaLeaf = CFStringRef.createCFString("DAMediaLeaf");
+        CFStringRef daMediaSize = CFStringRef.createCFString("DAMediaSize");
+        CFStringRef daMediaBlockSize = CFStringRef.createCFString("DAMediaBlockSize");
 
         // Open a DiskArbitration session
         DASessionRef session = DA.DASessionCreate(CF.CFAllocatorGetDefault());
@@ -78,12 +78,12 @@ public class DiskArbitrationTest {
         assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iter));
         long media = IO.IOIteratorNext(iter.getValue());
         while (media != 0) {
-            CFStringRef wholeKey = CFStringRef.toCFString("Whole");
+            CFStringRef wholeKey = CFStringRef.createCFString("Whole");
             CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
             wholeKey.release();
             assertNotNull(cfWhole);
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
-            if (CoreFoundationUtil.cfPointerToBoolean(cfWholeBool)) {
+            if (cfWholeBool.booleanValue()) {
                 DADiskRef disk = DA.DADiskCreateFromIOMedia(CF.CFAllocatorGetDefault(), session, media);
                 bsdNames.add(DA.DADiskGetBSDName(disk));
                 disk.release();
@@ -109,22 +109,22 @@ public class DiskArbitrationTest {
             // Since we looked up "whole" BSD disks these should match
             Pointer result = CF.CFDictionaryGetValue(diskInfo, daMediaBSDName);
             CFStringRef bsdNamePtr = new CFStringRef(result);
-            assertEquals(bsdName, CoreFoundationUtil.cfPointerToString(bsdNamePtr));
+            assertEquals(bsdName, bsdNamePtr.stringValue());
             result = CF.CFDictionaryGetValue(diskInfo, daMediaWhole);
             CFBooleanRef bsdWholePtr = new CFBooleanRef(result);
-            assertTrue(CoreFoundationUtil.cfPointerToBoolean(bsdWholePtr));
+            assertTrue(bsdWholePtr.booleanValue());
 
             result = CF.CFDictionaryGetValue(diskInfo, daMediaLeaf);
             CFBooleanRef bsdLeafPtr = new CFBooleanRef(result);
-            assertFalse(CoreFoundationUtil.cfPointerToBoolean(bsdLeafPtr));
+            assertFalse(bsdLeafPtr.booleanValue());
 
             // Size is a multiple of block size
             result = CF.CFDictionaryGetValue(diskInfo, daMediaSize);
             CFNumberRef sizePtr = new CFNumberRef(result);
-            long size = CoreFoundationUtil.cfPointerToLong(sizePtr);
+            long size = sizePtr.longValue();
             result = CF.CFDictionaryGetValue(diskInfo, daMediaBlockSize);
             CFNumberRef blockSizePtr = new CFNumberRef(result);
-            long blockSize = CoreFoundationUtil.cfPointerToLong(blockSizePtr);
+            long blockSize = blockSizePtr.longValue();
             assertEquals(0, size % blockSize);
 
             diskInfo.release();

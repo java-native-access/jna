@@ -57,9 +57,9 @@ public class CoreFoundationTest {
     @Test
     public void testCFStringRef() {
         String awesome = "ǝɯosǝʍɐ sı ∀Nſ"; // Unicode
-        CFStringRef cfAwesome = CFStringRef.toCFString(awesome);
+        CFStringRef cfAwesome = CFStringRef.createCFString(awesome);
         assertEquals(awesome.length(), CF.CFStringGetLength(cfAwesome));
-        assertEquals(awesome, CoreFoundationUtil.cfPointerToString(cfAwesome));
+        assertEquals(awesome, cfAwesome.stringValue());
 
         Memory mem = new Memory(awesome.getBytes().length + 1);
         mem.clear();
@@ -71,7 +71,7 @@ public class CoreFoundationTest {
         }
         // Essentially a toString, can't rely on format but should contain the string
         CFStringRef desc = CF.CFCopyDescription(cfAwesome);
-        assertTrue(CoreFoundationUtil.cfPointerToString(desc).contains(awesome));
+        assertTrue(desc.stringValue().contains(awesome));
 
         desc.release();
         cfAwesome.release();
@@ -81,7 +81,7 @@ public class CoreFoundationTest {
     public void testCFNumberRef() {
         LongByReference max = new LongByReference(Long.MAX_VALUE);
         CFNumberRef cfMax = CF.CFNumberCreate(null, CFNumberType.kCFNumberLongLongType.ordinal(), max);
-        assertEquals(Long.MAX_VALUE, CoreFoundationUtil.cfPointerToLong(cfMax));
+        assertEquals(Long.MAX_VALUE, cfMax.longValue());
         cfMax.release();
 
         IntByReference zero = new IntByReference(0);
@@ -89,8 +89,8 @@ public class CoreFoundationTest {
         CFNumberRef cfZero = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.ordinal(), zero);
         CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.ordinal(), one);
 
-        assertEquals(0, CoreFoundationUtil.cfPointerToInt(cfZero));
-        assertEquals(1, CoreFoundationUtil.cfPointerToInt(cfOne));
+        assertEquals(0, cfZero.intValue());
+        assertEquals(1, cfOne.intValue());
         cfZero.release();
         cfOne.release();
     }
@@ -103,9 +103,9 @@ public class CoreFoundationTest {
         CFNumberRef cfPi = CF.CFNumberCreate(null, CFNumberType.kCFNumberDoubleType.ordinal(), pi);
         assertEquals(1, CF.CFGetRetainCount(cfE));
         assertEquals(1, CF.CFGetRetainCount(cfPi));
-        CF.CFRetain(cfE);
-        CF.CFRetain(cfPi);
-        CF.CFRetain(cfPi);
+        cfE.retain();
+        cfPi.retain();
+        cfPi.retain();
         assertEquals(2, CF.CFGetRetainCount(cfE));
         assertEquals(3, CF.CFGetRetainCount(cfPi));
 
@@ -140,7 +140,7 @@ public class CoreFoundationTest {
         for (int i = 0; i < refArray.length; i++) {
             CFTypeRef result = CF.CFArrayGetValueAtIndex(cfPtrArray, i);
             CFNumberRef numRef = new CFNumberRef(result.getPointer());
-            assertEquals(i, CoreFoundationUtil.cfPointerToInt(numRef));
+            assertEquals(i, numRef.intValue());
         }
 
         for (int i = 0; i < refArray.length; i++) {
@@ -168,7 +168,7 @@ public class CoreFoundationTest {
     public void testCFDictionary() {
         CFAllocatorRef alloc = CF.CFAllocatorGetDefault();
         CFMutableDictionaryRef dict = CF.CFDictionaryCreateMutable(alloc, 2, null, null);
-        CFStringRef oneStr = CFStringRef.toCFString("one");
+        CFStringRef oneStr = CFStringRef.createCFString("one");
 
         // Key does not exist, returns null
         assertEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, null));
@@ -189,19 +189,19 @@ public class CoreFoundationTest {
         assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, null));
         Pointer result = CF.CFDictionaryGetValue(dict, oneStr);
         CFNumberRef numRef = new CFNumberRef(result);
-        assertEquals(1, CoreFoundationUtil.cfPointerToInt(numRef));
+        assertEquals(1, numRef.intValue());
 
         PointerByReference resultPtr = new PointerByReference();
         assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, resultPtr));
         numRef = new CFNumberRef(resultPtr.getValue());
-        assertEquals(1, CoreFoundationUtil.cfPointerToInt(numRef));
+        assertEquals(1, numRef.intValue());
 
         // Test non-CF type as key
         IntByReference onePtr = new IntByReference(1);
         CF.CFDictionarySetValue(dict, onePtr, oneStr);
         result = CF.CFDictionaryGetValue(dict, onePtr);
         CFStringRef strRef = new CFStringRef(result);
-        assertEquals("one", CoreFoundationUtil.cfPointerToString(strRef));
+        assertEquals("one", strRef.stringValue());
 
         oneStr.release();
         cfOne.release();

@@ -62,40 +62,40 @@ public class IOKitTest {
 
         String match = "matching BSD Name";
         CFMutableDictionaryRef dict = IO.IOBSDNameMatching(masterPort, 0, match);
-        CFStringRef bsdNameKey = CFStringRef.toCFString("BSD Name");
+        CFStringRef bsdNameKey = CFStringRef.createCFString("BSD Name");
         Pointer result = CF.CFDictionaryGetValue(dict, bsdNameKey);
         CFStringRef cfBsdName = new CFStringRef(result);
-        assertEquals(match, CoreFoundationUtil.cfPointerToString(cfBsdName));
+        assertEquals(match, cfBsdName.stringValue());
         bsdNameKey.release();
         dict.release();
 
         match = "matching IOClass Name";
         dict = IO.IOServiceNameMatching(match);
-        CFStringRef classNameKey = CFStringRef.toCFString("IONameMatch");
+        CFStringRef classNameKey = CFStringRef.createCFString("IONameMatch");
         result = CF.CFDictionaryGetValue(dict, classNameKey);
         CFStringRef cfClassName = new CFStringRef(result);
-        assertEquals(match, CoreFoundationUtil.cfPointerToString(cfClassName));
+        assertEquals(match, cfClassName.stringValue());
         classNameKey.release();
         dict.release();
 
         match = "IOPlatformExpertDevice";
         dict = IO.IOServiceMatching(match);
-        CFStringRef classKey = CFStringRef.toCFString("IOProviderClass");
+        CFStringRef classKey = CFStringRef.createCFString("IOProviderClass");
         result = CF.CFDictionaryGetValue(dict, classKey);
         CFStringRef cfClass = new CFStringRef(result);
-        assertEquals(match, CoreFoundationUtil.cfPointerToString(cfClass));
+        assertEquals(match, cfClass.stringValue());
         classKey.release();
 
         // Get matching service (consumes dict reference)
         long platformExpert = IO.IOServiceGetMatchingService(masterPort, dict);
         assertNotEquals(0, platformExpert);
         // Get a single key
-        CFStringRef serialKey = CFStringRef.toCFString("IOPlatformSerialNumber");
+        CFStringRef serialKey = CFStringRef.createCFString("IOPlatformSerialNumber");
         CFTypeRef cfSerialAsType = IO.IORegistryEntryCreateCFProperty(platformExpert, serialKey,
                 CF.CFAllocatorGetDefault(), 0);
         assertNotNull(cfSerialAsType);
         CFStringRef cfSerial = new CFStringRef(cfSerialAsType.getPointer());
-        String serialNumber = CoreFoundationUtil.cfPointerToString(cfSerial);
+        String serialNumber = cfSerial.stringValue();
         cfSerialAsType.release();
 
         assertEquals(12, serialNumber.length());
@@ -108,7 +108,7 @@ public class IOKitTest {
         assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, serialKey, null));
         result = CF.CFDictionaryGetValue(dict, serialKey);
         cfSerial = new CFStringRef(result);
-        assertEquals(serialNumber, CoreFoundationUtil.cfPointerToString(cfSerial));
+        assertEquals(serialNumber, cfSerial.stringValue());
         dict.release();
         assertEquals(0, IO.IOObjectRelease(platformExpert));
 
@@ -123,7 +123,7 @@ public class IOKitTest {
                 IOKit.kIORegistryIterateRecursively);
         // with recursive search should return a match
         cfSerial = new CFStringRef(cfSerialAsType.getPointer());
-        assertEquals(serialNumber, CoreFoundationUtil.cfPointerToString(cfSerial));
+        assertEquals(serialNumber, cfSerial.stringValue());
         serialKey.release();
         cfSerialAsType.release();
 
@@ -238,9 +238,9 @@ public class IOKitTest {
         assertTrue(timeRemaining > 0 || timeRemaining == IOKit.kIOPSTimeRemainingUnknown
                 || timeRemaining == IOKit.kIOPSTimeRemainingUnlimited);
 
-        CFStringRef isPresentKey = CFStringRef.toCFString("Is Present");
-        CFStringRef currentCapacityKey = CFStringRef.toCFString("Current Capacity");
-        CFStringRef maxCapacityKey = CFStringRef.toCFString("Max Capacity");
+        CFStringRef isPresentKey = CFStringRef.createCFString("Is Present");
+        CFStringRef currentCapacityKey = CFStringRef.createCFString("Current Capacity");
+        CFStringRef maxCapacityKey = CFStringRef.createCFString("Max Capacity");
         int powerSourcesCount = CF.CFArrayGetCount(powerSourcesList);
         for (int ps = 0; ps < powerSourcesCount; ps++) {
             // Get the dictionary for that Power Source
@@ -252,16 +252,16 @@ public class IOKitTest {
             PointerByReference result = new PointerByReference();
             if (0 != CF.CFDictionaryGetValueIfPresent(dictionary, isPresentKey, result)) {
                 CFBooleanRef isPresentRef = new CFBooleanRef(result.getValue());
-                if (CoreFoundationUtil.cfPointerToBoolean(isPresentRef)) {
+                if (isPresentRef.booleanValue()) {
                     int currentCapacity = 0;
                     if (0 != CF.CFDictionaryGetValueIfPresent(dictionary, currentCapacityKey, result)) {
                         CFNumberRef cap = new CFNumberRef(result.getValue());
-                        currentCapacity = CoreFoundationUtil.cfPointerToInt(cap);
+                        currentCapacity = cap.intValue();
                     }
                     int maxCapacity = 100;
                     if (0 != CF.CFDictionaryGetValueIfPresent(dictionary, maxCapacityKey, result)) {
                         CFNumberRef cap = new CFNumberRef(result.getValue());
-                        maxCapacity = CoreFoundationUtil.cfPointerToInt(cap);
+                        maxCapacity = cap.intValue();
                     }
                     assertTrue(currentCapacity <= maxCapacity);
                 }

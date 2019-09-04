@@ -25,11 +25,18 @@
 package com.sun.jna.platform.mac;
 
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.DoubleByReference;
+import com.sun.jna.ptr.FloatByReference;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.ptr.ShortByReference;
 
 /**
  * Core Foundation is a framework that provides fundamental software services
@@ -106,6 +113,108 @@ public interface CoreFoundation extends Library {
         public CFNumberRef(Pointer p) {
             super(p);
         }
+
+        /**
+         * Convert this {@code CFNumber} to a {@code long}.
+         * <p>
+         * This method assumes a 64-bit integer is stored and does not do type checking.
+         * Users should use {@link #CFNumberGetType} to determine the appropriate type
+         * conversion. If this object's type differs from the return type, and the
+         * conversion is lossy or the return value is out of range, then this method
+         * returns an approximate value.
+         *
+         * @return The corresponding {@code long}
+         */
+        public long longValue() {
+            LongByReference lbr = new LongByReference();
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberLongLongType.ordinal(), lbr);
+            return lbr.getValue();
+        }
+
+        /**
+         * Convert this {@code CFNumber} to an {@code int}.
+         * <p>
+         * This method assumes a 32-bit integer is stored and does not do type checking.
+         * Users should use {@link #CFNumberGetType} to determine the appropriate type
+         * conversion. If this object's type differs from the return type, and the
+         * conversion is lossy or the return value is out of range, then this method
+         * returns an approximate value.
+         *
+         * @return The corresponding {@code int}
+         */
+        public int intValue() {
+            IntByReference ibr = new IntByReference();
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberIntType.ordinal(), ibr);
+            return ibr.getValue();
+        }
+
+        /**
+         * Convert this {@code CFNumber} to a {@code short}.
+         * <p>
+         * This method assumes a 16-bit integer is stored and does not do type checking.
+         * Users should use {@link #CFNumberGetType} to determine the appropriate type
+         * conversion. If this object's type differs from the return type, and the
+         * conversion is lossy or the return value is out of range, then this method
+         * returns an approximate value.
+         *
+         * @return The corresponding {@code short}
+         */
+        public short shortValue() {
+            ShortByReference sbr = new ShortByReference();
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberShortType.ordinal(), sbr);
+            return sbr.getValue();
+        }
+
+        /**
+         * Convert this {@code CFNumber} to a {@code byte}.
+         * <p>
+         * This method assumes an 8-bit integer is stored and does not do type checking.
+         * Users should use {@link #CFNumberGetType} to determine the appropriate type
+         * conversion. If this object's type differs from the return type, and the
+         * conversion is lossy or the return value is out of range, then this method
+         * returns an approximate value.
+         *
+         * @return The corresponding {@code byte}
+         */
+        public byte byteValue() {
+            ByteByReference bbr = new ByteByReference();
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberCharType.ordinal(), bbr);
+            return bbr.getValue();
+        }
+
+        /**
+         * Convert this {@code CFNumber} to a {@code double}.
+         * <p>
+         * This method assumes a 64-bit floating point value is stored and does not do
+         * type checking. Users should use {@link #CFNumberGetType} to determine the
+         * appropriate type conversion. If this object's type differs from the return
+         * type, and the conversion is lossy or the return value is out of range, then
+         * this method returns an approximate value.
+         *
+         * @return The corresponding {@code double}
+         */
+        public double doubleValue() {
+            DoubleByReference dbr = new DoubleByReference();
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberDoubleType.ordinal(), dbr);
+            return dbr.getValue();
+        }
+
+        /**
+         * Convert this {@code CFNumber} to a {@code float}.
+         * <p>
+         * This method assumes a 32-bit floating point value is stored and does not do
+         * type checking. Users should use {@link #CFNumberGetType} to determine the
+         * appropriate type conversion. If this object's type differs from the return
+         * type, and the conversion is lossy or the return value is out of range, then
+         * this method returns an approximate value.
+         *
+         * @return The corresponding {@code float}
+         */
+        public float floatValue() {
+            FloatByReference fbr = new FloatByReference();
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberFloatType.ordinal(), fbr);
+            return fbr.getValue();
+        }
     }
 
     /**
@@ -130,6 +239,15 @@ public interface CoreFoundation extends Library {
 
         public CFBooleanRef(Pointer p) {
             super(p);
+        }
+
+        /**
+         * Convert a reference to a Core Foundations Boolean into its {@code boolean}
+         *
+         * @return The corresponding {@code boolean}
+         */
+        public boolean booleanValue() {
+            return 0 != INSTANCE.CFBooleanGetValue(this);
         }
     }
 
@@ -205,7 +323,7 @@ public interface CoreFoundation extends Library {
 
         /**
          * Convenience function which calls {@link #CFStringCreateWithCharacters} to
-         * create a new {@code CFString} from the given Java {@link java.lang.String}
+         * create a new {@link CFStringRef} from the given Java {@link java.lang.String}
          * and returns its reference pointer.
          * <p>
          * This reference must be released with {@link #CFRelease} to avoid leaking
@@ -216,9 +334,29 @@ public interface CoreFoundation extends Library {
          * @return An immutable string containing {@code s}, or {@code null} if there
          *         was a problem creating the object.
          */
-        public static CFStringRef toCFString(String s) {
+        public static CFStringRef createCFString(String s) {
             final char[] chars = s.toCharArray();
             return INSTANCE.CFStringCreateWithCharacters(null, chars, chars.length);
+        }
+
+        /**
+         * Convert a reference to a Core Foundations String into its
+         * {@link java.lang.String}
+         *
+         * @return The corresponding {@link java.lang.String}, or null if the conversion
+         *         failed.
+         */
+        public String stringValue() {
+            long length = INSTANCE.CFStringGetLength(this);
+            long maxSize = INSTANCE.CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+            if (maxSize == kCFNotFound) {
+                return null;
+            }
+            Memory buf = new Memory(maxSize);
+            if (0 != INSTANCE.CFStringGetCString(this, buf, maxSize, kCFStringEncodingUTF8)) {
+                return buf.getString(0, "UTF8");
+            }
+            return null;
         }
     }
 
