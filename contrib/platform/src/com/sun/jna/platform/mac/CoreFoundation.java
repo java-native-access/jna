@@ -71,6 +71,20 @@ public interface CoreFoundation extends Library {
         public CFTypeRef(Pointer p) {
             super(p);
         }
+
+        /**
+         * Convenience method for {@link CoreFoundation#CFRetain} on this object.
+         */
+        public void retain() {
+            INSTANCE.CFRetain(this);
+        }
+
+        /**
+         * Convenience method for {@link CoreFoundation#CFRelease} on this object.
+         */
+        public void release() {
+            INSTANCE.CFRelease(this);
+        }
     }
 
     /**

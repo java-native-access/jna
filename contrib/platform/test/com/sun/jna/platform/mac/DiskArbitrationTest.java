@@ -24,7 +24,6 @@
  */
 package com.sun.jna.platform.mac;
 
-import static com.sun.jna.platform.mac.CoreFoundationUtil.release;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -81,15 +80,15 @@ public class DiskArbitrationTest {
         while (media != 0) {
             CFStringRef wholeKey = CFStringRef.toCFString("Whole");
             CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
-            CoreFoundationUtil.release(wholeKey);
+            wholeKey.release();
             assertNotNull(cfWhole);
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
             if (CoreFoundationUtil.cfPointerToBoolean(cfWholeBool)) {
                 DADiskRef disk = DA.DADiskCreateFromIOMedia(CF.CFAllocatorGetDefault(), session, media);
                 bsdNames.add(DA.DADiskGetBSDName(disk));
-                release(disk);
+                disk.release();
             }
-            CoreFoundationUtil.release(cfWhole);
+            cfWhole.release();
             IO.IOObjectRelease(media);
             media = IO.IOIteratorNext(iter.getValue());
         }
@@ -128,16 +127,16 @@ public class DiskArbitrationTest {
             long blockSize = CoreFoundationUtil.cfPointerToLong(blockSizePtr);
             assertEquals(0, size % blockSize);
 
-            release(diskInfo);
-            release(disk);
+            diskInfo.release();
+            disk.release();
         }
-        release(daMediaBSDName);
-        release(daMediaWhole);
-        release(daMediaLeaf);
-        release(daMediaSize);
-        release(daMediaBlockSize);
+        daMediaBSDName.release();
+        daMediaWhole.release();
+        daMediaLeaf.release();
+        daMediaSize.release();
+        daMediaBlockSize.release();
 
-        release(session);
+        session.release();
 
         assertEquals(0, IO.IOObjectRelease(masterPort));
     }

@@ -24,8 +24,6 @@
  */
 package com.sun.jna.platform.mac;
 
-import static com.sun.jna.platform.mac.CoreFoundationUtil.release;
-import static com.sun.jna.platform.mac.CoreFoundationUtil.releaseAll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
@@ -75,8 +73,8 @@ public class CoreFoundationTest {
         CFStringRef desc = CF.CFCopyDescription(cfAwesome);
         assertTrue(CoreFoundationUtil.cfPointerToString(desc).contains(awesome));
 
-        release(desc);
-        release(cfAwesome);
+        desc.release();
+        cfAwesome.release();
     }
 
     @Test
@@ -84,7 +82,7 @@ public class CoreFoundationTest {
         LongByReference max = new LongByReference(Long.MAX_VALUE);
         CFNumberRef cfMax = CF.CFNumberCreate(null, CFNumberType.kCFNumberLongLongType.ordinal(), max);
         assertEquals(Long.MAX_VALUE, CoreFoundationUtil.cfPointerToLong(cfMax));
-        release(cfMax);
+        cfMax.release();
 
         IntByReference zero = new IntByReference(0);
         IntByReference one = new IntByReference(1);
@@ -93,9 +91,8 @@ public class CoreFoundationTest {
 
         assertEquals(0, CoreFoundationUtil.cfPointerToInt(cfZero));
         assertEquals(1, CoreFoundationUtil.cfPointerToInt(cfOne));
-
-        release(cfZero);
-        release(cfOne);
+        cfZero.release();
+        cfOne.release();
     }
 
     @Test
@@ -115,14 +112,16 @@ public class CoreFoundationTest {
         List<CFTypeRef> irrationalReferences = new ArrayList<>();
         irrationalReferences.add(cfE);
         irrationalReferences.add(cfPi);
-        releaseAll(irrationalReferences);
+        for (CFTypeRef value : irrationalReferences) {
+            value.release();
+        }
 
         assertEquals(1, CF.CFGetRetainCount(cfE));
         assertEquals(2, CF.CFGetRetainCount(cfPi));
-        release(cfPi);
+        cfPi.release();
         assertEquals(1, CF.CFGetRetainCount(cfPi));
-        release(cfE);
-        release(cfPi);
+        cfE.release();
+        cfPi.release();
     }
 
     @Test
@@ -145,9 +144,9 @@ public class CoreFoundationTest {
         }
 
         for (int i = 0; i < refArray.length; i++) {
-            release(refArray[i]);
+            refArray[i].release();
         }
-        release(cfPtrArray);
+        cfPtrArray.release();
     }
 
     @Test
@@ -162,8 +161,7 @@ public class CoreFoundationTest {
 
         Pointer bytes = CF.CFDataGetBytePtr(cfBug);
         assertEquals(deadBug, bytes.getString(0));
-
-        release(cfBug);
+        cfBug.release();
     }
 
     @Test
@@ -205,8 +203,8 @@ public class CoreFoundationTest {
         CFStringRef strRef = new CFStringRef(result);
         assertEquals("one", CoreFoundationUtil.cfPointerToString(strRef));
 
-        release(oneStr);
-        release(cfOne);
-        release(dict);
+        oneStr.release();
+        cfOne.release();
+        dict.release();
     }
 }

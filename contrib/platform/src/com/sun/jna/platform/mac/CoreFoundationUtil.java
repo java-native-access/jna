@@ -26,14 +26,11 @@ package com.sun.jna.platform.mac;
 
 import static com.sun.jna.platform.mac.CoreFoundation.kCFStringEncodingUTF8;
 
-import java.util.Collection;
-
 import com.sun.jna.Memory;
 import com.sun.jna.platform.mac.CoreFoundation.CFBooleanRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberType;
 import com.sun.jna.platform.mac.CoreFoundation.CFStringRef;
-import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
@@ -114,39 +111,5 @@ public class CoreFoundationUtil {
         Memory buf = new Memory(maxSize);
         CF.CFStringGetCString(theString, buf, maxSize, kCFStringEncodingUTF8);
         return buf.getString(0, "UTF8");
-    }
-
-    /**
-     * Releases a CF reference. If the retain count of {@code ref} becomes zero the
-     * memory allocated to the object is deallocated and the object is destroyed. If
-     * you create, copy, or explicitly retain (see the
-     * {@link CoreFoundation#CFRetain} function) a Core Foundation object, you are
-     * responsible for releasing it when you no longer need it.
-     *
-     * @param ref
-     *            The reference to release
-     */
-    public static void release(CFTypeRef ref) {
-        if (ref != null) {
-            CF.CFRelease(ref);
-        }
-    }
-
-    /**
-     * Releases a collection of CF references. If the retain count of a reference
-     * becomes zero the memory allocated to the object is deallocated and the object
-     * is destroyed. If you create, copy, or explicitly retain (see the
-     * {@link CoreFoundation#CFRetain} function) a Core Foundation object, you are
-     * responsible for releasing it when you no longer need it.
-     *
-     * @param <T>
-     *            A type extending {@link CFTypeRef}.
-     * @param refs
-     *            The collection of references to release
-     */
-    public static <T extends CFTypeRef> void releaseAll(Collection<T> refs) {
-        for (CFTypeRef ref : refs) {
-            release(ref);
-        }
     }
 }

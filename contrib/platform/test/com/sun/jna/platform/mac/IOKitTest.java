@@ -24,7 +24,6 @@
  */
 package com.sun.jna.platform.mac;
 
-import static com.sun.jna.platform.mac.CoreFoundationUtil.release;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -67,8 +66,8 @@ public class IOKitTest {
         Pointer result = CF.CFDictionaryGetValue(dict, bsdNameKey);
         CFStringRef cfBsdName = new CFStringRef(result);
         assertEquals(match, CoreFoundationUtil.cfPointerToString(cfBsdName));
-        release(bsdNameKey);
-        release(dict);
+        bsdNameKey.release();
+        dict.release();
 
         match = "matching IOClass Name";
         dict = IO.IOServiceNameMatching(match);
@@ -76,8 +75,8 @@ public class IOKitTest {
         result = CF.CFDictionaryGetValue(dict, classNameKey);
         CFStringRef cfClassName = new CFStringRef(result);
         assertEquals(match, CoreFoundationUtil.cfPointerToString(cfClassName));
-        release(classNameKey);
-        release(dict);
+        classNameKey.release();
+        dict.release();
 
         match = "IOPlatformExpertDevice";
         dict = IO.IOServiceMatching(match);
@@ -85,7 +84,7 @@ public class IOKitTest {
         result = CF.CFDictionaryGetValue(dict, classKey);
         CFStringRef cfClass = new CFStringRef(result);
         assertEquals(match, CoreFoundationUtil.cfPointerToString(cfClass));
-        release(classKey);
+        classKey.release();
 
         // Get matching service (consumes dict reference)
         long platformExpert = IO.IOServiceGetMatchingService(masterPort, dict);
@@ -97,7 +96,8 @@ public class IOKitTest {
         assertNotNull(cfSerialAsType);
         CFStringRef cfSerial = new CFStringRef(cfSerialAsType.getPointer());
         String serialNumber = CoreFoundationUtil.cfPointerToString(cfSerial);
-        release(cfSerialAsType);
+        cfSerialAsType.release();
+
         assertEquals(12, serialNumber.length());
         // Get all the keys
         PointerByReference properties = new PointerByReference();
@@ -109,7 +109,7 @@ public class IOKitTest {
         result = CF.CFDictionaryGetValue(dict, serialKey);
         cfSerial = new CFStringRef(result);
         assertEquals(serialNumber, CoreFoundationUtil.cfPointerToString(cfSerial));
-        release(dict);
+        dict.release();
         assertEquals(0, IO.IOObjectRelease(platformExpert));
 
         // Get a single key from a nested entry
@@ -124,8 +124,8 @@ public class IOKitTest {
         // with recursive search should return a match
         cfSerial = new CFStringRef(cfSerialAsType.getPointer());
         assertEquals(serialNumber, CoreFoundationUtil.cfPointerToString(cfSerial));
-        release(serialKey);
-        release(cfSerialAsType);
+        serialKey.release();
+        cfSerialAsType.release();
 
         assertEquals(0, IO.IOObjectRelease(root));
         assertEquals(0, IO.IOObjectRelease(masterPort));
@@ -267,10 +267,10 @@ public class IOKitTest {
                 }
             }
         }
-        release(isPresentKey);
-        release(currentCapacityKey);
-        release(maxCapacityKey);
-        release(powerSourcesList);
-        release(powerSourcesInfo);
+        isPresentKey.release();
+        currentCapacityKey.release();
+        maxCapacityKey.release();
+        powerSourcesList.release();
+        powerSourcesInfo.release();
     }
 }
