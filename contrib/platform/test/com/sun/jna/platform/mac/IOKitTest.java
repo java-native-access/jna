@@ -105,7 +105,7 @@ public class IOKitTest {
                 IO.IORegistryEntryCreateCFProperties(platformExpert, properties, CF.CFAllocatorGetDefault(), 0));
         dict = new CFMutableDictionaryRef();
         dict.setPointer(properties.getValue());
-        assertTrue(CF.CFDictionaryGetValueIfPresent(dict, serialKey, null));
+        assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, serialKey, null));
         result = CF.CFDictionaryGetValue(dict, serialKey);
         cfSerial = new CFStringRef(result);
         assertEquals(serialNumber, CoreFoundationUtil.cfPointerToString(cfSerial));
@@ -250,16 +250,16 @@ public class IOKitTest {
             // Get values from dictionary (See IOPSKeys.h)
             // Skip if not present
             PointerByReference result = new PointerByReference();
-            if (CF.CFDictionaryGetValueIfPresent(dictionary, isPresentKey, result)) {
+            if (0 != CF.CFDictionaryGetValueIfPresent(dictionary, isPresentKey, result)) {
                 CFBooleanRef isPresentRef = new CFBooleanRef(result.getValue());
-                if (CF.CFBooleanGetValue(isPresentRef)) {
+                if (CoreFoundationUtil.cfPointerToBoolean(isPresentRef)) {
                     int currentCapacity = 0;
-                    if (CF.CFDictionaryGetValueIfPresent(dictionary, currentCapacityKey, result)) {
+                    if (0 != CF.CFDictionaryGetValueIfPresent(dictionary, currentCapacityKey, result)) {
                         CFNumberRef cap = new CFNumberRef(result.getValue());
                         currentCapacity = CoreFoundationUtil.cfPointerToInt(cap);
                     }
                     int maxCapacity = 100;
-                    if (CF.CFDictionaryGetValueIfPresent(dictionary, maxCapacityKey, result)) {
+                    if (0 != CF.CFDictionaryGetValueIfPresent(dictionary, maxCapacityKey, result)) {
                         CFNumberRef cap = new CFNumberRef(result.getValue());
                         maxCapacity = CoreFoundationUtil.cfPointerToInt(cap);
                     }

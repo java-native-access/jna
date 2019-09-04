@@ -91,7 +91,7 @@ public class CoreFoundationUtil {
      * @return The corresponding {@code boolean}
      */
     public static boolean cfPointerToBoolean(CFBooleanRef theBoolean) {
-        return CF.CFBooleanGetValue(theBoolean);
+        return 0 != CF.CFBooleanGetValue(theBoolean);
     }
 
     /**

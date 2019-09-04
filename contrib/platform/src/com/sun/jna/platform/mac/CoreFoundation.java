@@ -54,14 +54,8 @@ public interface CoreFoundation extends Library {
 
     int kCFNotFound = -1;
 
-    int kCFStringEncodingMacRoman = 0;
-    int kCFStringEncodingWindowsLatin1 = 0x0500;
-    int kCFStringEncodingISOLatin1 = 0x0201;
-    int kCFStringEncodingNextStepLatin = 0x0B01;
     int kCFStringEncodingASCII = 0x0600;
-    int kCFStringEncodingUnicode = 0x0100;
     int kCFStringEncodingUTF8 = 0x08000100;
-    int kCFStringEncodingNonLossyASCII = 0x0BFF;
 
     /**
      * The {@code CFTypeRef} type is the base type defined in Core Foundation. It is
@@ -267,7 +261,7 @@ public interface CoreFoundation extends Library {
      *            A pointer to the value for the returned number object.
      * @return A new number with the value specified by {@code valuePtr}.
      */
-    CFNumberRef CFNumberCreate(CFAllocatorRef alloc, int theType, PointerType valuePtr);
+    CFNumberRef CFNumberCreate(CFAllocatorRef alloc, long theType, PointerType valuePtr);
 
     /**
      * Creates a new immutable array with the given values.
@@ -475,9 +469,9 @@ public interface CoreFoundation extends Library {
      *            value from the dictionary is not returned (but the return value of
      *            this function still indicates whether or not the key-value pair
      *            was present).
-     * @return {@code true} if a matching key was found, otherwise {@code false}.
+     * @return 1 if a matching key was found, otherwise 0.
      */
-    boolean CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, PointerType key, PointerByReference value);
+    byte CFDictionaryGetValueIfPresent(CFDictionaryRef theDict, PointerType key, PointerByReference value);
 
     /**
      * Sets the value corresponding to a given key.
@@ -525,19 +519,19 @@ public interface CoreFoundation extends Library {
      *            The string encoding to which the character contents of
      *            {@code theString} should be converted. The encoding must specify
      *            an 8-bit encoding.
-     * @return {@code true} upon success or {@code false} if the conversion fails or
-     *         the provided buffer is too small.
+     * @return 1 upon success or 0 if the conversion fails or the provided buffer is
+     *         too small.
      */
-    boolean CFStringGetCString(CFTypeRef theString, Pointer bufferToFill, long bufferSize, int encoding);
+    byte CFStringGetCString(CFTypeRef theString, Pointer bufferToFill, long bufferSize, int encoding);
 
     /**
      * Returns the value of a {@code CFBoolean} object.
      *
      * @param bool
      *            The boolean to examine.
-     * @return The value of {@code bool}.
+     * @return 1 if the value of {@code bool} is {@code true}, 0 otherwise.
      */
-    boolean CFBooleanGetValue(CFTypeRef bool);
+    byte CFBooleanGetValue(CFTypeRef bool);
 
     /**
      * Retrieves a value at a given index.
@@ -560,7 +554,7 @@ public interface CoreFoundation extends Library {
      * @return A constant that indicates the data type of the value contained in
      *         number. See {@link CFNumberType} for a list of possible values.
      */
-    int CFNumberGetType(CFNumberRef number);
+    long CFNumberGetType(CFNumberRef number);
 
     /**
      * Obtains the value of a {@code CFNumber} object cast to a specified type.
@@ -572,10 +566,9 @@ public interface CoreFoundation extends Library {
      *            {@link CFNumberType} for a list of possible values.
      * @param On
      *            return, contains the value of {@code number}.
-     * @return {@code true} if the operation was successful, otherwise
-     *         {@code false}.
+     * @return 1 if the operation was successful, otherwise 0.
      */
-    boolean CFNumberGetValue(CFNumberRef number, int theType, ByReference valuePtr);
+    byte CFNumberGetValue(CFNumberRef number, long theType, ByReference valuePtr);
 
     /**
      * Returns the number (in terms of UTF-16 code pairs) of Unicode characters in a
@@ -597,7 +590,9 @@ public interface CoreFoundation extends Library {
      * @param encoding
      *            The string encoding for the number of characters specified by
      *            length.
-     * @return a long.
+     * @return The maximum number of bytes that could be needed to represent length
+     *         number of Unicode characters with the string encoding encoding, or
+     *         {@link #kCFNotFound} if the number exceeds {@link Long#MAX_VALUE}.
      */
     long CFStringGetMaximumSizeForEncoding(long length, int encoding);
 
@@ -628,5 +623,5 @@ public interface CoreFoundation extends Library {
      *            The {@code CFData} object to examine.
      * @return A read-only pointer to the bytes associated with {@code theData}.
      */
-    PointerByReference CFDataGetBytePtr(CFDataRef theData);
+    Pointer CFDataGetBytePtr(CFDataRef theData);
 }
