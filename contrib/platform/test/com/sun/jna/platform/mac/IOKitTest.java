@@ -241,10 +241,12 @@ public class IOKitTest {
         CFStringRef isPresentKey = CFStringRef.createCFString("Is Present");
         CFStringRef currentCapacityKey = CFStringRef.createCFString("Current Capacity");
         CFStringRef maxCapacityKey = CFStringRef.createCFString("Max Capacity");
-        int powerSourcesCount = CF.CFArrayGetCount(powerSourcesList);
+        long powerSourcesCount = CF.CFArrayGetCount(powerSourcesList);
         for (int ps = 0; ps < powerSourcesCount; ps++) {
             // Get the dictionary for that Power Source
-            CFTypeRef powerSource = CoreFoundation.INSTANCE.CFArrayGetValueAtIndex(powerSourcesList, ps);
+            Pointer pwrSrcPtr = CoreFoundation.INSTANCE.CFArrayGetValueAtIndex(powerSourcesList, ps);
+            CFTypeRef powerSource = new CFTypeRef();
+            powerSource.setPointer(pwrSrcPtr);
             CFDictionaryRef dictionary = IOKit.INSTANCE.IOPSGetPowerSourceDescription(powerSourcesInfo, powerSource);
 
             // Get values from dictionary (See IOPSKeys.h)

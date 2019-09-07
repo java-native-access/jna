@@ -24,6 +24,7 @@
  */
 package com.sun.jna.platform.mac;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Test;
 
@@ -138,8 +140,8 @@ public class CoreFoundationTest {
 
         assertEquals(refArray.length, CF.CFArrayGetCount(cfPtrArray));
         for (int i = 0; i < refArray.length; i++) {
-            CFTypeRef result = CF.CFArrayGetValueAtIndex(cfPtrArray, i);
-            CFNumberRef numRef = new CFNumberRef(result.getPointer());
+            Pointer result = CF.CFArrayGetValueAtIndex(cfPtrArray, i);
+            CFNumberRef numRef = new CFNumberRef(result);
             assertEquals(i, numRef.intValue());
         }
 
@@ -151,17 +153,24 @@ public class CoreFoundationTest {
 
     @Test
     public void testCFData() {
-        String deadBug = "The only good bug is a dead bug.";
-        Memory bugBytes = new Memory(deadBug.length() + 1);
-        bugBytes.clear();
-        bugBytes.setString(0, deadBug);
-
-        CFDataRef cfBug = CF.CFDataCreate(null, bugBytes, bugBytes.size());
-        assertEquals(bugBytes.size(), CF.CFDataGetLength(cfBug));
-
-        Pointer bytes = CF.CFDataGetBytePtr(cfBug);
-        assertEquals(deadBug, bytes.getString(0));
-        cfBug.release();
+        int size = 128;
+        // Create some random bytes
+        byte[] randomBytes = new byte[size];
+        new Random().nextBytes(randomBytes);
+        // Fill native memory with them
+        Memory nativeBytes = new Memory(size);
+        for (int i = 0; i < size; i++) {
+            nativeBytes.setByte(i, randomBytes[i]);
+        }
+        // Create a CF reference to the data
+        CFDataRef cfData = CF.CFDataCreate(null, nativeBytes, size);
+        long dataSize = CF.CFDataGetLength(cfData);
+        assertEquals(size, dataSize);
+        // Read it back out and convert to an array
+        Pointer bytes = CF.CFDataGetBytePtr(cfData);
+        byte[] dataBytes = bytes.getByteArray(0, (int) dataSize);
+        assertArrayEquals(randomBytes, dataBytes);
+        cfData.release();
     }
 
     @Test

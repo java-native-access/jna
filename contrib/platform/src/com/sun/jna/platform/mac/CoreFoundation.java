@@ -367,7 +367,7 @@ public interface CoreFoundation extends Library {
      *            a {@link #CFArrayRef} object.
      * @return The number of values in {@code array}.
      */
-    int CFArrayGetCount(CFArrayRef theArray);
+    long CFArrayGetCount(CFArrayRef theArray);
 
     /**
      * Creates a string from a buffer of Unicode characters.
@@ -413,7 +413,7 @@ public interface CoreFoundation extends Library {
      *            A pointer to the value for the returned number object.
      * @return A new number with the value specified by {@code valuePtr}.
      */
-    CFNumberRef CFNumberCreate(CFAllocatorRef alloc, long theType, PointerType valuePtr);
+    CFNumberRef CFNumberCreate(CFAllocatorRef alloc, long theType, ByReference valuePtr);
 
     /**
      * Creates a new immutable array with the given values.
@@ -517,7 +517,7 @@ public interface CoreFoundation extends Library {
      * @return A new dictionary, or {@code null} if there was a problem creating the
      *         object.
      */
-    CFMutableDictionaryRef CFDictionaryCreateMutable(CFAllocatorRef alloc, int capacity, Pointer keyCallBacks,
+    CFMutableDictionaryRef CFDictionaryCreateMutable(CFAllocatorRef alloc, long capacity, Pointer keyCallBacks,
             Pointer valueCallBacks);
 
     /**
@@ -597,7 +597,7 @@ public interface CoreFoundation extends Library {
      *         {@link #CFDictionaryGetValueIfPresent} to distinguish between a value
      *         that is not found, and a {@code null} value.
      */
-    Pointer CFDictionaryGetValue(CFTypeRef theDict, PointerType key);
+    Pointer CFDictionaryGetValue(CFDictionaryRef theDict, PointerType key);
 
     /**
      * Returns a boolean value that indicates whether a given value for a given key
@@ -674,7 +674,7 @@ public interface CoreFoundation extends Library {
      * @return 1 upon success or 0 if the conversion fails or the provided buffer is
      *         too small.
      */
-    byte CFStringGetCString(CFTypeRef theString, Pointer bufferToFill, long bufferSize, int encoding);
+    byte CFStringGetCString(CFStringRef theString, Pointer bufferToFill, long bufferSize, int encoding);
 
     /**
      * Returns the value of a {@code CFBoolean} object.
@@ -683,7 +683,7 @@ public interface CoreFoundation extends Library {
      *            The boolean to examine.
      * @return 1 if the value of {@code bool} is {@code true}, 0 otherwise.
      */
-    byte CFBooleanGetValue(CFTypeRef bool);
+    byte CFBooleanGetValue(CFBooleanRef bool);
 
     /**
      * Retrieves a value at a given index.
@@ -696,7 +696,7 @@ public interface CoreFoundation extends Library {
      *            the count of {@code theArray})), the behavior is undefined.
      * @return The value at the {@code idx} index in {@code theArray}).
      */
-    CFTypeRef CFArrayGetValueAtIndex(CFArrayRef theArray, int idx);
+    Pointer CFArrayGetValueAtIndex(CFArrayRef theArray, long idx);
 
     /**
      * Returns the type used by a {@code CFNumber} object to store its value.
