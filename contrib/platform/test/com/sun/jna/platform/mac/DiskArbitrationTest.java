@@ -25,7 +25,6 @@
 package com.sun.jna.platform.mac;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +43,11 @@ import com.sun.jna.platform.mac.CoreFoundation.CFStringRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.platform.mac.DiskArbitration.DADiskRef;
 import com.sun.jna.platform.mac.DiskArbitration.DASessionRef;
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.platform.mac.IOKit.IOIterator;
+import com.sun.jna.platform.mac.IOKit.IOObject;
+import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
+import com.sun.jna.platform.mac.IOKit.MachPort;
+import com.sun.jna.ptr.PointerByReference;
 
 public class DiskArbitrationTest {
 
@@ -54,9 +57,9 @@ public class DiskArbitrationTest {
 
     @Test
     public void testDiskCreate() {
-        LongByReference masterPortPtr = new LongByReference();
-        assertEquals(0, IO.IOMasterPort(0, masterPortPtr));
-        long masterPort = masterPortPtr.getValue();
+        PointerByReference masterPortPtr = new PointerByReference();
+        assertEquals(0, IO.IOMasterPort(IOKit.MACH_PORT_NULL, masterPortPtr));
+        MachPort masterPort = new MachPort(masterPortPtr.getValue());
 
         // Create some keys we'll need
         CFStringRef daMediaBSDName = CFStringRef.createCFString("DAMediaBSDName");
@@ -71,13 +74,15 @@ public class DiskArbitrationTest {
 
         // Get IOMedia objects representing whole drives and save the BSD Name
         List<String> bsdNames = new ArrayList<>();
-        LongByReference iter = new LongByReference();
+        PointerByReference iterPtr = new PointerByReference();
 
         CFMutableDictionaryRef dict = IOKit.INSTANCE.IOServiceMatching("IOMedia");
         // Consumes a reference to dict
-        assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iter));
-        long media = IO.IOIteratorNext(iter.getValue());
-        while (media != 0) {
+        assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iterPtr));
+        IOIterator iter = new IOIterator(iterPtr.getValue());
+        IOObject mediaObj = IO.IOIteratorNext(iter);
+        while (mediaObj != null) {
+            IORegistryEntry media = new IORegistryEntry(mediaObj.getPointer());
             CFStringRef wholeKey = CFStringRef.createCFString("Whole");
             CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
             wholeKey.release();
@@ -90,9 +95,9 @@ public class DiskArbitrationTest {
             }
             cfWhole.release();
             IO.IOObjectRelease(media);
-            media = IO.IOIteratorNext(iter.getValue());
+            mediaObj = IO.IOIteratorNext(iter);
         }
-        IO.IOObjectRelease(iter.getValue());
+        IO.IOObjectRelease(iter);
 
         // Now iterate the bsdNames
         for (String bsdName : bsdNames) {
@@ -113,10 +118,6 @@ public class DiskArbitrationTest {
             result = CF.CFDictionaryGetValue(diskInfo, daMediaWhole);
             CFBooleanRef bsdWholePtr = new CFBooleanRef(result);
             assertTrue(bsdWholePtr.booleanValue());
-
-            result = CF.CFDictionaryGetValue(diskInfo, daMediaLeaf);
-            CFBooleanRef bsdLeafPtr = new CFBooleanRef(result);
-            assertFalse(bsdLeafPtr.booleanValue());
 
             // Size is a multiple of block size
             result = CF.CFDictionaryGetValue(diskInfo, daMediaSize);

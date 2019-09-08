@@ -29,6 +29,7 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.mac.CoreFoundation.CFAllocatorRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFDictionaryRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
+import com.sun.jna.platform.mac.IOKit.IOObject;
 
 /**
  * Disk Arbitration is a low-level framework based on Core Foundation. The Disk
@@ -96,7 +97,7 @@ public interface DiskArbitration extends Library {
      *            The I/O Kit media object.
      * @return A reference to a new {@code DADisk}.
      */
-    DADiskRef DADiskCreateFromIOMedia(CFAllocatorRef allocator, DASessionRef session, long media);
+    DADiskRef DADiskCreateFromIOMedia(CFAllocatorRef allocator, DASessionRef session, IOObject media);
 
     /**
      * Obtains the Disk Arbitration description of the specified disk. This function

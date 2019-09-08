@@ -27,6 +27,7 @@ package com.sun.jna.platform.mac;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.platform.mac.CoreFoundation.CFAllocatorRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFArrayRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFDictionaryRef;
@@ -43,25 +44,120 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface IOKit extends Library {
 
+    IOKit INSTANCE = Native.load("IOKit", IOKit.class);
+
     int kIORegistryIterateRecursively = 0x00000001;
     int kIORegistryIterateParents = 0x00000002;
 
     double kIOPSTimeRemainingUnlimited = -2.0;
     double kIOPSTimeRemainingUnknown = -1.0;
 
-    IOKit INSTANCE = Native.load("IOKit", IOKit.class);
+    MachPort MACH_PORT_NULL = new MachPort();
+
+    /**
+     * IOKitLib implements non-kernel task access to common IOKit object types -
+     * IORegistryEntry, IOService, IOIterator etc. These functions are generic -
+     * families may provide API that is more specific.
+     * <p>
+     * IOKitLib represents IOKit objects outside the kernel with the types
+     * io_object_t, io_registry_entry_t, io_service_t, & io_connect_t. Function
+     * names usually begin with the type of object they are compatible with - e.g.,
+     * IOObjectRelease can be used with any io_object_t. Inside the kernel, the c++
+     * class hierarchy allows the subclasses of each object type to receive the same
+     * requests from user level clients, for example in the kernel, IOService is a
+     * subclass of IORegistryEntry, which means any of the IORegistryEntryXXX
+     * functions in IOKitLib may be used with io_service_t's as well as
+     * io_registry_t's. There are functions available to introspect the class of the
+     * kernel object which any io_object_t et al. represents. IOKit objects returned
+     * by all functions should be released with IOObjectRelease.
+     */
+    class IOObject extends PointerType {
+        public IOObject() {
+            super();
+        }
+
+        public IOObject(Pointer p) {
+            super(p);
+        }
+    }
+
+    /**
+     * An IOKit iterator handle.
+     */
+    class IOIterator extends IOObject {
+        public IOIterator() {
+            super();
+        }
+
+        public IOIterator(Pointer p) {
+            super(p);
+        }
+    }
+
+    /**
+     * The base class for most I/O Kit families, devices, and drivers.
+     */
+    class IOService extends IOObject {
+    }
+
+    /**
+     * The base class for all objects in the registry.
+     */
+    class IORegistryEntry extends IOObject {
+        public IORegistryEntry() {
+            super();
+        }
+
+        public IORegistryEntry(Pointer p) {
+            super(p);
+        }
+    }
+
+    /**
+     * For an application to communicate with a device, the first thing it must do
+     * is create a connection between itself and the in-kernel object representing
+     * the device. To do this, it creates a user client object.
+     */
+    class IOConnect extends IOObject {
+        public IOConnect() {
+            super();
+        }
+
+        public IOConnect(Pointer p) {
+            super(p);
+        }
+    }
+
+    /**
+     * Communication between tasks is an important element of the Mach philosophy.
+     * Mach supports a client/server system structure in which tasks (clients)
+     * access services by making requests of other tasks (servers) via messages sent
+     * over a communication channel.
+     * <p>
+     * The endpoints of these communication channels in Mach are called ports, while
+     * port rights denote permission to use the channel.
+     */
+    class MachPort extends IOObject {
+        public MachPort() {
+            super();
+        }
+
+        public MachPort(Pointer p) {
+            super(p);
+        }
+    }
 
     /**
      * Returns the mach port used to initiate communication with IOKit.
      *
      * @param bootstrapPort
-     *            Pass 0 for the default.
+     *            Pass {@link #MACH_PORT_NULL} for the default.
      * @param masterPort
-     *            The master port is returned, and should be released by the caller
-     *            when finished.
+     *            A pointer to the master port is returned, and should be released
+     *            by the caller when finished.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IOMasterPort(long bootstrapPort, LongByReference masterPort);
+    int IOMasterPort(MachPort bootstrapPort, PointerByReference masterPort);
 
     /**
      * Create a matching dictionary that specifies an {@code IOService} class match.
@@ -112,7 +208,7 @@ public interface IOKit extends Library {
      *         otherwise it should be released with {@link CoreFoundation#CFRelease}
      *         by the caller.
      */
-    CFMutableDictionaryRef IOBSDNameMatching(long masterPort, int options, String bsdName);
+    CFMutableDictionaryRef IOBSDNameMatching(MachPort masterPort, int options, String bsdName);
 
     /**
      * Look up a registered IOService object that matches a matching dictionary.
@@ -129,7 +225,7 @@ public interface IOKit extends Library {
      *         <p>
      *         The service must be released by the caller.
      */
-    long IOServiceGetMatchingService(long masterPort, CFMutableDictionaryRef matchingDictionary);
+    IOService IOServiceGetMatchingService(MachPort masterPort, CFMutableDictionaryRef matchingDictionary);
 
     /**
      * Look up registered IOService objects that match a matching dictionary.
@@ -147,8 +243,8 @@ public interface IOKit extends Library {
      *            by the caller when the iteration is finished.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IOServiceGetMatchingServices(long masterPort, CFMutableDictionaryRef matchingDictionary,
-            LongByReference existing);
+    int IOServiceGetMatchingServices(MachPort masterPort, CFMutableDictionaryRef matchingDictionary,
+            PointerByReference existing);
 
     /**
      * Returns the next object in an iteration.
@@ -159,13 +255,13 @@ public interface IOKit extends Library {
      *         returned, otherwise zero is returned. The element should be released
      *         by the caller when it is finished.
      */
-    long IOIteratorNext(long iterator);
+    IOObject IOIteratorNext(IOIterator iterator);
 
     /**
      * Create a CF representation of a registry entry's property.
      *
      * @param entry
-     *            TThe registry entry handle whose property to copy.
+     *            The registry entry handle whose property to copy.
      * @param key
      *            A {@code CFString} specifying the property name.
      * @param allocator
@@ -176,7 +272,8 @@ public interface IOKit extends Library {
      *         <p>
      *         The caller should release with {@link CoreFoundation#CFRelease}.
      */
-    CFTypeRef IORegistryEntryCreateCFProperty(long entry, CFStringRef key, CFAllocatorRef allocator, int options);
+    CFTypeRef IORegistryEntryCreateCFProperty(IORegistryEntry entry, CFStringRef key, CFAllocatorRef allocator,
+            int options);
 
     /**
      * Create a CF dictionary representation of a registry entry's property table.
@@ -192,7 +289,8 @@ public interface IOKit extends Library {
      *            No options are currently defined.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IORegistryEntryCreateCFProperties(long entry, PointerByReference properties, CFAllocatorRef allocator,
+    int IORegistryEntryCreateCFProperties(IORegistryEntry entry, PointerByReference properties,
+            CFAllocatorRef allocator,
             int options);
 
     /**
@@ -217,7 +315,8 @@ public interface IOKit extends Library {
      * @return A CF container is created and returned the caller on success. The
      *         caller should release with CFRelease.
      */
-    CFTypeRef IORegistryEntrySearchCFProperty(long entry, String plane, CFStringRef key, CFAllocatorRef allocator,
+    CFTypeRef IORegistryEntrySearchCFProperty(IORegistryEntry entry, String plane, CFStringRef key,
+            CFAllocatorRef allocator,
             int options);
 
     /**
@@ -229,7 +328,7 @@ public interface IOKit extends Library {
      *            The resulting ID.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IORegistryEntryGetRegistryEntryID(long entry, LongByReference id);
+    int IORegistryEntryGetRegistryEntryID(IORegistryEntry entry, LongByReference id);
 
     /**
      * Returns a name assigned to a registry entry.
@@ -237,10 +336,11 @@ public interface IOKit extends Library {
      * @param entry
      *            The registry entry handle whose name to look up.
      * @param name
-     *            The caller's buffer to receive the name.
+     *            The caller's buffer to receive the name. This must be a 128-byte
+     *            buffer.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IORegistryEntryGetName(long entry, Pointer name);
+    int IORegistryEntryGetName(IORegistryEntry entry, Pointer name);
 
     /**
      * Returns an iterator over a registry entry’s child entries in a plane.
@@ -255,7 +355,7 @@ public interface IOKit extends Library {
      *            The iterator must be released when the iteration is finished.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IORegistryEntryGetChildIterator(long entry, String plane, LongByReference iter);
+    int IORegistryEntryGetChildIterator(IORegistryEntry entry, String plane, PointerByReference iter);
 
     /**
      * Returns the first child of a registry entry in a plane.
@@ -270,7 +370,7 @@ public interface IOKit extends Library {
      *            be released by the caller.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IORegistryEntryGetChildEntry(long entry, String plane, LongByReference child);
+    int IORegistryEntryGetChildEntry(IORegistryEntry entry, String plane, PointerByReference child);
 
     /**
      * Returns the first parent of a registry entry in a plane.
@@ -285,7 +385,7 @@ public interface IOKit extends Library {
      *            must be released by the caller.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IORegistryEntryGetParentEntry(long entry, String plane, LongByReference parent);
+    int IORegistryEntryGetParentEntry(IORegistryEntry entry, String plane, PointerByReference parent);
 
     /**
      * Return a handle to the registry root.
@@ -295,7 +395,7 @@ public interface IOKit extends Library {
      * @return A handle to the IORegistryEntry root instance, to be released with
      *         {@link #IOObjectRelease} by the caller, or 0 on failure.
      */
-    long IORegistryGetRootEntry(long masterPort);
+    IORegistryEntry IORegistryGetRootEntry(MachPort masterPort);
 
     /**
      * Performs an OSDynamicCast operation on an IOKit object.
@@ -307,7 +407,7 @@ public interface IOKit extends Library {
      * @return If the object handle is valid, and represents an object in the kernel
      *         that dynamic casts to the class true is returned, otherwise false.
      */
-    boolean IOObjectConformsTo(long object, String className);
+    boolean IOObjectConformsTo(IOObject object, String className);
 
     /**
      * Releases an object handle previously returned by {@code IOKitLib}.
@@ -316,7 +416,7 @@ public interface IOKit extends Library {
      *            The IOKit object to release.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IOObjectRelease(long object);
+    int IOObjectRelease(IOObject object);
 
     /**
      * A request to create a connection to an IOService.
@@ -335,7 +435,7 @@ public interface IOKit extends Library {
      *            {@link IOServiceClose}.
      * @return A return code generated by {@code IOService::newUserClient}.
      */
-    int IOServiceOpen(long service, long owningTask, int type, LongByReference connect);
+    int IOServiceOpen(IOService service, MachPort owningTask, int type, PointerByReference connect);
 
     /**
      * Returns the busyState of an IOService.
@@ -346,7 +446,7 @@ public interface IOKit extends Library {
      *            The busyState count is returned.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IOServiceGetBusyState(long service, IntByReference busyState);
+    int IOServiceGetBusyState(IOService service, IntByReference busyState);
 
     /**
      * Close a connection to an IOService and destroy the connect handle.
@@ -356,7 +456,7 @@ public interface IOKit extends Library {
      *            by this function, and should not be released with IOObjectRelease.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
-    int IOServiceClose(long connect);
+    int IOServiceClose(IOConnect connect);
 
     /**
      * Returns a blob of Power Source information in an opaque CFTypeRef.

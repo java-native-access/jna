@@ -45,6 +45,12 @@ import com.sun.jna.platform.mac.CoreFoundation.CFMutableDictionaryRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFStringRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
+import com.sun.jna.platform.mac.IOKit.IOConnect;
+import com.sun.jna.platform.mac.IOKit.IOIterator;
+import com.sun.jna.platform.mac.IOKit.IOObject;
+import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
+import com.sun.jna.platform.mac.IOKit.IOService;
+import com.sun.jna.platform.mac.IOKit.MachPort;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -56,9 +62,9 @@ public class IOKitTest {
 
     @Test
     public void testMatching() {
-        LongByReference masterPortPtr = new LongByReference();
-        assertEquals(0, IO.IOMasterPort(0, masterPortPtr));
-        long masterPort = masterPortPtr.getValue();
+        PointerByReference masterPortPtr = new PointerByReference();
+        assertEquals(0, IO.IOMasterPort(IOKit.MACH_PORT_NULL, masterPortPtr));
+        MachPort masterPort = new MachPort(masterPortPtr.getValue());
 
         String match = "matching BSD Name";
         CFMutableDictionaryRef dict = IO.IOBSDNameMatching(masterPort, 0, match);
@@ -87,8 +93,9 @@ public class IOKitTest {
         classKey.release();
 
         // Get matching service (consumes dict reference)
-        long platformExpert = IO.IOServiceGetMatchingService(masterPort, dict);
-        assertNotEquals(0, platformExpert);
+        IOService platformExpertSvc = IO.IOServiceGetMatchingService(masterPort, dict);
+        assertNotNull(platformExpertSvc.getPointer());
+        IORegistryEntry platformExpert = new IORegistryEntry(platformExpertSvc.getPointer());
         // Get a single key
         CFStringRef serialKey = CFStringRef.createCFString("IOPlatformSerialNumber");
         CFTypeRef cfSerialAsType = IO.IORegistryEntryCreateCFProperty(platformExpert, serialKey,
@@ -113,7 +120,7 @@ public class IOKitTest {
         assertEquals(0, IO.IOObjectRelease(platformExpert));
 
         // Get a single key from a nested entry
-        long root = IO.IORegistryGetRootEntry(masterPort);
+        IORegistryEntry root = IO.IORegistryGetRootEntry(masterPort);
         assertNotEquals(0, root);
         cfSerialAsType = IO.IORegistryEntrySearchCFProperty(root, "IOService", serialKey, CF.CFAllocatorGetDefault(),
                 0);
@@ -133,20 +140,22 @@ public class IOKitTest {
 
     @Test
     public void testIteratorParentChild() {
-        LongByReference masterPortPtr = new LongByReference();
-        assertEquals(0, IO.IOMasterPort(0, masterPortPtr));
-        long masterPort = masterPortPtr.getValue();
+        PointerByReference masterPortPtr = new PointerByReference();
+        assertEquals(0, IO.IOMasterPort(IOKit.MACH_PORT_NULL, masterPortPtr));
+        MachPort masterPort = new MachPort(masterPortPtr.getValue());
 
         Set<Long> uniqueEntryIdSet = new HashSet<>();
         // Create matching dictionary for USB Controller class
         CFMutableDictionaryRef dict = IO.IOServiceMatching("IOUSBController");
         // Iterate over USB Controllers. All devices are children of one of
         // these controllers in the "IOService" plane
-        LongByReference iter = new LongByReference();
-        assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iter));
-        // iter is a pointer to first device; iterate until 0
-        long controllerDevice = IO.IOIteratorNext(iter.getValue());
-        while (controllerDevice != 0) {
+        PointerByReference iterPtr = new PointerByReference();
+        assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iterPtr));
+        IOIterator iter = new IOIterator(iterPtr.getValue());
+        // iter is a pointer to first device; iterate until null
+        IOObject controllerDeviceObj = IO.IOIteratorNext(iter);
+        while (controllerDeviceObj != null) {
+            IORegistryEntry controllerDevice = new IORegistryEntry(controllerDeviceObj.getPointer());
             LongByReference id = new LongByReference();
             IO.IORegistryEntryGetRegistryEntryID(controllerDevice, id);
             // EntryIDs 0 thru 19 are reserved, all are unique
@@ -162,68 +171,78 @@ public class IOKitTest {
             assertEquals("AppleUSB", buffer.getString(0).substring(0, 8));
 
             // Get the first child, to test vs. iterator
-            LongByReference firstChild = new LongByReference();
-            boolean testFirstChild = 0 == IO.IORegistryEntryGetChildEntry(controllerDevice, "IOService", firstChild);
+            PointerByReference firstChildPtr = new PointerByReference();
+            boolean testFirstChild = true;
+            // If this returns 0, we have at least one child entry to test
+            // If not, the iterator will never check whether to test
+            IO.IORegistryEntryGetChildEntry(controllerDevice, "IOService", firstChildPtr);
 
             // Now iterate the children of this device in the "IOService" plane.
-            LongByReference childIter = new LongByReference();
-            IO.IORegistryEntryGetChildIterator(controllerDevice, "IOService", childIter);
-            long childDevice = IO.IOIteratorNext(childIter.getValue());
-            while (childDevice != 0) {
-                assertTrue(IO.IOObjectConformsTo(childDevice, "IOUSBDevice"));
+            PointerByReference childIterPtr = new PointerByReference();
+            IO.IORegistryEntryGetChildIterator(controllerDevice, "IOService", childIterPtr);
+            IOIterator childIter = new IOIterator(childIterPtr.getValue());
+            IOObject childDeviceObj = IO.IOIteratorNext(childIter);
+            while (childDeviceObj != null) {
+                assertTrue(IO.IOObjectConformsTo(childDeviceObj, "IOUSBDevice"));
 
+                IORegistryEntry childDevice = new IORegistryEntry(childDeviceObj.getPointer());
                 LongByReference childId = new LongByReference();
                 IO.IORegistryEntryGetRegistryEntryID(childDevice, childId);
                 assertTrue(childId.getValue() > 19);
                 assertFalse(uniqueEntryIdSet.contains(childId.getValue()));
                 uniqueEntryIdSet.add(childId.getValue());
 
-                // If first child, test and release
+                // If first child, test and release the retained first child pointer
                 if (testFirstChild) {
-                    assertEquals(childDevice, firstChild.getValue());
-                    IO.IOObjectRelease(firstChild.getValue());
+                    IOObject firstChild = new IOObject(firstChildPtr.getValue());
+                    assertEquals(childDevice, firstChild);
+                    IO.IOObjectRelease(firstChild);
                     testFirstChild = false;
                 }
 
                 // Get this device's parent in IOService plane, matches controller
-                LongByReference parent = new LongByReference();
-                IO.IORegistryEntryGetParentEntry(childDevice, "IOService", parent);
-                assertEquals(controllerDevice, parent.getValue());
-                IO.IOObjectRelease(parent.getValue());
+                PointerByReference parentPtr = new PointerByReference();
+                IO.IORegistryEntryGetParentEntry(childDevice, "IOService", parentPtr);
+                IORegistryEntry parent = new IORegistryEntry(parentPtr.getValue());
+                assertEquals(controllerDevice, parent);
+                IO.IOObjectRelease(parent);
 
                 // Release this device and iterate to the next one
                 IO.IOObjectRelease(childDevice);
-                childDevice = IO.IOIteratorNext(childIter.getValue());
+                childDeviceObj = IO.IOIteratorNext(childIter);
             }
-            IO.IOObjectRelease(childIter.getValue());
+            IO.IOObjectRelease(childIter);
 
             // Release this controller and iterate to the next one
             assertEquals(0, IO.IOObjectRelease(controllerDevice));
-            controllerDevice = IO.IOIteratorNext(iter.getValue());
+            controllerDeviceObj = IO.IOIteratorNext(iter);
         }
-        assertEquals(0, IO.IOObjectRelease(iter.getValue()));
+        assertEquals(0, IO.IOObjectRelease(iter));
         assertEquals(0, IO.IOObjectRelease(masterPort));
     }
 
     @Test
     public void testIOConnect() {
-        LongByReference masterPortPtr = new LongByReference();
-        assertEquals(0, IO.IOMasterPort(0, masterPortPtr));
-        long masterPort = masterPortPtr.getValue();
+        PointerByReference masterPortPtr = new PointerByReference();
+        assertEquals(0, IO.IOMasterPort(IOKit.MACH_PORT_NULL, masterPortPtr));
+        MachPort masterPort = new MachPort(masterPortPtr.getValue());
 
         // Open a connection to SMC
         CFMutableDictionaryRef dict = IO.IOServiceMatching("AppleSMC");
         // consumes dict references
-        long smcService = IO.IOServiceGetMatchingService(masterPort, dict);
+        IOService smcService = IO.IOServiceGetMatchingService(masterPort, dict);
         assertNotEquals(0, smcService);
-        LongByReference conn = new LongByReference();
-        assertEquals(0, IO.IOServiceOpen(smcService, SystemB.INSTANCE.mach_task_self(), 0, conn));
+        PointerByReference connPtr = new PointerByReference();
+        // Uh oh...
+        MachPort taskSelf = new MachPort(Pointer.createConstant(SystemB.INSTANCE.mach_task_self()));
+        assertEquals(0, IO.IOServiceOpen(smcService, taskSelf, 0, connPtr));
+        IOConnect conn = new IOConnect(connPtr.getValue());
 
         IntByReference busy = new IntByReference(Integer.MIN_VALUE);
         IO.IOServiceGetBusyState(smcService, busy);
         assertTrue(busy.getValue() >= 0);
 
-        IO.IOServiceClose(conn.getValue());
+        IO.IOServiceClose(conn);
         IO.IOObjectRelease(smcService);
         assertEquals(0, IO.IOObjectRelease(masterPort));
     }
