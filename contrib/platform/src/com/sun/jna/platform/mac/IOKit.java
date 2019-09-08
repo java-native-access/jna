@@ -60,7 +60,7 @@ public interface IOKit extends Library {
      * families may provide API that is more specific.
      * <p>
      * IOKitLib represents IOKit objects outside the kernel with the types
-     * io_object_t, io_registry_entry_t, io_service_t, & io_connect_t. Function
+     * io_object_t, io_registry_entry_t, io_service_t, and io_connect_t. Function
      * names usually begin with the type of object they are compatible with - e.g.,
      * IOObjectRelease can be used with any io_object_t. Inside the kernel, the c++
      * class hierarchy allows the subclasses of each object type to receive the same
@@ -79,6 +79,15 @@ public interface IOKit extends Library {
         public IOObject(Pointer p) {
             super(p);
         }
+
+        /**
+         * Convenience method for {@link IOKit#IOObjectRelease} on this object.
+         *
+         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         */
+        public int release() {
+            return INSTANCE.IOObjectRelease(this);
+        }
     }
 
     /**
@@ -91,6 +100,17 @@ public interface IOKit extends Library {
 
         public IOIterator(Pointer p) {
             super(p);
+        }
+
+        /**
+         * Convenience method for {@link IOKit#IOIteratorNext} on this object.
+         *
+         * @return If the iterator handle is valid, the next element in the iteration is
+         *         returned, otherwise zero is returned. The element should be released
+         *         by the caller when it is finished.
+         */
+        public IOObject next() {
+            return INSTANCE.IOIteratorNext(this);
         }
     }
 

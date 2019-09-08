@@ -80,7 +80,7 @@ public class DiskArbitrationTest {
         // Consumes a reference to dict
         assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iterPtr));
         IOIterator iter = new IOIterator(iterPtr.getValue());
-        IOObject mediaObj = IO.IOIteratorNext(iter);
+        IOObject mediaObj = iter.next();
         while (mediaObj != null) {
             IORegistryEntry media = new IORegistryEntry(mediaObj.getPointer());
             CFStringRef wholeKey = CFStringRef.createCFString("Whole");
@@ -94,10 +94,10 @@ public class DiskArbitrationTest {
                 disk.release();
             }
             cfWhole.release();
-            IO.IOObjectRelease(media);
-            mediaObj = IO.IOIteratorNext(iter);
+            assertEquals(0, media.release());
+            mediaObj = iter.next();
         }
-        IO.IOObjectRelease(iter);
+        assertEquals(0, iter.release());
 
         // Now iterate the bsdNames
         for (String bsdName : bsdNames) {
@@ -139,6 +139,6 @@ public class DiskArbitrationTest {
 
         session.release();
 
-        assertEquals(0, IO.IOObjectRelease(masterPort));
+        assertEquals(0, masterPort.release());
     }
 }

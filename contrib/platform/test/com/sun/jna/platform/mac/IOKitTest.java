@@ -117,7 +117,7 @@ public class IOKitTest {
         cfSerial = new CFStringRef(result);
         assertEquals(serialNumber, cfSerial.stringValue());
         dict.release();
-        assertEquals(0, IO.IOObjectRelease(platformExpert));
+        assertEquals(0, platformExpert.release());
 
         // Get a single key from a nested entry
         IORegistryEntry root = IO.IORegistryGetRootEntry(masterPort);
@@ -134,8 +134,8 @@ public class IOKitTest {
         serialKey.release();
         cfSerialAsType.release();
 
-        assertEquals(0, IO.IOObjectRelease(root));
-        assertEquals(0, IO.IOObjectRelease(masterPort));
+        assertEquals(0, root.release());
+        assertEquals(0, masterPort.release());
     }
 
     @Test
@@ -153,7 +153,7 @@ public class IOKitTest {
         assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iterPtr));
         IOIterator iter = new IOIterator(iterPtr.getValue());
         // iter is a pointer to first device; iterate until null
-        IOObject controllerDeviceObj = IO.IOIteratorNext(iter);
+        IOObject controllerDeviceObj = iter.next();
         while (controllerDeviceObj != null) {
             IORegistryEntry controllerDevice = new IORegistryEntry(controllerDeviceObj.getPointer());
             LongByReference id = new LongByReference();
@@ -181,7 +181,7 @@ public class IOKitTest {
             PointerByReference childIterPtr = new PointerByReference();
             IO.IORegistryEntryGetChildIterator(controllerDevice, "IOService", childIterPtr);
             IOIterator childIter = new IOIterator(childIterPtr.getValue());
-            IOObject childDeviceObj = IO.IOIteratorNext(childIter);
+            IOObject childDeviceObj = childIter.next();
             while (childDeviceObj != null) {
                 assertTrue(IO.IOObjectConformsTo(childDeviceObj, "IOUSBDevice"));
 
@@ -196,7 +196,7 @@ public class IOKitTest {
                 if (testFirstChild) {
                     IOObject firstChild = new IOObject(firstChildPtr.getValue());
                     assertEquals(childDevice, firstChild);
-                    IO.IOObjectRelease(firstChild);
+                    assertEquals(0, firstChild.release());
                     testFirstChild = false;
                 }
 
@@ -205,20 +205,20 @@ public class IOKitTest {
                 IO.IORegistryEntryGetParentEntry(childDevice, "IOService", parentPtr);
                 IORegistryEntry parent = new IORegistryEntry(parentPtr.getValue());
                 assertEquals(controllerDevice, parent);
-                IO.IOObjectRelease(parent);
+                assertEquals(0, parent.release());
 
                 // Release this device and iterate to the next one
-                IO.IOObjectRelease(childDevice);
-                childDeviceObj = IO.IOIteratorNext(childIter);
+                assertEquals(0, childDevice.release());
+                childDeviceObj = childIter.next();
             }
-            IO.IOObjectRelease(childIter);
+            assertEquals(0, childIter.release());
 
             // Release this controller and iterate to the next one
-            assertEquals(0, IO.IOObjectRelease(controllerDevice));
-            controllerDeviceObj = IO.IOIteratorNext(iter);
+            assertEquals(0, controllerDevice.release());
+            controllerDeviceObj = iter.next();
         }
-        assertEquals(0, IO.IOObjectRelease(iter));
-        assertEquals(0, IO.IOObjectRelease(masterPort));
+        assertEquals(0, iter.release());
+        assertEquals(0, masterPort.release());
     }
 
     @Test
@@ -243,8 +243,8 @@ public class IOKitTest {
         assertTrue(busy.getValue() >= 0);
 
         IO.IOServiceClose(conn);
-        IO.IOObjectRelease(smcService);
-        assertEquals(0, IO.IOObjectRelease(masterPort));
+        assertEquals(0, smcService.release());
+        assertEquals(0, masterPort.release());
     }
 
     @Test

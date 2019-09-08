@@ -364,7 +364,7 @@ public interface CoreFoundation extends Library {
      * Returns the number of values currently in an array.
      *
      * @param theArray
-     *            a {@link #CFArrayRef} object.
+     *            a {@link CFArrayRef} object.
      * @return The number of values in {@code array}.
      */
     long CFArrayGetCount(CFArrayRef theArray);
@@ -716,8 +716,8 @@ public interface CoreFoundation extends Library {
      * @param theType
      *            A constant that specifies the data type to return. See
      *            {@link CFNumberType} for a list of possible values.
-     * @param On
-     *            return, contains the value of {@code number}.
+     * @param valuePtr
+     *            On return, contains the value of {@code number}.
      * @return 1 if the operation was successful, otherwise 0.
      */
     byte CFNumberGetValue(CFNumberRef number, long theType, ByReference valuePtr);
