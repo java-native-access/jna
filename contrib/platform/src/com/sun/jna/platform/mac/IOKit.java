@@ -55,6 +55,25 @@ public interface IOKit extends Library {
     MachPort MACH_PORT_NULL = new MachPort();
 
     /**
+     * Communication between tasks is an important element of the Mach philosophy.
+     * Mach supports a client/server system structure in which tasks (clients)
+     * access services by making requests of other tasks (servers) via messages sent
+     * over a communication channel.
+     * <p>
+     * The endpoints of these communication channels in Mach are called ports, while
+     * port rights denote permission to use the channel.
+     */
+    class MachPort extends PointerType {
+        public MachPort() {
+            super();
+        }
+
+        public MachPort(Pointer p) {
+            super(p);
+        }
+    }
+
+    /**
      * IOKitLib implements non-kernel task access to common IOKit object types -
      * IORegistryEntry, IOService, IOIterator etc. These functions are generic -
      * families may provide API that is more specific.
@@ -71,7 +90,7 @@ public interface IOKit extends Library {
      * kernel object which any io_object_t et al. represents. IOKit objects returned
      * by all functions should be released with IOObjectRelease.
      */
-    class IOObject extends PointerType {
+    class IOObject extends MachPort {
         public IOObject() {
             super();
         }
@@ -149,32 +168,12 @@ public interface IOKit extends Library {
     }
 
     /**
-     * Communication between tasks is an important element of the Mach philosophy.
-     * Mach supports a client/server system structure in which tasks (clients)
-     * access services by making requests of other tasks (servers) via messages sent
-     * over a communication channel.
-     * <p>
-     * The endpoints of these communication channels in Mach are called ports, while
-     * port rights denote permission to use the channel.
-     */
-    class MachPort extends IOObject {
-        public MachPort() {
-            super();
-        }
-
-        public MachPort(Pointer p) {
-            super(p);
-        }
-    }
-
-    /**
      * Returns the mach port used to initiate communication with IOKit.
      *
      * @param bootstrapPort
      *            Pass {@link #MACH_PORT_NULL} for the default.
      * @param masterPort
-     *            A pointer to the master port is returned, and should be released
-     *            by the caller when finished.
+     *            A pointer to the master port is returned.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
     int IOMasterPort(MachPort bootstrapPort, PointerByReference masterPort);
