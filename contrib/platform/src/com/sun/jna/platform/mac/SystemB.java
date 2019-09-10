@@ -25,24 +25,30 @@
 
 package com.sun.jna.platform.mac;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.mac.IOKit.MachPort;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-/**
- * Author: Daniel Widdis Date: 6/5/15
- */
 public interface SystemB extends Library {
 
-    SystemB INSTANCE = Native.load("System", SystemB.class);
+    Map<String, Object> OPTIONS = Collections.unmodifiableMap(new HashMap<String, Object>() {
+        private static final long serialVersionUID = 1L; // we're not serializing it
+        {
+            put(OPTION_FUNCTION_MAPPER, new SystemBFunctionMapper());
+        }
+    });
+
+    SystemB INSTANCE = Native.load("System", SystemB.class, OPTIONS);
 
     // host_statistics()
     int HOST_LOAD_INFO = 1;// System loading stats
@@ -92,22 +98,20 @@ public interface SystemB extends Library {
     // resource.h
     int RUSAGE_INFO_V2 = 2;
 
-    @Structure.FieldOrder({"cpu_ticks"})
+    @Structure.FieldOrder({ "cpu_ticks" })
     public static class HostCpuLoadInfo extends Structure {
         public int cpu_ticks[] = new int[CPU_STATE_MAX];
     }
 
-    @Structure.FieldOrder({"avenrun", "mach_factor"})
+    @Structure.FieldOrder({ "avenrun", "mach_factor" })
     public static class HostLoadInfo extends Structure {
         public int[] avenrun = new int[3]; // scaled by LOAD_SCALE
         public int[] mach_factor = new int[3]; // scaled by LOAD_SCALE
     }
 
-    @Structure.FieldOrder({"free_count", "active_count",
-                "inactive_count", "wire_count", "zero_fill_count",
-                "reactivations", "pageins", "pageouts", "faults",
-                "cow_faults", "lookups", "hits", "purgeable_count",
-                "purges", "speculative_count"})
+    @Structure.FieldOrder({ "free_count", "active_count", "inactive_count", "wire_count", "zero_fill_count",
+            "reactivations", "pageins", "pageouts", "faults", "cow_faults", "lookups", "hits", "purgeable_count",
+            "purges", "speculative_count" })
     public static class VMStatistics extends Structure {
         public int free_count; // # of pages free
         public int active_count; // # of pages active
@@ -127,19 +131,11 @@ public interface SystemB extends Library {
         public int speculative_count;
     }
 
-    @Structure.FieldOrder({"free_count", "active_count",
-                "inactive_count", "wire_count",
-                "zero_fill_count", "reactivations",
-                "pageins", "pageouts",
-                "faults", "cow_faults",
-                "lookups", "hits",
-                "purges",
-                "purgeable_count", "speculative_count",
-                "decompressions", "compressions",
-                "swapins", "swapouts",
-                "compressor_page_count", "throttled_count",
-                "external_page_count", "internal_page_count",
-                "total_uncompressed_pages_in_compressor"})
+    @Structure.FieldOrder({ "free_count", "active_count", "inactive_count", "wire_count", "zero_fill_count",
+            "reactivations", "pageins", "pageouts", "faults", "cow_faults", "lookups", "hits", "purges",
+            "purgeable_count", "speculative_count", "decompressions", "compressions", "swapins", "swapouts",
+            "compressor_page_count", "throttled_count", "external_page_count", "internal_page_count",
+            "total_uncompressed_pages_in_compressor" })
     public static class VMStatistics64 extends Structure {
         public int free_count; // # of pages free
         public int active_count; // # of pages active
@@ -173,16 +169,15 @@ public interface SystemB extends Library {
         public long total_uncompressed_pages_in_compressor;
     }
 
-    @Structure.FieldOrder({"pbsd", "ptinfo"})
+    @Structure.FieldOrder({ "pbsd", "ptinfo" })
     class ProcTaskAllInfo extends Structure {
         public ProcBsdInfo pbsd;
         public ProcTaskInfo ptinfo;
     }
 
-    @Structure.FieldOrder({"pbi_flags", "pbi_status", "pbi_xstatus", "pbi_pid", "pbi_ppid",
-        "pbi_uid", "pbi_gid", "pbi_ruid", "pbi_rgid", "pbi_svuid", "pbi_svgid", "rfu_1", "pbi_comm",
-        "pbi_name", "pbi_nfiles", "pbi_pgid", "pbi_pjobc", "e_tdev", "e_tpgid", "pbi_nice",
-        "pbi_start_tvsec", "pbi_start_tvusec"})
+    @Structure.FieldOrder({ "pbi_flags", "pbi_status", "pbi_xstatus", "pbi_pid", "pbi_ppid", "pbi_uid", "pbi_gid",
+            "pbi_ruid", "pbi_rgid", "pbi_svuid", "pbi_svgid", "rfu_1", "pbi_comm", "pbi_name", "pbi_nfiles", "pbi_pgid",
+            "pbi_pjobc", "e_tdev", "e_tpgid", "pbi_nice", "pbi_start_tvsec", "pbi_start_tvusec" })
     class ProcBsdInfo extends Structure {
         public int pbi_flags;
         public int pbi_status;
@@ -208,10 +203,10 @@ public interface SystemB extends Library {
         public long pbi_start_tvusec;
     }
 
-    @Structure.FieldOrder({"pti_virtual_size", "pti_resident_size", "pti_total_user",
-        "pti_total_system", "pti_threads_user", "pti_threads_system", "pti_policy", "pti_faults",
-        "pti_pageins", "pti_cow_faults", "pti_messages_sent", "pti_messages_received", "pti_syscalls_mach",
-        "pti_syscalls_unix", "pti_csw", "pti_threadnum", "pti_numrunning", "pti_priority"})
+    @Structure.FieldOrder({ "pti_virtual_size", "pti_resident_size", "pti_total_user", "pti_total_system",
+            "pti_threads_user", "pti_threads_system", "pti_policy", "pti_faults", "pti_pageins", "pti_cow_faults",
+            "pti_messages_sent", "pti_messages_received", "pti_syscalls_mach", "pti_syscalls_unix", "pti_csw",
+            "pti_threadnum", "pti_numrunning", "pti_priority" })
     class ProcTaskInfo extends Structure {
         public long pti_virtual_size; /* virtual memory size (bytes) */
         public long pti_resident_size; /* resident memory size (bytes) */
@@ -233,12 +228,11 @@ public interface SystemB extends Library {
         public int pti_priority; /* task priority */
     }
 
-    @Structure.FieldOrder({"v_swtch", "v_trap", "v_syscall", "v_intr", "v_soft", "v_faults",
-        "v_lookups", "v_hits", "v_vm_faults", "v_cow_faults", "v_swpin", "v_swpout", "v_pswpin",
-        "v_pswpout", "v_pageins", "v_pageouts", "v_pgpgin", "v_pgpgout", "v_intrans", "v_reactivated",
-        "v_rev", "v_scan", "v_dfree", "v_pfree", "v_zfod", "v_nzfod", "v_page_size", "v_kernel_pages",
-        "v_free_target", "v_free_min", "v_free_count", "v_wire_count", "v_active_count",
-        "v_inactive_target", "v_inactive_count"})
+    @Structure.FieldOrder({ "v_swtch", "v_trap", "v_syscall", "v_intr", "v_soft", "v_faults", "v_lookups", "v_hits",
+            "v_vm_faults", "v_cow_faults", "v_swpin", "v_swpout", "v_pswpin", "v_pswpout", "v_pageins", "v_pageouts",
+            "v_pgpgin", "v_pgpgout", "v_intrans", "v_reactivated", "v_rev", "v_scan", "v_dfree", "v_pfree", "v_zfod",
+            "v_nzfod", "v_page_size", "v_kernel_pages", "v_free_target", "v_free_min", "v_free_count", "v_wire_count",
+            "v_active_count", "v_inactive_target", "v_inactive_count" })
     class VMMeter extends Structure {
         /*
          * General system activity.
@@ -288,11 +282,11 @@ public interface SystemB extends Library {
         public int v_inactive_count; /* number of pages inactive */
     }
 
-    @Structure.FieldOrder({"ri_uuid", "ri_user_time", "ri_system_time", "ri_pkg_idle_wkups",
-        "ri_interrupt_wkups", "ri_pageins", "ri_wired_size", "ri_resident_size", "ri_phys_footprint",
-        "ri_proc_start_abstime", "ri_proc_exit_abstime", "ri_child_user_time", "ri_child_system_time",
-        "ri_child_pkg_idle_wkups", "ri_child_interrupt_wkups", "ri_child_pageins",
-        "ri_child_elapsed_abstime", "ri_diskio_bytesread", "ri_diskio_byteswritten" })
+    @Structure.FieldOrder({ "ri_uuid", "ri_user_time", "ri_system_time", "ri_pkg_idle_wkups", "ri_interrupt_wkups",
+            "ri_pageins", "ri_wired_size", "ri_resident_size", "ri_phys_footprint", "ri_proc_start_abstime",
+            "ri_proc_exit_abstime", "ri_child_user_time", "ri_child_system_time", "ri_child_pkg_idle_wkups",
+            "ri_child_interrupt_wkups", "ri_child_pageins", "ri_child_elapsed_abstime", "ri_diskio_bytesread",
+            "ri_diskio_byteswritten" })
     class RUsageInfoV2 extends Structure {
         public byte[] ri_uuid = new byte[16];
         public long ri_user_time;
@@ -315,14 +309,14 @@ public interface SystemB extends Library {
         public long ri_diskio_byteswritten;
     }
 
-    @Structure.FieldOrder({"vip_vi", "vip_path"})
+    @Structure.FieldOrder({ "vip_vi", "vip_path" })
     class VnodeInfoPath extends Structure {
         public byte[] vip_vi = new byte[152]; // vnode_info but we don't
                                               // need its data
         public byte[] vip_path = new byte[MAXPATHLEN];
     }
 
-    @Structure.FieldOrder({"pvi_cdir", "pvi_rdir"})
+    @Structure.FieldOrder({ "pvi_cdir", "pvi_rdir" })
     class VnodePathInfo extends Structure {
         public VnodeInfoPath pvi_cdir;
         public VnodeInfoPath pvi_rdir;
@@ -330,12 +324,12 @@ public interface SystemB extends Library {
 
     /**
      * The statfs() routine returns information about a mounted file system. The
-     * path argument is the path name of any file or directory within the
-     * mounted file system. The buf argument is a pointer to a statfs structure.
+     * path argument is the path name of any file or directory within the mounted
+     * file system. The buf argument is a pointer to a statfs structure.
      */
-    @Structure.FieldOrder({"f_bsize", "f_iosize", "f_blocks", "f_bfree", "f_bavail", "f_files",
-        "f_ffree", "f_fsid", "f_owner", "f_type", "f_flags", "f_fssubtype", "f_fstypename", "f_mntonname",
-        "f_mntfromname", "f_reserved" })
+    @Structure.FieldOrder({ "f_bsize", "f_iosize", "f_blocks", "f_bfree", "f_bavail", "f_files", "f_ffree", "f_fsid",
+            "f_owner", "f_type", "f_flags", "f_fssubtype", "f_fstypename", "f_mntonname", "f_mntfromname",
+            "f_reserved" })
     class Statfs extends Structure {
         public int f_bsize; /* fundamental file system block size */
         public int f_iosize; /* optimal transfer block size */
@@ -361,7 +355,7 @@ public interface SystemB extends Library {
     /**
      * Return type for sysctl vm.swapusage
      */
-    @Structure.FieldOrder({"xsu_total", "xsu_avail", "xsu_used", "xsu_pagesize", "xsu_encrypted"})
+    @Structure.FieldOrder({ "xsu_total", "xsu_avail", "xsu_used", "xsu_pagesize", "xsu_encrypted" })
     class XswUsage extends Structure {
         public long xsu_total;
         public long xsu_avail;
@@ -373,12 +367,11 @@ public interface SystemB extends Library {
     /**
      * Data type as part of IFmsgHdr
      */
-    @Structure.FieldOrder({"ifi_type", "ifi_typelen", "ifi_physical", "ifi_addrlen", "ifi_hdrlen",
-        "ifi_recvquota", "ifi_xmitquota", "ifi_unused1", "ifi_mtu", "ifi_metric", "ifi_baudrate",
-        "ifi_ipackets", "ifi_ierrors", "ifi_opackets", "ifi_oerrors", "ifi_collisions", "ifi_ibytes",
-        "ifi_obytes", "ifi_imcasts", "ifi_omcasts", "ifi_iqdrops", "ifi_noproto", "ifi_recvtiming",
-        "ifi_xmittiming", "ifi_lastchange", "ifi_unused2", "ifi_hwassist", "ifi_reserved1",
-        "ifi_reserved2"})
+    @Structure.FieldOrder({ "ifi_type", "ifi_typelen", "ifi_physical", "ifi_addrlen", "ifi_hdrlen", "ifi_recvquota",
+            "ifi_xmitquota", "ifi_unused1", "ifi_mtu", "ifi_metric", "ifi_baudrate", "ifi_ipackets", "ifi_ierrors",
+            "ifi_opackets", "ifi_oerrors", "ifi_collisions", "ifi_ibytes", "ifi_obytes", "ifi_imcasts", "ifi_omcasts",
+            "ifi_iqdrops", "ifi_noproto", "ifi_recvtiming", "ifi_xmittiming", "ifi_lastchange", "ifi_unused2",
+            "ifi_hwassist", "ifi_reserved1", "ifi_reserved2" })
     class IFdata extends Structure {
         public byte ifi_type; // ethernet, tokenring, etc
         public byte ifi_typelen; // Length of frame type id
@@ -414,8 +407,8 @@ public interface SystemB extends Library {
     /**
      * Return type for sysctl CTL_NET,PF_ROUTE
      */
-    @Structure.FieldOrder({"ifm_msglen", "ifm_version", "ifm_type", "ifm_addrs", "ifm_flags",
-        "ifm_index", "ifm_data" })
+    @Structure.FieldOrder({ "ifm_msglen", "ifm_version", "ifm_type", "ifm_addrs", "ifm_flags", "ifm_index",
+            "ifm_data" })
     class IFmsgHdr extends Structure {
         public short ifm_msglen; // to skip over non-understood messages
         public byte ifm_version; // future binary compatability
@@ -437,11 +430,10 @@ public interface SystemB extends Library {
     /**
      * Data type as part of IFmsgHdr
      */
-    @Structure.FieldOrder({ "ifi_type", "ifi_typelen", "ifi_physical", "ifi_addrlen", "ifi_hdrlen",
-        "ifi_recvquota", "ifi_xmitquota", "ifi_unused1", "ifi_mtu", "ifi_metric", "ifi_baudrate",
-        "ifi_ipackets", "ifi_ierrors", "ifi_opackets", "ifi_oerrors", "ifi_collisions", "ifi_ibytes",
-        "ifi_obytes", "ifi_imcasts", "ifi_omcasts", "ifi_iqdrops", "ifi_noproto", "ifi_recvtiming",
-        "ifi_xmittiming", "ifi_lastchange"})
+    @Structure.FieldOrder({ "ifi_type", "ifi_typelen", "ifi_physical", "ifi_addrlen", "ifi_hdrlen", "ifi_recvquota",
+            "ifi_xmitquota", "ifi_unused1", "ifi_mtu", "ifi_metric", "ifi_baudrate", "ifi_ipackets", "ifi_ierrors",
+            "ifi_opackets", "ifi_oerrors", "ifi_collisions", "ifi_ibytes", "ifi_obytes", "ifi_imcasts", "ifi_omcasts",
+            "ifi_iqdrops", "ifi_noproto", "ifi_recvtiming", "ifi_xmittiming", "ifi_lastchange" })
     class IFdata64 extends Structure {
         public byte ifi_type; // ethernet, tokenring, etc
         public byte ifi_typelen; // Length of frame type id
@@ -473,8 +465,8 @@ public interface SystemB extends Library {
     /**
      * Return type for sysctl CTL_NET,PF_ROUTE
      */
-    @Structure.FieldOrder({ "ifm_msglen", "ifm_version", "ifm_type", "ifm_addrs", "ifm_flags",
-        "ifm_index", "ifm_snd_len", "ifm_snd_maxlen", "ifm_snd_drops", "ifm_timer", "ifm_data"})
+    @Structure.FieldOrder({ "ifm_msglen", "ifm_version", "ifm_type", "ifm_addrs", "ifm_flags", "ifm_index",
+            "ifm_snd_len", "ifm_snd_maxlen", "ifm_snd_drops", "ifm_timer", "ifm_data" })
     class IFmsgHdr2 extends Structure {
         public short ifm_msglen; // to skip over non-understood messages
         public byte ifm_version; // future binary compatability
@@ -496,8 +488,8 @@ public interface SystemB extends Library {
     /**
      * Return type for getpwuid
      */
-    @Structure.FieldOrder({"pw_name", "pw_passwd", "pw_uid", "pw_gid", "pw_change", "pw_class",
-        "pw_gecos", "pw_dir", "pw_shell", "pw_expire", "pw_fields" })
+    @Structure.FieldOrder({ "pw_name", "pw_passwd", "pw_uid", "pw_gid", "pw_change", "pw_class", "pw_gecos", "pw_dir",
+            "pw_shell", "pw_expire", "pw_fields" })
     class Passwd extends Structure {
         public String pw_name; // user name
         public String pw_passwd; // encrypted password
@@ -515,7 +507,7 @@ public interface SystemB extends Library {
     /**
      * Return type for getgrgid
      */
-    @Structure.FieldOrder({"gr_name", "gr_passwd", "gr_gid", "gr_mem"})
+    @Structure.FieldOrder({ "gr_name", "gr_passwd", "gr_gid", "gr_mem" })
     class Group extends Structure {
         public String gr_name; /* group name */
         public String gr_passwd; /* group password */
@@ -526,7 +518,7 @@ public interface SystemB extends Library {
     /**
      * Time value
      */
-    @Structure.FieldOrder({"tv_sec", "tv_usec"})
+    @Structure.FieldOrder({ "tv_sec", "tv_usec" })
     class Timeval extends Structure {
         public NativeLong tv_sec; // seconds
         public int tv_usec; // microseconds
@@ -535,73 +527,113 @@ public interface SystemB extends Library {
     /**
      * Time Zone
      */
-    @Structure.FieldOrder({ "tz_minuteswest", "tz_dsttime"})
+    @Structure.FieldOrder({ "tz_minuteswest", "tz_dsttime" })
     class Timezone extends Structure {
         public int tz_minuteswest; /* of Greenwich */
         public int tz_dsttime; /* type of dst correction to apply */
     }
 
     /**
-     * The system's notion of the current Greenwich time and the current time
-     * zone is obtained with the gettimeofday() call, and set with the
-     * settimeofday() call. The time is expressed in seconds and microseconds
-     * since midnight (0 hour), January 1, 1970. The resolution of the system
-     * clock is hardware dependent, and the time may be updated continuously or
-     * in ``ticks.'' If tp is NULL and tzp is non-NULL, gettimeofday() will
-     * populate the timezone struct in tzp. If tp is non-NULL and tzp is NULL,
-     * then only the timeval struct in tp is populated. If both tp and tzp are
-     * NULL, nothing is returned.
+     * The system's notion of the current Greenwich time and the current time zone
+     * is obtained with the gettimeofday() call, and set with the settimeofday()
+     * call. The time is expressed in seconds and microseconds since midnight (0
+     * hour), January 1, 1970. The resolution of the system clock is hardware
+     * dependent, and the time may be updated continuously or in ``ticks.'' If tp is
+     * NULL and tzp is non-NULL, gettimeofday() will populate the timezone struct in
+     * tzp. If tp is non-NULL and tzp is NULL, then only the timeval struct in tp is
+     * populated. If both tp and tzp are NULL, nothing is returned.
      *
      * @param tp
      *            Timeval structure
      * @param tzp
      *            Timezone structure
-     * @return A 0 return value indicates that the call succeeded. A -1 return
-     *         value indicates an error occurred, and in this case an error code
-     *         is stored into the global variable errno.
+     * @return A 0 return value indicates that the call succeeded. A -1 return value
+     *         indicates an error occurred, and in this case an error code is stored
+     *         into the global variable errno.
      */
     int gettimeofday(Timeval tp, Timezone tzp);
 
     /**
-     * The mach_host_self system call returns the calling thread's host name
+     * The {@code mach_host_self} system call returns the calling thread's host name
      * port. It has an effect equivalent to receiving a send right for the host
      * port.
      *
-     * @return the host's name port
+     * @return a pointer to the host's name port
      */
+    MachPort mach_host_self_ptr();
+
+    /**
+     * The mach_host_self system call returns the calling thread's host name port.
+     * It has an effect equivalent to receiving a send right for the host port.
+     *
+     * @return the host's name port
+     *
+     * @deprecated Using the 32-bit return type may corrupt the stack. Use
+     *             {@link #mach_host_self_ptr} instead.
+     */
+    @Deprecated
     int mach_host_self();
 
     /**
-     * The mach_task_self system call returns the calling thread's task_self
+     * The {@code mach_task_self} system call returns the calling thread's task_self
      * port. It has an effect equivalent to receiving a send right for the task's
      * kernel port.
      *
-     * @return the task's kernel port
+     * @return a pointer to the task's kernel port
      */
+    MachPort mach_task_self_ptr();
+
+    /**
+     * The mach_task_self system call returns the calling thread's task_self port.
+     * It has an effect equivalent to receiving a send right for the task's kernel
+     * port.
+     *
+     * @return the task's kernel port
+     *
+     * @deprecated Using the 32-bit return type may corrupt the stack. Use
+     *             {@link #mach_task_self_ptr} instead.
+     */
+    @Deprecated
     int mach_task_self();
 
     /**
      * The host_page_size function returns the page size for the given host.
      *
      * @param machPort
-     *            The name (or control) port for the host for which the page
-     *            size is desired.
+     *            The name (or control) port for the host for which the page size is
+     *            desired.
      * @param pPageSize
      *            The host's page size (in bytes), set on success.
      * @return 0 on success; sets errno on failure
      */
+    int host_page_size_ptr(MachPort machPort, LongByReference pPageSize);
+
+    /**
+     * The host_page_size function returns the page size for the given host.
+     *
+     * @param machPort
+     *            The name (or control) port for the host for which the page size is
+     *            desired.
+     * @param pPageSize
+     *            The host's page size (in bytes), set on success.
+     * @return 0 on success; sets errno on failure
+     *
+     * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
+     *             {@link #host_page_size_ptr} instead.
+     */
+    @Deprecated
     int host_page_size(int machPort, LongByReference pPageSize);
 
     /**
-     * The host_statistics function returns scheduling and virtual memory
-     * statistics concerning the host as specified by hostStat.
+     * The host_statistics function returns scheduling and virtual memory statistics
+     * concerning the host as specified by hostStat.
      *
      * @param machPort
      *            The control port for the host for which information is to be
      *            obtained.
      * @param hostStat
-     *            The type of statistics desired (HOST_LOAD_INFO, HOST_VM_INFO,
-     *            or HOST_CPU_LOAD_INFO)
+     *            The type of statistics desired (HOST_LOAD_INFO, HOST_VM_INFO, or
+     *            HOST_CPU_LOAD_INFO)
      * @param stats
      *            Statistics about the specified host.
      * @param count
@@ -609,6 +641,29 @@ public interface SystemB extends Library {
      *            returned (in natural-sized units).
      * @return 0 on success; sets errno on failure
      */
+    int host_statistics_ptr(MachPort machPort, int hostStat, Structure stats, IntByReference count);
+
+    /**
+     * The host_statistics function returns scheduling and virtual memory statistics
+     * concerning the host as specified by hostStat.
+     *
+     * @param machPort
+     *            The control port for the host for which information is to be
+     *            obtained.
+     * @param hostStat
+     *            The type of statistics desired (HOST_LOAD_INFO, HOST_VM_INFO, or
+     *            HOST_CPU_LOAD_INFO)
+     * @param stats
+     *            Statistics about the specified host.
+     * @param count
+     *            On input, the maximum size of the buffer; on output, the size
+     *            returned (in natural-sized units).
+     * @return 0 on success; sets errno on failure
+     *
+     * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
+     *             {@link #host_statistics_ptr} instead.
+     */
+    @Deprecated
     int host_statistics(int machPort, int hostStat, Structure stats, IntByReference count);
 
     /**
@@ -627,35 +682,57 @@ public interface SystemB extends Library {
      *            returned (in natural-sized units).
      * @return 0 on success; sets errno on failure
      */
+    int host_statistics64_ptr(MachPort machPort, int hostStat, Structure stats, IntByReference count);
+
+    /**
+     * The host_statistics64 function returns 64-bit virtual memory statistics
+     * concerning the host as specified by hostStat.
+     *
+     * @param machPort
+     *            The control port for the host for which information is to be
+     *            obtained.
+     * @param hostStat
+     *            The type of statistics desired (HOST_VM_INFO64)
+     * @param stats
+     *            Statistics about the specified host.
+     * @param count
+     *            On input, the maximum size of the buffer; on output, the size
+     *            returned (in natural-sized units).
+     * @return 0 on success; sets errno on failure
+     *
+     * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
+     *             {@link #host_statistics64_ptr} instead.
+     */
+    @Deprecated
     int host_statistics64(int machPort, int hostStat, Structure stats, IntByReference count);
 
     /**
-     * The sysctl() function retrieves system information and allows processes
-     * with appropriate privileges to set system information. The information
-     * available from sysctl() consists of integers, strings, and tables.
+     * The sysctl() function retrieves system information and allows processes with
+     * appropriate privileges to set system information. The information available
+     * from sysctl() consists of integers, strings, and tables.
      *
      * The state is described using a "Management Information Base" (MIB) style
      * name, listed in name, which is a namelen length array of integers.
      *
-     * The information is copied into the buffer specified by oldp. The size of
-     * the buffer is given by the location specified by oldlenp before the call,
-     * and that location gives the amount of data copied after a successful call
-     * and after a call that returns with the error code ENOMEM. If the amount
-     * of data available is greater than the size of the buffer supplied, the
-     * call supplies as much data as fits in the buffer provided and returns
-     * with the error code ENOMEM. If the old value is not desired, oldp and
-     * oldlenp should be set to NULL.
+     * The information is copied into the buffer specified by oldp. The size of the
+     * buffer is given by the location specified by oldlenp before the call, and
+     * that location gives the amount of data copied after a successful call and
+     * after a call that returns with the error code ENOMEM. If the amount of data
+     * available is greater than the size of the buffer supplied, the call supplies
+     * as much data as fits in the buffer provided and returns with the error code
+     * ENOMEM. If the old value is not desired, oldp and oldlenp should be set to
+     * NULL.
      *
-     * The size of the available data can be determined by calling sysctl() with
-     * the NULL argument for oldp. The size of the available data will be
-     * returned in the location pointed to by oldlenp. For some operations, the
-     * amount of space may change often. For these operations, the system
-     * attempts to round up so that the returned size is large enough for a call
-     * to return the data shortly thereafter.
+     * The size of the available data can be determined by calling sysctl() with the
+     * NULL argument for oldp. The size of the available data will be returned in
+     * the location pointed to by oldlenp. For some operations, the amount of space
+     * may change often. For these operations, the system attempts to round up so
+     * that the returned size is large enough for a call to return the data shortly
+     * thereafter.
      *
-     * To set a new value, newp is set to point to a buffer of length newlen
-     * from which the requested value is to be taken. If a new value is not to
-     * be set, newp should be set to NULL and newlen set to 0.
+     * To set a new value, newp is set to point to a buffer of length newlen from
+     * which the requested value is to be taken. If a new value is not to be set,
+     * newp should be set to NULL and newlen set to 0.
      *
      * @param name
      *            MIB array of integers
@@ -671,13 +748,12 @@ public interface SystemB extends Library {
      *            Size of information to be written
      * @return 0 on success; sets errno on failure
      */
-    int sysctl(int[] name, int namelen, Pointer oldp, IntByReference oldlenp,
-               Pointer newp, int newlen);
+    int sysctl(int[] name, int namelen, Pointer oldp, IntByReference oldlenp, Pointer newp, int newlen);
 
     /**
-     * The sysctlbyname() function accepts an ASCII representation of the name
-     * and internally looks up the integer name vector. Apart from that, it
-     * behaves the same as the standard sysctl() function.
+     * The sysctlbyname() function accepts an ASCII representation of the name and
+     * internally looks up the integer name vector. Apart from that, it behaves the
+     * same as the standard sysctl() function.
      *
      * @param name
      *            ASCII representation of the MIB name
@@ -691,37 +767,34 @@ public interface SystemB extends Library {
      *            Size of information to be written
      * @return 0 on success; sets errno on failure
      */
-    int sysctlbyname(String name, Pointer oldp, IntByReference oldlenp,
-                     Pointer newp, int newlen);
+    int sysctlbyname(String name, Pointer oldp, IntByReference oldlenp, Pointer newp, int newlen);
 
     /**
-     * The sysctlnametomib() function accepts an ASCII representation of the
-     * name, looks up the integer name vector, and returns the numeric
-     * representation in the mib array pointed to by mibp. The number of
-     * elements in the mib array is given by the location specified by sizep
-     * before the call, and that location gives the number of entries copied
-     * after a successful call. The resulting mib and size may be used in
-     * subsequent sysctl() calls to get the data associated with the requested
-     * ASCII name. This interface is intended for use by applications that want
-     * to repeatedly request the same variable (the sysctl() function runs in
-     * about a third the time as the same request made via the sysctlbyname()
-     * function).
+     * The sysctlnametomib() function accepts an ASCII representation of the name,
+     * looks up the integer name vector, and returns the numeric representation in
+     * the mib array pointed to by mibp. The number of elements in the mib array is
+     * given by the location specified by sizep before the call, and that location
+     * gives the number of entries copied after a successful call. The resulting mib
+     * and size may be used in subsequent sysctl() calls to get the data associated
+     * with the requested ASCII name. This interface is intended for use by
+     * applications that want to repeatedly request the same variable (the sysctl()
+     * function runs in about a third the time as the same request made via the
+     * sysctlbyname() function).
      *
      * The number of elements in the mib array can be determined by calling
      * sysctlnametomib() with the NULL argument for mibp.
      *
-     * The sysctlnametomib() function is also useful for fetching mib prefixes.
-     * If size on input is greater than the number of elements written, the
-     * array still contains the additional elements which may be written
-     * programmatically.
+     * The sysctlnametomib() function is also useful for fetching mib prefixes. If
+     * size on input is greater than the number of elements written, the array still
+     * contains the additional elements which may be written programmatically.
      *
      * @param name
      *            ASCII representation of the name
      * @param mibp
      *            Integer array containing the corresponding name vector.
      * @param size
-     *            On input, number of elements in the returned array; on output,
-     *            the number of entries copied.
+     *            On input, number of elements in the returned array; on output, the
+     *            number of entries copied.
      * @return 0 on success; sets errno on failure
      */
     int sysctlnametomib(String name, Pointer mibp, IntByReference size);
@@ -742,28 +815,53 @@ public interface SystemB extends Library {
      *            Pointer to number of elements in the returned structure
      * @return 0 on success; sets errno on failure
      */
-    int host_processor_info(int machPort, int flavor, IntByReference procCount,
-        PointerByReference procInfo, IntByReference procInfoCount);
+    int host_processor_info_ptr(MachPort machPort, int flavor, IntByReference procCount, PointerByReference procInfo,
+            IntByReference procInfoCount);
 
     /**
-     * The getloadavg() function returns the number of processes in the system
-     * run queue averaged over various periods of time.  Up to nelem samples are
-     * retrieved and assigned to successive elements of loadavg[].  The system
-     * imposes a maximum of 3 samples, representing averages over the last 1, 5,
-     * and 15 minutes, respectively.
+     * The host_processor_info function returns information about processors.
+     *
+     * @param machPort
+     *            The control port for the host for which information is to be
+     *            obtained.
+     * @param flavor
+     *            The type of information requested.
+     * @param procCount
+     *            Pointer to the number of processors
+     * @param procInfo
+     *            Pointer to the structure corresponding to the requested flavor
+     * @param procInfoCount
+     *            Pointer to number of elements in the returned structure
+     * @return 0 on success; sets errno on failure
+     *
+     * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
+     *             {@link #host_processor_info_ptr} instead.
+     */
+    @Deprecated
+    int host_processor_info(int machPort, int flavor, IntByReference procCount, PointerByReference procInfo,
+            IntByReference procInfoCount);
+
+    /**
+     * The getloadavg() function returns the number of processes in the system run
+     * queue averaged over various periods of time. Up to nelem samples are
+     * retrieved and assigned to successive elements of loadavg[]. The system
+     * imposes a maximum of 3 samples, representing averages over the last 1, 5, and
+     * 15 minutes, respectively.
+     *
      * @param loadavg
      *            An array of doubles which will be filled with the results
      * @param nelem
      *            Number of samples to return
-     * @return If the load average was unobtainable, -1 is returned; otherwise,
-     * the number of samples actually retrieved is returned.
-     * @see <A HREF="https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
+     * @return If the load average was unobtainable, -1 is returned; otherwise, the
+     *         number of samples actually retrieved is returned.
+     * @see <A HREF=
+     *      "https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
      */
     int getloadavg(double[] loadavg, int nelem);
 
     /**
-     * This function searches the password database for the given user uid,
-     * always returning the first one encountered.
+     * This function searches the password database for the given user uid, always
+     * returning the first one encountered.
      *
      * @param uid
      *            The user ID
@@ -772,9 +870,9 @@ public interface SystemB extends Library {
     Passwd getpwuid(int uid);
 
     /**
-     * This function searches the group database for the given group name
-     * pointed to by the group id given by gid, returning the first one
-     * encountered. Identical group gids may result in undefined behavior.
+     * This function searches the group database for the given group name pointed to
+     * by the group id given by gid, returning the first one encountered. Identical
+     * group gids may result in undefined behavior.
      *
      * @param gid
      *            The group ID
@@ -792,18 +890,18 @@ public interface SystemB extends Library {
      * @param buffer
      *            a C array of int-sized values to be filled with process
      *            identifiers that hold an open file reference matching the
-     *            specified path or volume. Pass NULL to obtain the minimum
-     *            buffer size needed to hold the currently active processes.
+     *            specified path or volume. Pass NULL to obtain the minimum buffer
+     *            size needed to hold the currently active processes.
      * @param buffersize
      *            the size (in bytes) of the provided buffer.
-     * @return the number of bytes of data returned in the provided buffer; -1
-     *         if an error was encountered;
+     * @return the number of bytes of data returned in the provided buffer; -1 if an
+     *         error was encountered;
      */
     int proc_listpids(int type, int typeinfo, int[] buffer, int buffersize);
 
     /**
-     * Return in buffer a proc_*info structure corresponding to the flavor for
-     * the specified process
+     * Return in buffer a proc_*info structure corresponding to the flavor for the
+     * specified process
      *
      * @param pid
      *            the process identifier
@@ -815,8 +913,8 @@ public interface SystemB extends Library {
      *            holds results
      * @param buffersize
      *            size of results
-     * @return the number of bytes of data returned in the provided buffer; -1
-     *         if an error was encountered;
+     * @return the number of bytes of data returned in the provided buffer; -1 if an
+     *         error was encountered;
      */
     int proc_pidinfo(int pid, int flavor, long arg, Structure buffer, int buffersize);
 
@@ -829,8 +927,7 @@ public interface SystemB extends Library {
      *            holds results
      * @param buffersize
      *            size of results
-     * @return the length of the name returned in buffer if successful; 0
-     *         otherwise
+     * @return the length of the name returned in buffer if successful; 0 otherwise
      */
     int proc_pidpath(int pid, Pointer buffer, int buffersize);
 
@@ -850,31 +947,30 @@ public interface SystemB extends Library {
     int proc_pid_rusage(int pid, int flavor, RUsageInfoV2 buffer);
 
     /**
-     * The getfsstat() function returns information about all mounted file
-     * systems. The buf argument is a pointer to an array of statfs structures.
+     * The getfsstat() function returns information about all mounted file systems.
+     * The buf argument is a pointer to an array of statfs structures.
      *
      * Fields that are undefined for a particular file system are set to -1. The
      * buffer is filled with an array of statfs structures, one for each mounted
      * file system up to the size specified by bufsize.
      *
      * @param buf
-     *            Array of statfs structures that will be filled with results.
-     *            If buf is given as NULL, getfsstat() returns just the number
-     *            of mounted file systems.
+     *            Array of statfs structures that will be filled with results. If
+     *            buf is given as NULL, getfsstat() returns just the number of
+     *            mounted file systems.
      * @param bufsize
      *            Size of the buffer to fill
      * @param flags
-     *            If flags is set to MNT_NOWAIT, getfsstat() will directly
-     *            return the information retained in the kernel to avoid delays
-     *            caused by waiting for updated information from a file system
-     *            that is perhaps temporarily unable to respond. Some of the
-     *            information returned may be out of date, however; if flags is
-     *            set to MNT_WAIT or MNT_DWAIT instead, getfsstat() will request
-     *            updated information from each mounted filesystem before
-     *            returning.
+     *            If flags is set to MNT_NOWAIT, getfsstat() will directly return
+     *            the information retained in the kernel to avoid delays caused by
+     *            waiting for updated information from a file system that is perhaps
+     *            temporarily unable to respond. Some of the information returned
+     *            may be out of date, however; if flags is set to MNT_WAIT or
+     *            MNT_DWAIT instead, getfsstat() will request updated information
+     *            from each mounted filesystem before returning.
      * @return Upon successful completion, the number of statfs structures is
-     *         returned. Otherwise, -1 is returned and the global variable errno
-     *         is set to indicate the error.
+     *         returned. Otherwise, -1 is returned and the global variable errno is
+     *         set to indicate the error.
      */
     int getfsstat64(Statfs[] buf, int bufsize, int flags);
 

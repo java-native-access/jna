@@ -231,8 +231,8 @@ public class IOKitTest {
         IOService smcService = IO.IOServiceGetMatchingService(masterPort, dict);
         assertNotEquals(0, smcService);
         PointerByReference connPtr = new PointerByReference();
-        // Uh oh...
-        MachPort taskSelf = new MachPort(Pointer.createConstant(SystemB.INSTANCE.mach_task_self()));
+
+        MachPort taskSelf = SystemB.INSTANCE.mach_task_self_ptr();
         assertEquals(0, IO.IOServiceOpen(smcService, taskSelf, 0, connPtr));
         IOConnect conn = new IOConnect(connPtr.getValue());
 
