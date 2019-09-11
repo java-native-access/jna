@@ -136,5 +136,6 @@ public class DiskArbitrationTest {
         daMediaBlockSize.release();
 
         session.release();
+        assertEquals(0, masterPort.release());
     }
 }

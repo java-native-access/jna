@@ -134,6 +134,7 @@ public class IOKitTest {
         cfSerialAsType.release();
 
         assertEquals(0, root.release());
+        assertEquals(0, masterPort.release());
     }
 
     @Test
@@ -214,6 +215,7 @@ public class IOKitTest {
             controllerDevice = iter.next();
         }
         assertEquals(0, iter.release());
+        assertEquals(0, masterPort.release());
     }
 
     @Test
@@ -239,6 +241,7 @@ public class IOKitTest {
 
         IO.IOServiceClose(conn);
         assertEquals(0, smcService.release());
+        assertEquals(0, masterPort.release());
     }
 
     @Test
