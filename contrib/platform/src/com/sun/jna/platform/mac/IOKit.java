@@ -128,15 +128,9 @@ public interface IOKit extends Library {
          *         returned, otherwise zero is returned. The element should be released
          *         by the caller when it is finished.
          */
-        public IOObject next() {
+        public IOService next() {
             return INSTANCE.IOIteratorNext(this);
         }
-    }
-
-    /**
-     * The base class for most I/O Kit families, devices, and drivers.
-     */
-    class IOService extends IOObject {
     }
 
     /**
@@ -153,11 +147,24 @@ public interface IOKit extends Library {
     }
 
     /**
+     * The base class for most I/O Kit families, devices, and drivers.
+     */
+    class IOService extends IORegistryEntry {
+        public IOService() {
+            super();
+        }
+
+        public IOService(Pointer p) {
+            super(p);
+        }
+    }
+
+    /**
      * For an application to communicate with a device, the first thing it must do
      * is create a connection between itself and the in-kernel object representing
      * the device. To do this, it creates a user client object.
      */
-    class IOConnect extends IOObject {
+    class IOConnect extends IOService {
         public IOConnect() {
             super();
         }
@@ -257,13 +264,13 @@ public interface IOKit extends Library {
      *            construct matching dictionaries for common criteria with helper
      *            functions such as {@link #IOServiceMatching},
      *            {@link #IOServiceNameMatching}, and {@link #IOBSDNameMatching}.
-     * @param existing
+     * @param iterator
      *            An iterator handle is returned on success, and should be released
      *            by the caller when the iteration is finished.
      * @return 0 if successful, otherwise a {@code kern_return_t} error code.
      */
     int IOServiceGetMatchingServices(MachPort masterPort, CFMutableDictionaryRef matchingDictionary,
-            PointerByReference existing);
+            PointerByReference iterator);
 
     /**
      * Returns the next object in an iteration.
@@ -274,7 +281,7 @@ public interface IOKit extends Library {
      *         returned, otherwise zero is returned. The element should be released
      *         by the caller when it is finished.
      */
-    IOObject IOIteratorNext(IOIterator iterator);
+    IOService IOIteratorNext(IOIterator iterator);
 
     /**
      * Create a CF representation of a registry entry's property.

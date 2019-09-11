@@ -44,7 +44,6 @@ import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.platform.mac.DiskArbitration.DADiskRef;
 import com.sun.jna.platform.mac.DiskArbitration.DASessionRef;
 import com.sun.jna.platform.mac.IOKit.IOIterator;
-import com.sun.jna.platform.mac.IOKit.IOObject;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKit.MachPort;
 import com.sun.jna.ptr.PointerByReference;
@@ -80,9 +79,8 @@ public class DiskArbitrationTest {
         // Consumes a reference to dict
         assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iterPtr));
         IOIterator iter = new IOIterator(iterPtr.getValue());
-        IOObject mediaObj = iter.next();
-        while (mediaObj != null) {
-            IORegistryEntry media = new IORegistryEntry(mediaObj.getPointer());
+        IORegistryEntry media = iter.next();
+        while (media != null) {
             CFStringRef wholeKey = CFStringRef.createCFString("Whole");
             CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
             wholeKey.release();
@@ -95,7 +93,7 @@ public class DiskArbitrationTest {
             }
             cfWhole.release();
             assertEquals(0, media.release());
-            mediaObj = iter.next();
+            media = iter.next();
         }
         assertEquals(0, iter.release());
 

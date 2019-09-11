@@ -93,9 +93,8 @@ public class IOKitTest {
         classKey.release();
 
         // Get matching service (consumes dict reference)
-        IOService platformExpertSvc = IO.IOServiceGetMatchingService(masterPort, dict);
-        assertNotNull(platformExpertSvc.getPointer());
-        IORegistryEntry platformExpert = new IORegistryEntry(platformExpertSvc.getPointer());
+        IORegistryEntry platformExpert = IO.IOServiceGetMatchingService(masterPort, dict);
+        assertNotNull(platformExpert.getPointer());
         // Get a single key
         CFStringRef serialKey = CFStringRef.createCFString("IOPlatformSerialNumber");
         CFTypeRef cfSerialAsType = IO.IORegistryEntryCreateCFProperty(platformExpert, serialKey,
@@ -152,9 +151,8 @@ public class IOKitTest {
         assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iterPtr));
         IOIterator iter = new IOIterator(iterPtr.getValue());
         // iter is a pointer to first device; iterate until null
-        IOObject controllerDeviceObj = iter.next();
-        while (controllerDeviceObj != null) {
-            IORegistryEntry controllerDevice = new IORegistryEntry(controllerDeviceObj.getPointer());
+        IORegistryEntry controllerDevice = iter.next();
+        while (controllerDevice != null) {
             LongByReference id = new LongByReference();
             IO.IORegistryEntryGetRegistryEntryID(controllerDevice, id);
             // EntryIDs 0 thru 19 are reserved, all are unique
@@ -180,11 +178,10 @@ public class IOKitTest {
             PointerByReference childIterPtr = new PointerByReference();
             IO.IORegistryEntryGetChildIterator(controllerDevice, "IOService", childIterPtr);
             IOIterator childIter = new IOIterator(childIterPtr.getValue());
-            IOObject childDeviceObj = childIter.next();
-            while (childDeviceObj != null) {
-                assertTrue(IO.IOObjectConformsTo(childDeviceObj, "IOUSBDevice"));
+            IORegistryEntry childDevice = childIter.next();
+            while (childDevice != null) {
+                assertTrue(IO.IOObjectConformsTo(childDevice, "IOUSBDevice"));
 
-                IORegistryEntry childDevice = new IORegistryEntry(childDeviceObj.getPointer());
                 LongByReference childId = new LongByReference();
                 IO.IORegistryEntryGetRegistryEntryID(childDevice, childId);
                 assertTrue(childId.getValue() > 19);
@@ -208,13 +205,13 @@ public class IOKitTest {
 
                 // Release this device and iterate to the next one
                 assertEquals(0, childDevice.release());
-                childDeviceObj = childIter.next();
+                childDevice = childIter.next();
             }
             assertEquals(0, childIter.release());
 
             // Release this controller and iterate to the next one
             assertEquals(0, controllerDevice.release());
-            controllerDeviceObj = iter.next();
+            controllerDevice = iter.next();
         }
         assertEquals(0, iter.release());
     }
