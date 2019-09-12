@@ -27,6 +27,7 @@ package com.sun.jna.platform.mac;
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.ptr.ByReference;
@@ -127,7 +128,7 @@ public interface CoreFoundation extends Library {
          */
         public long longValue() {
             LongByReference lbr = new LongByReference();
-            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberLongLongType.ordinal(), lbr);
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberLongLongType.typeIndex(), lbr);
             return lbr.getValue();
         }
 
@@ -144,7 +145,7 @@ public interface CoreFoundation extends Library {
          */
         public int intValue() {
             IntByReference ibr = new IntByReference();
-            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberIntType.ordinal(), ibr);
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberIntType.typeIndex(), ibr);
             return ibr.getValue();
         }
 
@@ -161,7 +162,7 @@ public interface CoreFoundation extends Library {
          */
         public short shortValue() {
             ShortByReference sbr = new ShortByReference();
-            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberShortType.ordinal(), sbr);
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberShortType.typeIndex(), sbr);
             return sbr.getValue();
         }
 
@@ -178,7 +179,7 @@ public interface CoreFoundation extends Library {
          */
         public byte byteValue() {
             ByteByReference bbr = new ByteByReference();
-            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberCharType.ordinal(), bbr);
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberCharType.typeIndex(), bbr);
             return bbr.getValue();
         }
 
@@ -195,7 +196,7 @@ public interface CoreFoundation extends Library {
          */
         public double doubleValue() {
             DoubleByReference dbr = new DoubleByReference();
-            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberDoubleType.ordinal(), dbr);
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberDoubleType.typeIndex(), dbr);
             return dbr.getValue();
         }
 
@@ -212,14 +213,14 @@ public interface CoreFoundation extends Library {
          */
         public float floatValue() {
             FloatByReference fbr = new FloatByReference();
-            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberFloatType.ordinal(), fbr);
+            INSTANCE.CFNumberGetValue(this, CFNumberType.kCFNumberFloatType.typeIndex(), fbr);
             return fbr.getValue();
         }
     }
 
     /**
      * Enum of values used for {@link CFNumberType} in {@link #CFNumberGetValue} and
-     * {@link #CFNumberGetType}. Use {@link java.lang.Enum#ordinal} for the expected
+     * {@link #CFNumberGetType}. Use {@link CFNumberType#typeIndex} for the expected
      * integer value corresponding to the C-style enum.
      */
     enum CFNumberType {
@@ -227,6 +228,15 @@ public interface CoreFoundation extends Library {
         kCFNumberFloat32Type, kCFNumberFloat64Type, kCFNumberCharType, kCFNumberShortType, kCFNumberIntType,
         kCFNumberLongType, kCFNumberLongLongType, kCFNumberFloatType, kCFNumberDoubleType, kCFNumberCFIndexType,
         kCFNumberNSIntegerType, kCFNumberCGFloatType, kCFNumberMaxType;
+
+        /**
+         * Index for the type of {@link CFNumberRef} stored.
+         *
+         * @return a {@link CFIndex} representing the enum ordinal.
+         */
+        public CFIndex typeIndex() {
+            return new CFIndex(this.ordinal());
+        }
     }
 
     /**
@@ -336,7 +346,7 @@ public interface CoreFoundation extends Library {
          */
         public static CFStringRef createCFString(String s) {
             final char[] chars = s.toCharArray();
-            return INSTANCE.CFStringCreateWithCharacters(null, chars, chars.length);
+            return INSTANCE.CFStringCreateWithCharacters(null, chars, new CFIndex(chars.length));
         }
 
         /**
@@ -347,16 +357,28 @@ public interface CoreFoundation extends Library {
          *         failed.
          */
         public String stringValue() {
-            long length = INSTANCE.CFStringGetLength(this);
-            long maxSize = INSTANCE.CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
-            if (maxSize == kCFNotFound) {
+            CFIndex length = INSTANCE.CFStringGetLength(this);
+            CFIndex maxSize = INSTANCE.CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+            if (maxSize.intValue() == kCFNotFound) {
                 return null;
             }
-            Memory buf = new Memory(maxSize);
+            Memory buf = new Memory(maxSize.longValue());
             if (0 != INSTANCE.CFStringGetCString(this, buf, maxSize, kCFStringEncodingUTF8)) {
                 return buf.getString(0, "UTF8");
             }
             return null;
+        }
+    }
+
+    /**
+     * A wrapper for the {@link NativeLong} type, used for {@link CFNumberRef}
+     * types, {@link CFStringRef} lengths, and {@link CFArrayRef} sizes and indices.
+     */
+    class CFIndex extends NativeLong {
+        private static final long serialVersionUID = 1L;
+
+        public CFIndex(long value) {
+            super(value);
         }
     }
 
@@ -367,7 +389,7 @@ public interface CoreFoundation extends Library {
      *            a {@link CFArrayRef} object.
      * @return The number of values in {@code array}.
      */
-    long CFArrayGetCount(CFArrayRef theArray);
+    CFIndex CFArrayGetCount(CFArrayRef theArray);
 
     /**
      * Creates a string from a buffer of Unicode characters.
@@ -387,7 +409,7 @@ public interface CoreFoundation extends Library {
      * @return An immutable string containing {@code chars}, or {@code null} if
      *         there was a problem creating the object.
      */
-    CFStringRef CFStringCreateWithCharacters(CFAllocatorRef alloc, char[] chars, long length);
+    CFStringRef CFStringCreateWithCharacters(CFAllocatorRef alloc, char[] chars, CFIndex length);
 
     /**
      * Creates a {@code CFNumber} object using a specified value.
@@ -413,7 +435,7 @@ public interface CoreFoundation extends Library {
      *            A pointer to the value for the returned number object.
      * @return A new number with the value specified by {@code valuePtr}.
      */
-    CFNumberRef CFNumberCreate(CFAllocatorRef alloc, long theType, ByReference valuePtr);
+    CFNumberRef CFNumberCreate(CFAllocatorRef alloc, CFIndex theType, ByReference valuePtr);
 
     /**
      * Creates a new immutable array with the given values.
@@ -454,7 +476,7 @@ public interface CoreFoundation extends Library {
      *         {@code values}, or {@code null} if there was a problem creating the
      *         object.
      */
-    CFArrayRef CFArrayCreate(CFAllocatorRef alloc, Pointer values, long numValues, Pointer callBacks);
+    CFArrayRef CFArrayCreate(CFAllocatorRef alloc, Pointer values, CFIndex numValues, Pointer callBacks);
 
     /**
      * Creates an immutable {@code CFData} object using data copied from a specified
@@ -475,7 +497,7 @@ public interface CoreFoundation extends Library {
      * @return A new {@code CFData} object, or {@code null} if there was a problem
      *         creating the object.
      */
-    CFDataRef CFDataCreate(CFAllocatorRef alloc, Pointer bytes, long length);
+    CFDataRef CFDataCreate(CFAllocatorRef alloc, Pointer bytes, CFIndex length);
 
     /**
      * Creates a new mutable dictionary.
@@ -517,7 +539,7 @@ public interface CoreFoundation extends Library {
      * @return A new dictionary, or {@code null} if there was a problem creating the
      *         object.
      */
-    CFMutableDictionaryRef CFDictionaryCreateMutable(CFAllocatorRef alloc, long capacity, Pointer keyCallBacks,
+    CFMutableDictionaryRef CFDictionaryCreateMutable(CFAllocatorRef alloc, CFIndex capacity, Pointer keyCallBacks,
             Pointer valueCallBacks);
 
     /**
@@ -576,7 +598,7 @@ public interface CoreFoundation extends Library {
      *            The {@code CFType} object to examine.
      * @return A number representing the reference count of {code cf}.
      */
-    long CFGetRetainCount(CFTypeRef cf);
+    CFIndex CFGetRetainCount(CFTypeRef cf);
 
     /**
      * Returns the value associated with a given key.
@@ -674,7 +696,7 @@ public interface CoreFoundation extends Library {
      * @return 1 upon success or 0 if the conversion fails or the provided buffer is
      *         too small.
      */
-    byte CFStringGetCString(CFStringRef theString, Pointer bufferToFill, long bufferSize, int encoding);
+    byte CFStringGetCString(CFStringRef theString, Pointer bufferToFill, CFIndex bufferSize, int encoding);
 
     /**
      * Returns the value of a {@code CFBoolean} object.
@@ -696,7 +718,7 @@ public interface CoreFoundation extends Library {
      *            the count of {@code theArray})), the behavior is undefined.
      * @return The value at the {@code idx} index in {@code theArray}).
      */
-    Pointer CFArrayGetValueAtIndex(CFArrayRef theArray, long idx);
+    Pointer CFArrayGetValueAtIndex(CFArrayRef theArray, CFIndex idx);
 
     /**
      * Returns the type used by a {@code CFNumber} object to store its value.
@@ -706,7 +728,7 @@ public interface CoreFoundation extends Library {
      * @return A constant that indicates the data type of the value contained in
      *         number. See {@link CFNumberType} for a list of possible values.
      */
-    long CFNumberGetType(CFNumberRef number);
+    CFIndex CFNumberGetType(CFNumberRef number);
 
     /**
      * Obtains the value of a {@code CFNumber} object cast to a specified type.
@@ -720,7 +742,7 @@ public interface CoreFoundation extends Library {
      *            On return, contains the value of {@code number}.
      * @return 1 if the operation was successful, otherwise 0.
      */
-    byte CFNumberGetValue(CFNumberRef number, long theType, ByReference valuePtr);
+    byte CFNumberGetValue(CFNumberRef number, CFIndex theType, ByReference valuePtr);
 
     /**
      * Returns the number (in terms of UTF-16 code pairs) of Unicode characters in a
@@ -731,7 +753,7 @@ public interface CoreFoundation extends Library {
      * @return The number (in terms of UTF-16 code pairs) of characters stored in
      *         {@code theString}.
      */
-    long CFStringGetLength(CFStringRef theString);
+    CFIndex CFStringGetLength(CFStringRef theString);
 
     /**
      * Returns the maximum number of bytes a string of a specified length (in
@@ -746,7 +768,7 @@ public interface CoreFoundation extends Library {
      *         number of Unicode characters with the string encoding encoding, or
      *         {@link #kCFNotFound} if the number exceeds {@link Long#MAX_VALUE}.
      */
-    long CFStringGetMaximumSizeForEncoding(long length, int encoding);
+    CFIndex CFStringGetMaximumSizeForEncoding(CFIndex length, int encoding);
 
     /**
      * Gets the default allocator object for the current thread.
@@ -766,7 +788,7 @@ public interface CoreFoundation extends Library {
      *            The {@code CFData} object to examine.
      * @return An index that specifies the number of bytes in {@code theData}.
      */
-    long CFDataGetLength(CFDataRef theData);
+    CFIndex CFDataGetLength(CFDataRef theData);
 
     /**
      * Returns a read-only pointer to the bytes of a {@code CFData} object.

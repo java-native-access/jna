@@ -42,6 +42,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.CoreFoundation.CFAllocatorRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFArrayRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFDataRef;
+import com.sun.jna.platform.mac.CoreFoundation.CFIndex;
 import com.sun.jna.platform.mac.CoreFoundation.CFMutableDictionaryRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberType;
@@ -65,7 +66,8 @@ public class CoreFoundationTest {
 
         Memory mem = new Memory(awesome.getBytes().length + 1);
         mem.clear();
-        assertNotEquals(0, CF.CFStringGetCString(cfAwesome, mem, mem.size(), CoreFoundation.kCFStringEncodingUTF8));
+        assertNotEquals(0,
+                CF.CFStringGetCString(cfAwesome, mem, new CFIndex(mem.size()), CoreFoundation.kCFStringEncodingUTF8));
         byte[] awesomeBytes = mem.getByteArray(0, (int) mem.size() - 1);
         byte[] awesomeArr = awesome.getBytes();
         for (int i = 0; i < awesomeArr.length; i++) {
@@ -82,14 +84,14 @@ public class CoreFoundationTest {
     @Test
     public void testCFNumberRef() {
         LongByReference max = new LongByReference(Long.MAX_VALUE);
-        CFNumberRef cfMax = CF.CFNumberCreate(null, CFNumberType.kCFNumberLongLongType.ordinal(), max);
+        CFNumberRef cfMax = CF.CFNumberCreate(null, CFNumberType.kCFNumberLongLongType.typeIndex(), max);
         assertEquals(Long.MAX_VALUE, cfMax.longValue());
         cfMax.release();
 
         IntByReference zero = new IntByReference(0);
         IntByReference one = new IntByReference(1);
-        CFNumberRef cfZero = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.ordinal(), zero);
-        CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.ordinal(), one);
+        CFNumberRef cfZero = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.typeIndex(), zero);
+        CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.typeIndex(), one);
 
         assertEquals(0, cfZero.intValue());
         assertEquals(1, cfOne.intValue());
@@ -101,8 +103,8 @@ public class CoreFoundationTest {
     public void testCFRetainCount() {
         DoubleByReference pi = new DoubleByReference(Math.PI);
         DoubleByReference e = new DoubleByReference(Math.E);
-        CFNumberRef cfE = CF.CFNumberCreate(null, CFNumberType.kCFNumberDoubleType.ordinal(), e);
-        CFNumberRef cfPi = CF.CFNumberCreate(null, CFNumberType.kCFNumberDoubleType.ordinal(), pi);
+        CFNumberRef cfE = CF.CFNumberCreate(null, CFNumberType.kCFNumberDoubleType.typeIndex(), e);
+        CFNumberRef cfPi = CF.CFNumberCreate(null, CFNumberType.kCFNumberDoubleType.typeIndex(), pi);
         assertEquals(1, CF.CFGetRetainCount(cfE));
         assertEquals(1, CF.CFGetRetainCount(cfPi));
         cfE.retain();
@@ -132,15 +134,15 @@ public class CoreFoundationTest {
         int size = Native.getNativeSize(CFNumberRef.class);
         Memory contiguousArray = new Memory(size * refArray.length);
         for (int i = 0; i < refArray.length; i++) {
-            refArray[i] = CF.CFNumberCreate(null, CoreFoundation.CFNumberType.kCFNumberIntType.ordinal(),
+            refArray[i] = CF.CFNumberCreate(null, CoreFoundation.CFNumberType.kCFNumberIntType.typeIndex(),
                     new IntByReference(i));
             contiguousArray.setPointer(i * size, refArray[i].getPointer());
         }
-        CFArrayRef cfPtrArray = CF.CFArrayCreate(null, contiguousArray, refArray.length, null);
+        CFArrayRef cfPtrArray = CF.CFArrayCreate(null, contiguousArray, new CFIndex(refArray.length), null);
 
         assertEquals(refArray.length, CF.CFArrayGetCount(cfPtrArray));
         for (int i = 0; i < refArray.length; i++) {
-            Pointer result = CF.CFArrayGetValueAtIndex(cfPtrArray, i);
+            Pointer result = CF.CFArrayGetValueAtIndex(cfPtrArray, new CFIndex(i));
             CFNumberRef numRef = new CFNumberRef(result);
             assertEquals(i, numRef.intValue());
         }
@@ -163,8 +165,8 @@ public class CoreFoundationTest {
             nativeBytes.setByte(i, randomBytes[i]);
         }
         // Create a CF reference to the data
-        CFDataRef cfData = CF.CFDataCreate(null, nativeBytes, size);
-        long dataSize = CF.CFDataGetLength(cfData);
+        CFDataRef cfData = CF.CFDataCreate(null, nativeBytes, new CFIndex(size));
+        long dataSize = CF.CFDataGetLength(cfData).intValue();
         assertEquals(size, dataSize);
         // Read it back out and convert to an array
         Pointer bytes = CF.CFDataGetBytePtr(cfData);
@@ -176,7 +178,7 @@ public class CoreFoundationTest {
     @Test
     public void testCFDictionary() {
         CFAllocatorRef alloc = CF.CFAllocatorGetDefault();
-        CFMutableDictionaryRef dict = CF.CFDictionaryCreateMutable(alloc, 2, null, null);
+        CFMutableDictionaryRef dict = CF.CFDictionaryCreateMutable(alloc, new CFIndex(2), null, null);
         CFStringRef oneStr = CFStringRef.createCFString("one");
 
         // Key does not exist, returns null
@@ -192,7 +194,7 @@ public class CoreFoundationTest {
 
         // Store (replace the null) and retrieve integer value
         IntByReference one = new IntByReference(1);
-        CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.ordinal(), one);
+        CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.typeIndex(), one);
         CF.CFDictionarySetValue(dict, oneStr, cfOne);
 
         assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, null));
