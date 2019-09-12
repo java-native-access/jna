@@ -63,9 +63,7 @@ public class IOKitTest {
 
     @Test
     public void testMatching() {
-        PointerByReference masterPortPtr = new PointerByReference();
-        assertEquals(0, IO.IOMasterPort(IOKit.MACH_PORT_NULL, masterPortPtr));
-        MachPort masterPort = new MachPort(masterPortPtr.getValue());
+        MachPort masterPort = IOKitUtil.getMasterPort();
 
         String match = "matching BSD Name";
         CFMutableDictionaryRef dict = IO.IOBSDNameMatching(masterPort, 0, match);
@@ -103,7 +101,10 @@ public class IOKitTest {
         assertNotNull(cfSerialAsType);
         CFStringRef cfSerial = new CFStringRef(cfSerialAsType.getPointer());
         String serialNumber = cfSerial.stringValue();
-        cfSerialAsType.release();
+
+        // Test util method for the same thing
+        String serialNumberViaUtil = IOKitUtil.getIORegistryStringProperty(platformExpert, "IOPlatformSerialNumber");
+        assertEquals(serialNumber, serialNumberViaUtil);
 
         assertEquals(12, serialNumber.length());
         // Get all the keys
@@ -120,8 +121,8 @@ public class IOKitTest {
         assertEquals(0, platformExpert.release());
 
         // Get a single key from a nested entry
-        IORegistryEntry root = IO.IORegistryGetRootEntry(masterPort);
-        assertNotEquals(0, root);
+        IORegistryEntry root = IOKitUtil.getRoot();
+        assertNotNull(root);
         cfSerialAsType = IO.IORegistryEntrySearchCFProperty(root, "IOService", serialKey, CF.CFAllocatorGetDefault(),
                 0);
         // without recursive search should be null
@@ -140,19 +141,13 @@ public class IOKitTest {
 
     @Test
     public void testIteratorParentChild() {
-        PointerByReference masterPortPtr = new PointerByReference();
-        assertEquals(0, IO.IOMasterPort(IOKit.MACH_PORT_NULL, masterPortPtr));
-        MachPort masterPort = new MachPort(masterPortPtr.getValue());
+        MachPort masterPort = IOKitUtil.getMasterPort();
 
         Set<Long> uniqueEntryIdSet = new HashSet<>();
-        // Create matching dictionary for USB Controller class
-        CFMutableDictionaryRef dict = IO.IOServiceMatching("IOUSBController");
         // Iterate over USB Controllers. All devices are children of one of
         // these controllers in the "IOService" plane
-        PointerByReference iterPtr = new PointerByReference();
-        assertEquals(0, IO.IOServiceGetMatchingServices(masterPort, dict, iterPtr));
-        IOIterator iter = new IOIterator(iterPtr.getValue());
-        // iter is a pointer to first device; iterate until null
+        IOIterator iter = IOKitUtil.getMatchingServices("IOUSBController");
+        assertNotNull(iter);
         IORegistryEntry controllerDevice = iter.next();
         while (controllerDevice != null) {
             LongByReference id = new LongByReference();
@@ -221,17 +216,12 @@ public class IOKitTest {
 
     @Test
     public void testIOConnect() {
-        PointerByReference masterPortPtr = new PointerByReference();
-        assertEquals(0, IO.IOMasterPort(IOKit.MACH_PORT_NULL, masterPortPtr));
-        MachPort masterPort = new MachPort(masterPortPtr.getValue());
+        MachPort masterPort = IOKitUtil.getMasterPort();
 
-        // Open a connection to SMC
-        CFMutableDictionaryRef dict = IO.IOServiceMatching("AppleSMC");
-        // consumes dict references
-        IOService smcService = IO.IOServiceGetMatchingService(masterPort, dict);
-        assertNotEquals(0, smcService);
+        IOService smcService = IOKitUtil.getMatchingService("AppleSMC");
+        assertNotNull(smcService);
+
         PointerByReference connPtr = new PointerByReference();
-
         MachPort taskSelf = SystemB.INSTANCE.mach_task_self_ptr();
         assertEquals(0, IO.IOServiceOpen(smcService, taskSelf, 0, connPtr));
         IOConnect conn = new IOConnect(connPtr.getValue());

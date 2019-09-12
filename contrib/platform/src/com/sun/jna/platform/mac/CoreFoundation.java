@@ -377,6 +377,10 @@ public interface CoreFoundation extends Library {
     class CFIndex extends NativeLong {
         private static final long serialVersionUID = 1L;
 
+        public CFIndex() {
+            super();
+        }
+
         public CFIndex(long value) {
             super(value);
         }

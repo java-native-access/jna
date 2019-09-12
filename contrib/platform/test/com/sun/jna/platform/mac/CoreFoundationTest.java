@@ -61,7 +61,7 @@ public class CoreFoundationTest {
     public void testCFStringRef() {
         String awesome = "ǝɯosǝʍɐ sı ∀Nſ"; // Unicode
         CFStringRef cfAwesome = CFStringRef.createCFString(awesome);
-        assertEquals(awesome.length(), CF.CFStringGetLength(cfAwesome));
+        assertEquals(awesome.length(), CF.CFStringGetLength(cfAwesome).intValue());
         assertEquals(awesome, cfAwesome.stringValue());
 
         Memory mem = new Memory(awesome.getBytes().length + 1);
@@ -105,13 +105,13 @@ public class CoreFoundationTest {
         DoubleByReference e = new DoubleByReference(Math.E);
         CFNumberRef cfE = CF.CFNumberCreate(null, CFNumberType.kCFNumberDoubleType.typeIndex(), e);
         CFNumberRef cfPi = CF.CFNumberCreate(null, CFNumberType.kCFNumberDoubleType.typeIndex(), pi);
-        assertEquals(1, CF.CFGetRetainCount(cfE));
-        assertEquals(1, CF.CFGetRetainCount(cfPi));
+        assertEquals(1, CF.CFGetRetainCount(cfE).intValue());
+        assertEquals(1, CF.CFGetRetainCount(cfPi).intValue());
         cfE.retain();
         cfPi.retain();
         cfPi.retain();
-        assertEquals(2, CF.CFGetRetainCount(cfE));
-        assertEquals(3, CF.CFGetRetainCount(cfPi));
+        assertEquals(2, CF.CFGetRetainCount(cfE).intValue());
+        assertEquals(3, CF.CFGetRetainCount(cfPi).intValue());
 
         List<CFTypeRef> irrationalReferences = new ArrayList<>();
         irrationalReferences.add(cfE);
@@ -120,10 +120,10 @@ public class CoreFoundationTest {
             value.release();
         }
 
-        assertEquals(1, CF.CFGetRetainCount(cfE));
-        assertEquals(2, CF.CFGetRetainCount(cfPi));
+        assertEquals(1, CF.CFGetRetainCount(cfE).intValue());
+        assertEquals(2, CF.CFGetRetainCount(cfPi).intValue());
         cfPi.release();
-        assertEquals(1, CF.CFGetRetainCount(cfPi));
+        assertEquals(1, CF.CFGetRetainCount(cfPi).intValue());
         cfE.release();
         cfPi.release();
     }
@@ -140,7 +140,7 @@ public class CoreFoundationTest {
         }
         CFArrayRef cfPtrArray = CF.CFArrayCreate(null, contiguousArray, new CFIndex(refArray.length), null);
 
-        assertEquals(refArray.length, CF.CFArrayGetCount(cfPtrArray));
+        assertEquals(refArray.length, CF.CFArrayGetCount(cfPtrArray).intValue());
         for (int i = 0; i < refArray.length; i++) {
             Pointer result = CF.CFArrayGetValueAtIndex(cfPtrArray, new CFIndex(i));
             CFNumberRef numRef = new CFNumberRef(result);

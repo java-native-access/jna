@@ -25,6 +25,7 @@
 package com.sun.jna.platform.mac;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -87,9 +88,18 @@ public class DiskArbitrationTest {
             assertNotNull(cfWhole);
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
             if (cfWholeBool.booleanValue()) {
+                // check that util boolean matches
+                assertTrue(IOKitUtil.getIORegistryBooleanProperty(media, "Whole", false));
+                // check long and int values for major
+                long majorLong = IOKitUtil.getIORegistryLongProperty(media, "BSD Major", Long.MAX_VALUE);
+                int majorInt = IOKitUtil.getIORegistryIntProperty(media, "BSD Major", Integer.MAX_VALUE);
+                assertEquals(majorLong, majorInt);
+
                 DADiskRef disk = DA.DADiskCreateFromIOMedia(CF.CFAllocatorGetDefault(), session, media);
                 bsdNames.add(DA.DADiskGetBSDName(disk));
                 disk.release();
+            } else {
+                assertFalse(IOKitUtil.getIORegistryBooleanProperty(media, "Whole", true));
             }
             cfWhole.release();
             assertEquals(0, media.release());
