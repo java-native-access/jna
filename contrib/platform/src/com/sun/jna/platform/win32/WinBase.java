@@ -1176,6 +1176,18 @@ public interface WinBase extends WinDef, BaseTSD {
              * Processor architecture (unnamed struct).
              */
             public PI pi;
+
+            @Override
+            public void read() {
+                // dwOemID is obsolete but users may have come to rely on its value because it
+                // was initialized by default, so we retain its initialization for
+                // compatibility.
+                setType("dwOemID");
+                super.read();
+                // pi requires type defined for initialization as a structure.
+                setType("pi");
+                super.read();
+            }
         }
 
         /**
@@ -1226,14 +1238,6 @@ public interface WinBase extends WinDef, BaseTSD {
          * Architecture-dependent processor revision.
          */
         public WORD wProcessorRevision;
-
-        // the dwOemID union member is obsolete. Force read of pi instead.
-        @Override
-        public void read() {
-            super.read();
-            processorArchitecture.setType(PI.class);
-            processorArchitecture.read();
-        }
     }
 
     /**
