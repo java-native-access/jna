@@ -1226,6 +1226,14 @@ public interface WinBase extends WinDef, BaseTSD {
          * Architecture-dependent processor revision.
          */
         public WORD wProcessorRevision;
+
+        // the dwOemID union member is obsolete. Force read of pi instead.
+        @Override
+        public void read() {
+            super.read();
+            processorArchitecture.setType(PI.class);
+            processorArchitecture.read();
+        }
     }
 
     /**
