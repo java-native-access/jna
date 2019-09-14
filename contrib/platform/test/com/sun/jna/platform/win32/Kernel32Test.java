@@ -524,6 +524,10 @@ public class Kernel32Test extends TestCase {
         SYSTEM_INFO lpSystemInfo = new SYSTEM_INFO();
         Kernel32.INSTANCE.GetSystemInfo(lpSystemInfo);
         assertTrue(lpSystemInfo.dwNumberOfProcessors.intValue() > 0);
+        // the dwOemID member is obsolete, but gets a value.
+        // the pi member is a structure and isn't read by default
+        assertEquals(lpSystemInfo.processorArchitecture.dwOemID.getLow(),
+                lpSystemInfo.processorArchitecture.pi.wProcessorArchitecture);
     }
 
     public void testGetSystemTimes() {
