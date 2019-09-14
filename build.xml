@@ -408,7 +408,7 @@
     <!-- Bundle native components with primary jar to facilitate
          easy distribution to common platforms.
       -->
-    <jar jarfile="${build}/${jar}" duplicate="preserve">
+    <jar jarfile="${build}/${jar}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
         <attribute name="Manifest-Version" value="1.0"/>
@@ -674,7 +674,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   </target>
 
   <target name="idea-jar" depends="jar" description="Build Intellij Idea convenience jar">
-    <jar destfile="${dist}/idea-dispatch.jar">
+    <jar destfile="${dist}/idea-dispatch.jar" createUnicodeExtraFields="never" encoding="UTF-8">
       <zipfileset src="${dist-jar}" excludes="**/*.class"/>
     </jar>
   </target>
@@ -965,7 +965,7 @@ cd build
 zip ../${os.prefix}.jar libjnidispatch.so jnidispatch.dll
 cd ..
     </echo>
-    <jar jarfile="${build}/${os.prefix}.jar">
+    <jar jarfile="${build}/${os.prefix}.jar" createUnicodeExtraFields="never" encoding="UTF-8">
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
@@ -1028,7 +1028,7 @@ cd ..
     </copy>
     <!-- For web start, native libraries may be provided in the root of -->
     <!-- an included jar file -->
-    <jar jarfile="${build}/${native.jar}">
+    <jar jarfile="${build}/${native.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
@@ -1090,7 +1090,7 @@ cd ..
         </fileset>
     </copy>
     <!-- Create a jar for easy movement of tests, and jar load test -->
-    <jar jarfile="${build}/${testjar}">
+    <jar jarfile="${build}/${testjar}" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${test.classes}">
         <patternset refid="jar-compiled"/>
         <include name="**/*testlib-jar*"/>
@@ -1111,7 +1111,7 @@ cd ..
     <copy todir="${build}/jws" file="${build}/${testjar}"/>
     <copy todir="${build}/jws" file="lib/junit.jar"/>
     <copy todir="${build}/jws" file="lib/clover.jar"/>
-    <jar jarfile="${build}/jws/jnidispatch.jar">
+    <jar jarfile="${build}/jws/jnidispatch.jar" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${build.native}" includes="*jnidispatch.*"/>
     </jar>
     <!-- To allow JNLP tests to run, import the JNA testing certificate as a CA -->
@@ -1137,7 +1137,7 @@ cd ..
          device/simulator storage card. -->
     <property name="shared" value="shared"/>
     <!-- w32ce arm testing -->
-    <jar jarfile="${shared}/test.jar">
+    <jar jarfile="${shared}/test.jar" createUnicodeExtraFields="never" encoding="UTF-8">
       <zipfileset src="${build}/${jar}"/>
       <zipfileset src="${build}/${testjar}"/>
     </jar>
@@ -1330,7 +1330,7 @@ cd ..
 
       <arg value="-notimestamp"/>
     </javadoc>
-    <jar jarfile="${platform-javadoc-jar}">
+    <jar jarfile="${platform-javadoc-jar}" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${javadoc}" />
     </jar>
   </target>
@@ -1350,7 +1350,7 @@ cd ..
 	<include name="**/build/demo-*.jar" />
       </fileset>
     </copy>
-    <jar jarfile="${maven-javadoc-jar}">
+    <jar jarfile="${maven-javadoc-jar}" createUnicodeExtraFields="never" encoding="UTF-8">
         <fileset dir="${javadoc}" />
     </jar>
 
