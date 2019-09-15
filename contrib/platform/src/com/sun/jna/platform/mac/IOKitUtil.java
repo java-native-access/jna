@@ -35,7 +35,7 @@ import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.platform.mac.IOKit.IOIterator;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKit.IOService;
-import com.sun.jna.platform.mac.IOKit.MachPort;
+import com.sun.jna.platform.mac.SystemB.MachPort;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -57,11 +57,11 @@ public class IOKitUtil {
      *         ports (each call to {@link IOKit#IOMasterPort} adds another send
      *         right to the port) but it is considered good programming practice to
      *         deallocate the port when you are finished with it, using
-     *         {@link IOKit#IOObjectRelease}.
+     *         {@link SystemB#mach_port_deallocate}.
      */
     public static MachPort getMasterPort() {
         PointerByReference port = new PointerByReference();
-        IO.IOMasterPort(IOKit.MACH_PORT_NULL, port);
+        IO.IOMasterPort(SystemB.MACH_PORT_NULL, port);
         return new MachPort(port.getValue());
     }
 
@@ -74,7 +74,7 @@ public class IOKitUtil {
     public static IORegistryEntry getRoot() {
         MachPort masterPort = getMasterPort();
         IORegistryEntry root = IO.IORegistryGetRootEntry(masterPort);
-        masterPort.release();
+        masterPort.deallocate();
         return root;
     }
 
@@ -108,7 +108,7 @@ public class IOKitUtil {
     public static IOService getMatchingService(CFDictionaryRef matchingDictionary) {
         MachPort masterPort = getMasterPort();
         IOService service = IO.IOServiceGetMatchingService(masterPort, matchingDictionary);
-        masterPort.release();
+        masterPort.deallocate();
         return service;
     }
 
@@ -143,7 +143,7 @@ public class IOKitUtil {
         MachPort masterPort = getMasterPort();
         PointerByReference serviceIterator = new PointerByReference();
         int result = IO.IOServiceGetMatchingServices(masterPort, matchingDictionary, serviceIterator);
-        masterPort.release();
+        masterPort.deallocate();
         if (result == 0 && serviceIterator.getValue() != null) {
             return new IOIterator(serviceIterator.getValue());
         }
@@ -161,7 +161,7 @@ public class IOKitUtil {
     public static CFMutableDictionaryRef getBSDNameMatchingDict(String bsdName) {
         MachPort masterPort = getMasterPort();
         CFMutableDictionaryRef result = IO.IOBSDNameMatching(masterPort, 0, bsdName);
-        masterPort.release();
+        masterPort.deallocate();
         return result;
     }
 

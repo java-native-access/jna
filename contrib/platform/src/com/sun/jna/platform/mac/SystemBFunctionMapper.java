@@ -25,24 +25,19 @@
 package com.sun.jna.platform.mac;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
 
 import com.sun.jna.FunctionMapper;
 import com.sun.jna.NativeLibrary;
 
 public class SystemBFunctionMapper implements FunctionMapper {
-    private static Collection<String> mappedFunctions = Arrays.asList("mach_host_self_ptr", "mach_task_self_ptr",
-            "host_page_size_ptr", "host_statistics_ptr", "host_statistics64_ptr", "host_processor_info_ptr");
-
     /**
-     * Removes the _ptr suffix from methods which use the properly sized pointer
+     * Removes the _ptr suffix from methods which return the properly sized pointer
      * rather than 32-bit int.
      */
     @Override
     public String getFunctionName(NativeLibrary library, Method method) {
         String name = method.getName();
-        if (mappedFunctions.contains(name)) {
+        if (name.equals("mach_task_self_ptr") || name.equals("mach_host_self_ptr")) {
             return name.substring(0, name.length() - 4);
         }
         return name;

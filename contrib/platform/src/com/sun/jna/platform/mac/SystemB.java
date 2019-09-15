@@ -29,12 +29,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.jna.IntegerType;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.mac.IOKit.MachPort;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -49,6 +50,7 @@ public interface SystemB extends Library {
     });
 
     SystemB INSTANCE = Native.load("System", SystemB.class, OPTIONS);
+
 
     // host_statistics()
     int HOST_LOAD_INFO = 1;// System loading stats
@@ -98,6 +100,83 @@ public interface SystemB extends Library {
     // resource.h
     int RUSAGE_INFO_V2 = 2;
 
+    MachPort MACH_PORT_NULL = new MachPort();
+
+    /**
+     * Mach ports are the endpoints to Mach-implemented communications channels
+     * (usually uni-directional message queues, but other types also exist).
+     * <p>
+     * Unique collections of these endpoints are maintained for each Mach task. Each
+     * Mach port in the task's collection is given a task-local name to identify it
+     * - and the the various "rights" held by the task for that specific endpoint.
+     */
+    class MachPort extends PointerType {
+        public MachPort() {
+            super();
+        }
+
+        public MachPort(Pointer p) {
+            super(p);
+        }
+
+        /**
+         * Casts the port's pointer value to its name.
+         *
+         * @return The port's {@link MachPortName}.
+         */
+        public MachPortName castToName() {
+            return new MachPortName(Pointer.nativeValue(this.getPointer()));
+        }
+
+        /**
+         * Convenience method for {@link SystemB#mach_port_deallocate} on this port.
+         *
+         * @return 0 if successful, a {@code kern_return_t} code otherwise.
+         */
+        public int deallocate() {
+            return INSTANCE.mach_port_deallocate(INSTANCE.mach_task_self_ptr(), this.castToName());
+        }
+    }
+
+    /**
+     * Holds the port name of a host name port (or short: host port). Any task can
+     * get a send right to the name port of the host running the task using the
+     * mach_host_self system call. The name port can be used to query information
+     * about the host, for example the current time.
+     */
+    class HostPort extends MachPort {
+    }
+
+    /**
+     * Mach Tasks are units of resource ownership; each task consists of a virtual
+     * address space, a port right namespace, and one or more threads. (Similar to a
+     * process.)
+     */
+    class TaskPort extends MachPort {
+    }
+
+    /**
+     * The name is Mach port namespace specific. It is used to identify the rights
+     * held for that port by the task whose namespace is implied [or specifically
+     * provided].
+     * <p>
+     * Use of this type usually implies just a name - no rights.
+     * <p>
+     * This is an unsigned 32-bit integer type.
+     */
+    class MachPortName extends IntegerType {
+        private static final long serialVersionUID = 1L;
+
+        /** Create a zero-valued MachPortName. */
+        public MachPortName() {
+            this(0);
+        }
+
+        /** Create a MachPortName with the given value. */
+        public MachPortName(long value) {
+            super(4, value, true);
+        }
+    }
     @Structure.FieldOrder({ "cpu_ticks" })
     public static class HostCpuLoadInfo extends Structure {
         public int cpu_ticks[] = new int[CPU_STATE_MAX];
@@ -554,13 +633,12 @@ public interface SystemB extends Library {
     int gettimeofday(Timeval tp, Timezone tzp);
 
     /**
-     * The {@code mach_host_self} system call returns the calling thread's host name
-     * port. It has an effect equivalent to receiving a send right for the host
-     * port.
+     * The mach_host_self system call returns the calling thread's host name port.
+     * It has an effect equivalent to receiving a send right for the host port.
      *
-     * @return a pointer to the host's name port
+     * @return the host's name port
      */
-    MachPort mach_host_self_ptr();
+    HostPort mach_host_self_ptr();
 
     /**
      * The mach_host_self system call returns the calling thread's host name port.
@@ -575,13 +653,13 @@ public interface SystemB extends Library {
     int mach_host_self();
 
     /**
-     * The {@code mach_task_self} system call returns the calling thread's task_self
-     * port. It has an effect equivalent to receiving a send right for the task's
-     * kernel port.
+     * The mach_task_self system call returns the calling thread's task_self port.
+     * It has an effect equivalent to receiving a send right for the task's kernel
+     * port.
      *
-     * @return a pointer to the task's kernel port
+     * @return the task's kernel port
      */
-    MachPort mach_task_self_ptr();
+    TaskPort mach_task_self_ptr();
 
     /**
      * The mach_task_self system call returns the calling thread's task_self port.
@@ -597,16 +675,27 @@ public interface SystemB extends Library {
     int mach_task_self();
 
     /**
+     * Decrement the target port right's user reference count.
+     *
+     * @param port
+     *            The port holding the right.
+     * @param name
+     *            The port's name for the right.
+     * @return 0 if successful, a {@code kern_return_t} code otherwise.
+     */
+    int mach_port_deallocate(MachPort port, MachPortName name);
+
+    /**
      * The host_page_size function returns the page size for the given host.
      *
-     * @param machPort
+     * @param hostPort
      *            The name (or control) port for the host for which the page size is
      *            desired.
      * @param pPageSize
      *            The host's page size (in bytes), set on success.
      * @return 0 on success; sets errno on failure
      */
-    int host_page_size_ptr(MachPort machPort, LongByReference pPageSize);
+    int host_page_size(HostPort hostPort, LongByReference pPageSize);
 
     /**
      * The host_page_size function returns the page size for the given host.
@@ -619,7 +708,7 @@ public interface SystemB extends Library {
      * @return 0 on success; sets errno on failure
      *
      * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
-     *             {@link #host_page_size_ptr} instead.
+     *             {@link #host_page_size(HostPort, LongByReference)} instead.
      */
     @Deprecated
     int host_page_size(int machPort, LongByReference pPageSize);
@@ -628,12 +717,12 @@ public interface SystemB extends Library {
      * The host_statistics function returns scheduling and virtual memory statistics
      * concerning the host as specified by hostStat.
      *
-     * @param machPort
+     * @param hostPort
      *            The control port for the host for which information is to be
      *            obtained.
      * @param hostStat
-     *            The type of statistics desired (HOST_LOAD_INFO, HOST_VM_INFO, or
-     *            HOST_CPU_LOAD_INFO)
+     *            The type of statistics desired ({@link #HOST_LOAD_INFO},
+     *            {@link #HOST_VM_INFO}, or {@link #HOST_CPU_LOAD_INFO})
      * @param stats
      *            Statistics about the specified host.
      * @param count
@@ -641,7 +730,7 @@ public interface SystemB extends Library {
      *            returned (in natural-sized units).
      * @return 0 on success; sets errno on failure
      */
-    int host_statistics_ptr(MachPort machPort, int hostStat, Structure stats, IntByReference count);
+    int host_statistics(HostPort hostPort, int hostStat, Structure stats, IntByReference count);
 
     /**
      * The host_statistics function returns scheduling and virtual memory statistics
@@ -651,8 +740,8 @@ public interface SystemB extends Library {
      *            The control port for the host for which information is to be
      *            obtained.
      * @param hostStat
-     *            The type of statistics desired (HOST_LOAD_INFO, HOST_VM_INFO, or
-     *            HOST_CPU_LOAD_INFO)
+     *            The type of statistics desired ({@link #HOST_LOAD_INFO},
+     *            {@link #HOST_VM_INFO}, or {@link #HOST_CPU_LOAD_INFO})
      * @param stats
      *            Statistics about the specified host.
      * @param count
@@ -661,7 +750,8 @@ public interface SystemB extends Library {
      * @return 0 on success; sets errno on failure
      *
      * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
-     *             {@link #host_statistics_ptr} instead.
+     *             {@link #host_statistics(HostPort, int, Structure, IntByReference)}
+     *             instead.
      */
     @Deprecated
     int host_statistics(int machPort, int hostStat, Structure stats, IntByReference count);
@@ -670,11 +760,11 @@ public interface SystemB extends Library {
      * The host_statistics64 function returns 64-bit virtual memory statistics
      * concerning the host as specified by hostStat.
      *
-     * @param machPort
+     * @param hostPort
      *            The control port for the host for which information is to be
      *            obtained.
      * @param hostStat
-     *            The type of statistics desired (HOST_VM_INFO64)
+     *            The type of statistics desired ({@link #HOST_VM_INFO64})
      * @param stats
      *            Statistics about the specified host.
      * @param count
@@ -682,7 +772,7 @@ public interface SystemB extends Library {
      *            returned (in natural-sized units).
      * @return 0 on success; sets errno on failure
      */
-    int host_statistics64_ptr(MachPort machPort, int hostStat, Structure stats, IntByReference count);
+    int host_statistics64(HostPort hostPort, int hostStat, Structure stats, IntByReference count);
 
     /**
      * The host_statistics64 function returns 64-bit virtual memory statistics
@@ -692,7 +782,7 @@ public interface SystemB extends Library {
      *            The control port for the host for which information is to be
      *            obtained.
      * @param hostStat
-     *            The type of statistics desired (HOST_VM_INFO64)
+     *            The type of statistics desired ({@link #HOST_VM_INFO64})
      * @param stats
      *            Statistics about the specified host.
      * @param count
@@ -701,7 +791,8 @@ public interface SystemB extends Library {
      * @return 0 on success; sets errno on failure
      *
      * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
-     *             {@link #host_statistics64_ptr} instead.
+     *             {@link #host_statistics64(HostPort, int, Structure, IntByReference)}
+     *             instead.
      */
     @Deprecated
     int host_statistics64(int machPort, int hostStat, Structure stats, IntByReference count);
@@ -770,20 +861,20 @@ public interface SystemB extends Library {
     int sysctlbyname(String name, Pointer oldp, IntByReference oldlenp, Pointer newp, int newlen);
 
     /**
-     * The sysctlnametomib() function accepts an ASCII representation of the name,
-     * looks up the integer name vector, and returns the numeric representation in
-     * the mib array pointed to by mibp. The number of elements in the mib array is
-     * given by the location specified by sizep before the call, and that location
-     * gives the number of entries copied after a successful call. The resulting mib
-     * and size may be used in subsequent sysctl() calls to get the data associated
-     * with the requested ASCII name. This interface is intended for use by
-     * applications that want to repeatedly request the same variable (the sysctl()
-     * function runs in about a third the time as the same request made via the
-     * sysctlbyname() function).
-     *
+     * This function accepts an ASCII representation of the name, looks up the
+     * integer name vector, and returns the numeric representation in the mib array
+     * pointed to by mibp. The number of elements in the mib array is given by the
+     * location specified by sizep before the call, and that location gives the
+     * number of entries copied after a successful call. The resulting mib and size
+     * may be used in subsequent sysctl() calls to get the data associated with the
+     * requested ASCII name. This interface is intended for use by applications that
+     * want to repeatedly request the same variable (the sysctl() function runs in
+     * about a third the time as the same request made via the sysctlbyname()
+     * function).
+     * <p>
      * The number of elements in the mib array can be determined by calling
      * sysctlnametomib() with the NULL argument for mibp.
-     *
+     * <p>
      * The sysctlnametomib() function is also useful for fetching mib prefixes. If
      * size on input is greater than the number of elements written, the array still
      * contains the additional elements which may be written programmatically.
@@ -802,7 +893,7 @@ public interface SystemB extends Library {
     /**
      * The host_processor_info function returns information about processors.
      *
-     * @param machPort
+     * @param hostPort
      *            The control port for the host for which information is to be
      *            obtained.
      * @param flavor
@@ -815,7 +906,7 @@ public interface SystemB extends Library {
      *            Pointer to number of elements in the returned structure
      * @return 0 on success; sets errno on failure
      */
-    int host_processor_info_ptr(MachPort machPort, int flavor, IntByReference procCount, PointerByReference procInfo,
+    int host_processor_info(HostPort hostPort, int flavor, IntByReference procCount, PointerByReference procInfo,
             IntByReference procInfoCount);
 
     /**
@@ -835,7 +926,8 @@ public interface SystemB extends Library {
      * @return 0 on success; sets errno on failure
      *
      * @deprecated Using the 32-bit port type argument may corrupt the stack. Use
-     *             {@link #host_processor_info_ptr} instead.
+     *             {@link #host_processor_info(HostPort, int, IntByReference, PointerByReference, IntByReference)}
+     *             instead.
      */
     @Deprecated
     int host_processor_info(int machPort, int flavor, IntByReference procCount, PointerByReference procInfo,
