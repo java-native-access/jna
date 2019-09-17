@@ -23,6 +23,8 @@
  */
 package com.sun.jna.platform.mac;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
@@ -30,14 +32,12 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.SystemB.Group;
 import com.sun.jna.platform.mac.SystemB.HostCpuLoadInfo;
 import com.sun.jna.platform.mac.SystemB.HostLoadInfo;
-import com.sun.jna.platform.mac.SystemB.HostPort;
 import com.sun.jna.platform.mac.SystemB.IFmsgHdr;
 import com.sun.jna.platform.mac.SystemB.IFmsgHdr2;
 import com.sun.jna.platform.mac.SystemB.Passwd;
 import com.sun.jna.platform.mac.SystemB.ProcTaskAllInfo;
 import com.sun.jna.platform.mac.SystemB.RUsageInfoV2;
 import com.sun.jna.platform.mac.SystemB.Statfs;
-import com.sun.jna.platform.mac.SystemB.TaskPort;
 import com.sun.jna.platform.mac.SystemB.Timeval;
 import com.sun.jna.platform.mac.SystemB.Timezone;
 import com.sun.jna.platform.mac.SystemB.VMMeter;
@@ -54,10 +54,7 @@ import junit.framework.TestCase;
 
 /**
  * Exercise the {@link SystemB} class.
- *
- * @author widdis@gmail.com
  */
-// @SuppressWarnings("unused")
 public class SystemBTest extends TestCase {
 
     public void testSysctl() {
@@ -95,8 +92,8 @@ public class SystemBTest extends TestCase {
     }
 
     public void testHostPageSize() {
-        HostPort hostPort = SystemB.INSTANCE.mach_host_self_ptr();
-        assertNotNull(hostPort);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         LongByReference pPageSize = new LongByReference();
         int ret = SystemB.INSTANCE.host_page_size(hostPort, pPageSize);
@@ -107,8 +104,8 @@ public class SystemBTest extends TestCase {
     }
 
     public void testVMInfo() {
-        HostPort hostPort = SystemB.INSTANCE.mach_host_self_ptr();
-        assertNotNull(hostPort);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         VMStatistics vmStats = new VMStatistics();
         int ret = SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_VM_INFO, vmStats,
@@ -128,8 +125,8 @@ public class SystemBTest extends TestCase {
     }
 
     public void testCpuLoad() {
-        HostPort hostPort = SystemB.INSTANCE.mach_host_self_ptr();
-        assertNotNull(hostPort);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         HostCpuLoadInfo cpuLoadInfo = new HostCpuLoadInfo();
         int ret = SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_CPU_LOAD_INFO, cpuLoadInfo,
@@ -140,8 +137,8 @@ public class SystemBTest extends TestCase {
     }
 
     public void testHostLoad() {
-        HostPort hostPort = SystemB.INSTANCE.mach_host_self_ptr();
-        assertNotNull(hostPort);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         HostLoadInfo hostLoadInfo = new HostLoadInfo();
         int ret = SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_CPU_LOAD_INFO, hostLoadInfo,
@@ -155,8 +152,8 @@ public class SystemBTest extends TestCase {
     }
 
     public void testHostProcessorInfo() {
-        HostPort hostPort = SystemB.INSTANCE.mach_host_self_ptr();
-        assertNotNull(hostPort);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         IntByReference procCount = new IntByReference();
         PointerByReference procCpuLoadInfo = new PointerByReference();
@@ -168,14 +165,6 @@ public class SystemBTest extends TestCase {
         assertTrue(procCount.getValue() > 0);
         assertEquals(procCpuLoadInfo.getValue().getIntArray(0, procInfoCount.getValue()).length,
                 procInfoCount.getValue());
-    }
-
-    public void testMachPorts() {
-        HostPort hostPort = SystemB.INSTANCE.mach_host_self_ptr();
-        assertNotNull(hostPort);
-        assertEquals(Pointer.nativeValue(hostPort.getPointer()) & 0xffffffff, hostPort.castToName().intValue());
-        TaskPort taskPort = SystemB.INSTANCE.mach_task_self_ptr();
-        assertNotNull(taskPort);
     }
 
     public void testGetLoadAvg() {
@@ -206,8 +195,8 @@ public class SystemBTest extends TestCase {
     }
 
     public void testVMMeter() {
-        HostPort hostPort = SystemB.INSTANCE.mach_host_self_ptr();
-        assertNotNull(hostPort);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
         VMMeter vmstats = new VMMeter();
         assertEquals(0, SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_VM_INFO, vmstats,
                 new IntByReference(vmstats.size())));

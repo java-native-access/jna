@@ -51,8 +51,6 @@ import com.sun.jna.platform.mac.IOKit.IOIterator;
 import com.sun.jna.platform.mac.IOKit.IOObject;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKit.IOService;
-import com.sun.jna.platform.mac.SystemB.MachPort;
-import com.sun.jna.platform.mac.SystemB.TaskPort;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -61,10 +59,11 @@ public class IOKitTest {
 
     private static final CoreFoundation CF = CoreFoundation.INSTANCE;
     private static final IOKit IO = IOKit.INSTANCE;
+    private static final SystemB SYS = SystemB.INSTANCE;
 
     @Test
     public void testMatching() {
-        MachPort masterPort = IOKitUtil.getMasterPort();
+        int masterPort = IOKitUtil.getMasterPort();
 
         String match = "matching BSD Name";
         CFMutableDictionaryRef dict = IO.IOBSDNameMatching(masterPort, 0, match);
@@ -137,12 +136,13 @@ public class IOKitTest {
         cfSerialAsType.release();
 
         assertEquals(0, root.release());
-        assertEquals(0, masterPort.deallocate());
+        assertEquals(0, SYS.mach_port_deallocate(SystemB.INSTANCE.mach_task_self(),
+                masterPort));
     }
 
     @Test
     public void testIteratorParentChild() {
-        MachPort masterPort = IOKitUtil.getMasterPort();
+        int masterPort = IOKitUtil.getMasterPort();
 
         Set<Long> uniqueEntryIdSet = new HashSet<>();
         // Iterate over USB Controllers. All devices are children of one of
@@ -212,18 +212,19 @@ public class IOKitTest {
             controllerDevice = iter.next();
         }
         assertEquals(0, iter.release());
-        assertEquals(0, masterPort.deallocate());
+        assertEquals(0, SYS.mach_port_deallocate(SystemB.INSTANCE.mach_task_self(),
+                masterPort));
     }
 
     @Test
     public void testIOConnect() {
-        MachPort masterPort = IOKitUtil.getMasterPort();
+        int masterPort = IOKitUtil.getMasterPort();
 
         IOService smcService = IOKitUtil.getMatchingService("AppleSMC");
         assertNotNull(smcService);
 
         PointerByReference connPtr = new PointerByReference();
-        TaskPort taskSelf = SystemB.INSTANCE.mach_task_self_ptr();
+        int taskSelf = SYS.mach_task_self();
         assertEquals(0, IO.IOServiceOpen(smcService, taskSelf, 0, connPtr));
         IOConnect conn = new IOConnect(connPtr.getValue());
 
@@ -233,7 +234,8 @@ public class IOKitTest {
 
         IO.IOServiceClose(conn);
         assertEquals(0, smcService.release());
-        assertEquals(0, masterPort.deallocate());
+        assertEquals(0, SYS.mach_port_deallocate(SystemB.INSTANCE.mach_task_self(),
+                masterPort));
     }
 
     @Test

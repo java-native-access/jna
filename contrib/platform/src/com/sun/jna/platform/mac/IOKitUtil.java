@@ -35,7 +35,7 @@ import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.platform.mac.IOKit.IOIterator;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKit.IOService;
-import com.sun.jna.platform.mac.SystemB.MachPort;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -44,6 +44,7 @@ import com.sun.jna.ptr.PointerByReference;
 public class IOKitUtil {
     private static final IOKit IO = IOKit.INSTANCE;
     private static final CoreFoundation CF = CoreFoundation.INSTANCE;
+    private static final SystemB SYS = SystemB.INSTANCE;
 
     private IOKitUtil() {
     }
@@ -59,10 +60,10 @@ public class IOKitUtil {
      *         deallocate the port when you are finished with it, using
      *         {@link SystemB#mach_port_deallocate}.
      */
-    public static MachPort getMasterPort() {
-        PointerByReference port = new PointerByReference();
-        IO.IOMasterPort(SystemB.MACH_PORT_NULL, port);
-        return new MachPort(port.getValue());
+    public static int getMasterPort() {
+        IntByReference port = new IntByReference();
+        IO.IOMasterPort(0, port);
+        return port.getValue();
     }
 
     /**
@@ -72,9 +73,9 @@ public class IOKitUtil {
      *         {@link IOKit#IOObjectRelease}.
      */
     public static IORegistryEntry getRoot() {
-        MachPort masterPort = getMasterPort();
+        int masterPort = getMasterPort();
         IORegistryEntry root = IO.IORegistryGetRootEntry(masterPort);
-        masterPort.deallocate();
+        SYS.mach_port_deallocate(SYS.mach_task_self(), masterPort);
         return root;
     }
 
@@ -106,9 +107,9 @@ public class IOKitUtil {
      *         {@link IOKit#IOObjectRelease}.
      */
     public static IOService getMatchingService(CFDictionaryRef matchingDictionary) {
-        MachPort masterPort = getMasterPort();
+        int masterPort = getMasterPort();
         IOService service = IO.IOServiceGetMatchingService(masterPort, matchingDictionary);
-        masterPort.deallocate();
+        SYS.mach_port_deallocate(SYS.mach_task_self(), masterPort);
         return service;
     }
 
@@ -140,10 +141,10 @@ public class IOKitUtil {
      *         {@link IOKit#IOObjectRelease}.
      */
     public static IOIterator getMatchingServices(CFDictionaryRef matchingDictionary) {
-        MachPort masterPort = getMasterPort();
+        int masterPort = getMasterPort();
         PointerByReference serviceIterator = new PointerByReference();
         int result = IO.IOServiceGetMatchingServices(masterPort, matchingDictionary, serviceIterator);
-        masterPort.deallocate();
+        SYS.mach_port_deallocate(SYS.mach_task_self(), masterPort);
         if (result == 0 && serviceIterator.getValue() != null) {
             return new IOIterator(serviceIterator.getValue());
         }
@@ -159,9 +160,9 @@ public class IOKitUtil {
      *         should release when finished, using {@link IOKit#IOObjectRelease}.
      */
     public static CFMutableDictionaryRef getBSDNameMatchingDict(String bsdName) {
-        MachPort masterPort = getMasterPort();
+        int masterPort = getMasterPort();
         CFMutableDictionaryRef result = IO.IOBSDNameMatching(masterPort, 0, bsdName);
-        masterPort.deallocate();
+        SYS.mach_port_deallocate(SYS.mach_task_self(), masterPort);
         return result;
     }
 

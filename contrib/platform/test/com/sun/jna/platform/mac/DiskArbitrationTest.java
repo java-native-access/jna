@@ -46,7 +46,7 @@ import com.sun.jna.platform.mac.DiskArbitration.DADiskRef;
 import com.sun.jna.platform.mac.DiskArbitration.DASessionRef;
 import com.sun.jna.platform.mac.IOKit.IOIterator;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
-import com.sun.jna.platform.mac.SystemB.MachPort;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public class DiskArbitrationTest {
@@ -54,12 +54,13 @@ public class DiskArbitrationTest {
     private static final DiskArbitration DA = DiskArbitration.INSTANCE;
     private static final CoreFoundation CF = CoreFoundation.INSTANCE;
     private static final IOKit IO = IOKit.INSTANCE;
+    private static final SystemB SYS = SystemB.INSTANCE;
 
     @Test
     public void testDiskCreate() {
-        PointerByReference masterPortPtr = new PointerByReference();
-        assertEquals(0, IO.IOMasterPort(SystemB.MACH_PORT_NULL, masterPortPtr));
-        MachPort masterPort = new MachPort(masterPortPtr.getValue());
+        IntByReference masterPortPtr = new IntByReference();
+        assertEquals(0, IO.IOMasterPort(0, masterPortPtr));
+        int masterPort = masterPortPtr.getValue();
 
         // Create some keys we'll need
         CFStringRef daMediaBSDName = CFStringRef.createCFString("DAMediaBSDName");
@@ -146,6 +147,6 @@ public class DiskArbitrationTest {
         daMediaBlockSize.release();
 
         session.release();
-        assertEquals(0, masterPort.deallocate());
+        assertEquals(0, SYS.mach_port_deallocate(SYS.mach_task_self(), masterPort));
     }
 }
