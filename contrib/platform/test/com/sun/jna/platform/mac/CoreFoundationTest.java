@@ -30,7 +30,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -58,21 +59,19 @@ public class CoreFoundationTest {
     private static final CoreFoundation CF = CoreFoundation.INSTANCE;
 
     @Test
-    public void testCFStringRef() {
+    public void testCFStringRef() throws UnsupportedEncodingException {
         String awesome = "ǝɯosǝʍɐ sı ∀Nſ"; // Unicode
         CFStringRef cfAwesome = CFStringRef.createCFString(awesome);
         assertEquals(awesome.length(), CF.CFStringGetLength(cfAwesome).intValue());
         assertEquals(awesome, cfAwesome.stringValue());
 
-        Memory mem = new Memory(awesome.getBytes().length + 1);
+        byte[] awesomeArr = awesome.getBytes("UTF-8");
+        Memory mem = new Memory(awesomeArr.length + 1);
         mem.clear();
         assertNotEquals(0,
                 CF.CFStringGetCString(cfAwesome, mem, new CFIndex(mem.size()), CoreFoundation.kCFStringEncodingUTF8));
         byte[] awesomeBytes = mem.getByteArray(0, (int) mem.size() - 1);
-        byte[] awesomeArr = awesome.getBytes();
-        for (int i = 0; i < awesomeArr.length; i++) {
-            assertEquals(awesomeArr[i], awesomeBytes[i]);
-        }
+        assertArrayEquals(awesomeArr, awesomeBytes);
         // Essentially a toString, can't rely on format but should contain the string
         CFStringRef desc = CF.CFCopyDescription(cfAwesome);
         assertTrue(desc.stringValue().contains(awesome));
@@ -113,9 +112,7 @@ public class CoreFoundationTest {
         assertEquals(2, CF.CFGetRetainCount(cfE).intValue());
         assertEquals(3, CF.CFGetRetainCount(cfPi).intValue());
 
-        List<CFTypeRef> irrationalReferences = new ArrayList<>();
-        irrationalReferences.add(cfE);
-        irrationalReferences.add(cfPi);
+        List<? extends CFTypeRef> irrationalReferences = Arrays.asList(cfE, cfPi);
         for (CFTypeRef value : irrationalReferences) {
             value.release();
         }
@@ -161,16 +158,14 @@ public class CoreFoundationTest {
         new Random().nextBytes(randomBytes);
         // Fill native memory with them
         Memory nativeBytes = new Memory(size);
-        for (int i = 0; i < size; i++) {
-            nativeBytes.setByte(i, randomBytes[i]);
-        }
+        nativeBytes.write(0, randomBytes, 0, randomBytes.length);
         // Create a CF reference to the data
         CFDataRef cfData = CF.CFDataCreate(null, nativeBytes, new CFIndex(size));
-        long dataSize = CF.CFDataGetLength(cfData).intValue();
+        int dataSize = CF.CFDataGetLength(cfData).intValue();
         assertEquals(size, dataSize);
         // Read it back out and convert to an array
         Pointer bytes = CF.CFDataGetBytePtr(cfData);
-        byte[] dataBytes = bytes.getByteArray(0, (int) dataSize);
+        byte[] dataBytes = bytes.getByteArray(0, dataSize);
         assertArrayEquals(randomBytes, dataBytes);
         cfData.release();
     }

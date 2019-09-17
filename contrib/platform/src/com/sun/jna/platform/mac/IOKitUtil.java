@@ -173,7 +173,8 @@ public class IOKitUtil {
      *            A handle to the registry entry
      * @param key
      *            The string name of the key to retrieve
-     * @return The value of the registry entry if it exists;{@code null} otherwise
+     * @return The value of the registry entry if it exists; {@code null}
+     *         otherwise
      */
     public static String getIORegistryStringProperty(IORegistryEntry entry, String key) {
         String value = null;
@@ -198,18 +199,16 @@ public class IOKitUtil {
      *            A handle to the registry entry
      * @param key
      *            The string name of the key to retrieve
-     * @param defaultValue
-     *            The value to return if unsuccessful
-     * @return The value of the registry entry if it exists.
+     * @return The value of the registry entry if it exists; {@code null}
+     *         otherwise
      *         <p>
-     *         This method assumes a 64-bit integer is stored and does not do type
-     *         checking. If this object's type differs from the return type, and the
-     *         conversion is lossy or the return value is out of range, then this
-     *         method returns an approximate value. If the value does not exist, the
-     *         {@code defaultValue} is returned.
+     *         This method assumes a 64-bit integer is stored and does not do
+     *         type checking. If this object's type differs from the return
+     *         type, and the conversion is lossy or the return value is out of
+     *         range, then this method returns an approximate value.
      */
-    public static long getIORegistryLongProperty(IORegistryEntry entry, String key, long defaultValue) {
-        long value = defaultValue;
+    public static Long getIORegistryLongProperty(IORegistryEntry entry, String key) {
+        Long value = null;
         CFStringRef keyAsCFString = CFStringRef.createCFString(key);
         CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
                 0);
@@ -231,18 +230,16 @@ public class IOKitUtil {
      *            A handle to the registry entry
      * @param key
      *            The string name of the key to retrieve
-     * @param defaultValue
-     *            The value to return if unsuccessful
-     * @return The value of the registry entry if it exists.
+     * @return The value of the registry entry if it exists; {@code null}
+     *         otherwise
      *         <p>
-     *         This method assumes a 32-bit integer is stored and does not do type
-     *         checking. If this object's type differs from the return type, and the
-     *         conversion is lossy or the return value is out of range, then this
-     *         method returns an approximate value. If the value does not exist, the
-     *         {@code defaultValue} is returned.
+     *         This method assumes a 32-bit integer is stored and does not do
+     *         type checking. If this object's type differs from the return
+     *         type, and the conversion is lossy or the return value is out of
+     *         range, then this method returns an approximate value.
      */
-    public static int getIORegistryIntProperty(IORegistryEntry entry, String key, int defaultValue) {
-        int value = defaultValue;
+    public static Integer getIORegistryIntProperty(IORegistryEntry entry, String key) {
+        Integer value = null;
         CFStringRef keyAsCFString = CFStringRef.createCFString(key);
         CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
                 0);
@@ -264,18 +261,16 @@ public class IOKitUtil {
      *            A handle to the registry entry
      * @param key
      *            The string name of the key to retrieve
-     * @param defaultValue
-     *            The value to return if unsuccessful
-     * @return The value of the registry entry if it exists.
+     * @return The value of the registry entry if it exists; {@code null}
+     *         otherwise
      *         <p>
-     *         This method assumes a floating point value is stored and does not do
-     *         type checking. If this object's type differs from the return type,
-     *         and the conversion is lossy or the return value is out of range, then
-     *         this method returns an approximate value. If the value does not
-     *         exist, the {@code defaultValue} is returned.
+     *         This method assumes a floating point value is stored and does not
+     *         do type checking. If this object's type differs from the return
+     *         type, and the conversion is lossy or the return value is out of
+     *         range, then this method returns an approximate value.
      */
-    public static double getIORegistryIntProperty(IORegistryEntry entry, String key, double defaultValue) {
-        double value = defaultValue;
+    public static Double getIORegistryDoubleProperty(IORegistryEntry entry, String key) {
+        Double value = null;
         CFStringRef keyAsCFString = CFStringRef.createCFString(key);
         CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
                 0);
@@ -297,13 +292,11 @@ public class IOKitUtil {
      *            A handle to the registry entry
      * @param key
      *            The string name of the key to retrieve
-     * @param defaultValue
-     *            The value to return if unsuccessful
-     * @return The value of the registry entry if it exists; {@code defaultValue}
+     * @return The value of the registry entry if it exists; {@code null}
      *         otherwise
      */
-    public static boolean getIORegistryBooleanProperty(IORegistryEntry entry, String key, boolean defaultValue) {
-        boolean value = defaultValue;
+    public static Boolean getIORegistryBooleanProperty(IORegistryEntry entry, String key) {
+        Boolean value = null;
         CFStringRef keyAsCFString = CFStringRef.createCFString(key);
         CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
                 0);

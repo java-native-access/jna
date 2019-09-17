@@ -68,13 +68,14 @@ public class DiskArbitrationTest {
         CFStringRef daMediaLeaf = CFStringRef.createCFString("DAMediaLeaf");
         CFStringRef daMediaSize = CFStringRef.createCFString("DAMediaSize");
         CFStringRef daMediaBlockSize = CFStringRef.createCFString("DAMediaBlockSize");
+        CFStringRef wholeKey = CFStringRef.createCFString("Whole");
 
         // Open a DiskArbitration session
         DASessionRef session = DA.DASessionCreate(CF.CFAllocatorGetDefault());
         assertNotNull(session);
 
         // Get IOMedia objects representing whole drives and save the BSD Name
-        List<String> bsdNames = new ArrayList<>();
+        List<String> bsdNames = new ArrayList<String>();
         PointerByReference iterPtr = new PointerByReference();
 
         CFMutableDictionaryRef dict = IOKit.INSTANCE.IOServiceMatching("IOMedia");
@@ -83,24 +84,27 @@ public class DiskArbitrationTest {
         IOIterator iter = new IOIterator(iterPtr.getValue());
         IORegistryEntry media = iter.next();
         while (media != null) {
-            CFStringRef wholeKey = CFStringRef.createCFString("Whole");
             CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
-            wholeKey.release();
             assertNotNull(cfWhole);
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
             if (cfWholeBool.booleanValue()) {
                 // check that util boolean matches
-                assertTrue(IOKitUtil.getIORegistryBooleanProperty(media, "Whole", false));
-                // check long and int values for major
-                long majorLong = IOKitUtil.getIORegistryLongProperty(media, "BSD Major", Long.MAX_VALUE);
-                int majorInt = IOKitUtil.getIORegistryIntProperty(media, "BSD Major", Integer.MAX_VALUE);
-                assertEquals(majorLong, majorInt);
+                assertTrue(IOKitUtil.getIORegistryBooleanProperty(media, "Whole"));
+                // check long, int, double values for major
+                Long majorLong = IOKitUtil.getIORegistryLongProperty(media, "BSD Major");
+                Integer majorInt = IOKitUtil.getIORegistryIntProperty(media, "BSD Major");
+                Double majorDouble = IOKitUtil.getIORegistryDoubleProperty(media, "BSD Major");
+                assertNotNull(majorLong);
+                assertNotNull(majorInt);
+                assertNotNull(majorDouble);
+                assertEquals(majorLong.intValue(), majorInt.intValue());
+                assertEquals(majorDouble.doubleValue(), majorInt.doubleValue(), 1e-15);
 
                 DADiskRef disk = DA.DADiskCreateFromIOMedia(CF.CFAllocatorGetDefault(), session, media);
                 bsdNames.add(DA.DADiskGetBSDName(disk));
                 disk.release();
             } else {
-                assertFalse(IOKitUtil.getIORegistryBooleanProperty(media, "Whole", true));
+                assertFalse(IOKitUtil.getIORegistryBooleanProperty(media, "Whole"));
             }
             cfWhole.release();
             assertEquals(0, media.release());
@@ -140,6 +144,7 @@ public class DiskArbitrationTest {
             diskInfo.release();
             disk.release();
         }
+        wholeKey.release();
         daMediaBSDName.release();
         daMediaWhole.release();
         daMediaLeaf.release();
