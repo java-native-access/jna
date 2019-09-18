@@ -56,6 +56,8 @@ public class IOKitTest {
     private static final IOKit IO = IOKit.INSTANCE;
     private static final SystemB SYS = SystemB.INSTANCE;
 
+    private static final String IO_SERVICE = "IOService";
+
     @Test
     public void testMatching() {
         int masterPort = IOKitUtil.getMasterPort();
@@ -88,7 +90,6 @@ public class IOKitTest {
 
         // Get matching service (consumes dict reference)
         IORegistryEntry platformExpert = IO.IOServiceGetMatchingService(masterPort, dict);
-        assertNull(platformExpert.getChildEntry("IOService"));
         // Get a single key
         CFStringRef serialKey = CFStringRef.createCFString("IOPlatformSerialNumber");
         CFTypeRef cfSerialAsType = platformExpert.createCFProperty(serialKey);
@@ -113,11 +114,20 @@ public class IOKitTest {
         // Get a single key from a nested entry
         IORegistryEntry root = IOKitUtil.getRoot();
         assertNotNull(root);
-        assertNull(root.getParentEntry("IOService"));
-        cfSerialAsType = root.searchCFProperty("IOService", serialKey, 0);
+        // Root should have no parent
+        assertNull(root.getParentEntry(IO_SERVICE));
+        // Follow down the chain for a child, shouldn't reach a depth of 50
+        int treeDepth = 0;
+        IORegistryEntry child = root.getChildEntry(IO_SERVICE);
+        while (child != null && ++treeDepth < 50) {
+            child = child.getChildEntry(IO_SERVICE);
+        }
+        assertNotEquals(50, treeDepth);
+
+        cfSerialAsType = root.searchCFProperty(IO_SERVICE, serialKey, 0);
         // without recursive search should be null
         assertNull(cfSerialAsType);
-        cfSerialAsType = root.searchCFProperty("IOService", serialKey, IOKit.kIORegistryIterateRecursively);
+        cfSerialAsType = root.searchCFProperty(IO_SERVICE, serialKey, IOKit.kIORegistryIterateRecursively);
         // with recursive search should return a match
         cfSerial = new CFStringRef(cfSerialAsType.getPointer());
         assertEquals(serialNumber, cfSerial.stringValue());
@@ -152,12 +162,12 @@ public class IOKitTest {
 
             // Get the first child, to test vs. iterator
             boolean testFirstChild = true;
-            IORegistryEntry firstChild = controllerDevice.getChildEntry("IOService");
+            IORegistryEntry firstChild = controllerDevice.getChildEntry(IO_SERVICE);
             // If this returns non-null, we have at least one child entry to
             // test. If not, the iterator will never check whether to test
 
             // Now iterate the children of this device in the "IOService" plane.
-            IOIterator childIter = controllerDevice.getChildIterator("IOService");
+            IOIterator childIter = controllerDevice.getChildIterator(IO_SERVICE);
             IORegistryEntry childDevice = childIter.next();
             while (childDevice != null) {
                 assertTrue(childDevice.conformsTo("IOUSBDevice"));
@@ -174,7 +184,7 @@ public class IOKitTest {
                 }
 
                 // Get this device's parent in IOService plane, matches controller
-                IORegistryEntry parent = childDevice.getParentEntry("IOService");
+                IORegistryEntry parent = childDevice.getParentEntry(IO_SERVICE);
                 assertEquals(controllerDevice, parent);
                 assertEquals(0, parent.release());
 

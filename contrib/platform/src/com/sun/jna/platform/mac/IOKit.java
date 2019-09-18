@@ -53,6 +53,10 @@ public interface IOKit extends Library {
     int kIORegistryIterateRecursively = 0x00000001;
     int kIORegistryIterateParents = 0x00000002;
 
+    /**
+     * Return value when attempting parent or child in registry and they do not
+     * exist
+     */
     int kIOReturnNoDevice = 0xe00002c0;
 
     double kIOPSTimeRemainingUnlimited = -2.0;

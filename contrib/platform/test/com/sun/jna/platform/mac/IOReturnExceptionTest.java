@@ -33,14 +33,14 @@ public class IOReturnExceptionTest {
     @Test
     public void testException() {
         try {
-            throw new IOReturnException(-536870206);
+            throw new IOReturnException(IOKit.kIOReturnNoDevice);
         } catch (IOReturnException e) {
             int code = e.getIOReturnCode();
-            assertEquals(0xE00002C2, code);
+            assertEquals(0xe00002c0, code);
             assertEquals(0x38, IOReturnException.getSystem(code)); // io_kit
             assertEquals(0x0, IOReturnException.getSubSystem(code)); // sub_iokit_common
-            assertEquals(0x2C2, IOReturnException.getCode(code)); // kIOReturnBadArgument
-            assertEquals("IOReturn error code: -536870206 (system=56, subSystem=0, code=706)", e.getMessage());
+            assertEquals(0x2c0, IOReturnException.getCode(code)); // kIOReturnNoDevice
+            assertEquals("IOReturn error code: -536870208 (system=56, subSystem=0, code=704)", e.getMessage());
         }
     }
 }
