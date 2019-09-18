@@ -24,14 +24,8 @@
  */
 package com.sun.jna.platform.mac;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.mac.CoreFoundation.CFBooleanRef;
-import com.sun.jna.platform.mac.CoreFoundation.CFDataRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFDictionaryRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFMutableDictionaryRef;
-import com.sun.jna.platform.mac.CoreFoundation.CFNumberRef;
-import com.sun.jna.platform.mac.CoreFoundation.CFStringRef;
-import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.platform.mac.IOKit.IOIterator;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKit.IOService;
@@ -43,7 +37,6 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class IOKitUtil {
     private static final IOKit IO = IOKit.INSTANCE;
-    private static final CoreFoundation CF = CoreFoundation.INSTANCE;
     private static final SystemB SYS = SystemB.INSTANCE;
 
     private IOKitUtil() {
@@ -164,177 +157,5 @@ public class IOKitUtil {
         CFMutableDictionaryRef result = IO.IOBSDNameMatching(masterPort, 0, bsdName);
         SYS.mach_port_deallocate(SYS.mach_task_self(), masterPort);
         return result;
-    }
-
-    /**
-     * Convenience method to get a String value from an IO Registry
-     *
-     * @param entry
-     *            A handle to the registry entry
-     * @param key
-     *            The string name of the key to retrieve
-     * @return The value of the registry entry if it exists; {@code null}
-     *         otherwise
-     */
-    public static String getIORegistryStringProperty(IORegistryEntry entry, String key) {
-        String value = null;
-        CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-        CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
-                0);
-        if (valueAsCFType != null && valueAsCFType.getPointer() != null) {
-            CFStringRef valueAsCFString = new CFStringRef(valueAsCFType.getPointer());
-            value = valueAsCFString.stringValue();
-        }
-        keyAsCFString.release();
-        if (valueAsCFType != null) {
-            valueAsCFType.release();
-        }
-        return value;
-    }
-
-    /**
-     * Convenience method to get a {@code long} value from an IO Registry.
-     *
-     * @param entry
-     *            A handle to the registry entry
-     * @param key
-     *            The string name of the key to retrieve
-     * @return The value of the registry entry if it exists; {@code null}
-     *         otherwise
-     *         <p>
-     *         This method assumes a 64-bit integer is stored and does not do
-     *         type checking. If this object's type differs from the return
-     *         type, and the conversion is lossy or the return value is out of
-     *         range, then this method returns an approximate value.
-     */
-    public static Long getIORegistryLongProperty(IORegistryEntry entry, String key) {
-        Long value = null;
-        CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-        CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
-                0);
-        if (valueAsCFType != null && valueAsCFType.getPointer() != null) {
-            CFNumberRef valueAsCFNumber = new CFNumberRef(valueAsCFType.getPointer());
-            value = valueAsCFNumber.longValue();
-        }
-        keyAsCFString.release();
-        if (valueAsCFType != null) {
-            valueAsCFType.release();
-        }
-        return value;
-    }
-
-    /**
-     * Convenience method to get an {@code int} value from an IO Registry.
-     *
-     * @param entry
-     *            A handle to the registry entry
-     * @param key
-     *            The string name of the key to retrieve
-     * @return The value of the registry entry if it exists; {@code null}
-     *         otherwise
-     *         <p>
-     *         This method assumes a 32-bit integer is stored and does not do
-     *         type checking. If this object's type differs from the return
-     *         type, and the conversion is lossy or the return value is out of
-     *         range, then this method returns an approximate value.
-     */
-    public static Integer getIORegistryIntProperty(IORegistryEntry entry, String key) {
-        Integer value = null;
-        CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-        CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
-                0);
-        if (valueAsCFType != null) {
-            CFNumberRef valueAsCFNumber = new CFNumberRef(valueAsCFType.getPointer());
-            value = valueAsCFNumber.intValue();
-        }
-        keyAsCFString.release();
-        if (valueAsCFType != null) {
-            valueAsCFType.release();
-        }
-        return value;
-    }
-
-    /**
-     * Convenience method to get a {@code double} value from an IO Registry.
-     *
-     * @param entry
-     *            A handle to the registry entry
-     * @param key
-     *            The string name of the key to retrieve
-     * @return The value of the registry entry if it exists; {@code null}
-     *         otherwise
-     *         <p>
-     *         This method assumes a floating point value is stored and does not
-     *         do type checking. If this object's type differs from the return
-     *         type, and the conversion is lossy or the return value is out of
-     *         range, then this method returns an approximate value.
-     */
-    public static Double getIORegistryDoubleProperty(IORegistryEntry entry, String key) {
-        Double value = null;
-        CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-        CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
-                0);
-        if (valueAsCFType != null) {
-            CFNumberRef valueAsCFNumber = new CFNumberRef(valueAsCFType.getPointer());
-            value = valueAsCFNumber.doubleValue();
-        }
-        keyAsCFString.release();
-        if (valueAsCFType != null) {
-            valueAsCFType.release();
-        }
-        return value;
-    }
-
-    /**
-     * Convenience method to get a Boolean value from an IO Registry.
-     *
-     * @param entry
-     *            A handle to the registry entry
-     * @param key
-     *            The string name of the key to retrieve
-     * @return The value of the registry entry if it exists; {@code null}
-     *         otherwise
-     */
-    public static Boolean getIORegistryBooleanProperty(IORegistryEntry entry, String key) {
-        Boolean value = null;
-        CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-        CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
-                0);
-        if (valueAsCFType != null) {
-            CFBooleanRef valueAsCFBoolean = new CFBooleanRef(valueAsCFType.getPointer());
-            value = valueAsCFBoolean.booleanValue();
-        }
-        keyAsCFString.release();
-        if (valueAsCFType != null) {
-            valueAsCFType.release();
-        }
-        return value;
-    }
-
-    /**
-     * Convenience method to get a byte array value from an IO Registry.
-     *
-     * @param entry
-     *            A handle to the registry entry
-     * @param key
-     *            The string name of the key to retrieve
-     * @return The value of the registry entry if it exists; {@code null} otherwise
-     */
-    public static byte[] getIORegistryByteArrayProperty(IORegistryEntry entry, String key) {
-        byte[] value = null;
-        CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-        CFTypeRef valueAsCFType = IO.IORegistryEntryCreateCFProperty(entry, keyAsCFString, CF.CFAllocatorGetDefault(),
-                0);
-        if (valueAsCFType != null) {
-            CFDataRef valueAsCFData = new CFDataRef(valueAsCFType.getPointer());
-            int length = CF.CFDataGetLength(valueAsCFData).intValue();
-            Pointer p = CF.CFDataGetBytePtr(valueAsCFData);
-            value = p.getByteArray(0, length);
-        }
-        keyAsCFString.release();
-        if (valueAsCFType != null) {
-            valueAsCFType.release();
-        }
-        return value;
     }
 }

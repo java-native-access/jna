@@ -103,7 +103,7 @@ public class IOKitTest {
         String serialNumber = cfSerial.stringValue();
 
         // Test util method for the same thing
-        String serialNumberViaUtil = IOKitUtil.getIORegistryStringProperty(platformExpert, "IOPlatformSerialNumber");
+        String serialNumberViaUtil = platformExpert.getStringProperty("IOPlatformSerialNumber");
         assertEquals(serialNumber, serialNumberViaUtil);
 
         assertEquals(12, serialNumber.length());
@@ -136,7 +136,7 @@ public class IOKitTest {
         cfSerialAsType.release();
 
         assertEquals(0, root.release());
-        assertEquals(0, SYS.mach_port_deallocate(SystemB.INSTANCE.mach_task_self(),
+        assertEquals(0, SYS.mach_port_deallocate(SYS.mach_task_self(),
                 masterPort));
     }
 
@@ -212,7 +212,7 @@ public class IOKitTest {
             controllerDevice = iter.next();
         }
         assertEquals(0, iter.release());
-        assertEquals(0, SYS.mach_port_deallocate(SystemB.INSTANCE.mach_task_self(),
+        assertEquals(0, SYS.mach_port_deallocate(SYS.mach_task_self(),
                 masterPort));
     }
 
@@ -234,7 +234,7 @@ public class IOKitTest {
 
         IO.IOServiceClose(conn);
         assertEquals(0, smcService.release());
-        assertEquals(0, SYS.mach_port_deallocate(SystemB.INSTANCE.mach_task_self(),
+        assertEquals(0, SYS.mach_port_deallocate(SYS.mach_task_self(),
                 masterPort));
     }
 

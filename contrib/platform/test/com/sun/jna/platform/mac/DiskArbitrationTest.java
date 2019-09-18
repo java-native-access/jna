@@ -89,11 +89,11 @@ public class DiskArbitrationTest {
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
             if (cfWholeBool.booleanValue()) {
                 // check that util boolean matches
-                assertTrue(IOKitUtil.getIORegistryBooleanProperty(media, "Whole"));
+                assertTrue(media.getBooleanProperty("Whole"));
                 // check long, int, double values for major
-                Long majorLong = IOKitUtil.getIORegistryLongProperty(media, "BSD Major");
-                Integer majorInt = IOKitUtil.getIORegistryIntProperty(media, "BSD Major");
-                Double majorDouble = IOKitUtil.getIORegistryDoubleProperty(media, "BSD Major");
+                Long majorLong = media.getLongProperty("BSD Major");
+                Integer majorInt = media.getIntegerProperty("BSD Major");
+                Double majorDouble = media.getDoubleProperty("BSD Major");
                 assertNotNull(majorLong);
                 assertNotNull(majorInt);
                 assertNotNull(majorDouble);
@@ -104,7 +104,7 @@ public class DiskArbitrationTest {
                 bsdNames.add(DA.DADiskGetBSDName(disk));
                 disk.release();
             } else {
-                assertFalse(IOKitUtil.getIORegistryBooleanProperty(media, "Whole"));
+                assertFalse(media.getBooleanProperty("Whole"));
             }
             cfWhole.release();
             assertEquals(0, media.release());
