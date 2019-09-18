@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.CoreFoundation.CFArrayRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFBooleanRef;
@@ -47,11 +46,9 @@ import com.sun.jna.platform.mac.CoreFoundation.CFStringRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFTypeRef;
 import com.sun.jna.platform.mac.IOKit.IOConnect;
 import com.sun.jna.platform.mac.IOKit.IOIterator;
-import com.sun.jna.platform.mac.IOKit.IOObject;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKit.IOService;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IOKitTest {
@@ -91,7 +88,7 @@ public class IOKitTest {
 
         // Get matching service (consumes dict reference)
         IORegistryEntry platformExpert = IO.IOServiceGetMatchingService(masterPort, dict);
-        assertNotNull(platformExpert.getPointer());
+        assertNull(platformExpert.getChildEntry("IOService"));
         // Get a single key
         CFStringRef serialKey = CFStringRef.createCFString("IOPlatformSerialNumber");
         CFTypeRef cfSerialAsType = platformExpert.createCFProperty(serialKey);
@@ -105,9 +102,7 @@ public class IOKitTest {
 
         assertEquals(12, serialNumber.length());
         // Get all the keys
-        PointerByReference properties = new PointerByReference();
-        assertEquals(0, platformExpert.createCFProperties(properties));
-        dict = new CFMutableDictionaryRef(properties.getValue());
+        dict = platformExpert.createCFProperties();
         assertNotEquals(0, dict.getValueIfPresent(serialKey, null));
         result = dict.getValue(serialKey);
         cfSerial = new CFStringRef(result);
@@ -118,6 +113,7 @@ public class IOKitTest {
         // Get a single key from a nested entry
         IORegistryEntry root = IOKitUtil.getRoot();
         assertNotNull(root);
+        assertNull(root.getParentEntry("IOService"));
         cfSerialAsType = root.searchCFProperty("IOService", serialKey, 0);
         // without recursive search should be null
         assertNull(cfSerialAsType);
@@ -143,53 +139,42 @@ public class IOKitTest {
         assertNotNull(iter);
         IORegistryEntry controllerDevice = iter.next();
         while (controllerDevice != null) {
-            LongByReference id = new LongByReference();
-            assertEquals(0, controllerDevice.getRegistryEntryID(id));
+            long id = controllerDevice.getRegistryEntryID();
             // EntryIDs 0 thru 19 are reserved, all are unique
-            assertTrue(id.getValue() > 19);
-            assertFalse(uniqueEntryIdSet.contains(id.getValue()));
-            uniqueEntryIdSet.add(id.getValue());
+            assertTrue(id > 19);
+            assertFalse(uniqueEntryIdSet.contains(id));
+            uniqueEntryIdSet.add(id);
 
             // Get device name
-            // Corresponds to io_name_t which is char[128]
-            Memory buffer = new Memory(128);
-            controllerDevice.getName(buffer);
+            String controllerName = controllerDevice.getName();
             // Root controllers always begin with "AppleUSB"
-            assertEquals("AppleUSB", buffer.getString(0).substring(0, 8));
+            assertEquals("AppleUSB", controllerName.substring(0, 8));
 
             // Get the first child, to test vs. iterator
-            PointerByReference firstChildPtr = new PointerByReference();
             boolean testFirstChild = true;
-            // If this returns 0, we have at least one child entry to test
-            // If not, the iterator will never check whether to test
-            controllerDevice.getChildEntry("IOService", firstChildPtr);
+            IORegistryEntry firstChild = controllerDevice.getChildEntry("IOService");
+            // If this returns non-null, we have at least one child entry to
+            // test. If not, the iterator will never check whether to test
 
             // Now iterate the children of this device in the "IOService" plane.
-            PointerByReference childIterPtr = new PointerByReference();
-            controllerDevice.getChildIterator("IOService", childIterPtr);
-            IOIterator childIter = new IOIterator(childIterPtr.getValue());
+            IOIterator childIter = controllerDevice.getChildIterator("IOService");
             IORegistryEntry childDevice = childIter.next();
             while (childDevice != null) {
                 assertTrue(childDevice.conformsTo("IOUSBDevice"));
-
-                LongByReference childId = new LongByReference();
-                childDevice.getRegistryEntryID(childId);
-                assertTrue(childId.getValue() > 19);
-                assertFalse(uniqueEntryIdSet.contains(childId.getValue()));
-                uniqueEntryIdSet.add(childId.getValue());
+                long childId = childDevice.getRegistryEntryID();
+                assertTrue(childId > 19);
+                assertFalse(uniqueEntryIdSet.contains(childId));
+                uniqueEntryIdSet.add(childId);
 
                 // If first child, test and release the retained first child pointer
                 if (testFirstChild) {
-                    IOObject firstChild = new IOObject(firstChildPtr.getValue());
                     assertEquals(childDevice, firstChild);
                     assertEquals(0, firstChild.release());
                     testFirstChild = false;
                 }
 
                 // Get this device's parent in IOService plane, matches controller
-                PointerByReference parentPtr = new PointerByReference();
-                childDevice.getParentEntry("IOService", parentPtr);
-                IORegistryEntry parent = new IORegistryEntry(parentPtr.getValue());
+                IORegistryEntry parent = childDevice.getParentEntry("IOService");
                 assertEquals(controllerDevice, parent);
                 assertEquals(0, parent.release());
 

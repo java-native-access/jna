@@ -25,6 +25,7 @@
 package com.sun.jna.platform.mac;
 
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
@@ -51,6 +52,8 @@ public interface IOKit extends Library {
 
     int kIORegistryIterateRecursively = 0x00000001;
     int kIORegistryIterateParents = 0x00000002;
+
+    int kIOReturnNoDevice = 0xe00002c0;
 
     double kIOPSTimeRemainingUnlimited = -2.0;
     double kIOPSTimeRemainingUnknown = -1.0;
@@ -140,74 +143,101 @@ public interface IOKit extends Library {
         }
 
         /**
-         * Convenience method for {@link #IORegistryEntryGetRegistryEntryID} to return
-         * an ID for this registry entry that is global to all tasks.
+         * Convenience method for {@link #IORegistryEntryGetRegistryEntryID} to
+         * return an ID for this registry entry that is global to all tasks.
          *
-         * @param id
-         *            The resulting ID.
-         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         * @return the ID.
+         * @throws IOReturnException
+         *             if the ID could not be retrieved.
          */
-        public int getRegistryEntryID(LongByReference id) {
-            return INSTANCE.IORegistryEntryGetRegistryEntryID(this, id);
+        public long getRegistryEntryID() {
+            LongByReference id = new LongByReference();
+            int kr = INSTANCE.IORegistryEntryGetRegistryEntryID(this, id);
+            if (kr != 0) {
+                throw new IOReturnException(kr);
+            }
+            return id.getValue();
         }
 
         /**
-         * Convenience method for {@link #IORegistryEntryGetName} to return a name
-         * assigned to this registry entry.
+         * Convenience method for {@link #IORegistryEntryGetName} to return a
+         * name assigned to this registry entry.
          *
-         * @param name
-         *            The caller's buffer to receive the name. This must be a 128-byte
-         *            buffer.
-         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         * @return The name
+         * @throws IOReturnException
+         *             if the name could not be retrieved.
          */
-        public int getName(Pointer name) {
-            return INSTANCE.IORegistryEntryGetName(this, name);
+        public String getName() {
+            Memory name = new Memory(128);
+            int kr = INSTANCE.IORegistryEntryGetName(this, name);
+            if (kr != 0) {
+                throw new IOReturnException(kr);
+            }
+            return name.getString(0);
         }
 
         /**
-         * Convenience method for {@link #IORegistryEntryGetChildIterator} to return an
-         * iterator over this registry entry’s child entries in a plane.
+         * Convenience method for {@link #IORegistryEntryGetChildIterator} to
+         * return an iterator over this registry entry’s child entries in a
+         * plane.
          *
          * @param plane
-         *            The name of an existing registry plane. Plane names are defined in
-         *            {@code IOKitKeys.h}, for example, {@code kIOServicePlane}.
-         * @param iter
-         *            The created iterator over the children of the entry, on success.
-         *            The iterator must be released when the iteration is finished.
-         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         *            The name of an existing registry plane. Plane names are
+         *            defined in {@code IOKitKeys.h}, for example,
+         *            {@code kIOServicePlane}.
+         * @return The iterator
+         * @throws IOReturnException
+         *             if the iterator could not be retrieved.
          */
-        public int getChildIterator(String plane, PointerByReference iter) {
-            return INSTANCE.IORegistryEntryGetChildIterator(this, plane, iter);
+        public IOIterator getChildIterator(String plane) {
+            PointerByReference iter = new PointerByReference();
+            int kr = INSTANCE.IORegistryEntryGetChildIterator(this, plane, iter);
+            if (kr != 0) {
+                throw new IOReturnException(kr);
+            }
+            return new IOIterator(iter.getValue());
         }
 
         /**
-         * Convenience method for {@link #IORegistryEntryGetChildEntry} to return the
-         * first child of this registry entry in a plane.
+         * Convenience method for {@link #IORegistryEntryGetChildEntry} to
+         * return the first child of this registry entry in a plane.
          *
          * @param plane
          *            The name of an existing registry plane.
-         * @param child
-         *            The first child of the registry entry, on success. The child must
-         *            be released by the caller.
-         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         * @return The child registry entry, if a child exists, null otherwise
+         * @throws IOReturnException
+         *             if the entry exists but could not be retrieved.
          */
-        public int getChildEntry(String plane, PointerByReference child) {
-            return INSTANCE.IORegistryEntryGetChildEntry(this, plane, child);
+        public IORegistryEntry getChildEntry(String plane) {
+            PointerByReference child = new PointerByReference();
+            int kr = INSTANCE.IORegistryEntryGetChildEntry(this, plane, child);
+            if (kr == kIOReturnNoDevice) {
+                return null;
+            } else if (kr != 0) {
+                throw new IOReturnException(kr);
+            }
+            return new IORegistryEntry(child.getValue());
         }
 
         /**
-         * Convenience method for {@link #IORegistryEntryGetParentEntry} to return the
-         * first parent of this registry entry in a plane.
+         * Convenience method for {@link #IORegistryEntryGetParentEntry} to
+         * return the first parent of this registry entry in a plane.
          *
          * @param plane
          *            The name of an existing registry plane.
-         * @param parent
-         *            The first parent of the registry entry, on success. The parent
-         *            must be released by the caller.
-         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         * @return The parent registry entry, if a parent exists, null otherwise
+         * @throws IOReturnException
+         *             if the entry exists but could not be retrieved.
          */
-        public int getParentEntry(String plane, PointerByReference parent) {
-            return INSTANCE.IORegistryEntryGetParentEntry(this, plane, parent);
+        public IORegistryEntry getParentEntry(String plane) {
+            PointerByReference parent = new PointerByReference();
+            int kr = INSTANCE.IORegistryEntryGetParentEntry(this, plane, parent);
+            if (kr == kIOReturnNoDevice) {
+                return null;
+            } else if (kr != 0) {
+                throw new IOReturnException(kr);
+            }
+            return new IORegistryEntry(parent.getValue());
         }
 
         /**
@@ -226,17 +256,25 @@ public interface IOKit extends Library {
         }
 
         /**
-         * Convenience method for {@link #IORegistryEntryCreateCFProperties} to create a
-         * CF dictionary representation of this registry entry's property table.
+         * Convenience method for {@link #IORegistryEntryCreateCFProperties} to
+         * create a CF dictionary representation of this registry entry's
+         * property table.
          *
-         * @param properties
-         *            A CFDictionary is created and returned the caller on success. The
-         *            caller should release with CFRelease.
-         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         * @return The property table.
+         *         <p>
+         *         The caller should release with
+         *         {@link CoreFoundation#CFRelease}.
+         * @throws IOReturnException
+         *             if the entry could not be retrieved.
          */
-        public int createCFProperties(PointerByReference properties) {
-            return INSTANCE.IORegistryEntryCreateCFProperties(this, properties,
+        public CFMutableDictionaryRef createCFProperties() {
+            PointerByReference properties = new PointerByReference();
+            int kr = INSTANCE.IORegistryEntryCreateCFProperties(this, properties,
                     CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+            if (kr != 0) {
+                throw new IOReturnException(kr);
+            }
+            return new CFMutableDictionaryRef(properties.getValue());
         }
 
         /**
