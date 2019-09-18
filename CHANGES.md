@@ -15,6 +15,7 @@ Bug Fixes
 * [#1127](https://github.com/java-native-access/jna/issues/1127): Windows needs a wide string in `c.s.j.p.win32.COM.IShellFolder#ParseDisplayName` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1128](https://github.com/java-native-access/jna/issues/1128): KEY_ALL_ACCESS value is incorrect in `c.s.j.p.win32.WinNT.java` - [@trevormaggs](https://github.com/trevormaggs).
 * [#1133](https://github.com/java-native-access/jna/issues/1133): Ensure JARs created from the build system don't contain invalid `Info-ZIP Unicode Path` extra info - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1134](https://github.com/java-native-access/jna/issues/1134): Read correct member of `WinBase.SYSTEM_INFO.processorArchitecture` union - [@dbwiddis](https://github.com/dbwiddis).
 
 Release 5.4.0
 =============
