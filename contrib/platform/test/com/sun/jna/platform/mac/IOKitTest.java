@@ -41,7 +41,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.CoreFoundation.CFArrayRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFBooleanRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFDictionaryRef;
-import com.sun.jna.platform.mac.CoreFoundation.CFIndex;
 import com.sun.jna.platform.mac.CoreFoundation.CFMutableDictionaryRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFStringRef;
@@ -108,8 +107,7 @@ public class IOKitTest {
         // Get all the keys
         PointerByReference properties = new PointerByReference();
         assertEquals(0, platformExpert.createCFProperties(properties));
-        dict = new CFMutableDictionaryRef();
-        dict.setPointer(properties.getValue());
+        dict = new CFMutableDictionaryRef(properties.getValue());
         assertNotEquals(0, dict.getValueIfPresent(serialKey, null));
         result = dict.getValue(serialKey);
         cfSerial = new CFStringRef(result);
@@ -243,27 +241,26 @@ public class IOKitTest {
         CFStringRef isPresentKey = CFStringRef.createCFString("Is Present");
         CFStringRef currentCapacityKey = CFStringRef.createCFString("Current Capacity");
         CFStringRef maxCapacityKey = CFStringRef.createCFString("Max Capacity");
-        int powerSourcesCount = powerSourcesList.getCount().intValue();
+        int powerSourcesCount = powerSourcesList.getCount();
         for (int ps = 0; ps < powerSourcesCount; ps++) {
             // Get the dictionary for that Power Source
-            Pointer pwrSrcPtr = powerSourcesList.getValueAtIndex(new CFIndex(ps));
-            CFTypeRef powerSource = new CFTypeRef();
-            powerSource.setPointer(pwrSrcPtr);
+            Pointer pwrSrcPtr = powerSourcesList.getValueAtIndex(ps);
+            CFTypeRef powerSource = new CFTypeRef(pwrSrcPtr);
             CFDictionaryRef dictionary = IOKit.INSTANCE.IOPSGetPowerSourceDescription(powerSourcesInfo, powerSource);
 
             // Get values from dictionary (See IOPSKeys.h)
             // Skip if not present
             PointerByReference result = new PointerByReference();
-            if (0 != dictionary.getValueIfPresent(isPresentKey, result)) {
+            if (dictionary.getValueIfPresent(isPresentKey, result)) {
                 CFBooleanRef isPresentRef = new CFBooleanRef(result.getValue());
                 if (isPresentRef.booleanValue()) {
                     int currentCapacity = 0;
-                    if (0 != dictionary.getValueIfPresent(currentCapacityKey, result)) {
+                    if (dictionary.getValueIfPresent(currentCapacityKey, result)) {
                         CFNumberRef cap = new CFNumberRef(result.getValue());
                         currentCapacity = cap.intValue();
                     }
                     int maxCapacity = 100;
-                    if (0 != dictionary.getValueIfPresent(maxCapacityKey, result)) {
+                    if (dictionary.getValueIfPresent(maxCapacityKey, result)) {
                         CFNumberRef cap = new CFNumberRef(result.getValue());
                         maxCapacity = cap.intValue();
                     }

@@ -322,8 +322,8 @@ public interface CoreFoundation extends Library {
          *
          * @return The number of values in this array.
          */
-        public CFIndex getCount() {
-            return INSTANCE.CFArrayGetCount(this);
+        public int getCount() {
+            return INSTANCE.CFArrayGetCount(this).intValue();
         }
 
         /**
@@ -333,8 +333,8 @@ public interface CoreFoundation extends Library {
          *            The index of the value to retrieve.
          * @return The value at the {@code idx} index.
          */
-        public Pointer getValueAtIndex(CFIndex idx) {
-            return INSTANCE.CFArrayGetValueAtIndex(this, idx);
+        public Pointer getValueAtIndex(int idx) {
+            return INSTANCE.CFArrayGetValueAtIndex(this, new CFIndex(idx));
         }
     }
 
@@ -359,8 +359,8 @@ public interface CoreFoundation extends Library {
          * @return An index that specifies the number of bytes associated with this
          *         object.
          */
-        public CFIndex getLength() {
-            return INSTANCE.CFDataGetLength(this);
+        public int getLength() {
+            return INSTANCE.CFDataGetLength(this).intValue();
         }
 
         /**
@@ -402,18 +402,19 @@ public interface CoreFoundation extends Library {
         }
 
         /**
-         * Convenience method for {@link CoreFoundation#CFDictionaryGetValueIfPresent}
-         * on this object.
+         * Convenience method for
+         * {@link CoreFoundation#CFDictionaryGetValueIfPresent} on this object.
          *
          * @param key
          *            The key for which to find a match.
          * @param value
          *            A pointer to memory which, on return, is filled with the
          *            pointer-sized value if a matching key is found.
-         * @return 1 if a matching key was found, otherwise 0
+         * @return {@code true} if a matching key was found, otherwise
+         *         {@code false}
          */
-        public byte getValueIfPresent(PointerType key, PointerByReference value) {
-            return INSTANCE.CFDictionaryGetValueIfPresent(this, key, value);
+        public boolean getValueIfPresent(PointerType key, PointerByReference value) {
+            return INSTANCE.CFDictionaryGetValueIfPresent(this, key, value) > 0;
         }
     }
 

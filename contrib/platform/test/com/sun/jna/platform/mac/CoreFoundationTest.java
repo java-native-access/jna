@@ -26,6 +26,7 @@ package com.sun.jna.platform.mac;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -141,9 +142,9 @@ public class CoreFoundationTest {
         CFArrayRef cfPtrArray = CF.CFArrayCreate(null, contiguousArray, new CFIndex(refArray.length), null);
         assertEquals(CoreFoundation.ARRAY_TYPE_ID, cfPtrArray.getTypeID());
 
-        assertEquals(refArray.length, cfPtrArray.getCount().intValue());
+        assertEquals(refArray.length, cfPtrArray.getCount());
         for (int i = 0; i < refArray.length; i++) {
-            Pointer result = cfPtrArray.getValueAtIndex(new CFIndex(i));
+            Pointer result = cfPtrArray.getValueAtIndex(i);
             try {
                 new CFStringRef(result);
                 fail("Should have thrown a ClassCastExcpetion.");
@@ -173,7 +174,7 @@ public class CoreFoundationTest {
         CFDataRef cfData = CF.CFDataCreate(null, nativeBytes, new CFIndex(size));
         assertEquals(CoreFoundation.DATA_TYPE_ID, cfData.getTypeID());
 
-        int dataSize = cfData.getLength().intValue();
+        int dataSize = cfData.getLength();
         assertEquals(size, dataSize);
         // Read it back out and convert to an array
         Pointer bytes = cfData.getBytePtr();
@@ -191,13 +192,13 @@ public class CoreFoundationTest {
         CFStringRef oneStr = CFStringRef.createCFString("one");
 
         // Key does not exist, returns null
-        assertEquals(0, dict.getValueIfPresent(oneStr, null));
+        assertFalse(dict.getValueIfPresent(oneStr, null));
         Pointer cfNull = dict.getValue(oneStr);
         assertNull(cfNull);
 
         // Store and retrieve null value
         dict.setValue(oneStr, null);
-        assertNotEquals(0, dict.getValueIfPresent(oneStr, null));
+        assertTrue(dict.getValueIfPresent(oneStr, null));
         Pointer cfNullValue = dict.getValue(oneStr);
         assertNull(cfNullValue);
 
@@ -206,13 +207,13 @@ public class CoreFoundationTest {
         CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.typeIndex(), one);
         dict.setValue(oneStr, cfOne);
 
-        assertNotEquals(0, dict.getValueIfPresent(oneStr, null));
+        assertTrue(dict.getValueIfPresent(oneStr, null));
         Pointer result = dict.getValue(oneStr);
         CFNumberRef numRef = new CFNumberRef(result);
         assertEquals(1, numRef.intValue());
 
         PointerByReference resultPtr = new PointerByReference();
-        assertNotEquals(0, dict.getValueIfPresent(oneStr, resultPtr));
+        assertTrue(dict.getValueIfPresent(oneStr, resultPtr));
         numRef = new CFNumberRef(resultPtr.getValue());
         assertEquals(1, numRef.intValue());
 
