@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -64,7 +65,7 @@ public class CoreFoundationTest {
         CFStringRef cfAwesome = CFStringRef.createCFString(awesome);
         assertEquals(awesome.length(), CF.CFStringGetLength(cfAwesome).intValue());
         assertEquals(awesome, cfAwesome.stringValue());
-        assertEquals(CF.CFStringGetTypeID(), cfAwesome.getTypeID());
+        assertEquals(CoreFoundation.STRING_TYPE_ID, cfAwesome.getTypeID());
 
         byte[] awesomeArr = awesome.getBytes("UTF-8");
         Memory mem = new Memory(awesomeArr.length + 1);
@@ -86,7 +87,7 @@ public class CoreFoundationTest {
         LongByReference max = new LongByReference(Long.MAX_VALUE);
         CFNumberRef cfMax = CF.CFNumberCreate(null, CFNumberType.kCFNumberLongLongType.typeIndex(), max);
         assertEquals(Long.MAX_VALUE, cfMax.longValue());
-        assertEquals(CF.CFNumberGetTypeID(), cfMax.getTypeID());
+        assertEquals(CoreFoundation.NUMBER_TYPE_ID, cfMax.getTypeID());
         cfMax.release();
 
         IntByReference zero = new IntByReference(0);
@@ -138,11 +139,17 @@ public class CoreFoundationTest {
             contiguousArray.setPointer(i * size, refArray[i].getPointer());
         }
         CFArrayRef cfPtrArray = CF.CFArrayCreate(null, contiguousArray, new CFIndex(refArray.length), null);
-        assertEquals(CF.CFArrayGetTypeID(), cfPtrArray.getTypeID());
+        assertEquals(CoreFoundation.ARRAY_TYPE_ID, cfPtrArray.getTypeID());
 
         assertEquals(refArray.length, cfPtrArray.getCount().intValue());
         for (int i = 0; i < refArray.length; i++) {
             Pointer result = cfPtrArray.getValueAtIndex(new CFIndex(i));
+            try {
+                new CFStringRef(result);
+                fail("Should have thrown a ClassCastExcpetion.");
+            } catch (ClassCastException expected) {
+                assertEquals("Unable to cast to CFString. Type ID: CFNumber", expected.getMessage());
+            }
             CFNumberRef numRef = new CFNumberRef(result);
             assertEquals(i, numRef.intValue());
         }
@@ -164,7 +171,7 @@ public class CoreFoundationTest {
         nativeBytes.write(0, randomBytes, 0, randomBytes.length);
         // Create a CF reference to the data
         CFDataRef cfData = CF.CFDataCreate(null, nativeBytes, new CFIndex(size));
-        assertEquals(CF.CFDataGetTypeID(), cfData.getTypeID());
+        assertEquals(CoreFoundation.DATA_TYPE_ID, cfData.getTypeID());
 
         int dataSize = cfData.getLength().intValue();
         assertEquals(size, dataSize);
@@ -179,7 +186,7 @@ public class CoreFoundationTest {
     public void testCFDictionary() {
         CFAllocatorRef alloc = CF.CFAllocatorGetDefault();
         CFMutableDictionaryRef dict = CF.CFDictionaryCreateMutable(alloc, new CFIndex(2), null, null);
-        assertEquals(CF.CFDictionaryGetTypeID(), dict.getTypeID());
+        assertEquals(CoreFoundation.DICTIONARY_TYPE_ID, dict.getTypeID());
 
         CFStringRef oneStr = CFStringRef.createCFString("one");
 

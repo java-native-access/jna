@@ -87,7 +87,7 @@ public class DiskArbitrationTest {
             CFTypeRef cfWhole = media.createCFProperty(wholeKey);
             assertNotNull(cfWhole);
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
-            assertEquals(CF.CFBooleanGetTypeID(), cfWholeBool.getTypeID());
+            assertEquals(CoreFoundation.BOOLEAN_TYPE_ID, cfWholeBool.getTypeID());
             if (cfWholeBool.booleanValue()) {
                 // check that util boolean matches
                 assertTrue(media.getBooleanProperty("Whole"));

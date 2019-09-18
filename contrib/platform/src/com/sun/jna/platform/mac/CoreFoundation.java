@@ -65,6 +65,14 @@ public interface CoreFoundation extends Library {
     int kCFStringEncodingASCII = 0x0600;
     int kCFStringEncodingUTF8 = 0x08000100;
 
+    CFTypeID ARRAY_TYPE_ID = INSTANCE.CFArrayGetTypeID();
+    CFTypeID BOOLEAN_TYPE_ID = INSTANCE.CFBooleanGetTypeID();
+    CFTypeID DATA_TYPE_ID = INSTANCE.CFDataGetTypeID();
+    CFTypeID DATE_TYPE_ID = INSTANCE.CFDateGetTypeID();
+    CFTypeID DICTIONARY_TYPE_ID = INSTANCE.CFDictionaryGetTypeID();
+    CFTypeID NUMBER_TYPE_ID = INSTANCE.CFNumberGetTypeID();
+    CFTypeID STRING_TYPE_ID = INSTANCE.CFStringGetTypeID();
+
     /**
      * The {@code CFTypeRef} type is the base type defined in Core Foundation. It is
      * used as the type and return value in several polymorphic functions. It is a
@@ -82,9 +90,25 @@ public interface CoreFoundation extends Library {
 
         /**
          * Convenience method for {@link CoreFoundation#CFGetTypeID} on this object.
+         *
+         * @return The {@link CFTypeID}
          */
         public CFTypeID getTypeID() {
+            if (this.getPointer() == null) {
+                return new CFTypeID(0);
+            }
             return INSTANCE.CFGetTypeID(this);
+        }
+
+        /**
+         * Test whether this object has the specified ID
+         *
+         * @param typeID
+         *            The {@link CFTypeID} for the class to test
+         * @return true if this object has the same ID as {@code typeID}
+         */
+        public boolean isTypeID(CFTypeID typeID) {
+            return getTypeID().equals(typeID);
         }
 
         /**
@@ -120,6 +144,9 @@ public interface CoreFoundation extends Library {
 
         public CFNumberRef(Pointer p) {
             super(p);
+            if (!isTypeID(NUMBER_TYPE_ID)) {
+                throw new ClassCastException("Unable to cast to CFNumber. Type ID: " + getTypeID());
+            }
         }
 
         /**
@@ -256,6 +283,9 @@ public interface CoreFoundation extends Library {
 
         public CFBooleanRef(Pointer p) {
             super(p);
+            if (!isTypeID(BOOLEAN_TYPE_ID)) {
+                throw new ClassCastException("Unable to cast to CFBoolean. Type ID: " + getTypeID());
+            }
         }
 
         /**
@@ -282,6 +312,9 @@ public interface CoreFoundation extends Library {
 
         public CFArrayRef(Pointer p) {
             super(p);
+            if (!isTypeID(ARRAY_TYPE_ID)) {
+                throw new ClassCastException("Unable to cast to CFArray. Type ID: " + getTypeID());
+            }
         }
 
         /**
@@ -315,6 +348,9 @@ public interface CoreFoundation extends Library {
 
         public CFDataRef(Pointer p) {
             super(p);
+            if (!isTypeID(DATA_TYPE_ID)) {
+                throw new ClassCastException("Unable to cast to CFData. Type ID: " + getTypeID());
+            }
         }
 
         /**
@@ -347,6 +383,9 @@ public interface CoreFoundation extends Library {
 
         public CFDictionaryRef(Pointer p) {
             super(p);
+            if (!isTypeID(DICTIONARY_TYPE_ID)) {
+                throw new ClassCastException("Unable to cast to CFDictionary. Type ID: " + getTypeID());
+            }
         }
 
         /**
@@ -418,6 +457,9 @@ public interface CoreFoundation extends Library {
 
         public CFStringRef(Pointer p) {
             super(p);
+            if (!isTypeID(STRING_TYPE_ID)) {
+                throw new ClassCastException("Unable to cast to CFString. Type ID: " + getTypeID());
+            }
         }
 
         /**
@@ -493,6 +535,27 @@ public interface CoreFoundation extends Library {
 
         public CFTypeID(long value) {
             super(value);
+        }
+
+        @Override
+        public String toString() {
+            if (this.equals(ARRAY_TYPE_ID)) {
+                return "CFArray";
+            } else if (this.equals(BOOLEAN_TYPE_ID)) {
+                return "CFBoolean";
+            } else if (this.equals(DATA_TYPE_ID)) {
+                return "CFData";
+            } else if (this.equals(DATE_TYPE_ID)) {
+                return "CFDate";
+            } else if (this.equals(DICTIONARY_TYPE_ID)) {
+                return "CFDictionary";
+            } else if (this.equals(NUMBER_TYPE_ID)) {
+                return "CFNumber";
+            } else if (this.equals(STRING_TYPE_ID)) {
+                return "CFString";
+            } else {
+                return super.toString();
+            }
         }
     }
 
