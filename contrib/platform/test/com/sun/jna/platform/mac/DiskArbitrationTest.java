@@ -87,6 +87,7 @@ public class DiskArbitrationTest {
             CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
             assertNotNull(cfWhole);
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
+            assertEquals(CF.CFBooleanGetTypeID(), cfWholeBool.getTypeID());
             if (cfWholeBool.booleanValue()) {
                 // check that util boolean matches
                 assertTrue(media.getBooleanProperty("Whole"));
@@ -125,18 +126,18 @@ public class DiskArbitrationTest {
             assertNotNull(diskInfo);
 
             // Since we looked up "whole" BSD disks these should match
-            Pointer result = CF.CFDictionaryGetValue(diskInfo, daMediaBSDName);
+            Pointer result = diskInfo.getValue(daMediaBSDName);
             CFStringRef bsdNamePtr = new CFStringRef(result);
             assertEquals(bsdName, bsdNamePtr.stringValue());
-            result = CF.CFDictionaryGetValue(diskInfo, daMediaWhole);
+            result = diskInfo.getValue(daMediaWhole);
             CFBooleanRef bsdWholePtr = new CFBooleanRef(result);
             assertTrue(bsdWholePtr.booleanValue());
 
             // Size is a multiple of block size
-            result = CF.CFDictionaryGetValue(diskInfo, daMediaSize);
+            result = diskInfo.getValue(daMediaSize);
             CFNumberRef sizePtr = new CFNumberRef(result);
             long size = sizePtr.longValue();
-            result = CF.CFDictionaryGetValue(diskInfo, daMediaBlockSize);
+            result = diskInfo.getValue(daMediaBlockSize);
             CFNumberRef blockSizePtr = new CFNumberRef(result);
             long blockSize = blockSizePtr.longValue();
             assertEquals(0, size % blockSize);

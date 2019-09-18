@@ -81,6 +81,13 @@ public interface CoreFoundation extends Library {
         }
 
         /**
+         * Convenience method for {@link CoreFoundation#CFGetTypeID} on this object.
+         */
+        public CFTypeID getTypeID() {
+            return INSTANCE.CFGetTypeID(this);
+        }
+
+        /**
          * Convenience method for {@link CoreFoundation#CFRetain} on this object.
          */
         public void retain() {
@@ -276,6 +283,26 @@ public interface CoreFoundation extends Library {
         public CFArrayRef(Pointer p) {
             super(p);
         }
+
+        /**
+         * Convenience method for {@link #CFArrayGetCount} on this object
+         *
+         * @return The number of values in this array.
+         */
+        public CFIndex getCount() {
+            return INSTANCE.CFArrayGetCount(this);
+        }
+
+        /**
+         * Convenience method for {@link #CFArrayGetValueAtIndex} on this object
+         *
+         * @param idx
+         *            The index of the value to retrieve.
+         * @return The value at the {@code idx} index.
+         */
+        public Pointer getValueAtIndex(CFIndex idx) {
+            return INSTANCE.CFArrayGetValueAtIndex(this, idx);
+        }
     }
 
     /**
@@ -288,6 +315,25 @@ public interface CoreFoundation extends Library {
 
         public CFDataRef(Pointer p) {
             super(p);
+        }
+
+        /**
+         * Convenience method for {@link #CFDataGetLength} on this object
+         *
+         * @return An index that specifies the number of bytes associated with this
+         *         object.
+         */
+        public CFIndex getLength() {
+            return INSTANCE.CFDataGetLength(this);
+        }
+
+        /**
+         * Convenience method for {@link #CFDataGetBytePtr} on this object
+         *
+         * @return A read-only pointer to the bytes associated with this object.
+         */
+        public Pointer getBytePtr() {
+            return INSTANCE.CFDataGetBytePtr(this);
         }
     }
 
@@ -302,6 +348,34 @@ public interface CoreFoundation extends Library {
         public CFDictionaryRef(Pointer p) {
             super(p);
         }
+
+        /**
+         * Convenience method for {@link CoreFoundation#CFDictionaryGetValue} on this
+         * object.
+         *
+         * @param key
+         *            The key for which to find a match.
+         * @return The value associated with key, or {@code null} if no key-value pair
+         *         matching key exists.
+         */
+        public Pointer getValue(PointerType key) {
+            return INSTANCE.CFDictionaryGetValue(this, key);
+        }
+
+        /**
+         * Convenience method for {@link CoreFoundation#CFDictionaryGetValueIfPresent}
+         * on this object.
+         *
+         * @param key
+         *            The key for which to find a match.
+         * @param value
+         *            A pointer to memory which, on return, is filled with the
+         *            pointer-sized value if a matching key is found.
+         * @return 1 if a matching key was found, otherwise 0
+         */
+        public byte getValueIfPresent(PointerType key, PointerByReference value) {
+            return INSTANCE.CFDictionaryGetValueIfPresent(this, key, value);
+        }
     }
 
     /**
@@ -314,6 +388,21 @@ public interface CoreFoundation extends Library {
 
         public CFMutableDictionaryRef(Pointer p) {
             super(p);
+        }
+
+        /**
+         * Convenience method for {@link CoreFoundation#CFDictionarySetValue} on this
+         * object.
+         *
+         * @param theDict
+         *            The dictionary to modify.
+         * @param key
+         *            The key of the value to set.
+         * @param value
+         *            The value to add to or replace .
+         */
+        public void setValue(PointerType key, PointerType value) {
+            INSTANCE.CFDictionarySetValue(this, key, value);
         }
     }
 
@@ -387,13 +476,25 @@ public interface CoreFoundation extends Library {
     }
 
     /**
-     * Returns the number of values currently in an array.
-     *
-     * @param theArray
-     *            a {@link CFArrayRef} object.
-     * @return The number of values in {@code array}.
+     * A type for unique, constant integer values that identify particular Core
+     * Foundation opaque types.
+     * <p>
+     * Because the value for a type ID can change from release to release, your code
+     * should not rely on stored or hard-coded type IDs nor should it hard-code any
+     * observed properties of a type ID (such as, for example, it being a small
+     * integer).
      */
-    CFIndex CFArrayGetCount(CFArrayRef theArray);
+    class CFTypeID extends NativeLong {
+        private static final long serialVersionUID = 1L;
+
+        public CFTypeID() {
+            super();
+        }
+
+        public CFTypeID(long value) {
+            super(value);
+        }
+    }
 
     /**
      * Creates a string from a buffer of Unicode characters.
@@ -712,6 +813,15 @@ public interface CoreFoundation extends Library {
     byte CFBooleanGetValue(CFBooleanRef bool);
 
     /**
+     * Returns the number of values currently in an array.
+     *
+     * @param theArray
+     *            a {@link CFArrayRef} object.
+     * @return The number of values in {@code array}.
+     */
+    CFIndex CFArrayGetCount(CFArrayRef theArray);
+
+    /**
      * Retrieves a value at a given index.
      *
      * @param theArray
@@ -802,4 +912,55 @@ public interface CoreFoundation extends Library {
      * @return A read-only pointer to the bytes associated with {@code theData}.
      */
     Pointer CFDataGetBytePtr(CFDataRef theData);
+
+    /**
+     * Returns the type of a {@code CFType} object.
+     *
+     * @param theObject
+     *            The {@code CFData} object to examine.
+     * @return A value of type {@link CFTypeID} that identifies the opaque type of
+     *         {@code cf}.
+     */
+    CFTypeID CFGetTypeID(CFTypeRef theObject);
+
+    /**
+     * @return The type identifier for the {@code CFArray} opaque type.
+     */
+    CFTypeID CFArrayGetTypeID();
+
+    /**
+     * @return The type identifier for the {@code CFBoolean} opaque type.
+     */
+    CFTypeID CFBooleanGetTypeID();
+
+    /**
+     * @return The type identifier for the {@code CFDate} opaque type.
+     */
+    CFTypeID CFDateGetTypeID();
+
+    /**
+     * @return The type identifier for the {@code CFData} opaque type.
+     *         <p>
+     *         {@code CFMutableData} objects have the same type identifier as
+     *         {@code CFData} objects.
+     */
+    CFTypeID CFDataGetTypeID();
+
+    /**
+     * @return The type identifier for the {@code CFDictionary} opaque type.
+     *         <p>
+     *         {@code CFMutableDictionary} objects have the same type identifier as
+     *         {@code CFDictionary} objects.
+     */
+    CFTypeID CFDictionaryGetTypeID();
+
+    /**
+     * @return The type identifier for the {@code CFNumber} opaque type.
+     */
+    CFTypeID CFNumberGetTypeID();
+
+    /**
+     * @return The type identifier for the {@code CFString} opaque type.
+     */
+    CFTypeID CFStringGetTypeID();
 }

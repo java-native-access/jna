@@ -64,6 +64,7 @@ public class CoreFoundationTest {
         CFStringRef cfAwesome = CFStringRef.createCFString(awesome);
         assertEquals(awesome.length(), CF.CFStringGetLength(cfAwesome).intValue());
         assertEquals(awesome, cfAwesome.stringValue());
+        assertEquals(CF.CFStringGetTypeID(), cfAwesome.getTypeID());
 
         byte[] awesomeArr = awesome.getBytes("UTF-8");
         Memory mem = new Memory(awesomeArr.length + 1);
@@ -85,6 +86,7 @@ public class CoreFoundationTest {
         LongByReference max = new LongByReference(Long.MAX_VALUE);
         CFNumberRef cfMax = CF.CFNumberCreate(null, CFNumberType.kCFNumberLongLongType.typeIndex(), max);
         assertEquals(Long.MAX_VALUE, cfMax.longValue());
+        assertEquals(CF.CFNumberGetTypeID(), cfMax.getTypeID());
         cfMax.release();
 
         IntByReference zero = new IntByReference(0);
@@ -136,10 +138,11 @@ public class CoreFoundationTest {
             contiguousArray.setPointer(i * size, refArray[i].getPointer());
         }
         CFArrayRef cfPtrArray = CF.CFArrayCreate(null, contiguousArray, new CFIndex(refArray.length), null);
+        assertEquals(CF.CFArrayGetTypeID(), cfPtrArray.getTypeID());
 
-        assertEquals(refArray.length, CF.CFArrayGetCount(cfPtrArray).intValue());
+        assertEquals(refArray.length, cfPtrArray.getCount().intValue());
         for (int i = 0; i < refArray.length; i++) {
-            Pointer result = CF.CFArrayGetValueAtIndex(cfPtrArray, new CFIndex(i));
+            Pointer result = cfPtrArray.getValueAtIndex(new CFIndex(i));
             CFNumberRef numRef = new CFNumberRef(result);
             assertEquals(i, numRef.intValue());
         }
@@ -161,10 +164,12 @@ public class CoreFoundationTest {
         nativeBytes.write(0, randomBytes, 0, randomBytes.length);
         // Create a CF reference to the data
         CFDataRef cfData = CF.CFDataCreate(null, nativeBytes, new CFIndex(size));
-        int dataSize = CF.CFDataGetLength(cfData).intValue();
+        assertEquals(CF.CFDataGetTypeID(), cfData.getTypeID());
+
+        int dataSize = cfData.getLength().intValue();
         assertEquals(size, dataSize);
         // Read it back out and convert to an array
-        Pointer bytes = CF.CFDataGetBytePtr(cfData);
+        Pointer bytes = cfData.getBytePtr();
         byte[] dataBytes = bytes.getByteArray(0, dataSize);
         assertArrayEquals(randomBytes, dataBytes);
         cfData.release();
@@ -174,38 +179,40 @@ public class CoreFoundationTest {
     public void testCFDictionary() {
         CFAllocatorRef alloc = CF.CFAllocatorGetDefault();
         CFMutableDictionaryRef dict = CF.CFDictionaryCreateMutable(alloc, new CFIndex(2), null, null);
+        assertEquals(CF.CFDictionaryGetTypeID(), dict.getTypeID());
+
         CFStringRef oneStr = CFStringRef.createCFString("one");
 
         // Key does not exist, returns null
-        assertEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, null));
-        Pointer cfNull = CF.CFDictionaryGetValue(dict, oneStr);
+        assertEquals(0, dict.getValueIfPresent(oneStr, null));
+        Pointer cfNull = dict.getValue(oneStr);
         assertNull(cfNull);
 
         // Store and retrieve null value
-        CF.CFDictionarySetValue(dict, oneStr, null);
-        assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, null));
-        Pointer cfNullValue = CF.CFDictionaryGetValue(dict, oneStr);
+        dict.setValue(oneStr, null);
+        assertNotEquals(0, dict.getValueIfPresent(oneStr, null));
+        Pointer cfNullValue = dict.getValue(oneStr);
         assertNull(cfNullValue);
 
         // Store (replace the null) and retrieve integer value
         IntByReference one = new IntByReference(1);
         CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.typeIndex(), one);
-        CF.CFDictionarySetValue(dict, oneStr, cfOne);
+        dict.setValue(oneStr, cfOne);
 
-        assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, null));
-        Pointer result = CF.CFDictionaryGetValue(dict, oneStr);
+        assertNotEquals(0, dict.getValueIfPresent(oneStr, null));
+        Pointer result = dict.getValue(oneStr);
         CFNumberRef numRef = new CFNumberRef(result);
         assertEquals(1, numRef.intValue());
 
         PointerByReference resultPtr = new PointerByReference();
-        assertNotEquals(0, CF.CFDictionaryGetValueIfPresent(dict, oneStr, resultPtr));
+        assertNotEquals(0, dict.getValueIfPresent(oneStr, resultPtr));
         numRef = new CFNumberRef(resultPtr.getValue());
         assertEquals(1, numRef.intValue());
 
         // Test non-CF type as key
         IntByReference onePtr = new IntByReference(1);
-        CF.CFDictionarySetValue(dict, onePtr, oneStr);
-        result = CF.CFDictionaryGetValue(dict, onePtr);
+        dict.setValue(onePtr, oneStr);
+        result = dict.getValue(onePtr);
         CFStringRef strRef = new CFStringRef(result);
         assertEquals("one", strRef.stringValue());
 

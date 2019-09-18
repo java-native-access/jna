@@ -268,8 +268,8 @@ public interface IOKit extends Library {
             keyAsCFString.release();
             if (valueAsCFType != null) {
                 CFDataRef valueAsCFData = new CFDataRef(valueAsCFType.getPointer());
-                int length = CoreFoundation.INSTANCE.CFDataGetLength(valueAsCFData).intValue();
-                Pointer p = CoreFoundation.INSTANCE.CFDataGetBytePtr(valueAsCFData);
+                int length = valueAsCFData.getLength().intValue();
+                Pointer p = valueAsCFData.getBytePtr();
                 value = p.getByteArray(0, length);
                 valueAsCFType.release();
             }
