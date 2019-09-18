@@ -84,7 +84,7 @@ public class DiskArbitrationTest {
         IOIterator iter = new IOIterator(iterPtr.getValue());
         IORegistryEntry media = iter.next();
         while (media != null) {
-            CFTypeRef cfWhole = IO.IORegistryEntryCreateCFProperty(media, wholeKey, CF.CFAllocatorGetDefault(), 0);
+            CFTypeRef cfWhole = media.createCFProperty(wholeKey);
             assertNotNull(cfWhole);
             CFBooleanRef cfWholeBool = new CFBooleanRef(cfWhole.getPointer());
             assertEquals(CF.CFBooleanGetTypeID(), cfWholeBool.getTypeID());

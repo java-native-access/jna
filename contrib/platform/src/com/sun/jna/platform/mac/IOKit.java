@@ -82,6 +82,18 @@ public interface IOKit extends Library {
         }
 
         /**
+         * Convenience method for {@link IOKit#IOObjectConformsTo} on this object.
+         *
+         * @param className
+         *            The name of the class.
+         * @return If the object handle is valid, and represents an object in the kernel
+         *         that dynamic casts to the class true is returned, otherwise false.
+         */
+        public boolean conformsTo(String className) {
+            return INSTANCE.IOObjectConformsTo(this, className);
+        }
+
+        /**
          * Convenience method for {@link IOKit#IOObjectRelease} on this object.
          *
          * @return 0 if successful, otherwise a {@code kern_return_t} error code.
@@ -128,6 +140,130 @@ public interface IOKit extends Library {
         }
 
         /**
+         * Convenience method for {@link #IORegistryEntryGetRegistryEntryID} to return
+         * an ID for this registry entry that is global to all tasks.
+         *
+         * @param id
+         *            The resulting ID.
+         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         */
+        public int getRegistryEntryID(LongByReference id) {
+            return INSTANCE.IORegistryEntryGetRegistryEntryID(this, id);
+        }
+
+        /**
+         * Convenience method for {@link #IORegistryEntryGetName} to return a name
+         * assigned to this registry entry.
+         *
+         * @param name
+         *            The caller's buffer to receive the name. This must be a 128-byte
+         *            buffer.
+         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         */
+        public int getName(Pointer name) {
+            return INSTANCE.IORegistryEntryGetName(this, name);
+        }
+
+        /**
+         * Convenience method for {@link #IORegistryEntryGetChildIterator} to return an
+         * iterator over this registry entry’s child entries in a plane.
+         *
+         * @param plane
+         *            The name of an existing registry plane. Plane names are defined in
+         *            {@code IOKitKeys.h}, for example, {@code kIOServicePlane}.
+         * @param iter
+         *            The created iterator over the children of the entry, on success.
+         *            The iterator must be released when the iteration is finished.
+         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         */
+        public int getChildIterator(String plane, PointerByReference iter) {
+            return INSTANCE.IORegistryEntryGetChildIterator(this, plane, iter);
+        }
+
+        /**
+         * Convenience method for {@link #IORegistryEntryGetChildEntry} to return the
+         * first child of this registry entry in a plane.
+         *
+         * @param plane
+         *            The name of an existing registry plane.
+         * @param child
+         *            The first child of the registry entry, on success. The child must
+         *            be released by the caller.
+         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         */
+        public int getChildEntry(String plane, PointerByReference child) {
+            return INSTANCE.IORegistryEntryGetChildEntry(this, plane, child);
+        }
+
+        /**
+         * Convenience method for {@link #IORegistryEntryGetParentEntry} to return the
+         * first parent of this registry entry in a plane.
+         *
+         * @param plane
+         *            The name of an existing registry plane.
+         * @param parent
+         *            The first parent of the registry entry, on success. The parent
+         *            must be released by the caller.
+         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         */
+        public int getParentEntry(String plane, PointerByReference parent) {
+            return INSTANCE.IORegistryEntryGetParentEntry(this, plane, parent);
+        }
+
+        /**
+         * Convenience method for {@link #IORegistryEntryCreateCFProperty} to create a
+         * CF representation of this registry entry's property.
+         *
+         * @param key
+         *            A {@code CFString} specifying the property name.
+         * @return A CF container is created and returned the caller on success.
+         *         <p>
+         *         The caller should release with {@link CoreFoundation#CFRelease}.
+         */
+        public CFTypeRef createCFProperty(CFStringRef key) {
+            return INSTANCE.IORegistryEntryCreateCFProperty(this, key, CoreFoundation.INSTANCE.CFAllocatorGetDefault(),
+                    0);
+        }
+
+        /**
+         * Convenience method for {@link #IORegistryEntryCreateCFProperties} to create a
+         * CF dictionary representation of this registry entry's property table.
+         *
+         * @param properties
+         *            A CFDictionary is created and returned the caller on success. The
+         *            caller should release with CFRelease.
+         * @return 0 if successful, otherwise a {@code kern_return_t} error code.
+         */
+        public int createCFProperties(PointerByReference properties) {
+            return INSTANCE.IORegistryEntryCreateCFProperties(this, properties,
+                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+        }
+
+        /**
+         * Convenience method for {@link #IORegistryEntrySearchCFProperty} to create a
+         * CF representation of a registry entry's property searched from this object.
+         *
+         * @param plane
+         *            The name of an existing registry plane. Plane names are defined in
+         *            {@code IOKitKeys.h}, for example, {@code kIOServicePlane}.
+         * @param key
+         *            A {@code CFString} specifying the property name.
+         * @param options
+         *            {@link #kIORegistryIterateRecursively} may be set to recurse
+         *            automatically into the registry hierarchy. Without this option,
+         *            this method degenerates into the standard
+         *            {@link #IORegistryEntryCreateCFProperty} call.
+         *            {@link #kIORegistryIterateParents} may be set to iterate the
+         *            parents of the entry, in place of the children.
+         * @return A CF container is created and returned the caller on success. The
+         *         caller should release with CFRelease.
+         */
+        CFTypeRef searchCFProperty(String plane, CFStringRef key, int options) {
+            return INSTANCE.IORegistryEntrySearchCFProperty(this, plane, key,
+                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), options);
+        }
+
+        /**
          * Convenience method to get a {@link java.lang.String} value from this IO
          * Registry Entry.
          *
@@ -138,8 +274,7 @@ public interface IOKit extends Library {
         public String getStringProperty(String key) {
             String value = null;
             CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-            CFTypeRef valueAsCFType = INSTANCE.IORegistryEntryCreateCFProperty(this, keyAsCFString,
-                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+            CFTypeRef valueAsCFType = this.createCFProperty(keyAsCFString);
             keyAsCFString.release();
             if (valueAsCFType != null) {
                 CFStringRef valueAsCFString = new CFStringRef(valueAsCFType.getPointer());
@@ -165,8 +300,7 @@ public interface IOKit extends Library {
         public Long getLongProperty(String key) {
             Long value = null;
             CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-            CFTypeRef valueAsCFType = INSTANCE.IORegistryEntryCreateCFProperty(this, keyAsCFString,
-                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+            CFTypeRef valueAsCFType = this.createCFProperty(keyAsCFString);
             keyAsCFString.release();
             if (valueAsCFType != null) {
                 CFNumberRef valueAsCFNumber = new CFNumberRef(valueAsCFType.getPointer());
@@ -192,8 +326,7 @@ public interface IOKit extends Library {
         public Integer getIntegerProperty(String key) {
             Integer value = null;
             CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-            CFTypeRef valueAsCFType = INSTANCE.IORegistryEntryCreateCFProperty(this, keyAsCFString,
-                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+            CFTypeRef valueAsCFType = this.createCFProperty(keyAsCFString);
             keyAsCFString.release();
             if (valueAsCFType != null) {
                 CFNumberRef valueAsCFNumber = new CFNumberRef(valueAsCFType.getPointer());
@@ -219,8 +352,7 @@ public interface IOKit extends Library {
         public Double getDoubleProperty(String key) {
             Double value = null;
             CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-            CFTypeRef valueAsCFType = INSTANCE.IORegistryEntryCreateCFProperty(this, keyAsCFString,
-                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+            CFTypeRef valueAsCFType = this.createCFProperty(keyAsCFString);
             keyAsCFString.release();
             if (valueAsCFType != null) {
                 CFNumberRef valueAsCFNumber = new CFNumberRef(valueAsCFType.getPointer());
@@ -241,8 +373,7 @@ public interface IOKit extends Library {
         public Boolean getBooleanProperty(String key) {
             Boolean value = null;
             CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-            CFTypeRef valueAsCFType = INSTANCE.IORegistryEntryCreateCFProperty(this, keyAsCFString,
-                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+            CFTypeRef valueAsCFType = this.createCFProperty(keyAsCFString);
             keyAsCFString.release();
             if (valueAsCFType != null) {
                 CFBooleanRef valueAsCFBoolean = new CFBooleanRef(valueAsCFType.getPointer());
@@ -263,8 +394,7 @@ public interface IOKit extends Library {
         public byte[] getByteArrayProperty(String key) {
             byte[] value = null;
             CFStringRef keyAsCFString = CFStringRef.createCFString(key);
-            CFTypeRef valueAsCFType = INSTANCE.IORegistryEntryCreateCFProperty(this, keyAsCFString,
-                    CoreFoundation.INSTANCE.CFAllocatorGetDefault(), 0);
+            CFTypeRef valueAsCFType = this.createCFProperty(keyAsCFString);
             keyAsCFString.release();
             if (valueAsCFType != null) {
                 CFDataRef valueAsCFData = new CFDataRef(valueAsCFType.getPointer());
