@@ -23,6 +23,8 @@
  */
 package com.sun.jna.platform.mac;
 
+import static org.junit.Assert.assertNotEquals;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
@@ -52,10 +54,7 @@ import junit.framework.TestCase;
 
 /**
  * Exercise the {@link SystemB} class.
- *
- * @author widdis@gmail.com
  */
-// @SuppressWarnings("unused")
 public class SystemBTest extends TestCase {
 
     public void testSysctl() {
@@ -93,11 +92,11 @@ public class SystemBTest extends TestCase {
     }
 
     public void testHostPageSize() {
-        int machPort = SystemB.INSTANCE.mach_host_self();
-        assertTrue(machPort > 0);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         LongByReference pPageSize = new LongByReference();
-        int ret = SystemB.INSTANCE.host_page_size(machPort, pPageSize);
+        int ret = SystemB.INSTANCE.host_page_size(hostPort, pPageSize);
         assertEquals(ret, 0);
         // Probably 4096, definitely a power of 2
         assertTrue(pPageSize.getValue() > 0);
@@ -105,12 +104,11 @@ public class SystemBTest extends TestCase {
     }
 
     public void testVMInfo() {
-        int machPort = SystemB.INSTANCE.mach_host_self();
-        assertTrue(machPort > 0);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         VMStatistics vmStats = new VMStatistics();
-        int ret = SystemB.INSTANCE.host_statistics(machPort,
-                SystemB.HOST_VM_INFO, vmStats,
+        int ret = SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_VM_INFO, vmStats,
                 new IntByReference(vmStats.size() / SystemB.INT_SIZE));
         assertEquals(ret, 0);
         // Nonnegative
@@ -118,9 +116,8 @@ public class SystemBTest extends TestCase {
 
         if (Platform.is64Bit()) {
             VMStatistics64 vmStats64 = new VMStatistics64();
-            ret = SystemB.INSTANCE.host_statistics64(machPort,
-                    SystemB.HOST_VM_INFO, vmStats64, new IntByReference(
-                            vmStats64.size() / SystemB.INT_SIZE));
+            ret = SystemB.INSTANCE.host_statistics64(hostPort, SystemB.HOST_VM_INFO, vmStats64,
+                    new IntByReference(vmStats64.size() / SystemB.INT_SIZE));
             assertEquals(ret, 0);
             // Nonnegative
             assertTrue(vmStats64.free_count >= 0);
@@ -128,26 +125,24 @@ public class SystemBTest extends TestCase {
     }
 
     public void testCpuLoad() {
-        int machPort = SystemB.INSTANCE.mach_host_self();
-        assertTrue(machPort > 0);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         HostCpuLoadInfo cpuLoadInfo = new HostCpuLoadInfo();
-        int ret = SystemB.INSTANCE.host_statistics(machPort,
-                SystemB.HOST_CPU_LOAD_INFO, cpuLoadInfo, new IntByReference(
-                        cpuLoadInfo.size()));
+        int ret = SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_CPU_LOAD_INFO, cpuLoadInfo,
+                new IntByReference(cpuLoadInfo.size()));
         assertEquals(ret, 0);
         // Should be int[4]
         assertEquals(cpuLoadInfo.cpu_ticks.length, SystemB.CPU_STATE_MAX);
     }
 
     public void testHostLoad() {
-        int machPort = SystemB.INSTANCE.mach_host_self();
-        assertTrue(machPort > 0);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         HostLoadInfo hostLoadInfo = new HostLoadInfo();
-        int ret = SystemB.INSTANCE.host_statistics(machPort,
-                SystemB.HOST_CPU_LOAD_INFO, hostLoadInfo, new IntByReference(
-                        hostLoadInfo.size()));
+        int ret = SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_CPU_LOAD_INFO, hostLoadInfo,
+                new IntByReference(hostLoadInfo.size()));
         assertEquals(ret, 0);
         // Should be two int[3]'s
         assertEquals(hostLoadInfo.avenrun.length, 3);
@@ -157,27 +152,19 @@ public class SystemBTest extends TestCase {
     }
 
     public void testHostProcessorInfo() {
-        int machPort = SystemB.INSTANCE.mach_host_self();
-        assertTrue(machPort > 0);
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
 
         IntByReference procCount = new IntByReference();
         PointerByReference procCpuLoadInfo = new PointerByReference();
         IntByReference procInfoCount = new IntByReference();
-        int ret = SystemB.INSTANCE.host_processor_info(machPort,
-                SystemB.PROCESSOR_CPU_LOAD_INFO, procCount, procCpuLoadInfo,
-                procInfoCount);
+        int ret = SystemB.INSTANCE.host_processor_info(hostPort, SystemB.PROCESSOR_CPU_LOAD_INFO, procCount,
+                procCpuLoadInfo, procInfoCount);
         assertEquals(ret, 0);
 
         assertTrue(procCount.getValue() > 0);
-        assertEquals(procCpuLoadInfo.getValue().getIntArray(0,
-                procInfoCount.getValue()).length, procInfoCount.getValue());
-    }
-
-    public void testMachPorts() {
-        int machPort = SystemB.INSTANCE.mach_host_self();
-        assertTrue(machPort > 0);
-        machPort = SystemB.INSTANCE.mach_task_self();
-        assertTrue(machPort > 0);
+        assertEquals(procCpuLoadInfo.getValue().getIntArray(0, procInfoCount.getValue()).length,
+                procInfoCount.getValue());
     }
 
     public void testGetLoadAvg() {
@@ -208,9 +195,10 @@ public class SystemBTest extends TestCase {
     }
 
     public void testVMMeter() {
-        int machPort = SystemB.INSTANCE.mach_host_self();
+        int hostPort = SystemB.INSTANCE.mach_host_self();
+        assertNotEquals(0, hostPort);
         VMMeter vmstats = new VMMeter();
-        assertEquals(0, SystemB.INSTANCE.host_statistics(machPort, SystemB.HOST_VM_INFO, vmstats,
+        assertEquals(0, SystemB.INSTANCE.host_statistics(hostPort, SystemB.HOST_VM_INFO, vmstats,
                 new IntByReference(vmstats.size())));
         assertTrue(vmstats.v_lookups >= 0);
     }
@@ -329,7 +317,6 @@ public class SystemBTest extends TestCase {
             // Cast pointer to if_msghdr2
             IFmsgHdr2 if2m = new IFmsgHdr2(p);
             if2m.read();
-
 
             assertTrue(if2m.ifm_index >= 0);
             assertTrue(if2m.ifm_data.ifi_ibytes >= 0);

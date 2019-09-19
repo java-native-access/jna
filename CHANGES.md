@@ -2,11 +2,12 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Next Release (5.4.1)
+Next Release (5.5.0)
 ====================
 
 Features
 --------
+* [#1131](https://github.com/java-native-access/jna/pull/1131): Add CoreFoundation, IOKit, and DiskArbitration mappings in `c.s.j.p.mac`. [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
