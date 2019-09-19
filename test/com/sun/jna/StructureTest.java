@@ -1388,7 +1388,7 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong type information for 'inner' field",
                      inner, els.getPointer(0));
         assertEquals("Wrong type information for integer field",
-                     Structure.getTypeInfo(Integer.valueOf(0)),
+                     Structure.getTypeInfo(0).getPointer(),
                      els.getPointer(Native.POINTER_SIZE));
         assertNull("Type element list should be null-terminated",
                    els.getPointer(Native.POINTER_SIZE*2));
@@ -2163,7 +2163,7 @@ public class StructureTest extends TestCase {
         Structure s = new TestStructure();
         assertEquals("Wrong type mapper for structure", mapper, s.getTypeMapper());
 
-        TestFFIType ffi_type = new TestFFIType(Structure.getTypeInfo(s));
+        TestFFIType ffi_type = new TestFFIType(Structure.getTypeInfo(s).getPointer());
         assertEquals("Java Structure size does not match FFIType size",
                      s.size(), ffi_type.size.intValue());
     }

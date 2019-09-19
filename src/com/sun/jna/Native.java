@@ -1770,27 +1770,27 @@ public final class Native implements Version {
                     // FFIType.get() always looks up the native type for any given
                     // class, so if we actually have conversion into a Java
                     // object, make sure we use the proper type information
-                    closure_rtype = FFIType.get(rclass.isPrimitive() ? rclass : Pointer.class).peer;
-                    rtype = FFIType.get(fromNative.nativeType()).peer;
+                    closure_rtype = FFIType.get(rclass.isPrimitive() ? rclass : Pointer.class).getPointer().peer;
+                    rtype = FFIType.get(fromNative.nativeType()).getPointer().peer;
                     break;
                 case CVT_NATIVE_MAPPED:
                 case CVT_NATIVE_MAPPED_STRING:
                 case CVT_NATIVE_MAPPED_WSTRING:
                 case CVT_INTEGER_TYPE:
                 case CVT_POINTER_TYPE:
-                    closure_rtype = FFIType.get(Pointer.class).peer;
-                    rtype = FFIType.get(NativeMappedConverter.getInstance(rclass).nativeType()).peer;
+                    closure_rtype = FFIType.get(Pointer.class).getPointer().peer;
+                    rtype = FFIType.get(NativeMappedConverter.getInstance(rclass).nativeType()).getPointer().peer;
                     break;
                 case CVT_STRUCTURE:
                 case CVT_OBJECT:
-                    closure_rtype = rtype = FFIType.get(Pointer.class).peer;
+                    closure_rtype = rtype = FFIType.get(Pointer.class).getPointer().peer;
                     break;
                 case CVT_STRUCTURE_BYVAL:
-                    closure_rtype = FFIType.get(Pointer.class).peer;
-                    rtype = FFIType.get(rclass).peer;
+                    closure_rtype = FFIType.get(Pointer.class).getPointer().peer;
+                    rtype = FFIType.get(rclass).getPointer().peer;
                     break;
                 default:
-                    closure_rtype = rtype = FFIType.get(rclass).peer;
+                    closure_rtype = rtype = FFIType.get(rclass).getPointer().peer;
             }
 
             for (int t=0;t < ptypes.length;t++) {
@@ -1822,20 +1822,20 @@ public final class Native implements Version {
                     case CVT_NATIVE_MAPPED:
                     case CVT_NATIVE_MAPPED_STRING:
                     case CVT_NATIVE_MAPPED_WSTRING:
-                        atypes[t] = FFIType.get(type).peer;
-                        closure_atypes[t] = FFIType.get(Pointer.class).peer;
+                        atypes[t] = FFIType.get(type).getPointer().peer;
+                        closure_atypes[t] = FFIType.get(Pointer.class).getPointer().peer;
                         break;
                     case CVT_TYPE_MAPPER:
                     case CVT_TYPE_MAPPER_STRING:
                     case CVT_TYPE_MAPPER_WSTRING:
-                        closure_atypes[t] = FFIType.get(type.isPrimitive() ? type : Pointer.class).peer;
-                        atypes[t] = FFIType.get(toNative[t].nativeType()).peer;
+                        closure_atypes[t] = FFIType.get(type.isPrimitive() ? type : Pointer.class).getPointer().peer;
+                        atypes[t] = FFIType.get(toNative[t].nativeType()).getPointer().peer;
                         break;
                     case CVT_DEFAULT:
-                        closure_atypes[t] = atypes[t] = FFIType.get(type).peer;
+                        closure_atypes[t] = atypes[t] = FFIType.get(type).getPointer().peer;
                         break;
                     default:
-                        closure_atypes[t] = atypes[t] = FFIType.get(Pointer.class).peer;
+                        closure_atypes[t] = atypes[t] = FFIType.get(Pointer.class).getPointer().peer;
                 }
             }
             sig += ")";

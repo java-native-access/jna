@@ -163,8 +163,8 @@ public class PerformanceTest extends TestCase implements Paths {
         long resp;
         long argv;
         if (Native.POINTER_SIZE == 4) {
-            b.putInt(0, (int)Structure.FFIType.get(double.class).peer);
-            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(double.class).peer, types);
+            b.putInt(0, (int)Structure.FFIType.get(double.class).getPointer().peer);
+            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(double.class).getPointer().peer, types);
             resp = pb.peer + 4;
             argv = pb.peer + 12;
             double INPUT = 42;
@@ -178,8 +178,8 @@ public class PerformanceTest extends TestCase implements Paths {
             delta = System.currentTimeMillis() - start;
         }
         else {
-            b.putLong(0, Structure.FFIType.get(double.class).peer);
-            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(double.class).peer, types);
+            b.putLong(0, Structure.FFIType.get(double.class).getPointer().peer);
+            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(double.class).getPointer().peer, types);
             resp = pb.peer + 8;
             argv = pb.peer + 16;
             double INPUT = 42;
@@ -305,10 +305,10 @@ public class PerformanceTest extends TestCase implements Paths {
         System.out.println("memset (JNA direct primitives): " + delta + "ms");
 
         if (Native.POINTER_SIZE == 4) {
-            b.putInt(0, (int)Structure.FFIType.get(Pointer.class).peer);
-            b.putInt(4, (int)Structure.FFIType.get(int.class).peer);
-            b.putInt(8, (int)Structure.FFIType.get(int.class).peer);
-            cif = Native.ffi_prep_cif(0, 3, Structure.FFIType.get(Pointer.class).peer, types);
+            b.putInt(0, (int)Structure.FFIType.get(Pointer.class).getPointer().peer);
+            b.putInt(4, (int)Structure.FFIType.get(int.class).getPointer().peer);
+            b.putInt(8, (int)Structure.FFIType.get(int.class).getPointer().peer);
+            cif = Native.ffi_prep_cif(0, 3, Structure.FFIType.get(Pointer.class).getPointer().peer, types);
             resp = pb.peer + 12;
             argv = pb.peer + 16;
             start = System.currentTimeMillis();
@@ -325,10 +325,10 @@ public class PerformanceTest extends TestCase implements Paths {
             delta = System.currentTimeMillis() - start;
         }
         else {
-            b.putLong(0, Structure.FFIType.get(Pointer.class).peer);
-            b.putLong(8, Structure.FFIType.get(int.class).peer);
-            b.putLong(16, Structure.FFIType.get(long.class).peer);
-            cif = Native.ffi_prep_cif(0, 3, Structure.FFIType.get(Pointer.class).peer, types);
+            b.putLong(0, Structure.FFIType.get(Pointer.class).getPointer().peer);
+            b.putLong(8, Structure.FFIType.get(int.class).getPointer().peer);
+            b.putLong(16, Structure.FFIType.get(long.class).getPointer().peer);
+            cif = Native.ffi_prep_cif(0, 3, Structure.FFIType.get(Pointer.class).getPointer().peer, types);
             resp = pb.peer + 24;
             argv = pb.peer + 32;
             start = System.currentTimeMillis();
@@ -405,8 +405,8 @@ public class PerformanceTest extends TestCase implements Paths {
         System.out.println("strlen (JNA direct - Buffer): " + delta + "ms");
 
         if (Native.POINTER_SIZE == 4) {
-            b.putInt(0, (int)Structure.FFIType.get(Pointer.class).peer);
-            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(int.class).peer, types);
+            b.putInt(0, (int)Structure.FFIType.get(Pointer.class).getPointer().peer);
+            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(int.class).getPointer().peer, types);
             resp = pb.peer + 4;
             argv = pb.peer + 8;
             start = System.currentTimeMillis();
@@ -423,8 +423,8 @@ public class PerformanceTest extends TestCase implements Paths {
             delta = System.currentTimeMillis() - start;
         }
         else {
-            b.putLong(0, Structure.FFIType.get(Pointer.class).peer);
-            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(long.class).peer, types);
+            b.putLong(0, Structure.FFIType.get(Pointer.class).getPointer().peer);
+            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(long.class).getPointer().peer, types);
             resp = pb.peer + 8;
             argv = pb.peer + 16;
             start = System.currentTimeMillis();

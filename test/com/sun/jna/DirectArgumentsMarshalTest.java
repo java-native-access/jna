@@ -123,6 +123,13 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         @Override
         public native void setCallbackInStruct(CbStruct s);
 
+        @Override
+        public native int stringifyMixedUnion1(
+            byte[] buffer, int bufferLength,
+            int dummyInt1, double dummyDouble1,
+            MixedUnion1.ByValue union1, MixedUnion1.ByValue union2,
+            int dummyInt2, double dummyDouble2);
+
         static {
             Native.register("testlib");
         }
