@@ -39,7 +39,7 @@ public class IOReturnException extends RuntimeException {
 
     /**
      * New exception from {@code kern_return_t}
-     * 
+     *
      * @param kr
      *            The return value
      */
@@ -49,7 +49,7 @@ public class IOReturnException extends RuntimeException {
 
     /**
      * New exception from {@code kern_return_t} with specified message
-     * 
+     *
      * @param kr
      *            The return value
      * @param msg
@@ -69,7 +69,7 @@ public class IOReturnException extends RuntimeException {
 
     /**
      * The high 6 bits of the return value encode the system.
-     * 
+     *
      * @param kr
      *            The return value
      * @return the system value
@@ -80,7 +80,7 @@ public class IOReturnException extends RuntimeException {
 
     /**
      * The middle 12 bits of the return value encode the subsystem.
-     * 
+     *
      * @param kr
      *            The return value
      * @return the subsystem value
@@ -91,7 +91,7 @@ public class IOReturnException extends RuntimeException {
 
     /**
      * The low 14 bits of the return value encode the return code.
-     * 
+     *
      * @param kr
      *            The return value
      * @return the return code
