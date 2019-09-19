@@ -24,7 +24,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.LastErrorException;
-import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
@@ -2693,7 +2692,8 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     boolean FileTimeToSystemTime(FILETIME lpFileTime, SYSTEMTIME lpSystemTime);
 
     /**
-     * @deprecated Use {@link #CreateRemoteThread(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.Pointer) }
+     * @deprecated Use
+     *             {@link #CreateRemoteThread(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, com.sun.jna.Pointer, com.sun.jna.Pointer, int, com.sun.jna.platform.win32.WinDef.DWORDByReference)
      */
     @Deprecated
     HANDLE CreateRemoteThread(HANDLE hProcess, WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, FOREIGN_THREAD_START_ROUTINE lpStartAddress, Pointer lpParameter, DWORD dwCreationFlags, Pointer lpThreadId);

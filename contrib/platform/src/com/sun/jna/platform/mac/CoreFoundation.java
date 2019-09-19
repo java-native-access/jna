@@ -434,8 +434,6 @@ public interface CoreFoundation extends Library {
          * Convenience method for {@link CoreFoundation#CFDictionarySetValue} on this
          * object.
          *
-         * @param theDict
-         *            The dictionary to modify.
          * @param key
          *            The key of the value to set.
          * @param value
