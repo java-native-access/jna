@@ -426,8 +426,8 @@ public interface IOKit extends Library {
         }
 
         /**
-         * Convenience method to get a {@link java.lang.byte} array value from this IO
-         * Registry Entry.
+         * Convenience method to get a {@code byte} array value from this IO Registry
+         * Entry.
          *
          * @param key
          *            The string name of the key to retrieve
