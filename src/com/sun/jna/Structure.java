@@ -2047,7 +2047,10 @@ public abstract class Structure {
                         size = sf.size;
                     }
                 }
-                if((! Platform.isWindows()) && Platform.isIntel() && Platform.is64Bit()) {
+                if( (! Platform.isWindows()) && (
+                        (Platform.isIntel() && Platform.is64Bit())
+                        || (Platform.isARM())
+                    )) {
                     // System V x86-64 ABI requires, that in a union aggregate,
                     // that contains Integer and Double members, the parameters
                     // must be passed in the integer registers. I.e. in the case
@@ -2055,6 +2058,9 @@ public abstract class Structure {
                     // wrong FFI Type would be found, because the doubles size
                     // is larger than the int member, but the wrong parameter
                     // passing method would be used.
+                    //
+                    // It was observed, that the same behaviour is visible on
+                    // arm/aarch64.
                     if(hasInteger && isFloatType(unionType)) {
                         unionType = new FFIType(unionType);
                         if(unionType.size.intValue() == 4) {
