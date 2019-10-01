@@ -41,6 +41,7 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [bolt-jna](https://github.com/protonail/bolt-jna): Cross-platform JNA based adapter for [Bolt](https://github.com/boltdb/bolt) (used in [Keylord](http://protonail.com)). It is show how to use JNA for binding to Go library.
 - [JVM OpenVR Bindings](https://github.com/kotlin-graphics/openvr).
 - [Apache Ignite](https://ignite.apache.org/): Direct IO plugin
+- [Domino JNA](https://github.com/klehmann/domino-jna): Cross-platform access to HCL Notes/Domino C API methods from Java
 
 *Interesting Investigations/Experiments*
 
