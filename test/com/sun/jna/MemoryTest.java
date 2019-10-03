@@ -190,7 +190,7 @@ public class MemoryTest extends TestCase {
         // get a reference to the allocated memory
         Field allocatedMemoryField = Memory.class.getDeclaredField("allocatedMemory");
         allocatedMemoryField.setAccessible(true);
-        Map<Memory, Reference<Memory>> allocatedMemory = (Map<Memory, Reference<Memory>>) allocatedMemoryField.get(null);
+        Map<Memory, Boolean> allocatedMemory = (Map<Memory, Boolean>) allocatedMemoryField.get(null);
         assertEquals(0, allocatedMemory.size());
 
         // Test allocation and ensure it is accounted for

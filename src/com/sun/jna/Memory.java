@@ -22,13 +22,9 @@
  */
 package com.sun.jna;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.WeakHashMap;
 
 /**
@@ -50,12 +46,12 @@ import java.util.WeakHashMap;
  * @author Sheng Liang, originator
  * @author Todd Fast, suitability modifications
  * @author Timothy Wall
+ * @author Jörg Sautter, memory footprint
  * @see Pointer
  */
 public class Memory extends Pointer {
     /** Keep track of all allocated memory so we can dispose of it before unloading. */
-    private static final Map<Memory, Reference<Memory>> allocatedMemory =
-            Collections.synchronizedMap(new WeakHashMap<Memory, Reference<Memory>>());
+    private static final WeakHashMap<Memory, Boolean> allocatedMemory = new WeakHashMap<Memory, Boolean>();
 
     private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
@@ -68,10 +64,16 @@ public class Memory extends Pointer {
 
     /** Dispose of all allocated memory. */
     public static void disposeAll() {
-        // use a copy since dispose() modifies the map
-        Collection<Memory> refs = new LinkedList<Memory>(allocatedMemory.keySet());
+        List<Memory> refs;
+        
+        synchronized(allocatedMemory) {
+            refs = new ArrayList<Memory>(allocatedMemory.keySet());
+            allocatedMemory.clear();
+        }
+        
         for (Memory r : refs) {
-            r.dispose();
+            // we cleared the map before, no need to maintain it
+            r.dispose0(false);
         }
     }
 
@@ -115,7 +117,10 @@ public class Memory extends Pointer {
         if (peer == 0)
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
 
-        allocatedMemory.put(this, new WeakReference<Memory>(this));
+        synchronized(allocatedMemory) {
+            // the key of the map is weak, the value is not used.
+            allocatedMemory.put(this, Boolean.TRUE);
+        }
     }
 
     protected Memory() {
@@ -179,15 +184,28 @@ public class Memory extends Pointer {
     /** Properly dispose of native memory when this object is GC'd. */
     @Override
     protected void finalize() {
-        dispose();
+        // if the dispose call is done by the Finalizer the key is not accessible in a WeakHashMap any more
+        // the call of allocatedMemory.remove is a waste of cpu time in this case    
+        dispose0(false);
     }
 
     /** Free the native memory and set peer to zero */
-    protected synchronized void dispose() {
+    protected void dispose() {
+        dispose0(true);
+    }
+    
+    /** Used to handle different types of dispose calls.
+     * @param maintainMap whether the {@code allocatedMemory} map needs to be updated 
+     */
+    private synchronized void dispose0(boolean maintainMap) {
         try {
             free(peer);
         } finally {
-            allocatedMemory.remove(this);
+            if (maintainMap) {
+                synchronized (allocatedMemory) {
+                    allocatedMemory.remove(this);
+                }
+            }
             peer = 0;
         }
     }
