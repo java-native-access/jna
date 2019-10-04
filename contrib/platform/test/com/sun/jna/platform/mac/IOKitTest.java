@@ -142,7 +142,7 @@ public class IOKitTest {
     public void testIteratorParentChild() {
         int masterPort = IOKitUtil.getMasterPort();
 
-        Set<Long> uniqueEntryIdSet = new HashSet<>();
+        Set<Long> uniqueEntryIdSet = new HashSet<Long>();
         // Iterate over USB Controllers. All devices are children of one of
         // these controllers in the "IOService" plane
         IOIterator iter = IOKitUtil.getMatchingServices("IOUSBController");
