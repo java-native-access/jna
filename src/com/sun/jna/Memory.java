@@ -87,6 +87,10 @@ public class Memory extends Pointer {
             this.size = size;
             this.peer = Memory.this.peer + offset;
         }
+        @Override
+        protected void finalize() {
+            dispose();
+        }
         /** No need to free memory. */
         @Override
         protected synchronized void dispose() {
