@@ -205,9 +205,12 @@ public class Memory extends Pointer {
         try {
             free(peer);
         } finally {
-            if (maintainMap) {
-                synchronized (allocatedMemory) {
+            synchronized (allocatedMemory) {
+                if (maintainMap) {
                     allocatedMemory.remove(this);
+                } else {
+                    // ensures the stale map entries are removed from the map
+                    allocatedMemory.size();
                 }
             }
             peer = 0;
