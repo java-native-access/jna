@@ -65,12 +65,12 @@ public class Memory extends Pointer {
     /** Dispose of all allocated memory. */
     public static void disposeAll() {
         List<Memory> refs;
-        
+
         synchronized(allocatedMemory) {
             refs = new ArrayList<Memory>(allocatedMemory.keySet());
             allocatedMemory.clear();
         }
-        
+
         for (Memory r : refs) {
             // we cleared the map before, no need to maintain it
             r.dispose0(false);
@@ -189,7 +189,7 @@ public class Memory extends Pointer {
     @Override
     protected void finalize() {
         // if the dispose call is done by the Finalizer the key is not accessible in a WeakHashMap any more
-        // the call of allocatedMemory.remove is a waste of cpu time in this case    
+        // the call of allocatedMemory.remove is a waste of cpu time in this case
         dispose0(false);
     }
 
@@ -197,9 +197,9 @@ public class Memory extends Pointer {
     protected void dispose() {
         dispose0(true);
     }
-    
+
     /** Used to handle different types of dispose calls.
-     * @param maintainMap whether the {@code allocatedMemory} map needs to be updated 
+     * @param maintainMap whether the {@code allocatedMemory} map needs to be updated
      */
     private synchronized void dispose0(boolean maintainMap) {
         try {
