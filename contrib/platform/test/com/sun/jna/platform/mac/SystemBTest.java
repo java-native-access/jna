@@ -25,6 +25,9 @@ package com.sun.jna.platform.mac;
 
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.Date;
+import java.util.Map;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
@@ -167,6 +170,31 @@ public class SystemBTest extends TestCase {
                 procInfoCount.getValue());
     }
 
+    // From Unix LibCAPI
+    public void testGetenv() {
+        Map<String, String> env = System.getenv();
+        for (Map.Entry<String, String> ee : env.entrySet()) {
+            String name = ee.getKey();
+            String expected = ee.getValue();
+            String actual = SystemB.INSTANCE.getenv(name);
+            assertEquals(name, expected, actual);
+        }
+    }
+
+    // From Unix LibCAPI
+    public void testSetenv() {
+        String name = "SystemBTestEnv";
+        try {
+            String expected = new Date(System.currentTimeMillis()).toString();
+            assertEquals("setenv", 0, SystemB.INSTANCE.setenv(name, expected, 1));
+            assertEquals("Mismatched values", expected, SystemB.INSTANCE.getenv(name));
+            assertEquals("unsetenv", 0, SystemB.INSTANCE.unsetenv(name));
+        } finally {
+            SystemB.INSTANCE.unsetenv(name);
+        }
+    }
+
+    // From Unix LibCAPI
     public void testGetLoadAvg() {
         double[] loadavg = new double[3];
         int retval = SystemB.INSTANCE.getloadavg(loadavg, 3);
@@ -174,6 +202,16 @@ public class SystemBTest extends TestCase {
         assertTrue(loadavg[0] >= 0);
         assertTrue(loadavg[1] >= 0);
         assertTrue(loadavg[2] >= 0);
+    }
+
+    // From Unix LibCAPI
+    public void testGethostnameGetdomainname() {
+        byte[] buffer = new byte[256];
+        assertEquals("gethostname", 0, SystemB.INSTANCE.gethostname(buffer, buffer.length));
+        String hostname = Native.toString(buffer);
+        assertTrue(hostname.length() > 0);
+        assertEquals("getdomainname", 0, SystemB.INSTANCE.getdomainname(buffer, buffer.length));
+        // May have length 0
     }
 
     public void testTimeofDay() {

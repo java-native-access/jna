@@ -30,11 +30,12 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.unix.LibCAPI;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-public interface SystemB extends Library {
+public interface SystemB extends LibCAPI, Library {
 
     SystemB INSTANCE = Native.load("System", SystemB.class);
 
@@ -729,24 +730,6 @@ public interface SystemB extends Library {
      */
     int host_processor_info(int hostPort, int flavor, IntByReference procCount, PointerByReference procInfo,
             IntByReference procInfoCount);
-
-    /**
-     * The getloadavg() function returns the number of processes in the system run
-     * queue averaged over various periods of time. Up to nelem samples are
-     * retrieved and assigned to successive elements of loadavg[]. The system
-     * imposes a maximum of 3 samples, representing averages over the last 1, 5, and
-     * 15 minutes, respectively.
-     *
-     * @param loadavg
-     *            An array of doubles which will be filled with the results
-     * @param nelem
-     *            Number of samples to return
-     * @return If the load average was unobtainable, -1 is returned; otherwise, the
-     *         number of samples actually retrieved is returned.
-     * @see <A HREF=
-     *      "https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
-     */
-    int getloadavg(double[] loadavg, int nelem);
 
     /**
      * This function searches the password database for the given user uid, always

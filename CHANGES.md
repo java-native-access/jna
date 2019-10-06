@@ -8,6 +8,7 @@ Next Release (5.5.0)
 Features
 --------
 * [#1131](https://github.com/java-native-access/jna/pull/1131): Add CoreFoundation, IOKit, and DiskArbitration mappings in `c.s.j.p.mac`. [@dbwiddis](https://github.com/dbwiddis).
+* [#1143](https://github.com/java-native-access/jna/pull/1143): `c.s.j.p.mac.SystemB` now extends `c.s.j.p.unix.LibCAPI`. [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
