@@ -22,8 +22,6 @@
  */
 package com.sun.jna;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,8 +52,8 @@ import java.util.WeakHashMap;
  */
 public class Memory extends Pointer {
     /** Keep track of all allocated memory so we can dispose of it before unloading. */
-    private static final Map<Memory, Reference<Memory>> allocatedMemory =
-            Collections.synchronizedMap(new WeakHashMap<Memory, Reference<Memory>>());
+    private static final Map<Memory, Boolean> allocatedMemory =
+            Collections.synchronizedMap(new WeakHashMap<Memory, Boolean>());
 
     private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
@@ -115,7 +113,7 @@ public class Memory extends Pointer {
         if (peer == 0)
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
 
-        allocatedMemory.put(this, new WeakReference<Memory>(this));
+        allocatedMemory.put(this, Boolean.TRUE);
     }
 
     protected Memory() {
