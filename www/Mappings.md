@@ -14,7 +14,7 @@ Java primitive types (and their object equivalents) map directly to the native C
 <tr><td>long long</td><td>64-bit integer</td><td>long</td><td>__int64</td></tr>
 <tr><td>float</td><td>32-bit FP</td><td>float</td><td></td></tr>
 <tr><td>double</td><td>64-bit FP</td><td>double</td><td></td></tr>
-<tr><td>char*</td><td>C string</td><td>String</td><td>LPTCSTR</td></tr>
+<tr><td>char*</td><td>C string</td><td>String</td><td>LPCSTR</td></tr>
 <tr><td>void*</td><td>pointer</td><td>Pointer</td><td>LPVOID, HANDLE, LP<i>XXX</i></td></tr>
 </table>
 
