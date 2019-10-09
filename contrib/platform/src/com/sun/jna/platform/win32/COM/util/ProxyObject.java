@@ -387,7 +387,6 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
         for (int i = 0; i < vargs.length; ++i) {
             vargs[i] = Convert.toVariant(args[i]);
         }
-        Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
         WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), dispID, vargs);
 
         for (int i = 0; i < vargs.length; i++) {
