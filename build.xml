@@ -136,9 +136,6 @@
   <property name="platform-javadoc-jar" value="${dist}/platform-${jna.version}-javadoc.jar" />
   <property name="platform-sources-jar" value="${dist}/platform-${jna.version}-sources.jar" />
 
-  <property name="pom" value="pom-jna.xml" />
-  <property name="pom-platform" value="pom-jna-platform.xml" />
-
   <!-- defined maven snapshots and staging repository id and url -->
   <property name="maven-snapshots-repository-id" value="oss.sonatype.org" />
   <property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
@@ -148,6 +145,12 @@
   <!-- Miscellaneous -->
   <property name="build" value="build"/>
   <property name="build.compiler.emacs" value="true"/>
+
+  <property name="pom-base" value="pom-jna.xml" />
+  <property name="pom-platform-base" value="pom-jna-platform.xml" />
+
+  <property name="pom" value="${build}/pom-jna.xml" />
+  <property name="pom-platform" value="${build}/pom-jna-platform.xml" />
 
   <target name="default" depends="test" description="Build and Test."/>
 
@@ -206,6 +209,9 @@
       <isset property="-native"/>
     </condition>
 
+    <copy file="${pom-base}" todir="${build}" />
+    <copy file="${pom-platform-base}" todir="${build}" />
+
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2"
                    file="${pom}"/>
@@ -214,13 +220,6 @@
                    replace="\1${jna.version}\2"
                    flags="g"
                    file="${pom-platform}"/>
-
-    <replaceregexp match='VERSION = ".*";'
-                   replace='VERSION = "${jna.version}";'
-                   file="src/com/sun/jna/Version.java"/>
-    <replaceregexp match='VERSION_NATIVE = ".*";'
-                   replace='VERSION_NATIVE = "${jni.version}";'
-                   file="src/com/sun/jna/Version.java"/>
 
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
@@ -380,7 +379,30 @@
 
   <target name="compile" depends="-setup"
           description="Compile all Java source">
-    <javac classpathref="compile.path"
+
+    <delete dir="${build}/jna-src" />
+    <mkdir dir="${build}/jna-src/com/sun/jna" />
+
+    <copy file="src/com/sun/jna/Version.java" todir="${build}/jna-src/com/sun/jna" />
+
+    <replaceregexp match='VERSION = ".*";'
+                   replace='VERSION = "${jna.version}";'
+                   file="${build}/jna-src/com/sun/jna/Version.java"/>
+    <replaceregexp match='VERSION_NATIVE = ".*";'
+                   replace='VERSION_NATIVE = "${jni.version}";'
+                   file="${build}/jna-src/com/sun/jna/Version.java"/>
+
+    <javac source="${compatibility}"
+           target="${compatibility}"
+           destdir="${classes}"
+           includeantruntime="false"
+           deprecation="on"
+           debug="${debug}"
+           encoding="UTF-8"
+           nativeheaderdir="${build.headers}">
+      <src location="${build}/jna-src/com/sun/jna" />
+    </javac>
+    <javac classpath="${compatibility}"
            source="${compatibility}"
            target="${compatibility}"
            destdir="${classes}"
@@ -390,6 +412,7 @@
            encoding="UTF-8"
            nativeheaderdir="${build.headers}">
       <src refid="src.path"/>
+      <exclude name="com/sun/jna/Version.java" />
     </javac>
   </target>
 
