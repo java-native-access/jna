@@ -147,6 +147,8 @@ com.sun.jna.platform.win32;version=${osgi.version},
 com.sun.jna.platform.win32.COM;version=${osgi.version},
 com.sun.jna.platform.win32.COM.tlb;version=${osgi.version},
 com.sun.jna.platform.win32.COM.tlb.imp;version=${osgi.version},
+com.sun.jna.platform.win32.COM.util;version=${osgi.version},
+com.sun.jna.platform.win32.COM.util.annotation;version=${osgi.version},
 com.sun.jna.platform.wince;version=${osgi.version}
 "/>
         </manifest>

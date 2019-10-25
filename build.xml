@@ -475,6 +475,8 @@ com/sun/jna/linux-x86-64/libjnidispatch.so;
 processor=x86-64;osname=linux,
 com/sun/jna/linux-arm/libjnidispatch.so;
 processor=arm;osname=linux,
+com/sun/jna/linux-arm/libjnidispatch.so;
+processor=arm_le;osname=linux,
 com/sun/jna/linux-armel/libjnidispatch.so;
 processor=armel;osname=linux,
 com/sun/jna/linux-aarch64/libjnidispatch.so;

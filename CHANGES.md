@@ -9,6 +9,8 @@ Features
 --------
 * [#1131](https://github.com/java-native-access/jna/pull/1131): Add CoreFoundation, IOKit, and DiskArbitration mappings in `c.s.j.p.mac`. [@dbwiddis](https://github.com/dbwiddis).
 * [#1143](https://github.com/java-native-access/jna/pull/1143): `c.s.j.p.mac.SystemB` now extends `c.s.j.p.unix.LibCAPI`. [@dbwiddis](https://github.com/dbwiddis).
+* [#1147](https://github.com/java-native-access/jna/pull/1147): Add additional OSGi headers for the JNA bundle to support 32bit ARM (hardfloat) [@mattixtech](https://github.com/mattixtech).
+* [#1148](https://github.com/java-native-access/jna/pull/1148)/[#1096](https://github.com/java-native-access/jna/issues/1096): Include Win32 COM utils (`c.s.j.p.win32.com.util` and `c.s.j.p.win32.com.annotation`) in OSGI bundle [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
