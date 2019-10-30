@@ -1,0 +1,17 @@
+com.sun.jna
+com.sun.jna.internal
+com.sun.jna.platform
+com.sun.jna.platform.dnd
+com.sun.jna.platform.linux
+com.sun.jna.platform.mac
+com.sun.jna.platform.unix
+com.sun.jna.platform.unix.solaris
+com.sun.jna.platform.win32
+com.sun.jna.platform.win32.COM
+com.sun.jna.platform.win32.COM.tlb
+com.sun.jna.platform.win32.COM.tlb.imp
+com.sun.jna.platform.win32.COM.util
+com.sun.jna.platform.win32.COM.util.annotation
+com.sun.jna.platform.wince
+com.sun.jna.ptr
+com.sun.jna.win32
