@@ -65,7 +65,7 @@ Version 5.5.0
 JNA
 ---
 
-[![Maven Central](https://img.shields.io/maven-central/v/net.java.dev.jna/jna.svg?label=Maven%20Central)](https://search.maven.org/artifact/net.java.dev.jna/jna/5.5.0/jar)&nbsp;[jna-5.5.0.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar)
+[![Maven Central](https://img.shields.io/maven-central/v/net.java.dev.jna/jna.svg?label=Maven%20Central)](https://search.maven.org/artifact/net.java.dev.jna/jna/5.5.0/jar)&nbsp;[jna-5.5.0.jar](https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar)
 
 This is the core artifact of JNA and contains only the binding library and the
 core helper classes.
@@ -73,7 +73,7 @@ core helper classes.
 JNA Platform
 ------------
 
-[![Maven Central](https://img.shields.io/maven-central/v/net.java.dev.jna/jna-platform.svg?label=Maven%20Central)](https://search.maven.org/artifact/net.java.dev.jna/jna-platform/5.5.0/jar)&nbsp;[jna-platform-5.5.0.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0.jar)
+[![Maven Central](https://img.shields.io/maven-central/v/net.java.dev.jna/jna-platform.svg?label=Maven%20Central)](https://search.maven.org/artifact/net.java.dev.jna/jna-platform/5.5.0/jar)&nbsp;[jna-platform-5.5.0.jar](https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0.jar)
 
 This artifact holds cross-platform mappings and mappings for a number of commonly used platform 
 functions, including a large number of Win32 mappings as well as a set of utility classes 
