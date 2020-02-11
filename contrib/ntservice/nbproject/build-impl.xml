@@ -37,8 +37,8 @@ is divided into following sections:
         <property file="${user.properties.file}"/>
         <!-- The two properties below are usually overridden -->
         <!-- by the active platform. Just a fallback. -->
-        <property name="default.javac.source" value="1.7"/>
-        <property name="default.javac.target" value="1.7"/>
+        <property name="default.javac.source" value="1.4"/>
+        <property name="default.javac.target" value="1.4"/>
     </target>
     <target name="-init-project" depends="-pre-init,-init-private,-init-user">
         <property file="nbproject/project.properties"/>
