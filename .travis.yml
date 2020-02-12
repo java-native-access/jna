@@ -32,7 +32,7 @@ matrix:
           os: linux
         - env: JDK=ea
           os: linux
-        - env: JDK=12
+        - env: JDK=11
           os: osx
     exclude:
         - env: JDK=default
