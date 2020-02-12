@@ -32,3 +32,5 @@ matrix:
           os: linux
         - env: JDK=ea
           os: linux
+        - env: JDK=8
+          os: osx
