@@ -174,7 +174,7 @@ Bug Fixes
       <li>Change into the expanded directory and run `bash build.sh`.</li>
       <li>The resulting `sunos-x86.jar` is copied back to the original build system to `lib/native/sunos-x86.jar`</li>
   </ol> - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#958](https://github.com/java-native-access/jna/issues/958): Update for PR 863: Old toolchains produce binaries without hard-/softfloat markers. Rasbian is missinng the markers and the oracle JDK is also affected. For hardfloat detection now also the Arm EABI section is also considered - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#958](https://github.com/java-native-access/jna/issues/958): Update for PR 863: Old toolchains produce binaries without hard-/softfloat markers. Rasbian is missing the markers and the oracle JDK is also affected. For hardfloat detection now also the Arm EABI section is also considered - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#974](https://github.com/java-native-access/jna/issues/974): If the callback code failed to attach to the JVM, this lead to a segfault. The success of attaching to the JVM was checked to late and an invalid `JNIEnv` pointer was used to access the JVM - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1010](https://github.com/java-native-access/jna/issues/1010): Fix binding of `lpAccessName` parameter of `com.sun.jna.platform.win32.Mpr#WNetUseConnection` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#384](https://github.com/java-native-access/jna/issues/384): Switch default value for `jna.nosys` to `true`. By default then the embedded native library is used - [@matthiasblaesing](https://github.com/matthiasblaesing).
@@ -445,13 +445,13 @@ Features
 * [#432](https://github.com/java-native-access/jna/pull/432): Added `com.sun.jna.platform.win32.Kernel32.SetLocalTime` - [@lgoldstein](https://github.com/lgoldstein).
 * [#434](https://github.com/java-native-access/jna/pull/434): Added `com.sun.jna.platform.win32.Kernel32.GetEnvironmentStrings`  - [@lgoldstein](https://github.com/lgoldstein).
 * Loosen OSGI OS name matching to accommodate Windows 8 family - Niels Bertram.
-* [#436] (https://github.com/java-native-access/jna/pull/469): Added basic Pdh API implementation to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
-* [#451] (https://github.com/java-native-access/jna/pull/451): Add VARIANT support for CHAR and BYTE  - [@mitkola](https://github.com/mitkola).
-* [#478] (https://github.com/java-native-access/jna/issues/451): Ask ldconfig for more places to search for libraries  - [@gohal](https://github.com/gohal).
-* [#481] (https://github.com/java-native-access/jna/pull/481): Added volume management functions to `com.sun.jna.platform.win32` - [@lgoldstein](https://github.com/lgoldstein).
-* [#483] (https://github.com/java-native-access/jna/pull/483): Found and fixed duplicate method definitions for the same API in `com.sun.jna.platform.win32` - [@lgoldstein](https://github.com/lgoldstein).
-* [#485] (https://github.com/java-native-access/jna/pull/485): Implemented `Comparable` interface for many of the base types in `com.sun.jna.platform.win32.WinDef` - [@lgoldstein](https://github.com/lgoldstein).
-* [#488] (https://github.com/java-native-access/jna/pull/488): Added `GetRawInputDeviceList` to `com.sun.jna.platform.win32.User32` and `User32Util` - [@lgoldstein](https://github.com/lgoldstein).
+* [#436](https://github.com/java-native-access/jna/pull/469): Added basic Pdh API implementation to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
+* [#451](https://github.com/java-native-access/jna/pull/451): Add VARIANT support for CHAR and BYTE  - [@mitkola](https://github.com/mitkola).
+* [#478](https://github.com/java-native-access/jna/issues/451): Ask ldconfig for more places to search for libraries  - [@gohal](https://github.com/gohal).
+* [#481](https://github.com/java-native-access/jna/pull/481): Added volume management functions to `com.sun.jna.platform.win32` - [@lgoldstein](https://github.com/lgoldstein).
+* [#483](https://github.com/java-native-access/jna/pull/483): Found and fixed duplicate method definitions for the same API in `com.sun.jna.platform.win32` - [@lgoldstein](https://github.com/lgoldstein).
+* [#485](https://github.com/java-native-access/jna/pull/485): Implemented `Comparable` interface for many of the base types in `com.sun.jna.platform.win32.WinDef` - [@lgoldstein](https://github.com/lgoldstein).
+* [#488](https://github.com/java-native-access/jna/pull/488): Added `GetRawInputDeviceList` to `com.sun.jna.platform.win32.User32` and `User32Util` - [@lgoldstein](https://github.com/lgoldstein).
 * [#490](https://github.com/java-native-access/jna/issues/490): Allow arbitrary calling convention specification, including FFI_MS_CDECL which alters handling of struct return values, and multiple Linux/PowerPC conventions - [@twall](https://github.com/twall).
 
 Bug Fixes
