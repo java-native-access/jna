@@ -68,7 +68,7 @@ public class MacFileUtils extends FileUtils {
     }
 
     @Override
-    public void moveToTrash(File[] files) throws IOException {
+    public void moveToTrash(File... files) throws IOException {
         List<String> failed = new ArrayList<String>();
         for (File src: files) {
             FileManager.FSRef fsref = new FileManager.FSRef();

@@ -30,11 +30,13 @@ import com.sun.jna.platform.FileUtils;
 
 public class W32FileUtils extends FileUtils {
 
+    @Override
     public boolean hasTrash() {
         return true;
     }
 
-    public void moveToTrash(File[] files) throws IOException {
+    @Override
+    public void moveToTrash(File... files) throws IOException {
         Shell32 shell = Shell32.INSTANCE;
         ShellAPI.SHFILEOPSTRUCT fileop = new ShellAPI.SHFILEOPSTRUCT();
         fileop.wFunc = ShellAPI.FO_DELETE;
