@@ -42,7 +42,7 @@ public abstract class FileUtils {
      * @param files files to move
      * @throws IOException on failure.
      */
-    public abstract void moveToTrash(File[] files) throws IOException;
+    public abstract void moveToTrash(File... files) throws IOException;
 
     /** Canonical lazy loading of a singleton. */
     private static class Holder {
@@ -90,6 +90,7 @@ public abstract class FileUtils {
             return trash;
         }
 
+        @Override
         public boolean hasTrash() {
             return getTrashDirectory().exists();
         }
@@ -97,7 +98,8 @@ public abstract class FileUtils {
         /** The default implementation attempts to move the file to
          * the desktop "Trash" folder.
          */
-        public void moveToTrash(File[] files) throws IOException {
+        @Override
+        public void moveToTrash(File... files) throws IOException {
             File trash = getTrashDirectory();
             if (!trash.exists()) {
                 throw new IOException("No trash location found (define fileutils.trash to be the path to the trash)");
