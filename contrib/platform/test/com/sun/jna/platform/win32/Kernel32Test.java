@@ -62,6 +62,7 @@ import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
 import com.sun.jna.platform.win32.Ntifs.REPARSE_DATA_BUFFER;
 import com.sun.jna.platform.win32.Ntifs.SymbolicLinkReparseBuffer;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
@@ -461,6 +462,24 @@ public class Kernel32Test extends TestCase {
         } finally {
             Kernel32Util.closeHandle(h);
         }
+    }
+
+    public void testGetProcessAffinityMask() {
+        int myPid = Kernel32.INSTANCE.GetCurrentProcessId();
+        HANDLE pHandle = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, myPid);
+        assertNotNull(pHandle);
+
+        ULONG_PTRByReference pProcessAffinity = new ULONG_PTRByReference();
+        ULONG_PTRByReference pSystemAffinity = new ULONG_PTRByReference();
+        assertTrue(Kernel32.INSTANCE.GetProcessAffinityMask(pHandle, pProcessAffinity, pSystemAffinity));
+
+        long processAffinity = pProcessAffinity.getValue().longValue();
+        long systemAffinity = pSystemAffinity.getValue().longValue();
+
+        assertEquals("Process affinity must be a subset of system affinity", processAffinity,
+                processAffinity & systemAffinity);
+        assertEquals("System affinity must be a superset of process affinity", systemAffinity,
+                processAffinity | systemAffinity);
     }
 
     public void testGetTempPath() {
