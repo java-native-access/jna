@@ -8,6 +8,7 @@ Next Release (5.6.0)
 Features
 --------
 * [#1160](https://github.com/java-native-access/jna/issues/1160): Make FileUtils#moveToTrash a varargs method - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1167](https://github.com/java-native-access/jna/pull/1167): Add `c.s.j.p.win32.Kernel32.GetProcessAffinityMask` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
