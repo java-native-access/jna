@@ -514,10 +514,8 @@ public class Kernel32Test extends TestCase {
 
             // Cleanup. Be nice and put affinity back where it started!
             dwProcessAffinityMask = new ULONG_PTR(processAffinity);
-            assertTrue("Failed to set affinity",
+            assertTrue("Failed to restore affinity to original setting",
                     Kernel32.INSTANCE.SetProcessAffinityMask(pHandle, dwProcessAffinityMask));
-            assertTrue("Failed to get affinity masks.",
-                    Kernel32.INSTANCE.GetProcessAffinityMask(pHandle, pProcessAffinity, pSystemAffinity));
         }
     }
 
