@@ -26,6 +26,8 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -334,6 +336,33 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      */
     boolean GetProcessAffinityMask(HANDLE hProcess, ULONG_PTRByReference lpProcessAffinityMask,
             ULONG_PTRByReference lpSystemAffinityMask);
+
+    /**
+     * Sets a processor affinity mask for the threads of the specified process.
+     *
+     * @param hProcess
+     *            A handle to the process whose affinity mask is to be set. This
+     *            handle must have the {@link WinNT#PROCESS_SET_INFORMATION} access
+     *            right.
+     * @param dwProcessAffinityMask
+     *            The affinity mask for the threads of the process.
+     *            <p>
+     *            On a system with more than 64 processors, the affinity mask must
+     *            specify processors in a single processor group.
+     * @return If the function succeeds, the return value is {@code true}.
+     *         <p>
+     *         If the function fails, the return value is {@code false}. To get
+     *         extended error information, call {@link #GetLastError()}.
+     *         <p>
+     *         If the process affinity mask requests a processor that is not
+     *         configured in the system, the last error code is
+     *         {@link WinError#ERROR_INVALID_PARAMETER}.
+     *         <p>
+     *         On a system with more than 64 processors, if the calling process
+     *         contains threads in more than one processor group, the last error
+     *         code is {@link WinError#ERROR_INVALID_PARAMETER}.
+     */
+    boolean SetProcessAffinityMask(HANDLE hProcess, ULONG_PTR dwProcessAffinityMask);
 
     /**
      * Retrieves the termination status of the specified process.

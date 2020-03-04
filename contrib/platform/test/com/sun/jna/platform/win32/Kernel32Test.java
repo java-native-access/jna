@@ -62,6 +62,7 @@ import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
 import com.sun.jna.platform.win32.Ntifs.REPARSE_DATA_BUFFER;
 import com.sun.jna.platform.win32.Ntifs.SymbolicLinkReparseBuffer;
@@ -464,22 +465,58 @@ public class Kernel32Test extends TestCase {
         }
     }
 
-    public void testGetProcessAffinityMask() {
-        int myPid = Kernel32.INSTANCE.GetCurrentProcessId();
-        HANDLE pHandle = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, myPid);
+    public void testGetAndSetProcessAffinityMask() {
+        // Pseudo handle, no need to close. Has PROCESS_ALL_ACCESS right.
+        HANDLE pHandle = Kernel32.INSTANCE.GetCurrentProcess();
         assertNotNull(pHandle);
 
         ULONG_PTRByReference pProcessAffinity = new ULONG_PTRByReference();
         ULONG_PTRByReference pSystemAffinity = new ULONG_PTRByReference();
-        assertTrue(Kernel32.INSTANCE.GetProcessAffinityMask(pHandle, pProcessAffinity, pSystemAffinity));
+        assertTrue("Failed to get affinity masks.",
+                Kernel32.INSTANCE.GetProcessAffinityMask(pHandle, pProcessAffinity, pSystemAffinity));
 
         long processAffinity = pProcessAffinity.getValue().longValue();
         long systemAffinity = pSystemAffinity.getValue().longValue();
 
-        assertEquals("Process affinity must be a subset of system affinity", processAffinity,
-                processAffinity & systemAffinity);
-        assertEquals("System affinity must be a superset of process affinity", systemAffinity,
-                processAffinity | systemAffinity);
+        if (systemAffinity == 0) {
+            // Rare case for process to be running in multiple processor groups, where both
+            // systemAffinity and processAffinity are 0 and we can't do anything else.
+            assertEquals(
+                    "Both process and system affinity must be zero if this process is running in multiple processor groups",
+                    processAffinity, systemAffinity);
+        } else {
+            // Test current affinity
+            assertEquals("Process affinity must be a subset of system affinity", processAffinity,
+                    processAffinity & systemAffinity);
+            assertEquals("System affinity must be a superset of process affinity", systemAffinity,
+                    processAffinity | systemAffinity);
+
+            // Set affinity to a single processor in the current system
+            long lowestOneBit = Long.lowestOneBit(systemAffinity);
+            ULONG_PTR dwProcessAffinityMask = new ULONG_PTR(lowestOneBit);
+            assertTrue("Failed to set affinity",
+                    Kernel32.INSTANCE.SetProcessAffinityMask(pHandle, dwProcessAffinityMask));
+            assertTrue("Failed to get affinity masks.",
+                    Kernel32.INSTANCE.GetProcessAffinityMask(pHandle, pProcessAffinity, pSystemAffinity));
+            assertEquals("Process affinity doesn't match what was just set", lowestOneBit,
+                    pProcessAffinity.getValue().longValue());
+
+            // Now try to set affinity to an invalid processor
+            lowestOneBit = Long.lowestOneBit(~systemAffinity);
+            // In case we have exactly 64 processors we can't do this, otherwise...
+            if (lowestOneBit != 0) {
+                dwProcessAffinityMask = new ULONG_PTR(lowestOneBit);
+                assertFalse("Successfully set affinity when it should have failed",
+                        Kernel32.INSTANCE.SetProcessAffinityMask(pHandle, dwProcessAffinityMask));
+                assertEquals("Last error should be ERROR_INVALID_PARAMETER", WinError.ERROR_INVALID_PARAMETER,
+                        Kernel32.INSTANCE.GetLastError());
+            }
+
+            // Cleanup. Be nice and put affinity back where it started!
+            dwProcessAffinityMask = new ULONG_PTR(processAffinity);
+            assertTrue("Failed to restore affinity to original setting",
+                    Kernel32.INSTANCE.SetProcessAffinityMask(pHandle, dwProcessAffinityMask));
+        }
     }
 
     public void testGetTempPath() {
