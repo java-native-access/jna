@@ -339,7 +339,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /**
      * Sets a processor affinity mask for the threads of the specified process.
-     * 
+     *
      * @param hProcess
      *            A handle to the process whose affinity mask is to be set. This
      *            handle must have the {@link WinNT#PROCESS_SET_INFORMATION} access
@@ -363,7 +363,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         code is {@link WinError#ERROR_INVALID_PARAMETER}.
      */
     boolean SetProcessAffinityMask(HANDLE hProcess, ULONG_PTR dwProcessAffinityMask);
-    
+
     /**
      * Retrieves the termination status of the specified process.
      *
