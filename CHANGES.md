@@ -10,6 +10,7 @@ Features
 * [#1160](https://github.com/java-native-access/jna/issues/1160): Make FileUtils#moveToTrash a varargs method - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1167](https://github.com/java-native-access/jna/pull/1167): Add `c.s.j.p.win32.Kernel32.GetProcessAffinityMask` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1168](https://github.com/java-native-access/jna/pull/1168): Add `c.s.j.p.win32.Kernel32.SetProcessAffinityMask` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1169](https://github.com/java-native-access/jna/issues/1169): Wait for process in getLinuxLdPaths - [@rdesgroppes](https://github.com/rdesgroppes).
 
 Bug Fixes
 ---------
