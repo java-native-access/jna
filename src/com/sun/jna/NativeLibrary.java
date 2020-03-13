@@ -987,9 +987,10 @@ public class NativeLibrary {
      */
     private static ArrayList<String> getLinuxLdPaths() {
         ArrayList<String> ldPaths = new ArrayList<String>();
+        Process process = null;
         BufferedReader reader = null;
         try {
-            Process process = Runtime.getRuntime().exec("/sbin/ldconfig -p");
+            process = Runtime.getRuntime().exec("/sbin/ldconfig -p");
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String buffer;
             while ((buffer = reader.readLine()) != null) {
@@ -1008,6 +1009,12 @@ public class NativeLibrary {
                 try {
                     reader.close();
                 } catch (IOException e) {
+                }
+            }
+            if(process != null) {
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
                 }
             }
         }
