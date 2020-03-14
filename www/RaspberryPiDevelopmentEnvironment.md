@@ -6,7 +6,7 @@ RaspberryPi. The additional tools below are needed as of Raspian, Release date: 
 
 * Various build tools and X11 libs:
 
-        $ sudo apt-get install autoconf automake libtool libx11-dev libxt-dev
+        $ sudo apt-get install autoconf automake libtool libx11-dev libxt-dev texinfo
 
     If you are missing these tools, when you build you are likely to see errors like those below:
   
@@ -15,5 +15,10 @@ RaspberryPi. The additional tools below are needed as of Raspian, Release date: 
     or
         
         fatal error: X11/Xlib.h: No such file or directory
+        
+    or
+    
+      makeinfo: command not found
+      ... WARNING: 'makeinfo' is missing on your system.
 
         
