@@ -96,7 +96,7 @@ public class NativeLibrary {
 
     private static final Map<String, Reference<NativeLibrary>> libraries = new HashMap<String, Reference<NativeLibrary>>();
     private static final Map<String, List<String>> searchPaths = Collections.synchronizedMap(new HashMap<String, List<String>>());
-    private static final List<String> librarySearchPath = new ArrayList<String>();
+    private static final LinkedHashSet<String> librarySearchPath = new LinkedHashSet<String>();
 
     static {
         // Force initialization of native library
