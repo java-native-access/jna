@@ -25,10 +25,11 @@
 
 package com.sun.jna;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 
@@ -80,6 +81,36 @@ public class PointerTest extends TestCase {
         Memory m = new Memory(size);
         m.setString(0, VALUE, ENCODING);
         assertEquals("Wrong decoded value", VALUE, m.getString(0, ENCODING));
+    }
+
+    public void testGetStringWithMaxBytesWithDefaultEncoding() throws Exception {
+        final String ENCODING = Native.DEFAULT_ENCODING;
+        String VALUE = "Hello World of " + '\0' + "Null";
+        int size = VALUE.getBytes(ENCODING).length + 1;
+        Memory m = new Memory(size);
+        m.setString(0, VALUE);
+        assertEquals("Wrong decoded value", "Hello World of ", m.getString(0, size));
+        assertEquals("Wrong decoded value", "Hello", m.getString(0, 5));
+    }
+
+    public void testGetStringWithMaxBytesWithCustomEncoding() throws Exception {
+        final String ENCODING = "utf8";
+        String VALUE = "Hello World of " + '\0' + UNICODE;
+        int size = VALUE.getBytes(ENCODING).length + 1;
+        Memory m = new Memory(size);
+        m.setString(0, VALUE);
+        assertEquals("Wrong decoded value", "Hello World of ", m.getString(0, size, ENCODING));
+        assertEquals("Wrong decoded value", "Hello", m.getString(0, 5, ENCODING));
+    }
+
+    public void testGetWideStringWithMaxBytes() throws Exception {
+        String VALUE = "Hello Wide World of " + '\0' + "Null";
+        int size = (VALUE.length() + 1) * Native.WCHAR_SIZE;
+        Memory m = new Memory(size);
+        m.setWideString(0, VALUE);
+        assertEquals("Wrong decoded value", "Hello Wide World of ", m.getWideString(0, size));
+        int wideSize = 5 * Native.WCHAR_SIZE;
+        assertEquals("Wrong decoded value", "Hello", m.getWideString(0, wideSize));
     }
 
     public static class TestPointerType extends PointerType {

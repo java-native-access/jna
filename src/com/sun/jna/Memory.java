@@ -564,18 +564,58 @@ public class Memory extends Pointer {
         return b;
     }
 
+    /**
+     * Indirect the native pointer to <code>malloc</code> space, a la
+     * <code>Pointer.getString</code>. But this method performs a bounds checks to
+     * ensure that the indirection does not cause memory outside the
+     * <code>malloc</code>ed space to be accessed.
+     * <p>
+     * The encoding used is obtained from {@link Native#getDefaultStringEncoding()}.
+     *
+     * @param offset
+     *            byte offset from pointer to start reading bytes
+     * @return the <code>String</code> value being pointed to, up to either a null
+     *         terminator or the end of allocated memory.
+     */
+    @Override
+    public String getString(long offset) {
+        return getString(offset, Native.getDefaultStringEncoding());
+    }
+
+    /**
+     * Indirect the native pointer to <code>malloc</code> space, a la
+     * <code>Pointer.getString</code>. But this method performs a bounds checks to
+     * ensure that the indirection does not cause memory outside the
+     * <code>malloc</code>ed space to be accessed.
+     *
+     * @return the <code>String</code> value being pointed to, up to either a null
+     *         terminator or the end of allocated memory.
+     * @see Pointer#getString(long, int, String)
+     */
     @Override
     public String getString(long offset, String encoding) {
         // NOTE: we only make sure the start of the string is within bounds
         boundsCheck(offset, 0);
-        return super.getString(offset, encoding);
+        // Call super limiting to remaining allocated memory
+        return super.getString(offset, (int) (size() - offset), encoding);
     }
 
+    /**
+     * Indirect the native pointer to <code>malloc</code> space, a la
+     * <code>Pointer.getWideString</code>. But this method performs a bounds checks
+     * to ensure that the indirection does not cause memory outside the
+     * <code>malloc</code>ed space to be accessed.
+     *
+     * @return the <code>String</code> value being pointed to, up to either a null
+     *         terminator or the end of allocated memory.
+     * @see Pointer#getWideString(long, int)
+     */
     @Override
     public String getWideString(long offset) {
         // NOTE: we only make sure the start of the string is within bounds
         boundsCheck(offset, 0);
-        return super.getWideString(offset);
+        // Call super limiting to remaining allocated memory
+        return super.getWideString(offset, (int) (size() - offset));
     }
 
     //////////////////////////////////////////////////////////////////////////
