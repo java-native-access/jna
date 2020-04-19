@@ -39,6 +39,8 @@ import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.IPHlpAPI.FIXED_INFO;
 import com.sun.jna.platform.win32.IPHlpAPI.MIB_IFROW;
 import com.sun.jna.platform.win32.IPHlpAPI.MIB_IF_ROW2;
+import com.sun.jna.platform.win32.IPHlpAPI.MIB_TCPSTATS;
+import com.sun.jna.platform.win32.IPHlpAPI.MIB_UDPSTATS;
 import com.sun.jna.ptr.IntByReference;
 
 public class IPHlpAPITest {
@@ -134,5 +136,21 @@ public class IPHlpAPITest {
             assertTrue(ValidIP.matcher(addr).matches());
             dns = dns.Next;
         }
+    }
+
+    @Test
+    public void testGetTcpStatistics() {
+        MIB_TCPSTATS stats = new MIB_TCPSTATS();
+        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetTcpStatistics(stats));
+        assertTrue(stats.dwRtoAlgorithm >= 1);
+        assertTrue(stats.dwRtoAlgorithm <= 4);
+        assertTrue(stats.dwEstabResets <= stats.dwCurrEstab);
+    }
+
+    @Test
+    public void testGetUdpStatistics() {
+        MIB_UDPSTATS stats = new MIB_UDPSTATS();
+        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetUdpStatistics(stats));
+        assertTrue(stats.dwNoPorts + stats.dwInErrors <= stats.dwInDatagrams);
     }
 }
