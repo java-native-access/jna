@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
+/* Copyright (c) 2018,2020 Daniel Widdis, All Rights Reserved
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
@@ -50,6 +50,10 @@ public interface IPHlpAPI extends Library {
     int MAX_HOSTNAME_LEN = 128;
     int MAX_DOMAIN_NAME_LEN = 128;
     int MAX_SCOPE_ID_LEN = 256;
+
+    // Source: Winsock2.h
+    int AF_INET = 2; // The Internet Protocol version 4 (IPv4) address family.
+    int AF_INET6 = 23; // The Internet Protocol version 6 (IPv6) address family.
 
     /**
      * The MIB_IFROW structure stores information about a particular interface.
@@ -333,14 +337,49 @@ public interface IPHlpAPI extends Library {
     int GetTcpStatistics(MIB_TCPSTATS Statistics);
 
     /**
+     * The GetTcpStatisticsEx function retrieves the Transmission Control Protocol
+     * (TCP) statistics for the current computer. The GetTcpStatisticsEx function
+     * differs from the {@link #GetTcpStatistics} function in that
+     * GetTcpStatisticsEx also supports the Internet Protocol version 6 (IPv6)
+     * protocol family.
+     *
+     * @param Statistics
+     *            A {@link MIB_TCPSTATS} structure that receives the TCP statistics
+     *            for the local computer.
+     * @param Family
+     *            The protocol family for which to retrieve statistics. This
+     *            parameter must be {@link #AF_INET} or {@link #AF_INET6}.
+     * @return If the function succeeds, the return value is
+     *         {@link WinError#NO_ERROR}.
+     */
+    int GetTcpStatisticsEx(MIB_TCPSTATS Statistics, int Family);
+
+    /**
      * The GetUdpStatistics function retrieves the User Datagram Protocol (UDP)
      * statistics for the local computer.
      *
-     * @param Stats
+     * @param Statistics
      *            A {@link MIB_UDPSTATS} structure that receives the UDP statistics
      *            for the local computer.
      * @return If the function succeeds, the return value is
      *         {@link WinError#NO_ERROR}.
      */
-    int GetUdpStatistics(MIB_UDPSTATS Stats);
+    int GetUdpStatistics(MIB_UDPSTATS Statistics);
+
+    /**
+     * The GetUdpStatisticsEx function retrieves the User Datagram Protocol (UDP)
+     * statistics for the current computer. The GetUdpStatisticsEx function differs
+     * from the {@link #GetUdpStatistics} function in that GetUdpStatisticsEx also
+     * supports the Internet Protocol version 6 (IPv6) protocol family.
+     *
+     * @param Statistics
+     *            A {@link MIB_UDPSTATS} structure that receives the UDP statistics
+     *            for the local computer.
+     * @param Family
+     *            The protocol family for which to retrieve statistics. This
+     *            parameter must be {@link #AF_INET} or {@link #AF_INET6}.
+     * @return If the function succeeds, the return value is
+     *         {@link WinError#NO_ERROR}.
+     */
+    int GetUdpStatisticsEx(MIB_UDPSTATS Statistics, int Family);
 }

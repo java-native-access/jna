@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
+/* Copyright (c) 2018,2020 Daniel Widdis, All Rights Reserved
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
@@ -145,6 +145,14 @@ public class IPHlpAPITest {
         assertTrue(stats.dwRtoAlgorithm >= 1);
         assertTrue(stats.dwRtoAlgorithm <= 4);
         assertTrue(stats.dwEstabResets <= stats.dwCurrEstab);
+
+        // Above should roughly match IPv4 stats with Ex version
+        MIB_TCPSTATS stats4 = new MIB_TCPSTATS();
+        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetTcpStatisticsEx(stats4, IPHlpAPI.AF_INET));
+        assertEquals(stats.dwRtoAlgorithm, stats4.dwRtoAlgorithm);
+        assertTrue(stats4.dwEstabResets <= stats4.dwCurrEstab);
+        assertTrue(stats.dwActiveOpens <= stats4.dwActiveOpens);
+        assertTrue(stats.dwPassiveOpens <= stats4.dwPassiveOpens);
     }
 
     @Test
@@ -152,5 +160,13 @@ public class IPHlpAPITest {
         MIB_UDPSTATS stats = new MIB_UDPSTATS();
         assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetUdpStatistics(stats));
         assertTrue(stats.dwNoPorts + stats.dwInErrors <= stats.dwInDatagrams);
+
+        // Above should roughly match IPv4 stats with Ex version
+        MIB_UDPSTATS stats4 = new MIB_UDPSTATS();
+        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetUdpStatisticsEx(stats4, IPHlpAPI.AF_INET));
+        assertTrue(stats.dwNoPorts <= stats4.dwNoPorts);
+        assertTrue(stats.dwInErrors <= stats4.dwInErrors);
+        assertTrue(stats.dwInDatagrams <= stats4.dwInDatagrams);
+        assertTrue(stats4.dwNoPorts + stats4.dwInErrors <= stats4.dwInDatagrams);
     }
 }
