@@ -13,12 +13,12 @@ Features
 * [#1169](https://github.com/java-native-access/jna/issues/1169): Wait for process in getLinuxLdPaths - [@rdesgroppes](https://github.com/rdesgroppes).
 * [#1178](https://github.com/java-native-access/jna/pull/1178): Add `c.s.j.p.win32.IPHlpAPI#GetTcpStatistics`, `c.s.j.p.win32.IPHlpAPI#GetUdpStatistics`, `c.s.j.p.win32.IPHlpAPI#GetTcpStatisticsEx` and `c.s.j.p.win32.IPHlpAPI#GetUdpStatisticsEx` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1191](https://github.com/java-native-access/jna/pull/1191): Add `c.s.j.p.win32.Advapi32Util#getTokenPrimaryGroup` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1182](https://github.com/java-native-access/jna/pull/1182): Add `toString` to classes extending `c.s.j.ptr.ByReference` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
 * [#1183](https://github.com/java-native-access/jna/pull/1183): `c.s.j.p.win32.WinDef.CHARByReference#getValue` should only read one byte - [@dbwiddis](https://github.com/dbwiddis).
 * [#1184](https://github.com/java-native-access/jna/pull/1184): `c.s.j.p.win32.WinDef.ULONGLONG` should always be 8 bytes - [@dbwiddis](https://github.com/dbwiddis).
-
 
 Release 5.5.0
 =============
