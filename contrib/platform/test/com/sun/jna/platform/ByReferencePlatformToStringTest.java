@@ -97,7 +97,7 @@ public class ByReferencePlatformToStringTest extends ByReferenceToStringTest {
         HANDLEByReference handlebr = new HANDLEByReference(new HANDLE(new Pointer(42)));
         parseAndTest(handlebr.toString(), "HANDLE", "native");
 
-        HKEYByReference hkeybr = new HKEYByReference(new HKEY(0));
+        HKEYByReference hkeybr = new HKEYByReference(new HKEY(42));
         parseAndTest(hkeybr.toString(), "HKEY", "native");
 
         LONGByReference longbr = new LONGByReference(new LONG(42));
