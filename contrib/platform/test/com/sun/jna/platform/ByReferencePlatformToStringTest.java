@@ -151,18 +151,23 @@ public class ByReferencePlatformToStringTest extends ByReferenceToStringTest {
         parseAndTest(vboolbr2.toString(), "VARIANT_BOOL", "1");
 
         VARTYPEByReference varbr = new VARTYPEByReference(new VARTYPE(42));
-        parseAndTest(varbr.toString(), "VARTYPE", "0");
+        parseAndTest(varbr.toString(), "VARTYPE", "42");
 
         WORDByReference wbr = new WORDByReference(new WORD(42));
         parseAndTest(wbr.toString(), "WORD", "42");
 
-        // No way to set value on these without native code
+        // No way to set value on these without native code. Both methods read a random
+        // NativeLong and return null if 0 or a random hex string otherwise
         AtomByReference abr = new AtomByReference();
-        // always null
-        assertTrue(abr.toString().startsWith("null@0x"));
+        String atomStr = abr.toString();
+        if (abr.getValue() == null) {
+            assertTrue(abr.toString().startsWith("null@0x"));
+        } else {
+            assertTrue(atomStr.startsWith("Atom@0x"));
+            assertTrue(atomStr.contains("=0x"));
+        }
 
         WindowByReference windowbr = new WindowByReference();
-        // either null or a random NativeLong hex string
         String windowStr = windowbr.toString();
         if (windowbr.getValue() == null) {
             assertTrue(windowStr.startsWith("null@0x"));
