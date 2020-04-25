@@ -23,6 +23,8 @@
  */
 package com.sun.jna.ptr;
 
+import com.sun.jna.Pointer;
+
 public class DoubleByReference extends ByReference {
     public DoubleByReference() {
         this(0d);
@@ -41,4 +43,8 @@ public class DoubleByReference extends ByReference {
         return getPointer().getDouble(0);
     }
 
+    @Override
+    public String toString() {
+        return String.format("double@0x%x=%s", Pointer.nativeValue(getPointer()), getValue());
+    }
 }
