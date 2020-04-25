@@ -23,6 +23,8 @@
  */
 package com.sun.jna.ptr;
 
+import com.sun.jna.Pointer;
+
 public class IntByReference extends ByReference {
 
     public IntByReference() {
@@ -40,5 +42,10 @@ public class IntByReference extends ByReference {
 
     public int getValue() {
         return getPointer().getInt(0);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("int@0x%x=0x%x (%d)", Pointer.nativeValue(getPointer()), getValue(), getValue());
     }
 }

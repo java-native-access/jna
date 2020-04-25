@@ -23,6 +23,8 @@
  */
 package com.sun.jna.ptr;
 
+import com.sun.jna.Pointer;
+
 public class ByteByReference extends ByReference {
 
     public ByteByReference() {
@@ -42,4 +44,8 @@ public class ByteByReference extends ByReference {
         return getPointer().getByte(0);
     }
 
+    @Override
+    public String toString() {
+        return String.format("byte@0x%x=0x%x (%d)", Pointer.nativeValue(getPointer()), getValue(), getValue());
+    }
 }

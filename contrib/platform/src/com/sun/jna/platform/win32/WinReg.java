@@ -67,6 +67,11 @@ public interface WinReg {
             h.setPointer(p);
             return h;
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     HKEY HKEY_CLASSES_ROOT = new HKEY(0x80000000);

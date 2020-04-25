@@ -107,6 +107,11 @@ public interface BaseTSD {
                                  ? getPointer().getInt(0)
                                  : getPointer().getLong(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
 

@@ -111,6 +111,11 @@ public interface LowLevelMonitorConfigurationAPI
             public MC_VCP_CODE_TYPE getValue() {
                 return EnumUtils.fromInteger(getPointer().getInt(0), MC_VCP_CODE_TYPE.class);
             }
+
+            @Override
+            public String toString() {
+                return super.toString(getValue());
+            }
         }
     }
 }

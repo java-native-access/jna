@@ -172,6 +172,11 @@ public interface X11 extends Library {
             NativeLong value = getPointer().getNativeLong(0);
             return (Atom)new Atom().fromNative(value, null);
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
     class Colormap extends XID {
         private static final long serialVersionUID = 1L;
@@ -250,6 +255,11 @@ public interface X11 extends Library {
         public Window getValue() {
             NativeLong value = getPointer().getNativeLong(0);
             return value.longValue() == X11.None ? Window.None : new Window(value.longValue());
+        }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
         }
     }
     class Pixmap extends Drawable {
