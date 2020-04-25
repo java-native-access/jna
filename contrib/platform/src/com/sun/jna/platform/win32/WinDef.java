@@ -1776,7 +1776,7 @@ public interface WinDef {
          * @return the value
          */
         public CHAR getValue() {
-            return new CHAR(getPointer().getChar(0));
+            return new CHAR(getPointer().getByte(0));
         }
 
         @Override
