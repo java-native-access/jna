@@ -24,6 +24,7 @@
 package com.sun.jna.ptr;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
 /** Provides generic "pointer to type" functionality, often used in C
@@ -40,5 +41,21 @@ public abstract class ByReference extends PointerType {
 
     protected ByReference(int dataSize) {
         setPointer(new Memory(dataSize));
+    }
+
+    /**
+     * Express this reference and the value it points to.
+     *
+     * @param value
+     *            The value to display. Callers should pass the result of
+     *            {@code getValue()}.
+     * @return A formatted string containing the object type, reference address, and
+     *         value
+     */
+    protected String toString(Object value) {
+        if (value == null) {
+            return String.format("null@0x%x", Pointer.nativeValue(getPointer()));
+        }
+        return String.format("%s@0x%x=%s", value.getClass().getSimpleName(), Pointer.nativeValue(getPointer()), value);
     }
 }

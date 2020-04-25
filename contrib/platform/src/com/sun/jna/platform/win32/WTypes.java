@@ -24,6 +24,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.UnsupportedEncodingException;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -31,7 +33,6 @@ import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Constant defined in WTypes.h
@@ -169,6 +170,11 @@ public interface WTypes {
 
         public String getString() {
             return this.getValue().getValue();
+        }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
         }
     }
 
@@ -316,6 +322,11 @@ public interface WTypes {
 
         public VARTYPE getValue() {
             return new VARTYPE(getPointer().getShort(0));
+        }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
         }
     }
 }

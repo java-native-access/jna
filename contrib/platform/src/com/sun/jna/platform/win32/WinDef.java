@@ -117,6 +117,11 @@ public interface WinDef {
         public WORD getValue() {
             return new WORD(getPointer().getShort(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     /**
@@ -207,6 +212,11 @@ public interface WinDef {
         public DWORD getValue() {
             return new DWORD(getPointer().getInt(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     /**
@@ -278,6 +288,11 @@ public interface WinDef {
         public LONG getValue() {
             return new LONG(getPointer().getInt(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     /**
@@ -348,6 +363,11 @@ public interface WinDef {
          */
         public LONGLONG getValue() {
             return new LONGLONG(getPointer().getLong(0));
+        }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
         }
     }
 
@@ -906,6 +926,11 @@ public interface WinDef {
         public ULONG getValue() {
             return new ULONG(getPointer().getInt(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     /**
@@ -976,6 +1001,11 @@ public interface WinDef {
          */
         public ULONGLONG getValue() {
             return new ULONGLONG(getPointer().getLong(0));
+        }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
         }
     }
 
@@ -1254,6 +1284,11 @@ public interface WinDef {
         public USHORT getValue() {
             return new USHORT(getPointer().getShort(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     /**
@@ -1357,6 +1392,11 @@ public interface WinDef {
         public UINT getValue() {
             return new UINT(getPointer().getInt(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     /**
@@ -1420,6 +1460,11 @@ public interface WinDef {
          */
         public SCODE getValue() {
             return new SCODE(getPointer().getInt(0));
+        }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
         }
     }
 
@@ -1592,6 +1637,11 @@ public interface WinDef {
         public BOOL getValue() {
             return new BOOL(getPointer().getInt(0));
         }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
+        }
     }
 
     /**
@@ -1727,6 +1777,11 @@ public interface WinDef {
          */
         public CHAR getValue() {
             return new CHAR(getPointer().getByte(0));
+        }
+
+        @Override
+        public String toString() {
+            return super.toString(getValue());
         }
     }
 

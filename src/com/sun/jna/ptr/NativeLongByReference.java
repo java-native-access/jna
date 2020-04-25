@@ -24,6 +24,7 @@
 package com.sun.jna.ptr;
 
 import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
 
 public class NativeLongByReference extends ByReference {
     public NativeLongByReference() {
@@ -41,5 +42,16 @@ public class NativeLongByReference extends ByReference {
 
     public NativeLong getValue() {
         return getPointer().getNativeLong(0);
+    }
+
+    @Override
+    public String toString() {
+        if (NativeLong.SIZE > 4) {
+            return String.format("NativeLong@0x%x=0x%x (%d)", Pointer.nativeValue(getPointer()), getValue().longValue(),
+                    getValue().longValue());
+        } else {
+            return String.format("NativeLong@0x%x=0x%x (%d)", Pointer.nativeValue(getPointer()), getValue().intValue(),
+                    getValue().intValue());
+        }
     }
 }
