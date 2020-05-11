@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef.CONSOLE_SCREEN_BUFFER_INFO;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
@@ -141,5 +142,13 @@ public class Kernel32ConsoleTest extends AbstractWin32TestSupport {
                 fail("Call failed: hr=0x" + Integer.toHexString(hr));
             }
         }
+    }
+
+    @Test
+    @Ignore("We get hr=6 - ERROR_INVALID_HANDLE - because GetConsoleScreenBufferInfo() doesn't work if we don't have an interactive CMD window")
+    public void testGetConsoleScreenBufferInfo() {
+        HANDLE hConsoleOutput = INSTANCE.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo = new CONSOLE_SCREEN_BUFFER_INFO();
+        assertCallSucceeded("GetConsoleScreenBufferInfo", INSTANCE.GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo));
     }
 }
