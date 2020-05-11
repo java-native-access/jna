@@ -22,6 +22,39 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.List;
+
+import com.sun.jna.IntegerType;
+import com.sun.jna.Memory;
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.Union;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.Dispatch;
+import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.Variant.VariantArg;
+import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.LPOLESTR;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WinDef.BYTE;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.LCID;
+import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinDef.LONGLONG;
+import com.sun.jna.platform.win32.WinDef.PVOID;
+import com.sun.jna.platform.win32.WinDef.SCODE;
+import com.sun.jna.platform.win32.WinDef.SHORT;
+import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinDef.ULONGLONG;
+import com.sun.jna.platform.win32.WinDef.USHORT;
+import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.COM.TypeComp;
+import com.sun.jna.platform.win32.COM.Unknown;
 import static com.sun.jna.platform.win32.Variant.VT_BOOL;
 import static com.sun.jna.platform.win32.Variant.VT_BSTR;
 import static com.sun.jna.platform.win32.Variant.VT_CY;
@@ -42,43 +75,10 @@ import static com.sun.jna.platform.win32.Variant.VT_UI4;
 import static com.sun.jna.platform.win32.Variant.VT_UINT;
 import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
 import static com.sun.jna.platform.win32.Variant.VT_VARIANT;
-
-import java.io.Closeable;
-import java.util.Date;
-
-import com.sun.jna.IntegerType;
-import com.sun.jna.Memory;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import com.sun.jna.Structure.FieldOrder;
-import com.sun.jna.Union;
-import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.Variant.VariantArg;
-import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WTypes.LPOLESTR;
-import com.sun.jna.platform.win32.WTypes.VARTYPE;
-import com.sun.jna.platform.win32.WinDef.BYTE;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import com.sun.jna.platform.win32.WinDef.LCID;
-import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinDef.LONGLONG;
-import com.sun.jna.platform.win32.WinDef.PVOID;
-import com.sun.jna.platform.win32.WinDef.SCODE;
-import com.sun.jna.platform.win32.WinDef.SHORT;
-import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.ULONGLONG;
-import com.sun.jna.platform.win32.WinDef.USHORT;
-import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.Dispatch;
-import com.sun.jna.platform.win32.COM.TypeComp;
-import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.io.Closeable;
+import java.util.Date;
 
 /**
  * The Interface OaIdl.

@@ -45,6 +45,6 @@ public class FloatByReference extends ByReference {
 
     @Override
     public String toString() {
-        return String.format("float@0x%x=%s", Pointer.nativeValue(getPointer()), Float.toString(getValue()));
+        return String.format("float@0x%x=%s", Pointer.nativeValue(getPointer()), getValue());
     }
 }

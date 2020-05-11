@@ -45,6 +45,6 @@ public class DoubleByReference extends ByReference {
 
     @Override
     public String toString() {
-        return String.format("double@0x%x=%s", Pointer.nativeValue(getPointer()), Double.toString(getValue()));
+        return String.format("double@0x%x=%s", Pointer.nativeValue(getPointer()), getValue());
     }
 }

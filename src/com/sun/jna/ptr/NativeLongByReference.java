@@ -46,12 +46,7 @@ public class NativeLongByReference extends ByReference {
 
     @Override
     public String toString() {
-        if (NativeLong.SIZE > 4) {
-            return String.format("NativeLong@0x%x=0x%x (%d)", Pointer.nativeValue(getPointer()), getValue().longValue(),
-                    getValue().longValue());
-        } else {
-            return String.format("NativeLong@0x%x=0x%x (%d)", Pointer.nativeValue(getPointer()), getValue().intValue(),
-                    getValue().intValue());
-        }
+        return String.format("NativeLong@0x1$%x=0x%2$x (%2$d)", Pointer.nativeValue(getPointer()),
+                NativeLong.SIZE > 4 ? getValue().longValue() : getValue().intValue());
     }
 }

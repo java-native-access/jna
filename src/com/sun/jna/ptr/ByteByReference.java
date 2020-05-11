@@ -46,6 +46,6 @@ public class ByteByReference extends ByReference {
 
     @Override
     public String toString() {
-        return String.format("byte@0x%x=0x%x (%d)", Pointer.nativeValue(getPointer()), getValue(), getValue());
+        return String.format("byte@0x%1$x=0x%2$x (%2$d)", Pointer.nativeValue(getPointer()), getValue());
     }
 }
