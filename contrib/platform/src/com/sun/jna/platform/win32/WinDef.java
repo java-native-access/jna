@@ -1786,7 +1786,7 @@ public interface WinDef {
 
         @Override
         public String toString() {
-            return String.format("COORD[%s,%s]", X, Y);
+            return String.format("COORD(%s,%s)", X, Y);
         }
     }
 
@@ -1803,7 +1803,7 @@ public interface WinDef {
 
         @Override
         public String toString() {
-            return String.format("SMALL_RECT[%s,%s,%s,%s]", Left, Top, Right, Bottom);
+            return String.format("SMALL_RECT(%s,%s)(%s,%s)", Left, Top, Right, Bottom);
         }
     }
 
@@ -1821,7 +1821,7 @@ public interface WinDef {
 
         @Override
         public String toString() {
-            return String.format("CONSOLE_SCREEN_BUFFER_INFO[%s,%s,%s,%s,%s]", dwSize, dwCursorPosition, wAttributes, srWindow, dwMaximumWindowSize);
+            return String.format("CONSOLE_SCREEN_BUFFER_INFO(%s,%s,%s,%s,%s)", dwSize, dwCursorPosition, wAttributes, srWindow, dwMaximumWindowSize);
         }
     }
 }
