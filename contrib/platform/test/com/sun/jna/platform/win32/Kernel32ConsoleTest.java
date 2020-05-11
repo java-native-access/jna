@@ -145,10 +145,16 @@ public class Kernel32ConsoleTest extends AbstractWin32TestSupport {
     }
 
     @Test
-    @Ignore("We get hr=6 - ERROR_INVALID_HANDLE - because GetConsoleScreenBufferInfo() doesn't work if we don't have an interactive CMD window")
     public void testGetConsoleScreenBufferInfo() {
         HANDLE hConsoleOutput = INSTANCE.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
         CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo = new CONSOLE_SCREEN_BUFFER_INFO();
-        assertCallSucceeded("GetConsoleScreenBufferInfo", INSTANCE.GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo));
+
+        // GetConsoleScreenBufferInfo() will fail with ERROR_INVALID_HANDLE(6)
+        // if we don't have an interactive CMD window
+        if (System.console() == null) {
+            assertFalse(INSTANCE.GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo));
+        } else {
+            assertCallSucceeded("GetConsoleScreenBufferInfo", INSTANCE.GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo));
+        }
     }
 }
