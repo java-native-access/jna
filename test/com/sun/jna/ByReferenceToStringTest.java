@@ -91,7 +91,7 @@ public class ByReferenceToStringTest extends TestCase {
      *            The string which should match the portion after the {@code =}
      *            sign, before any additional {@code @}
      */
-    protected void parseAndTest(String s, String beforeAt, String afterEquals) {
+    private void parseAndTest(String s, String beforeAt, String afterEquals) {
         String[] atSplit = s.split("@");
         assertEquals("Incorrect type prefix", beforeAt, atSplit[0]);
         String[] equalsSplit = atSplit[1].split("=");

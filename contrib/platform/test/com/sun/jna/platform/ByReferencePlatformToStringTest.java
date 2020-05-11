@@ -23,9 +23,11 @@
  */
 package com.sun.jna.platform;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
-import com.sun.jna.ByReferenceToStringTest;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.unix.X11.AtomByReference;
 import com.sun.jna.platform.unix.X11.WindowByReference;
@@ -76,7 +78,7 @@ import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 
-public class ByReferencePlatformToStringTest extends ByReferenceToStringTest {
+public class ByReferencePlatformToStringTest {
     @Test
     public void testPlatformToStrings() {
         BOOLByReference boolbr = new BOOLByReference(new BOOL(true));
@@ -175,5 +177,24 @@ public class ByReferencePlatformToStringTest extends ByReferenceToStringTest {
             assertTrue(windowStr.startsWith("Window@0x"));
             assertTrue(windowStr.contains("=0x"));
         }
+    }
+
+    /**
+     * Parses a string "foo@0x123=bar" testing equality of fixed parts of the string
+     *
+     * @param s
+     *            The string to test
+     * @param beforeAt
+     *            The string which should match the portion before the first
+     *            {@code @}
+     * @param afterEquals
+     *            The string which should match the portion after the {@code =}
+     *            sign, before any additional {@code @}
+     */
+    private void parseAndTest(String s, String beforeAt, String afterEquals) {
+        String[] atSplit = s.split("@");
+        assertEquals("Incorrect type prefix", beforeAt, atSplit[0]);
+        String[] equalsSplit = atSplit[1].split("=");
+        assertEquals("Incorrect value string", afterEquals, equalsSplit[1]);
     }
 }
