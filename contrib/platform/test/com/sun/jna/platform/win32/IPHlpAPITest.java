@@ -141,32 +141,48 @@ public class IPHlpAPITest {
     @Test
     public void testGetTcpStatistics() {
         MIB_TCPSTATS stats = new MIB_TCPSTATS();
-        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetTcpStatistics(stats));
-        assertTrue(stats.dwRtoAlgorithm >= 1);
-        assertTrue(stats.dwRtoAlgorithm <= 4);
-        assertTrue(stats.dwEstabResets <= stats.dwCurrEstab);
+        int err = IPHlpAPI.INSTANCE.GetTcpStatistics(stats);
+        assertEquals(String.format("Error %d calling GetTcpStatistics.", err), WinError.NO_ERROR, err);
+        assertTrue("RTO algorithm must be between 1 and 4.", stats.dwRtoAlgorithm >= 1);
+        assertTrue("RTO algorithm must be between 1 and 4.", stats.dwRtoAlgorithm <= 4);
 
         // Above should roughly match IPv4 stats with Ex version
         MIB_TCPSTATS stats4 = new MIB_TCPSTATS();
-        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetTcpStatisticsEx(stats4, IPHlpAPI.AF_INET));
-        assertEquals(stats.dwRtoAlgorithm, stats4.dwRtoAlgorithm);
-        assertTrue(stats4.dwEstabResets <= stats4.dwCurrEstab);
-        assertTrue(stats.dwActiveOpens <= stats4.dwActiveOpens);
-        assertTrue(stats.dwPassiveOpens <= stats4.dwPassiveOpens);
+        err = IPHlpAPI.INSTANCE.GetTcpStatisticsEx(stats4, IPHlpAPI.AF_INET);
+        assertEquals(String.format("Error %d calling GetTcpStatisticsEx.", err), WinError.NO_ERROR, err);
+        assertEquals("RTO algorithm from GetTcpStatistics should match GetTcpStatisticsEx", stats.dwRtoAlgorithm,
+                stats4.dwRtoAlgorithm);
+        assertTrue("Reset connections should not decrease between calls to GetTcpStatistics and GetTcpStatisticsEx",
+                stats.dwEstabResets <= stats4.dwEstabResets);
+        assertTrue(
+                "Active connections opened should not decrease between calls to GetTcpStatistics and GetTcpStatisticsEx",
+                stats.dwActiveOpens <= stats4.dwActiveOpens);
+        assertTrue(
+                "Passive connections opened should not decrease between calls to GetTcpStatistics and GetTcpStatisticsEx",
+                stats.dwPassiveOpens <= stats4.dwPassiveOpens);
     }
 
     @Test
     public void testGetUdpStatistics() {
         MIB_UDPSTATS stats = new MIB_UDPSTATS();
-        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetUdpStatistics(stats));
-        assertTrue(stats.dwNoPorts + stats.dwInErrors <= stats.dwInDatagrams);
+        int err = IPHlpAPI.INSTANCE.GetUdpStatistics(stats);
+        assertEquals(String.format("Error %d calling GetUdpStatistics.", err), WinError.NO_ERROR, err);
+        assertTrue("Datagrams received with errors or no port should be less than inbound datagrams.",
+                stats.dwNoPorts + stats.dwInErrors <= stats.dwInDatagrams);
 
         // Above should roughly match IPv4 stats with Ex version
         MIB_UDPSTATS stats4 = new MIB_UDPSTATS();
-        assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetUdpStatisticsEx(stats4, IPHlpAPI.AF_INET));
-        assertTrue(stats.dwNoPorts <= stats4.dwNoPorts);
-        assertTrue(stats.dwInErrors <= stats4.dwInErrors);
-        assertTrue(stats.dwInDatagrams <= stats4.dwInDatagrams);
-        assertTrue(stats4.dwNoPorts + stats4.dwInErrors <= stats4.dwInDatagrams);
+        err = IPHlpAPI.INSTANCE.GetUdpStatisticsEx(stats4, IPHlpAPI.AF_INET);
+        assertEquals(String.format("Error %d calling GetUdpStatistics.", err), WinError.NO_ERROR, err);
+        assertTrue(
+                "Datagrams received with no port should not decrease between calls to GetUdpStatistics and GetUdpStatisticsEx",
+                stats.dwNoPorts <= stats4.dwNoPorts);
+        assertTrue(
+                "Datagrams received with errors should not decrease between calls to GetUdpStatistics and GetUdpStatisticsEx",
+                stats.dwInErrors <= stats4.dwInErrors);
+        assertTrue("Datagrams received should not decrease between calls to GetUdpStatistics and GetUdpStatisticsEx",
+                stats.dwInDatagrams <= stats4.dwInDatagrams);
+        assertTrue("Datagrams received with errors or no port should be less than inbound datagrams.",
+                stats4.dwNoPorts + stats4.dwInErrors <= stats4.dwInDatagrams);
     }
 }
