@@ -32,6 +32,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
@@ -423,6 +424,33 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public TOKEN_USER(int size) {
+            super(new Memory(size));
+        }
+    }
+
+    /**
+     * The TOKEN_PRIMARY_GROUP structure specifies a group security identifier (SID)
+     * for an access token.
+     */
+    @FieldOrder({ "PrimaryGroup" })
+    public static class TOKEN_PRIMARY_GROUP extends Structure {
+        /**
+         * A pointer to a SID structure representing a group that will become the
+         * primary group of any objects created by a process using this access token.
+         * The SID must be one of the group SIDs already in the token.
+         */
+        public PSID.ByReference PrimaryGroup;
+
+        public TOKEN_PRIMARY_GROUP() {
+            super();
+        }
+
+        public TOKEN_PRIMARY_GROUP(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        public TOKEN_PRIMARY_GROUP(int size) {
             super(new Memory(size));
         }
     }
