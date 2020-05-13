@@ -1849,18 +1849,18 @@ public interface WinDef {
         public void read() {
             super.read();
             switch (EventType.intValue()) {
-            case KEY_EVENT:
-                Event.setType(KEY_EVENT_RECORD.class);
-                Event.read();
-                break;
-            case MOUSE_EVENT:
-                Event.setType(MOUSE_EVENT_RECORD.class);
-                Event.read();
-                break;
-            case WINDOW_BUFFER_SIZE_EVENT:
-                Event.setType(WINDOW_BUFFER_SIZE_RECORD.class);
-                Event.read();
-                break;
+                case KEY_EVENT:
+                    Event.setType(KEY_EVENT_RECORD.class);
+                    Event.read();
+                    break;
+                case MOUSE_EVENT:
+                    Event.setType(MOUSE_EVENT_RECORD.class);
+                    Event.read();
+                    break;
+                case WINDOW_BUFFER_SIZE_EVENT:
+                    Event.setType(WINDOW_BUFFER_SIZE_RECORD.class);
+                    Event.read();
+                    break;
             }
         }
 
