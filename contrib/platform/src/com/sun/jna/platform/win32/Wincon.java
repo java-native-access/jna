@@ -25,7 +25,11 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.CONSOLE_SCREEN_BUFFER_INFO;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.INPUT_RECORD;
+import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 
@@ -255,6 +259,7 @@ public interface Wincon {
     boolean SetConsoleTitle(String lpConsoleTitle);
 
     /**
+     * Retrieves information about the specified console screen buffer.
      * @param hConsoleOutput A handle to the console screen buffer.
      * @param lpConsoleScreenBufferInfo A pointer to a CONSOLE_SCREEN_BUFFER_INFO structure that receives the console screen buffer information.
      * @return {@code true} if successful - if {@code false} then use
@@ -262,4 +267,39 @@ public interface Wincon {
      * @see <a href="https://docs.microsoft.com/en-us/windows/console/getconsolescreenbufferinfo">GetConsoleScreenBufferInfo documentation</a>
      */
     boolean GetConsoleScreenBufferInfo(HANDLE hConsoleOutput, CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo);
+
+    /**
+     * Reads data from a console input buffer and removes it from the buffer.
+     * @param hConsoleInput A handle to the console input buffer.
+     * @param lpBuffer A pointer to an array of INPUT_RECORD structures that receives the input buffer data.
+     * @param nLength The size of the array pointed to by the lpBuffer parameter, in array elements.
+     * @param lpNumberOfEventsRead A pointer to a variable that receives the number of input records read.
+     * @return {@code true} if successful - if {@code false} then use
+     * {@code GetLastError()} to get extended error information
+     * @see <a href="https://docs.microsoft.com/en-us/windows/console/readconsoleinput">ReadConsoleInput documentation</a>
+     */
+    boolean ReadConsoleInput(HANDLE hConsoleInput, INPUT_RECORD[] lpBuffer, DWORD nLength, DWORDByReference lpNumberOfEventsRead);
+
+    /**
+     * Retrieves the number of unread input records in the console's input buffer.
+     * @param hConsoleInput A handle to the console input buffer.
+     * @param lpcNumberOfEvents A pointer to a variable that receives the number of unread input records in the console's input buffer.
+     * @return {@code true} if successful - if {@code false} then use
+     * {@code GetLastError()} to get extended error information
+     * @see <a href="https://docs.microsoft.com/en-us/windows/console/getnumberofconsoleinputevents">GetNumberOfConsoleInputEvents documentation</a>
+     */
+    boolean GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, DWORDByReference lpcNumberOfEvents);
+
+    /**
+     * Writes a character string to a console screen buffer beginning at the current cursor location.
+     * @param hConsoleOutput A handle to the console screen buffer.
+     * @param lpBuffer A pointer to a buffer that contains characters to be written to the console screen buffer.
+     * @param nNumberOfCharsToWrite The number of characters to be written.
+     * @param lpNumberOfCharsWritten A pointer to a variable that receives the number of characters actually written.
+     * @param lpReserved Reserved; must be NULL.
+     * @return {@code true} if successful - if {@code false} then use
+     * {@code GetLastError()} to get extended error information
+     * @see <a href="https://docs.microsoft.com/en-us/windows/console/writeconsole">WriteConsole documentation</a>
+     */
+    boolean WriteConsole(HANDLE hConsoleOutput, String lpBuffer, DWORD nNumberOfCharsToWrite, DWORDByReference lpNumberOfCharsWritten, LPVOID lpReserved);
 }

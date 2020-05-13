@@ -29,7 +29,10 @@ import org.junit.Test;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.CONSOLE_SCREEN_BUFFER_INFO;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.INPUT_RECORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import org.junit.Assume;
@@ -149,12 +152,49 @@ public class Kernel32ConsoleTest extends AbstractWin32TestSupport {
         HANDLE hConsoleOutput = INSTANCE.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
         CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo = new CONSOLE_SCREEN_BUFFER_INFO();
 
-        // GetConsoleScreenBufferInfo() will fail with ERROR_INVALID_HANDLE(6)
-        // if we don't have an interactive CMD window
         if (System.console() == null) {
             assertFalse(INSTANCE.GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo));
         } else {
             assertCallSucceeded("GetConsoleScreenBufferInfo", INSTANCE.GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo));
+        }
+    }
+
+    @Test
+    public void testReadConsoleInput() {
+        HANDLE hConsoleInput = INSTANCE.GetStdHandle(Wincon.STD_INPUT_HANDLE);
+        INPUT_RECORD[] lpBuffer = new INPUT_RECORD[1];
+        DWORD nLength = new DWORD(lpBuffer.length);
+        DWORDByReference lpNumberOfEventsRead = new DWORDByReference();
+
+        if (System.console() == null) {
+            assertFalse(INSTANCE.ReadConsoleInput(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead));
+        } else {
+            assertCallSucceeded("ReadConsoleInput", INSTANCE.ReadConsoleInput(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead));
+        }
+    }
+
+    @Test
+    public void testGetNumberOfConsoleInputEvents() {
+        HANDLE hConsoleInput = INSTANCE.GetStdHandle(Wincon.STD_INPUT_HANDLE);
+        DWORDByReference lpcNumberOfEvents = new DWORDByReference();
+
+        if (System.console() == null) {
+            assertFalse(INSTANCE.GetNumberOfConsoleInputEvents(hConsoleInput, lpcNumberOfEvents));
+        } else {
+            assertCallSucceeded("GetNumberOfConsoleInputEvents", INSTANCE.GetNumberOfConsoleInputEvents(hConsoleInput, lpcNumberOfEvents));
+        }
+    }
+
+    @Test
+    public void testWriteConsole() {
+        HANDLE hConsoleOutput = INSTANCE.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
+        String lpBuffer = "WriteConsole";
+        DWORD nNumberOfCharsToWrite = new DWORD(lpBuffer.length());
+
+        if (System.console() == null) {
+            assertFalse(INSTANCE.WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, null, null));
+        } else {
+            assertCallSucceeded("WriteConsole", INSTANCE.WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, null, null));
         }
     }
 }

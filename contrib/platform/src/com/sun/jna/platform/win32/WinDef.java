@@ -31,6 +31,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -1822,6 +1823,100 @@ public interface WinDef {
         @Override
         public String toString() {
             return String.format("CONSOLE_SCREEN_BUFFER_INFO(%s,%s,%s,%s,%s)", dwSize, dwCursorPosition, wAttributes, srWindow, dwMaximumWindowSize);
+        }
+    }
+
+    /**
+     * INPUT_RECORD structure
+     */
+    @FieldOrder({ "EventType", "Event" })
+    public static class INPUT_RECORD extends Structure {
+
+        public static final int KEY_EVENT = 0x01;
+        public static final int MOUSE_EVENT = 0x02;
+        public static final int WINDOW_BUFFER_SIZE_EVENT = 0x04;
+
+        public WORD EventType;
+        public UNION Event;
+
+        public static class UNION extends Union {
+            public KEY_EVENT_RECORD KeyEvent;
+            public MOUSE_EVENT_RECORD MouseEvent;
+            public WINDOW_BUFFER_SIZE_RECORD WindowBufferSizeEvent;
+        }
+
+        @Override
+        public void read() {
+            super.read();
+            switch (EventType.intValue()) {
+            case KEY_EVENT:
+                Event.setType(KEY_EVENT_RECORD.class);
+                Event.read();
+                break;
+            case MOUSE_EVENT:
+                Event.setType(MOUSE_EVENT_RECORD.class);
+                Event.read();
+                break;
+            case WINDOW_BUFFER_SIZE_EVENT:
+                Event.setType(WINDOW_BUFFER_SIZE_RECORD.class);
+                Event.read();
+                break;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return String.format("INPUT_RECORD(%s)", EventType);
+        }
+    }
+
+    /**
+     * KEY_EVENT_RECORD structure
+     */
+    @FieldOrder({ "bKeyDown", "wRepeatCount", "wVirtualKeyCode", "wVirtualScanCode", "uChar", "dwControlKeyState" })
+    public static class KEY_EVENT_RECORD extends Structure {
+
+        public BOOL bKeyDown;
+        public WORD wRepeatCount;
+        public WORD wVirtualKeyCode;
+        public WORD wVirtualScanCode;
+        public char uChar;
+        public DWORD dwControlKeyState;
+
+        @Override
+        public String toString() {
+            return String.format("KEY_EVENT_RECORD(%s,%s,%s,%s,%s,%s)", bKeyDown, wRepeatCount, wVirtualKeyCode, wVirtualKeyCode, wVirtualScanCode, uChar, dwControlKeyState);
+        }
+    }
+
+    /**
+     * MOUSE_EVENT_RECORD structure
+     */
+    @FieldOrder({ "dwMousePosition", "dwButtonState", "dwControlKeyState", "dwEventFlags" })
+    public static class MOUSE_EVENT_RECORD extends Structure {
+
+        public COORD dwMousePosition;
+        public DWORD dwButtonState;
+        public DWORD dwControlKeyState;
+        public DWORD dwEventFlags;
+
+        @Override
+        public String toString() {
+            return String.format("MOUSE_EVENT_RECORD(%s,%s,%s,%s)", dwMousePosition, dwButtonState, dwControlKeyState, dwEventFlags);
+        }
+    }
+
+    /**
+     * WINDOW_BUFFER_SIZE_RECORD structure
+     */
+    @FieldOrder({ "dwSize" })
+    public static class WINDOW_BUFFER_SIZE_RECORD extends Structure {
+
+        public COORD dwSize;
+
+        @Override
+        public String toString() {
+            return String.format("WINDOW_BUFFER_SIZE_RECORD(%s)", dwSize);
         }
     }
 }
