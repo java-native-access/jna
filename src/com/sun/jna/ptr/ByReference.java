@@ -23,7 +23,6 @@
  */
 package com.sun.jna.ptr;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.sun.jna.Memory;
@@ -68,8 +67,7 @@ public abstract class ByReference extends PointerType {
             }
             return String.format("%s@0x%x=%s", value.getClass().getSimpleName(), Pointer.nativeValue(getPointer()),
                     value);
-        } catch (NoSuchMethodException | SecurityException // getMethod
-                | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) { // invoke
+        } catch (Exception ex) {
             return String.format("ByReference Contract violated - %s#getValue raised exception: %s",
                     getClass().getName(), ex.getMessage());
         }
