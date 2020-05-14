@@ -25,8 +25,6 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.CONSOLE_SCREEN_BUFFER_INFO;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.INPUT_RECORD;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
@@ -278,17 +276,7 @@ public interface Wincon {
      * {@code GetLastError()} to get extended error information
      * @see <a href="https://docs.microsoft.com/en-us/windows/console/readconsoleinput">ReadConsoleInput documentation</a>
      */
-    boolean ReadConsoleInput(HANDLE hConsoleInput, INPUT_RECORD[] lpBuffer, DWORD nLength, DWORDByReference lpNumberOfEventsRead);
-
-    /**
-     * Retrieves the number of unread input records in the console's input buffer.
-     * @param hConsoleInput A handle to the console input buffer.
-     * @param lpcNumberOfEvents A pointer to a variable that receives the number of unread input records in the console's input buffer.
-     * @return {@code true} if successful - if {@code false} then use
-     * {@code GetLastError()} to get extended error information
-     * @see <a href="https://docs.microsoft.com/en-us/windows/console/getnumberofconsoleinputevents">GetNumberOfConsoleInputEvents documentation</a>
-     */
-    boolean GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, DWORDByReference lpcNumberOfEvents);
+    boolean ReadConsoleInput(HANDLE hConsoleInput, INPUT_RECORD[] lpBuffer, int nLength, IntByReference lpNumberOfEventsRead);
 
     /**
      * Writes a character string to a console screen buffer beginning at the current cursor location.
@@ -301,5 +289,5 @@ public interface Wincon {
      * {@code GetLastError()} to get extended error information
      * @see <a href="https://docs.microsoft.com/en-us/windows/console/writeconsole">WriteConsole documentation</a>
      */
-    boolean WriteConsole(HANDLE hConsoleOutput, String lpBuffer, DWORD nNumberOfCharsToWrite, DWORDByReference lpNumberOfCharsWritten, LPVOID lpReserved);
+    boolean WriteConsole(HANDLE hConsoleOutput, String lpBuffer, int nNumberOfCharsToWrite, IntByReference lpNumberOfCharsWritten, LPVOID lpReserved);
 }

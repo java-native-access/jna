@@ -29,8 +29,6 @@ import org.junit.Test;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.CONSOLE_SCREEN_BUFFER_INFO;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.INPUT_RECORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -163,20 +161,19 @@ public class Kernel32ConsoleTest extends AbstractWin32TestSupport {
     public void testReadConsoleInput() {
         HANDLE hConsoleInput = INSTANCE.GetStdHandle(Wincon.STD_INPUT_HANDLE);
         INPUT_RECORD[] lpBuffer = new INPUT_RECORD[1];
-        DWORD nLength = new DWORD(lpBuffer.length);
-        DWORDByReference lpNumberOfEventsRead = new DWORDByReference();
+        IntByReference lpNumberOfEventsRead = new IntByReference();
 
         if (System.console() == null) {
-            assertFalse(INSTANCE.ReadConsoleInput(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead));
+            assertFalse(INSTANCE.ReadConsoleInput(hConsoleInput, lpBuffer, lpBuffer.length, lpNumberOfEventsRead));
         } else {
-            assertCallSucceeded("ReadConsoleInput", INSTANCE.ReadConsoleInput(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead));
+            assertCallSucceeded("ReadConsoleInput", INSTANCE.ReadConsoleInput(hConsoleInput, lpBuffer, lpBuffer.length, lpNumberOfEventsRead));
         }
     }
 
     @Test
     public void testGetNumberOfConsoleInputEvents() {
         HANDLE hConsoleInput = INSTANCE.GetStdHandle(Wincon.STD_INPUT_HANDLE);
-        DWORDByReference lpcNumberOfEvents = new DWORDByReference();
+        IntByReference lpcNumberOfEvents = new IntByReference();
 
         if (System.console() == null) {
             assertFalse(INSTANCE.GetNumberOfConsoleInputEvents(hConsoleInput, lpcNumberOfEvents));
@@ -189,12 +186,11 @@ public class Kernel32ConsoleTest extends AbstractWin32TestSupport {
     public void testWriteConsole() {
         HANDLE hConsoleOutput = INSTANCE.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
         String lpBuffer = "WriteConsole";
-        DWORD nNumberOfCharsToWrite = new DWORD(lpBuffer.length());
 
         if (System.console() == null) {
-            assertFalse(INSTANCE.WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, null, null));
+            assertFalse(INSTANCE.WriteConsole(hConsoleOutput, lpBuffer, lpBuffer.length(), null, null));
         } else {
-            assertCallSucceeded("WriteConsole", INSTANCE.WriteConsole(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, null, null));
+            assertCallSucceeded("WriteConsole", INSTANCE.WriteConsole(hConsoleOutput, lpBuffer, lpBuffer.length(), null, null));
         }
     }
 }

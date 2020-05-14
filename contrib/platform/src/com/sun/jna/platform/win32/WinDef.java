@@ -1816,7 +1816,7 @@ public interface WinDef {
 
         public COORD dwSize;
         public COORD dwCursorPosition;
-        public WORD wAttributes;
+        public short wAttributes;
         public SMALL_RECT srWindow;
         public COORD dwMaximumWindowSize;
 
@@ -1832,14 +1832,14 @@ public interface WinDef {
     @FieldOrder({ "EventType", "Event" })
     public static class INPUT_RECORD extends Structure {
 
-        public static final int KEY_EVENT = 0x01;
-        public static final int MOUSE_EVENT = 0x02;
-        public static final int WINDOW_BUFFER_SIZE_EVENT = 0x04;
+        public static final short KEY_EVENT = 0x01;
+        public static final short MOUSE_EVENT = 0x02;
+        public static final short WINDOW_BUFFER_SIZE_EVENT = 0x04;
 
-        public WORD EventType;
-        public UNION Event;
+        public short EventType;
+        public Event Event;
 
-        public static class UNION extends Union {
+        public static class Event extends Union {
             public KEY_EVENT_RECORD KeyEvent;
             public MOUSE_EVENT_RECORD MouseEvent;
             public WINDOW_BUFFER_SIZE_RECORD WindowBufferSizeEvent;
@@ -1848,20 +1848,18 @@ public interface WinDef {
         @Override
         public void read() {
             super.read();
-            switch (EventType.intValue()) {
+            switch (EventType) {
                 case KEY_EVENT:
-                    Event.setType(KEY_EVENT_RECORD.class);
-                    Event.read();
+                    Event.setType("KeyEvent");
                     break;
                 case MOUSE_EVENT:
-                    Event.setType(MOUSE_EVENT_RECORD.class);
-                    Event.read();
+                    Event.setType("MouseEvent");
                     break;
                 case WINDOW_BUFFER_SIZE_EVENT:
-                    Event.setType(WINDOW_BUFFER_SIZE_RECORD.class);
-                    Event.read();
+                    Event.setType("WindowBufferSizeEvent");
                     break;
             }
+            Event.read();
         }
 
         @Override
@@ -1876,12 +1874,12 @@ public interface WinDef {
     @FieldOrder({ "bKeyDown", "wRepeatCount", "wVirtualKeyCode", "wVirtualScanCode", "uChar", "dwControlKeyState" })
     public static class KEY_EVENT_RECORD extends Structure {
 
-        public BOOL bKeyDown;
-        public WORD wRepeatCount;
-        public WORD wVirtualKeyCode;
-        public WORD wVirtualScanCode;
+        public boolean bKeyDown;
+        public short wRepeatCount;
+        public short wVirtualKeyCode;
+        public short wVirtualScanCode;
         public char uChar;
-        public DWORD dwControlKeyState;
+        public int dwControlKeyState;
 
         @Override
         public String toString() {
@@ -1896,9 +1894,9 @@ public interface WinDef {
     public static class MOUSE_EVENT_RECORD extends Structure {
 
         public COORD dwMousePosition;
-        public DWORD dwButtonState;
-        public DWORD dwControlKeyState;
-        public DWORD dwEventFlags;
+        public int dwButtonState;
+        public int dwControlKeyState;
+        public int dwEventFlags;
 
         @Override
         public String toString() {
