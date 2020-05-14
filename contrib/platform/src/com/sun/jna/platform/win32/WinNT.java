@@ -398,11 +398,6 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                 return new PSID(p);
             }
         }
-
-        @Override
-        public String toString() {
-            return super.toString(getValue());
-        }
     }
 
     /**
@@ -1366,11 +1361,6 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             HANDLE h = new HANDLE();
             h.setPointer(p);
             return h;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString(getValue());
         }
     }
 
@@ -2571,11 +2561,6 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             else {
                 return new ACL(p);
             }
-        }
-
-        @Override
-        public String toString() {
-            return super.toString(getValue());
         }
     }
 

@@ -200,11 +200,6 @@ public interface OaIdl {
         public VARIANT_BOOL getValue() {
             return new VARIANT_BOOL(getPointer().getShort(0));
         }
-
-        @Override
-        public String toString() {
-            return super.toString(getValue());
-        }
     }
 
     public static class _VARIANT_BOOLByReference extends ByReference {
@@ -223,11 +218,6 @@ public interface OaIdl {
 
         public VARIANT_BOOL getValue() {
             return new VARIANT_BOOL(getPointer().getShort(0));
-        }
-
-        @Override
-        public String toString() {
-            return super.toString(getValue());
         }
     }
 
@@ -321,11 +311,6 @@ public interface OaIdl {
         public DISPID getValue() {
             return new DISPID(getPointer().getInt(0));
         }
-
-        @Override
-        public String toString() {
-            return super.toString(getValue());
-        }
     }
 
     public static class MEMBERID extends DISPID {
@@ -356,11 +341,6 @@ public interface OaIdl {
 
         public MEMBERID getValue() {
             return new MEMBERID(getPointer().getInt(0));
-        }
-
-        @Override
-        public String toString() {
-            return super.toString(getValue());
         }
     }
 
@@ -915,7 +895,6 @@ public interface OaIdl {
         /**
          * Implemented to satisfy Closeable interface, delegates to destroy.
          */
-        @Override
         public void close() {
             destroy();
         }

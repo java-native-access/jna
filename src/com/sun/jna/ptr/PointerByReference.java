@@ -48,9 +48,4 @@ public class PointerByReference extends ByReference {
     public Pointer getValue() {
         return getPointer().getPointer(0);
     }
-
-    @Override
-    public String toString() {
-        return super.toString(getValue());
-    }
 }

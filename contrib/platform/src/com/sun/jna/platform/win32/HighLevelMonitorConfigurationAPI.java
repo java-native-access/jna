@@ -274,11 +274,6 @@ public interface HighLevelMonitorConfigurationAPI
             public MC_DISPLAY_TECHNOLOGY_TYPE getValue() {
                 return EnumUtils.fromInteger(getPointer().getInt(0), MC_DISPLAY_TECHNOLOGY_TYPE.class);
             }
-
-            @Override
-            public String toString() {
-                return super.toString(getValue());
-            }
         }
     }
 
@@ -444,11 +439,6 @@ public interface HighLevelMonitorConfigurationAPI
              */
             public MC_COLOR_TEMPERATURE getValue() {
                 return EnumUtils.fromInteger(getPointer().getInt(0), MC_COLOR_TEMPERATURE.class);
-            }
-
-            @Override
-            public String toString() {
-                return super.toString(getValue());
             }
         }
     }
