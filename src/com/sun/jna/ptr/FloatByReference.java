@@ -23,6 +23,8 @@
  */
 package com.sun.jna.ptr;
 
+import com.sun.jna.Pointer;
+
 public class FloatByReference extends ByReference {
     public FloatByReference() {
         this(0f);
@@ -41,4 +43,8 @@ public class FloatByReference extends ByReference {
         return getPointer().getFloat(0);
     }
 
+    @Override
+    public String toString() {
+        return String.format("float@0x%x=%s", Pointer.nativeValue(getPointer()), getValue());
+    }
 }
