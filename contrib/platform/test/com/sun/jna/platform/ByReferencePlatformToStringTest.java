@@ -123,7 +123,7 @@ public class ByReferencePlatformToStringTest {
         parseAndTest(memberidbr.toString(), "MEMBERID", "42");
 
         PACLByReference paclbr = new PACLByReference(new ACL());
-        parseAndTest(paclbr.toString(), "PACL", "WinNT$ACL(native");
+        parseAndTest(paclbr.toString(), "ACL", "WinNT$ACL(native");
 
         PSIDByReference psidbr = new PSIDByReference(new PSID());
         parseAndTest(psidbr.toString(), "PSID", "WinNT$PSID(native");
