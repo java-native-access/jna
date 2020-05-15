@@ -171,16 +171,24 @@ public class Advapi32UtilTest extends TestCase {
         try {
             HANDLEByReference phUser = new HANDLEByReference();
             try {
-                assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name,
-                                                       null, userInfo.usri1_password, WinBase.LOGON32_LOGON_NETWORK,
-                                                       WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
+                assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name, null, userInfo.usri1_password,
+                        WinBase.LOGON32_LOGON_NETWORK, WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
+                Account primaryGroup = Advapi32Util.getTokenPrimaryGroup(phUser.getValue());
+                assertTrue(primaryGroup.name.length() > 0);
+                assertTrue(primaryGroup.sidString.length() > 0);
+                assertTrue(primaryGroup.sid.length > 0);
                 Account[] groups = Advapi32Util.getTokenGroups(phUser.getValue());
+                boolean primaryGroupFound = false;
                 assertTrue(groups.length > 0);
-                for(Account group : groups) {
+                for (Account group : groups) {
                     assertTrue(group.name.length() > 0);
                     assertTrue(group.sidString.length() > 0);
                     assertTrue(group.sid.length > 0);
+                    if (primaryGroup.name.equals(group.name)) {
+                        primaryGroupFound = true;
+                    }
                 }
+                assertTrue("PrimaryGroup must be in group list", primaryGroupFound);
             } finally {
                 HANDLE hUser = phUser.getValue();
                 if (!WinBase.INVALID_HANDLE_VALUE.equals(hUser)) {
