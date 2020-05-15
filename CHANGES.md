@@ -12,6 +12,7 @@ Features
 * [#1168](https://github.com/java-native-access/jna/pull/1168): Add `c.s.j.p.win32.Kernel32#SetProcessAffinityMask` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1169](https://github.com/java-native-access/jna/issues/1169): Wait for process in getLinuxLdPaths - [@rdesgroppes](https://github.com/rdesgroppes).
 * [#1178](https://github.com/java-native-access/jna/pull/1178): Add `c.s.j.p.win32.IPHlpAPI#GetTcpStatistics`, `c.s.j.p.win32.IPHlpAPI#GetUdpStatistics`, `c.s.j.p.win32.IPHlpAPI#GetTcpStatisticsEx` and `c.s.j.p.win32.IPHlpAPI#GetUdpStatisticsEx` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1191](https://github.com/java-native-access/jna/pull/1191): Add `c.s.j.p.win32.Advapi32Util#getTokenPrimaryGroup` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------

@@ -63,6 +63,7 @@ import java.util.TreeMap;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
@@ -86,6 +87,7 @@ import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
+import com.sun.jna.platform.win32.WinNT.TOKEN_PRIMARY_GROUP;
 import com.sun.jna.platform.win32.WinNT.TOKEN_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
@@ -473,6 +475,45 @@ public abstract class Advapi32Util {
             userGroups.add(group);
         }
         return userGroups.toArray(new Account[0]);
+    }
+
+    /**
+     * This function returns the primary group associated with a security token,
+     * such as a user token.
+     *
+     * @param hToken
+     *            Token.
+     * @return Token primary group.
+     */
+    public static Account getTokenPrimaryGroup(HANDLE hToken) {
+        // get token group information size
+        IntByReference tokenInformationLength = new IntByReference();
+        if (Advapi32.INSTANCE.GetTokenInformation(hToken, WinNT.TOKEN_INFORMATION_CLASS.TokenPrimaryGroup, null, 0,
+                tokenInformationLength)) {
+            throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
+        int rc = Kernel32.INSTANCE.GetLastError();
+        if (rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        // get token group information
+        WinNT.TOKEN_PRIMARY_GROUP primaryGroup = new WinNT.TOKEN_PRIMARY_GROUP(tokenInformationLength.getValue());
+        if (!Advapi32.INSTANCE.GetTokenInformation(hToken, WinNT.TOKEN_INFORMATION_CLASS.TokenPrimaryGroup,
+                primaryGroup, tokenInformationLength.getValue(), tokenInformationLength)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        Account group;
+        try {
+            group = Advapi32Util.getAccountBySid(primaryGroup.PrimaryGroup);
+        } catch (Exception e) {
+            group = new Account();
+            group.sid = primaryGroup.PrimaryGroup.getBytes();
+            group.sidString = Advapi32Util.convertSidToStringSid(primaryGroup.PrimaryGroup);
+            group.name = group.sidString;
+            group.fqn = group.sidString;
+            group.accountType = SID_NAME_USE.SidTypeGroup;
+        }
+        return group;
     }
 
     /**
