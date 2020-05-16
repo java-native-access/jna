@@ -24,7 +24,11 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 
@@ -182,6 +186,9 @@ public interface Wincon {
     int ENABLE_INSERT_MODE=0x0020;
     int ENABLE_QUICK_EDIT_MODE=0x0040;
     int ENABLE_EXTENDED_FLAGS=0x0080;
+    int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
+    int DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
+    int ENABLE_VIRTUAL_TERMINAL_INPUT = 0x0200;
 
     /* If the hConsoleHandle parameter is a screen buffer handle, the mode
      * can be one or more of the following values
@@ -249,4 +256,181 @@ public interface Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/ms686050(v=vs.85).aspx">SetConsoleTitle documentation</a>
      */
     boolean SetConsoleTitle(String lpConsoleTitle);
+
+    /**
+     * Retrieves information about the specified console screen buffer.
+     * @param hConsoleOutput A handle to the console screen buffer.
+     * @param lpConsoleScreenBufferInfo A pointer to a CONSOLE_SCREEN_BUFFER_INFO structure that receives the console screen buffer information.
+     * @return {@code true} if successful - if {@code false} then use
+     * {@code GetLastError()} to get extended error information
+     * @see <a href="https://docs.microsoft.com/en-us/windows/console/getconsolescreenbufferinfo">GetConsoleScreenBufferInfo documentation</a>
+     */
+    boolean GetConsoleScreenBufferInfo(HANDLE hConsoleOutput, CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo);
+
+    /**
+     * Reads data from a console input buffer and removes it from the buffer.
+     * @param hConsoleInput A handle to the console input buffer.
+     * @param lpBuffer A pointer to an array of INPUT_RECORD structures that receives the input buffer data.
+     * @param nLength The size of the array pointed to by the lpBuffer parameter, in array elements.
+     * @param lpNumberOfEventsRead A pointer to a variable that receives the number of input records read.
+     * @return {@code true} if successful - if {@code false} then use
+     * {@code GetLastError()} to get extended error information
+     * @see <a href="https://docs.microsoft.com/en-us/windows/console/readconsoleinput">ReadConsoleInput documentation</a>
+     */
+    boolean ReadConsoleInput(HANDLE hConsoleInput, INPUT_RECORD[] lpBuffer, int nLength, IntByReference lpNumberOfEventsRead);
+
+    /**
+     * Writes a character string to a console screen buffer beginning at the current cursor location.
+     * @param hConsoleOutput A handle to the console screen buffer.
+     * @param lpBuffer A pointer to a buffer that contains characters to be written to the console screen buffer.
+     * @param nNumberOfCharsToWrite The number of characters to be written.
+     * @param lpNumberOfCharsWritten A pointer to a variable that receives the number of characters actually written.
+     * @param lpReserved Reserved; must be NULL.
+     * @return {@code true} if successful - if {@code false} then use
+     * {@code GetLastError()} to get extended error information
+     * @see <a href="https://docs.microsoft.com/en-us/windows/console/writeconsole">WriteConsole documentation</a>
+     */
+    boolean WriteConsole(HANDLE hConsoleOutput, String lpBuffer, int nNumberOfCharsToWrite, IntByReference lpNumberOfCharsWritten, LPVOID lpReserved);
+
+    /**
+     * COORD structure
+     */
+    @FieldOrder({ "X", "Y" })
+    public static class COORD extends Structure {
+
+        public short X;
+        public short Y;
+
+        @Override
+        public String toString() {
+            return String.format("COORD(%s,%s)", X, Y);
+        }
+    }
+
+    /**
+     * SMALL_RECT structure
+     */
+    @FieldOrder({ "Left", "Top", "Right", "Bottom" })
+    public static class SMALL_RECT extends Structure {
+
+        public short Left;
+        public short Top;
+        public short Right;
+        public short Bottom;
+
+        @Override
+        public String toString() {
+            return String.format("SMALL_RECT(%s,%s)(%s,%s)", Left, Top, Right, Bottom);
+        }
+    }
+
+    /**
+     * CONSOLE_SCREEN_BUFFER_INFO structure
+     */
+    @FieldOrder({ "dwSize", "dwCursorPosition", "wAttributes", "srWindow", "dwMaximumWindowSize" })
+    public static class CONSOLE_SCREEN_BUFFER_INFO extends Structure {
+
+        public COORD dwSize;
+        public COORD dwCursorPosition;
+        public short wAttributes;
+        public SMALL_RECT srWindow;
+        public COORD dwMaximumWindowSize;
+
+        @Override
+        public String toString() {
+            return String.format("CONSOLE_SCREEN_BUFFER_INFO(%s,%s,%s,%s,%s)", dwSize, dwCursorPosition, wAttributes, srWindow, dwMaximumWindowSize);
+        }
+    }
+
+    /**
+     * INPUT_RECORD structure
+     */
+    @FieldOrder({ "EventType", "Event" })
+    public static class INPUT_RECORD extends Structure {
+
+        public static final short KEY_EVENT = 0x01;
+        public static final short MOUSE_EVENT = 0x02;
+        public static final short WINDOW_BUFFER_SIZE_EVENT = 0x04;
+
+        public short EventType;
+        public Event Event;
+
+        public static class Event extends Union {
+            public KEY_EVENT_RECORD KeyEvent;
+            public MOUSE_EVENT_RECORD MouseEvent;
+            public WINDOW_BUFFER_SIZE_RECORD WindowBufferSizeEvent;
+        }
+
+        @Override
+        public void read() {
+            super.read();
+            switch (EventType) {
+                case KEY_EVENT:
+                    Event.setType("KeyEvent");
+                    break;
+                case MOUSE_EVENT:
+                    Event.setType("MouseEvent");
+                    break;
+                case WINDOW_BUFFER_SIZE_EVENT:
+                    Event.setType("WindowBufferSizeEvent");
+                    break;
+            }
+            Event.read();
+        }
+
+        @Override
+        public String toString() {
+            return String.format("INPUT_RECORD(%s)", EventType);
+        }
+    }
+
+    /**
+     * KEY_EVENT_RECORD structure
+     */
+    @FieldOrder({ "bKeyDown", "wRepeatCount", "wVirtualKeyCode", "wVirtualScanCode", "uChar", "dwControlKeyState" })
+    public static class KEY_EVENT_RECORD extends Structure {
+
+        public boolean bKeyDown;
+        public short wRepeatCount;
+        public short wVirtualKeyCode;
+        public short wVirtualScanCode;
+        public char uChar;
+        public int dwControlKeyState;
+
+        @Override
+        public String toString() {
+            return String.format("KEY_EVENT_RECORD(%s,%s,%s,%s,%s,%s)", bKeyDown, wRepeatCount, wVirtualKeyCode, wVirtualKeyCode, wVirtualScanCode, uChar, dwControlKeyState);
+        }
+    }
+
+    /**
+     * MOUSE_EVENT_RECORD structure
+     */
+    @FieldOrder({ "dwMousePosition", "dwButtonState", "dwControlKeyState", "dwEventFlags" })
+    public static class MOUSE_EVENT_RECORD extends Structure {
+
+        public COORD dwMousePosition;
+        public int dwButtonState;
+        public int dwControlKeyState;
+        public int dwEventFlags;
+
+        @Override
+        public String toString() {
+            return String.format("MOUSE_EVENT_RECORD(%s,%s,%s,%s)", dwMousePosition, dwButtonState, dwControlKeyState, dwEventFlags);
+        }
+    }
+
+    /**
+     * WINDOW_BUFFER_SIZE_RECORD structure
+     */
+    @FieldOrder({ "dwSize" })
+    public static class WINDOW_BUFFER_SIZE_RECORD extends Structure {
+
+        public COORD dwSize;
+
+        @Override
+        public String toString() {
+            return String.format("WINDOW_BUFFER_SIZE_RECORD(%s)", dwSize);
+        }
+    }
 }
