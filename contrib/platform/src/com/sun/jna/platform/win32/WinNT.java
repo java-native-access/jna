@@ -1220,6 +1220,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                 this.lh = new LowHigh(value);
             }
 
+            @Override
+            public void read() {
+                readField("lh");
+                readField("value");
+            }
+
             public long longValue() {
                 return value;
             }
