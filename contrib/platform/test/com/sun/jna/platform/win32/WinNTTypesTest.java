@@ -25,9 +25,23 @@ package com.sun.jna.platform.win32;
 
 import org.junit.Test;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 
 public class WinNTTypesTest extends AbstractWin32TestSupport {
+
+    @FieldOrder({ "largeInt" })
+    public class LargeIntegerStruct extends Structure {
+        public LARGE_INTEGER largeInt;
+
+        public LargeIntegerStruct(Pointer p) {
+            super(p);
+            read();
+        }
+    }
 
     @Test
     public void testLargeIntegerLowHighLongValue() {
@@ -47,12 +61,21 @@ public class WinNTTypesTest extends AbstractWin32TestSupport {
             0L,
             Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE
         }) {
+            // test with long constructor
             LARGE_INTEGER large = new LARGE_INTEGER(expected);
             assertEquals("Mismatched large value", expected, large.getValue());
 
             LARGE_INTEGER.LowHigh loHi = new LARGE_INTEGER.LowHigh(expected);
             assertEquals("Mismatched low part", loHi.LowPart, large.getLow());
             assertEquals("Mismatched high part", loHi.HighPart, large.getHigh());
+
+            // test populated from memory
+            Memory m = new Memory(Long.BYTES);
+            m.setLong(0, expected);
+            large = new LargeIntegerStruct(m).largeInt;
+            assertEquals("Mismatched large value in struct", expected, large.getValue());
+            assertEquals("Mismatched low part in struct", loHi.LowPart, large.getLow());
+            assertEquals("Mismatched high part in struct", loHi.HighPart, large.getHigh());
         }
     }
 }
