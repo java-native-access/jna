@@ -1,39 +1,63 @@
-sudo: false
 dist: trusty
+os: linux
 
-language: java
+# disable shallow clone
+git:
+  depth: false
 
-install:
+# Java is not yet supported on Windows, define per os
+language: shell
+
+before_install:
+  - '[ "${TRAVIS_OS_NAME}" = "windows" ]
+    && travis_retry git clone --depth 1 https://github.com/DanySK/Gravis-CI.git $HOME/gravis
+    && source $HOME/gravis/install-jdk
+    && choco install -y -f -i ant
+    && choco install -y -f -i cygwin --params "/InstallDir:C:\cygwin64 /NoStartMenu"
+    && export PATH="/c/cygwin64:/c/cygwin64/bin:$PATH"
+    && cygwinsetup.exe --root /c/cygwin64 --local-package-dir /c/cygwin64/packages --quiet-mode --no-desktop --no-startmenu --packages git,make,automake,automake1.15,libtool,mingw64-x86_64-gcc-g++,mingw64-x86_64-gcc-core,gcc-g++
+    && "/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/vcvarsall.bat" x64
+    || true'
   - export APACHE_ANT_BASE=$(curl http://apache.mirror.iphh.net/ant/binaries/ | grep "apache-ant-1.9..*-bin.tar.gz" | tail -1 | sed  's/.*href="\(.*\)-bin.tar.gz".*/\1/g')
   - 'echo "Apache Ant ARCHIVE: $APACHE_ANT_BASE"'
+  - 'echo "PATH: $PATH"'
+#  - net start spooler
+      
+install:
   - '[ "${TRAVIS_OS_NAME}" = "linux" ] && wget http://apache.mirror.iphh.net/ant/binaries/$APACHE_ANT_BASE-bin.tar.gz && tar xzf $APACHE_ANT_BASE-bin.tar.gz && sudo mv $APACHE_ANT_BASE /usr/local/$APACHE_ANT_BASE && sudo rm -f /usr/local/ant && sudo ln -s /usr/local/$APACHE_ANT_BASE /usr/local/ant && sudo ln -s /usr/local/$APACHE_ANT_BASE/bin/ant /usr/local/bin/ant || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew uninstall libtool && brew install libtool || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
 
 script:
-  - if [ "x$JDK" != "xdefault" ]; then wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh && export JAVA_HOME=$(bash install-jdk.sh --feature $JDK --emit-java-home | tail -1); export PATH=$JAVA_HOME/bin:$PATH; fi || true
+  - if [ "x$JDK" != "xdefault" ]; then 
+      wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh && export JAVA_HOME=$(bash install-jdk.sh --feature $JDK --emit-java-home | tail -1); 
+      export PATH=$JAVA_HOME/bin:$PATH; 
+    fi
+  - if [ "${TRAVIS_OS_NAME}" = "windows" ]; then ant dist; fi
   - ant test
   - ant test-platform
   - if [ "x$JDK" == "xdefault" ]; then ant checkstyle; fi
   - if [ "x$JDK" == "xdefault" ]; then ant dist; fi
 
-os:
-  - linux
-  - osx
-
-env: JDK=default
-
-matrix:
+jobs:
     include:
-        - env: JDK=11
-          os: linux
-        - env: JDK=12
-          os: linux
-        - env: JDK=ea
-          os: linux
-        - env: JDK=11
-          os: osx
-    exclude:
-        - env: JDK=default
-          os: osx
+#        - env: JDK=default
+#          os: linux
+#          language: java
+#        - env: JDK=11
+#          os: linux
+#          language: java
+#        - env: JDK=12
+#          os: linux
+#          language: java
+#        - env: JDK=ea
+#          os: linux
+#          language: java
+#        - env: JDK=11
+#          os: osx
+#          language: java
+        - env: JDK=adopt@1.8.0
+          os: windows
+          language: shell
+          
