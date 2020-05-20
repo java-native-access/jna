@@ -31,6 +31,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.Wtsapi32.WTSINFO;
 import com.sun.jna.platform.win32.Wtsapi32.WTS_CLIENT_ADDRESS;
+import com.sun.jna.platform.win32.Wtsapi32.WTS_CONNECTSTATE_CLASS;
+import com.sun.jna.platform.win32.Wtsapi32.WTS_INFO_CLASS;
 import com.sun.jna.platform.win32.Wtsapi32.WTS_PROCESS_INFO_EX;
 import com.sun.jna.platform.win32.Wtsapi32.WTS_SESSION_INFO;
 import com.sun.jna.ptr.IntByReference;
@@ -105,9 +107,6 @@ public class Wtsapi32Test extends TestCase {
     }
 
     public void testWTSEnumerateSessions() {
-        int WTSClientAddress = 14;
-        int WTSSessionInfo = 24;
-        int WTSClientProtocolType = 16;
         PointerByReference ppSessionInfo = new PointerByReference();
         IntByReference pCount = new IntByReference();
         assertTrue("Enumerate Sessions failed.", Wtsapi32.INSTANCE
@@ -117,19 +116,19 @@ public class Wtsapi32Test extends TestCase {
             WTS_SESSION_INFO sessionInfoRef = new WTS_SESSION_INFO(pSessionInfo);
             WTS_SESSION_INFO[] sessionInfo = (WTS_SESSION_INFO[]) sessionInfoRef.toArray(pCount.getValue());
             for (WTS_SESSION_INFO session : sessionInfo) {
-                if (session.State == 0) { // WTS_ACTIVE
+                if (session.State == WTS_CONNECTSTATE_CLASS.WTSActive) {
                     // Use session id to fetch additional session information
                     PointerByReference ppBuffer = new PointerByReference();
                     IntByReference pBytes = new IntByReference();
                     Wtsapi32.INSTANCE.WTSQuerySessionInformation(Wtsapi32.WTS_CURRENT_SERVER_HANDLE, session.SessionId,
-                            WTSClientProtocolType, ppBuffer, pBytes);
+                            WTS_INFO_CLASS.WTSClientProtocolType, ppBuffer, pBytes);
                     Pointer pBuffer = ppBuffer.getValue(); // pointer to USHORT
                     short protocolType = pBuffer.getShort(0); // 0 = console, 2 = RDP
                     assertTrue("Protocol Type must be between 0 and 2", protocolType >= 0 && protocolType <= 2);
                     Wtsapi32.INSTANCE.WTSFreeMemory(pBuffer);
 
                     Wtsapi32.INSTANCE.WTSQuerySessionInformation(Wtsapi32.WTS_CURRENT_SERVER_HANDLE, session.SessionId,
-                            WTSSessionInfo, ppBuffer, pBytes);
+                            WTS_INFO_CLASS.WTSSessionInfo, ppBuffer, pBytes);
                     pBuffer = ppBuffer.getValue(); // returns WTSINFO
                     WTSINFO wtsInfo = new WTSINFO(pBuffer);
                     assertEquals("State from WTSINFO must match WTS_SESSION_INFO", session.State, wtsInfo.State);
@@ -144,14 +143,15 @@ public class Wtsapi32Test extends TestCase {
                     Wtsapi32.INSTANCE.WTSFreeMemory(pBuffer);
 
                     Wtsapi32.INSTANCE.WTSQuerySessionInformation(Wtsapi32.WTS_CURRENT_SERVER_HANDLE, session.SessionId,
-                            WTSClientAddress, ppBuffer, pBytes);
+                            WTS_INFO_CLASS.WTSClientAddress, ppBuffer, pBytes);
                     pBuffer = ppBuffer.getValue(); // returns WTS_CLIENT_ADDRESS
                     WTS_CLIENT_ADDRESS addr = new WTS_CLIENT_ADDRESS(pBuffer);
                     assertTrue("Address family must be AF_INET, AF_INET6, AF_IPX, AF_NETBIOS, or AF_UNSPEC.",
-                            addr.AddressFamily == 0 // AF_UNSPEC
+                            addr.AddressFamily == IPHlpAPI.AF_UNSPEC
                                     || addr.AddressFamily == IPHlpAPI.AF_INET
-                                    || addr.AddressFamily == IPHlpAPI.AF_INET6 || addr.AddressFamily == 6 // AF_IPX
-                                    || addr.AddressFamily == 17); // AF_NETBIOS
+                                    || addr.AddressFamily == IPHlpAPI.AF_INET6
+                                    || addr.AddressFamily == IPHlpAPI.AF_IPX
+                                    || addr.AddressFamily == IPHlpAPI.AF_NETBIOS);
                     Wtsapi32.INSTANCE.WTSFreeMemory(pBuffer);
                 }
             }

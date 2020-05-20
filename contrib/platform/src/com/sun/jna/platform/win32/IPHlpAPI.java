@@ -52,8 +52,13 @@ public interface IPHlpAPI extends Library {
     int MAX_SCOPE_ID_LEN = 256;
 
     // Source: Winsock2.h
+    int AF_UNSPEC = 0; // The address family is unspecified.
     int AF_INET = 2; // The Internet Protocol version 4 (IPv4) address family.
+    int AF_IPX = 6; // The IPX/SPX address family.
+    int AF_NETBIOS = 17; // The NetBIOS address family.
     int AF_INET6 = 23; // The Internet Protocol version 6 (IPv6) address family.
+    int AF_IRDA = 26; // The Infrared Data Association (IrDA) address family.
+    int AF_BTH = 32; // The Bluetooth address family.
 
     /**
      * The MIB_IFROW structure stores information about a particular interface.

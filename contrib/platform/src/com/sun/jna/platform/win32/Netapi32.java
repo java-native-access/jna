@@ -27,6 +27,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
@@ -58,11 +59,11 @@ public interface Netapi32 extends StdCallLibrary {
         public int sesi10_idle_time;
 
         public SESSION_INFO_10() {
-            super(W32APITypeMapper.DEFAULT);
+            super(W32APITypeMapper.UNICODE);
         }
 
         public SESSION_INFO_10(Pointer p) {
-            super(p, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
+            super(p, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
     }
@@ -114,11 +115,12 @@ public interface Netapi32 extends StdCallLibrary {
      *            continue an existing session search. The handle should be zero on
      *            the first call and left unchanged for subsequent calls. If
      *            resume_handle is NULL, no resume handle is stored.
-     * @return If the function succeeds, the return value is NERR_Success. If the
-     *         function fails, the return value is an error code.
+     * @return If the function succeeds, the return value is NERR_Success (0). If
+     *         the function fails, the return value is an error code.
      */
-    int NetSessionEnum(String servername, String UncClientName, String username, int level, PointerByReference bufptr,
-            int prefmaxlen, IntByReference entriesread, IntByReference totalentries, IntByReference resume_handle);
+    int NetSessionEnum(WString servername, WString UncClientName, WString username, int level,
+            PointerByReference bufptr, int prefmaxlen, IntByReference entriesread, IntByReference totalentries,
+            IntByReference resume_handle);
 
     /**
      * Retrieves join status information for the specified computer.

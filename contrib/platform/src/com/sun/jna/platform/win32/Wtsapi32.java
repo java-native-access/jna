@@ -113,9 +113,76 @@ public interface Wtsapi32 extends StdCallLibrary {
     int WTS_PROCESS_INFO_LEVEL_0 = 0;
     int WTS_PROCESS_INFO_LEVEL_1 = 1;
 
+    /**
+     * Defined in {@code winsta.h} and present in this interface to properly size
+     * the {@link WTSINFO} structure.
+     */
     int DOMAIN_LENGTH = 17;
+
+    /**
+     * Defined in {@code winsta.h} and present in this interface to properly size
+     * the {@link WTSINFO} structure.
+     */
     int USERNAME_LENGTH = 20;
+
+    /**
+     * Defined in {@code winsta.h} and present in this interface to properly size
+     * the {@link WTSINFO} structure.
+     */
     int WINSTATIONNAME_LENGTH = 32;
+
+    /**
+     * Specifies the connection state of a Remote Desktop Services session.
+     */
+    public interface WTS_CONNECTSTATE_CLASS {
+        int WTSActive = 0;
+        int WTSConnected = 1;
+        int WTSConnectQuery = 2;
+        int WTSShadow = 3;
+        int WTSDisconnected = 4;
+        int WTSIdle = 5;
+        int WTSListen = 6;
+        int WTSReset = 7;
+        int WTSDown = 8;
+        int WTSInit = 9;
+    }
+
+    /**
+     * Contains values that indicate the type of session information to retrieve in
+     * a call to the {@link #WTSQuerySessionInformation()} function.
+     */
+    public interface WTS_INFO_CLASS {
+        int WTSInitialProgram = 0;
+        int WTSApplicationName = 1;
+        int WTSWorkingDirectory = 2;
+        int WTSOEMId = 3;
+        int WTSSessionId = 4;
+        int WTSUserName = 5;
+        int WTSWinStationName = 6;
+        int WTSDomainName = 7;
+        int WTSConnectState = 8;
+        int WTSClientBuildNumber = 9;
+        int WTSClientName = 10;
+        int WTSClientDirectory = 11;
+        int WTSClientProductId = 12;
+        int WTSClientHardwareId = 13;
+        int WTSClientAddress = 14;
+        int WTSClientDisplay = 15;
+        int WTSClientProtocolType = 16;
+        int WTSIdleTime = 17;
+        int WTSLogonTime = 18;
+        int WTSIncomingBytes = 19;
+        int WTSOutgoingBytes = 20;
+        int WTSIncomingFrames = 21;
+        int WTSOutgoingFrames = 22;
+        int WTSClientInfo = 23;
+        int WTSSessionInfo = 24;
+        int WTSSessionInfoEx = 25;
+        int WTSConfigInfo = 26;
+        int WTSValidationInfo = 27;
+        int WTSSessionAddressV4 = 28;
+        int WTSIsRemoteSession = 29;
+    }
 
     /**
      * Contains information about a client session on a Remote Desktop Session Host
@@ -164,7 +231,7 @@ public interface Wtsapi32 extends StdCallLibrary {
     class WTSINFO extends Structure {
         private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
 
-        public int State;
+        public int State; // WTS_CONNECTSTATE_CLASS
         public int SessionId;
         public int IncomingBytes;
         public int OutgoingBytes;
@@ -172,9 +239,9 @@ public interface Wtsapi32 extends StdCallLibrary {
         public int OutgoingFrames;
         public int IncomingCompressedBytes;
         public int OutgoingCompressedBytes;
-        public byte[] WinStationName = new byte[WINSTATIONNAME_LENGTH * CHAR_WIDTH];
-        public byte[] Domain = new byte[DOMAIN_LENGTH * CHAR_WIDTH];
-        public byte[] UserName = new byte[(USERNAME_LENGTH + 1) * CHAR_WIDTH];
+        public final byte[] WinStationName = new byte[WINSTATIONNAME_LENGTH * CHAR_WIDTH];
+        public final byte[] Domain = new byte[DOMAIN_LENGTH * CHAR_WIDTH];
+        public final byte[] UserName = new byte[(USERNAME_LENGTH + 1) * CHAR_WIDTH];
         public LARGE_INTEGER ConnectTime;
         public LARGE_INTEGER DisconnectTime;
         public LARGE_INTEGER LastInputTime;
@@ -182,22 +249,43 @@ public interface Wtsapi32 extends StdCallLibrary {
         public LARGE_INTEGER CurrentTime;
 
         public WTSINFO() {
-            super(W32APITypeMapper.DEFAULT);
+            super();
         }
 
         public WTSINFO(Pointer p) {
-            super(p, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
+            super(p);
             read();
         }
 
+        /**
+         * Convenience method to return the null-terminated string in the
+         * {@link #WinStationName} member, accounting for {@code CHAR} or {@code WCHAR}
+         * byte width.
+         *
+         * @return The {@code WinStationName} as a string.
+         */
         public String getWinStationName() {
             return getStringAtOffset(fieldOffset("WinStationName"));
         }
 
+        /**
+         * Convenience method to return the null-terminated string in the
+         * {@link #Domain} member, accounting for {@code CHAR} or {@code WCHAR} byte
+         * width.
+         *
+         * @return The {@code Domain} as a string.
+         */
         public String getDomain() {
             return getStringAtOffset(fieldOffset("Domain"));
         }
 
+        /**
+         * Convenience method to return the null-terminated string in the
+         * {@link #UserName} member, accounting for {@code CHAR} or {@code WCHAR} byte
+         * width.
+         *
+         * @return The {@code UserName} as a string.
+         */
         public String getUserName() {
             return getStringAtOffset(fieldOffset("UserName"));
         }
@@ -210,8 +298,7 @@ public interface Wtsapi32 extends StdCallLibrary {
     /**
      * Contains extended information about a process running on a Remote Desktop
      * Session Host (RD Session Host) server. This structure is returned by the
-     * WTSEnumerateProcessesEx function when you set the pLevel parameter to
-     * one.
+     * WTSEnumerateProcessesEx function when you set the pLevel parameter to one.
      *
      * @see <A HREF=
      *      "https://docs.microsoft.com/en-us/windows/desktop/api/wtsapi32/ns-wtsapi32-_wts_process_info_exa">WTS_PROCESS_INFO_EXA</A>
@@ -262,7 +349,7 @@ public interface Wtsapi32 extends StdCallLibrary {
      * @param ppSessionInfo
      *            A pointer to an array of {@link WTS_SESSION_INFO} structures that
      *            represent the retrieved sessions. To free the returned buffer,
-     *            call the {@link #WTSFreeMemory} function.
+     *            call the {@link Wtsapi32#WTSFreeMemory} function.
      * @param pCount
      *            A pointer to the number of {@code WTS_SESSION_INFO} structures
      *            returned in the {@code ppSessionInfo} parameter.
@@ -302,7 +389,7 @@ public interface Wtsapi32 extends StdCallLibrary {
      *            To query information for another user's session, you must have
      *            Query Information permission.
      * @param WTSInfoClass
-     *            A value of the {@code WTS_INFO_CLASS} enumeration that indicates
+     *            A value of the {@link WTS_INFO_CLASS} enumeration that indicates
      *            the type of session information to retrieve in a call to the
      *            {@code WTSQuerySessionInformation} function.
      * @param ppBuffer
@@ -334,14 +421,15 @@ public interface Wtsapi32 extends StdCallLibrary {
      * Registers the specified window to receive session change notifications.
      *
      * @param hWnd
-     *            [in] Handle of the window to receive session change notifications.
+     *            [in] Handle of the window to receive session change
+     *            notifications.
      *
      * @param dwFlags
      *            [in] Specifies which session notifications are to be received.
      *            This parameter can be one of the following values.
      *
-     * @return If the function succeeds, the return value is TRUE. Otherwise, it is
-     *         FALSE. To get extended error information, call GetLastError.
+     * @return If the function succeeds, the return value is TRUE. Otherwise, it
+     *         is FALSE. To get extended error information, call GetLastError.
      */
     boolean WTSRegisterSessionNotification(HWND hWnd, int dwFlags);
 
