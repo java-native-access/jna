@@ -25,6 +25,7 @@ package com.sun.jna.platform.win32;
 
 import java.io.File;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.DsGetDC.DS_DOMAIN_TRUSTS;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
 import com.sun.jna.platform.win32.LMAccess.GROUP_INFO_2;
@@ -36,6 +37,7 @@ import com.sun.jna.platform.win32.LMShare.SHARE_INFO_502;
 import com.sun.jna.platform.win32.NTSecApi.LSA_FOREST_TRUST_RECORD;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_RECORD;
+import com.sun.jna.platform.win32.Netapi32.SESSION_INFO_10;
 import com.sun.jna.platform.win32.Netapi32Util.User;
 import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 import com.sun.jna.ptr.IntByReference;
@@ -50,6 +52,27 @@ public class Netapi32Test extends TestCase {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Netapi32Test.class);
+    }
+
+    public void testNetSessionEnum() {
+        PointerByReference bufptr = new PointerByReference();
+        IntByReference entriesread = new IntByReference();
+        IntByReference totalentries = new IntByReference();
+        assertEquals("NetSessionEnum call failed", 0, Netapi32.INSTANCE.NetSessionEnum(null, null, null, 10, bufptr,
+                Netapi32.MAX_PREFERRED_LENGTH, entriesread, totalentries, null));
+        Pointer buf = bufptr.getValue();
+        SESSION_INFO_10 si10 = new SESSION_INFO_10(buf);
+        if (entriesread.getValue() > 0) {
+            SESSION_INFO_10[] sessionInfo = (SESSION_INFO_10[]) si10.toArray(entriesread.getValue());
+            for (SESSION_INFO_10 si : sessionInfo) {
+                assertNotNull("Computer name was null", si.sesi10_cname);
+                assertNotNull("User name was null", si.sesi10_username);
+                // time field is connected seconds
+                assertTrue("Idle time must be at least 0", si.sesi10_idle_time >= 0);
+                assertTrue("Idle time must be less than Connected time", si.sesi10_time >= si.sesi10_idle_time);
+            }
+            assertEquals(0, Netapi32.INSTANCE.NetApiBufferFree(buf));
+        }
     }
 
     public void testNetGetJoinInformation() {

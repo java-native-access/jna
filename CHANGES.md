@@ -12,9 +12,10 @@ Features
 * [#1168](https://github.com/java-native-access/jna/pull/1168): Add `c.s.j.p.win32.Kernel32#SetProcessAffinityMask` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1169](https://github.com/java-native-access/jna/issues/1169): Wait for process in getLinuxLdPaths - [@rdesgroppes](https://github.com/rdesgroppes).
 * [#1178](https://github.com/java-native-access/jna/pull/1178): Add `c.s.j.p.win32.IPHlpAPI#GetTcpStatistics`, `c.s.j.p.win32.IPHlpAPI#GetUdpStatistics`, `c.s.j.p.win32.IPHlpAPI#GetTcpStatisticsEx` and `c.s.j.p.win32.IPHlpAPI#GetUdpStatisticsEx` - [@dbwiddis](https://github.com/dbwiddis).
-* [#1191](https://github.com/java-native-access/jna/pull/1191): Add `c.s.j.p.win32.Advapi32Util#getTokenPrimaryGroup` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1182](https://github.com/java-native-access/jna/pull/1182): Add `toString` to classes extending `c.s.j.ptr.ByReference` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1191](https://github.com/java-native-access/jna/pull/1191): Add `c.s.j.p.win32.Advapi32Util#getTokenPrimaryGroup` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1194](https://github.com/java-native-access/jna/pull/1194): Add `GetConsoleScreenBufferInfo`, `ReadConsoleInput` and `WriteConsole` with associated structures to `c.s.j.p.win32.Wincon` - [@rednoah](https://github.com/rednoah).
+* [#1198](https://github.com/java-native-access/jna/pull/1198): Add `NetSessionEnum` to `c.s.j.p.win32.Netapi32` and `WTSEnumerateSessions`, `WTSQuerySessionInformation`, and `WTSFreeMemory` to `c.s.j.p.win32.Wtsapi32` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1200](https://github.com/java-native-access/jna/pull/1200): Add mappings for `libudev` to `c.s.j.p.linux.Udev` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
