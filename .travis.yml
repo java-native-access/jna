@@ -1,9 +1,17 @@
-sudo: false
+os: linux
 dist: trusty
 
 language: java
 
+git:
+  depth: false
+
 install:
+  - if [ "${TRAVIS_CPU_ARCH}" == "arm64" ]; then 
+      sudo apt-get -m install openjdk-11-jdk libltdl-dev;
+      export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64;
+      export PATH=$JAVA_HOME/bin:$PATH; 
+    fi
   - export APACHE_ANT_BASE=$(curl http://apache.mirror.iphh.net/ant/binaries/ | grep "apache-ant-1.9..*-bin.tar.gz" | tail -1 | sed  's/.*href="\(.*\)-bin.tar.gz".*/\1/g')
   - 'echo "Apache Ant ARCHIVE: $APACHE_ANT_BASE"'
   - '[ "${TRAVIS_OS_NAME}" = "linux" ] && wget http://apache.mirror.iphh.net/ant/binaries/$APACHE_ANT_BASE-bin.tar.gz && tar xzf $APACHE_ANT_BASE-bin.tar.gz && sudo mv $APACHE_ANT_BASE /usr/local/$APACHE_ANT_BASE && sudo rm -f /usr/local/ant && sudo ln -s /usr/local/$APACHE_ANT_BASE /usr/local/ant && sudo ln -s /usr/local/$APACHE_ANT_BASE/bin/ant /usr/local/bin/ant || true'
@@ -12,28 +20,19 @@ install:
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
 
 script:
-  - if [ "x$JDK" != "xdefault" ]; then wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh && export JAVA_HOME=$(bash install-jdk.sh --feature $JDK --emit-java-home | tail -1); export PATH=$JAVA_HOME/bin:$PATH; fi || true
+  - if [[ "${TRAVIS_CPU_ARCH}" != "arm64" && "x$JDK" != "xdefault" ]]; then wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh && export JAVA_HOME=$(bash install-jdk.sh --feature $JDK --emit-java-home | tail -1); export PATH=$JAVA_HOME/bin:$PATH; fi || true
   - ant test
   - ant test-platform
   - if [ "x$JDK" == "xdefault" ]; then ant checkstyle; fi
   - if [ "x$JDK" == "xdefault" ]; then ant dist; fi
 
-os:
-  - linux
-  - osx
-
-env: JDK=default
-
-matrix:
+jobs:
     include:
-        - env: JDK=11
-          os: linux
-        - env: JDK=12
-          os: linux
-        - env: JDK=ea
-          os: linux
-        - env: JDK=11
-          os: osx
-    exclude:
         - env: JDK=default
+        - env: JDK=11
+        - env: JDK=ea
+        - env: JDK=11
+          arch: arm64
+        - env: JDK=11
           os: osx
+ 
