@@ -16,6 +16,7 @@ Features
 * [#1191](https://github.com/java-native-access/jna/pull/1191): Add `c.s.j.p.win32.Advapi32Util#getTokenPrimaryGroup` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1194](https://github.com/java-native-access/jna/pull/1194): Add `GetConsoleScreenBufferInfo`, `ReadConsoleInput` and `WriteConsole` with associated structures to `c.s.j.p.win32.Wincon` - [@rednoah](https://github.com/rednoah).
 * [#1198](https://github.com/java-native-access/jna/pull/1198): Add `NetSessionEnum` to `c.s.j.p.win32.Netapi32` and `WTSEnumerateSessions`, `WTSQuerySessionInformation`, and `WTSFreeMemory` to `c.s.j.p.win32.Wtsapi32` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1200](https://github.com/java-native-access/jna/pull/1200): Add mappings for `libudev` to `c.s.j.p.linux.Udev` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
