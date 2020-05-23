@@ -315,8 +315,9 @@ public interface Udev extends Library {
      *
      * @param udev
      *            A udev context object.
+     * @return always returns NULL.
      */
-    void udev_unref(UdevContext udev);
+    UdevContext udev_unref(UdevContext udev);
 
     /**
      * Allocates a new udev device object and returns a pointer to it. This object
@@ -365,8 +366,9 @@ public interface Udev extends Library {
      *
      * @param udev_enumerate
      *            A udev enumerate object.
+     * @return always returns NULL.
      */
-    void udev_enumerate_unref(UdevEnumerate udev_enumerate);
+    UdevEnumerate udev_enumerate_unref(UdevEnumerate udev_enumerate);
 
     /**
      * Modify filters of a udev enumerate object to match a subsystem.
@@ -435,8 +437,9 @@ public interface Udev extends Library {
      *
      * @param udev_device
      *            A udev device object.
+     * @return always returns NULL.
      */
-    void udev_device_unref(UdevDevice udev_device);
+    UdevDevice udev_device_unref(UdevDevice udev_device);
 
     /**
      * Gets the parent of a udev device
