@@ -23,6 +23,9 @@
  */
 package com.sun.jna.platform.unix;
 
+import com.sun.jna.IntegerType;
+import com.sun.jna.Native;
+
 /**
  * Note: we are using this &quot;intermediate&quot; API in order to allow
  * Linux-like O/S-es to implement the same API, but maybe using a different
@@ -30,6 +33,107 @@ package com.sun.jna.platform.unix;
  * @author Lyor Goldstein
  */
 public interface LibCAPI extends Reboot, Resource {
+
+    /**
+     * This is an unsigned integer type used to represent the sizes of objects.
+     */
+    class size_t extends IntegerType {
+        public static final size_t ZERO = new size_t();
+
+        private static final long serialVersionUID = 1L;
+
+        public size_t() {
+            this(0);
+        }
+
+        public size_t(long value) {
+            super(Native.SIZE_T_SIZE, value, true);
+        }
+    }
+
+    /**
+     * This is a signed integer type used for a count of bytes or an error
+     * indication.
+     */
+    class ssize_t extends IntegerType {
+        public static final ssize_t ZERO = new ssize_t();
+
+        private static final long serialVersionUID = 1L;
+
+        public ssize_t() {
+            this(0);
+        }
+
+        public ssize_t(long value) {
+            super(Native.SIZE_T_SIZE, value, false);
+        }
+    }
+
+    /**
+     * This is a signed integer type used to represent file sizes.
+     * <p>
+     * Authors of portable applications should be aware that on 32-bit operating
+     * systems, the bit width of this type is dependent on compile-time options in
+     * the end-user's C library. If the library is compiled with
+     * {@code _FILE_OFFSET_BITS == 64} this type is 64-bit.
+     * <p>
+     * The parameter {@code ilp32OffBig} permits this type to be defined as 64-bit
+     * on a 32-bit operating system.
+     *
+     * @see <A HREF=
+     *      "https://pubs.opengroup.org/onlinepubs/009695399/utilities/c99.html#tagtcjh_11">IEEE
+     *      Std 1003.1, 2004 (POSIXv6)</A>
+     * @see <A HREF=
+     *      "https://pubs.opengroup.org/onlinepubs/9699919799/utilities/c99.html#tagtcjh_24">IEEE
+     *      Std 1003.1-2017 (POSIX v7)</A>
+     */
+    class off_t extends IntegerType {
+        public static final off_t ZERO = new off_t();
+
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Create a new {@code off_t} using the default bit width.
+         */
+        public off_t() {
+            this(0, false);
+        }
+
+        /**
+         * Create a new {@code off_t} using the default bit width or optionally 64-bit
+         * width.
+         *
+         * @param ilp32OffBig
+         *            If {@code true}, use 64-bit width.
+         */
+        public off_t(boolean ilp32OffBig) {
+            this(0, ilp32OffBig);
+        }
+
+        /**
+         * Create a new {@code off_t} using the default bit width.
+         *
+         * @param value
+         *            The value to set.
+         */
+        public off_t(long value) {
+            this(value, false);
+        }
+
+        /**
+         * Create a new {@code off_t} using the default bit width or optionally 64-bit
+         * width.
+         *
+         * @param value
+         *            The value to set.
+         * @param ilp32OffBig
+         *            If {@code true}, use 64-bit width.
+         */
+        public off_t(long value, boolean ilp32OffBig) {
+            super(ilp32OffBig ? 8 : Native.LONG_SIZE, value);
+        }
+    }
+
     // see man(2) get/set uid/gid
     int getuid();
     int geteuid();
