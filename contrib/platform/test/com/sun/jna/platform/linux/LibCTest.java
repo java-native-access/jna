@@ -34,6 +34,10 @@ import org.junit.Test;
 
 import com.sun.jna.platform.linux.LibC.Statvfs;
 import com.sun.jna.platform.linux.LibC.Sysinfo;
+import com.sun.jna.platform.unix.LibCAPI.off_t;
+import com.sun.jna.platform.unix.LibCAPI.size_t;
+import com.sun.jna.platform.unix.LibCAPI.ssize_t;
+
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,6 +48,19 @@ import junit.framework.TestCase;
  * Exercise the {@link LibC} class.
  */
 public class LibCTest extends TestCase {
+
+    @Test
+    public void testSizeTypes() {
+        long VALUE = 20;
+        size_t st = new size_t(VALUE);
+        assertEquals("Wrong size_t value", VALUE, st.longValue());
+        ssize_t sst = new ssize_t(VALUE);
+        assertEquals("Wrong ssize_t value", VALUE, sst.longValue());
+        off_t ot = new off_t(VALUE);
+        assertEquals("Wrong off_t value", VALUE, ot.longValue());
+        ot = new off_t(VALUE, true);
+        assertEquals("Wrong 64 bit off_t value", VALUE, ot.longValue());
+    }
 
     @Test
     public void testSysinfo() {
