@@ -76,7 +76,6 @@ public class LibCTest extends TestCase {
 
         FileStore fstore = Files.getFileStore(Paths.get(testDirectory));
         assertEquals(fstore.getTotalSpace(), vfs.f_blocks.longValue() * vfs.f_bsize.longValue());
-        assertEquals(fstore.getUsableSpace(), vfs.f_bavail.longValue() * vfs.f_bsize.longValue());
         assertTrue(vfs.f_bsize.longValue() > 0);
         assertTrue(vfs.f_bfree.longValue() <= vfs.f_blocks.longValue());
         assertTrue(vfs.f_ffree.longValue() <= vfs.f_files.longValue());
