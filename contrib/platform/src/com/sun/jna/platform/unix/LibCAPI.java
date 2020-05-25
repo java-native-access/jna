@@ -23,6 +23,10 @@
  */
 package com.sun.jna.platform.unix;
 
+import com.sun.jna.IntegerType;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+
 /**
  * Note: we are using this &quot;intermediate&quot; API in order to allow
  * Linux-like O/S-es to implement the same API, but maybe using a different
@@ -30,6 +34,42 @@ package com.sun.jna.platform.unix;
  * @author Lyor Goldstein
  */
 public interface LibCAPI extends Reboot, Resource {
+
+    /**
+     * This is an unsigned integer type used to represent the sizes of objects.
+     */
+    class size_t extends IntegerType {
+        public static final size_t ZERO = new size_t();
+
+        private static final long serialVersionUID = 1L;
+
+        public size_t() {
+            this(0);
+        }
+
+        public size_t(long value) {
+            super(Native.SIZE_T_SIZE, value, true);
+        }
+    }
+
+    /**
+     * This is a signed integer type used for a count of bytes or an error
+     * indication.
+     */
+    class ssize_t extends IntegerType {
+        public static final ssize_t ZERO = new ssize_t();
+
+        private static final long serialVersionUID = 1L;
+
+        public ssize_t() {
+            this(0);
+        }
+
+        public ssize_t(long value) {
+            super(Native.SIZE_T_SIZE, value, false);
+        }
+    }
+
     // see man(2) get/set uid/gid
     int getuid();
     int geteuid();
@@ -98,4 +138,68 @@ public interface LibCAPI extends Reboot, Resource {
      * @see <A HREF="https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
      */
     int getloadavg(double[] loadavg, int nelem);
+
+    /**
+     * Closes a file descriptor, so that it no longer refers to any file and may be
+     * reused. Any record locks held on the file it was associated with, and owned
+     * by the process, are removed (regardless of the file descriptor that was used
+     * to obtain the lock).
+     * <p>
+     * If {@code fd} is the last file descriptor referring to the underlying open
+     * file description, the resources associated with the open file description are
+     * freed; if the file descriptor was the last reference to a file which has been
+     * removed using {@code unlink}, the file is deleted.
+     *
+     * @param fd
+     *            a file descriptor
+     * @return returns zero on success. On error, -1 is returned, and {@code errno}
+     *         is set appropriately.
+     *         <p>
+     *         {@code close()} should not be retried after an error.
+     */
+    int close(int fd);
+
+    /**
+     * Flushes changes made to the in-core copy of a file that was mapped into
+     * memory using {@link LibCUtil#mmap(Pointer, long, int, int, int, long)} back
+     * to the filesystem. Without use of this call, there is no guarantee that
+     * changes are written back before {@link #munmap(Pointer, size_t)} is called.
+     * To be more precise, the part of the file that corresponds to the memory area
+     * starting at {@code addr} and having length {@code length} is updated.
+     *
+     * @param addr
+     *            The start of the memory area to sync to the filesystem.
+     * @param length
+     *            The length of the memory area to sync to the filesystem.
+     * @param flags
+     *            The flags argument should specify exactly one of {@code MS_ASYNC}
+     *            and {@code MS_SYNC}, and may additionally include the
+     *            {@code MS_INVALIDATE} bit.
+     * @return On success, zero is returned. On error, -1 is returned, and
+     *         {@code errno} is set appropriately.
+     */
+    int msync(Pointer addr, size_t length, int flags);
+
+    /**
+     * Deletes the mappings for the specified address range, and causes further
+     * references to addresses within the range to generate invalid memory
+     * references. The region is also automatically unmapped when the process is
+     * terminated. On the other hand, closing the file descriptor does not unmap the
+     * region.
+     * <p>
+     * It is not an error if the indicated range does not contain any mapped pages.
+     *
+     * @param addr
+     *            The base address from which to delete mappings. The address addr
+     *            must be a multiple of the page size (but length need not be).
+     * @param length
+     *            The length from the base address to delete mappings. All pages
+     *            containing a part of the indicated range are unmapped, and
+     *            subsequent references to these pages will generate
+     *            {@code SIGSEGV}.
+     * @return On success, returns 0. On failure, it returns -1, and {@code errno}
+     *         is set to indicate the cause of the error (probably to
+     *         {@code EINVAL}).
+     */
+    int munmap(Pointer addr, size_t length);
 }
