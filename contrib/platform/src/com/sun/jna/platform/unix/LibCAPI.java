@@ -25,6 +25,7 @@ package com.sun.jna.platform.unix;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 
 /**
  * Note: we are using this &quot;intermediate&quot; API in order to allow
@@ -73,12 +74,9 @@ public interface LibCAPI extends Reboot, Resource {
      * This is a signed integer type used to represent file sizes.
      * <p>
      * Authors of portable applications should be aware that on 32-bit operating
-     * systems, the bit width of this type is dependent on compile-time options in
-     * the end-user's C library. If the library is compiled with
-     * {@code _FILE_OFFSET_BITS == 64} this type is 64-bit.
-     * <p>
-     * The parameter {@code ilp32OffBig} permits this type to be defined as 64-bit
-     * on a 32-bit operating system.
+     * systems, the bit width of this type may be dependent on compile-time options
+     * in the end-user's library. The parameter {@code ilp32OffBig} permits this
+     * type to be defined as 64-bit on a 32-bit operating system.
      *
      * @see <A HREF=
      *      "https://pubs.opengroup.org/onlinepubs/009695399/utilities/c99.html#tagtcjh_11">IEEE
@@ -100,8 +98,8 @@ public interface LibCAPI extends Reboot, Resource {
         }
 
         /**
-         * Create a new {@code off_t} using the default bit width or optionally 64-bit
-         * width.
+         * Create a new {@code off_t} using the default bit width or 64-bit if
+         * specified.
          *
          * @param ilp32OffBig
          *            If {@code true}, use 64-bit width.
@@ -121,8 +119,8 @@ public interface LibCAPI extends Reboot, Resource {
         }
 
         /**
-         * Create a new {@code off_t} using the default bit width or optionally 64-bit
-         * width.
+         * Create a new {@code off_t} using the default bit width or 64-bit if
+         * specified.
          *
          * @param value
          *            The value to set.
@@ -130,7 +128,7 @@ public interface LibCAPI extends Reboot, Resource {
          *            If {@code true}, use 64-bit width.
          */
         public off_t(long value, boolean ilp32OffBig) {
-            super(ilp32OffBig ? 8 : Native.LONG_SIZE, value);
+            super(ilp32OffBig ? 8 : LibCUtil.OFF_T_SIZE, value);
         }
     }
 
@@ -202,4 +200,134 @@ public interface LibCAPI extends Reboot, Resource {
      * @see <A HREF="https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
      */
     int getloadavg(double[] loadavg, int nelem);
+
+    /**
+     * Closes a file descriptor, so that it no longer refers to any file and may be
+     * reused. Any record locks held on the file it was associated with, and owned
+     * by the process, are removed (regardless of the file descriptor that was used
+     * to obtain the lock).
+     * <p>
+     * If {@code fd} is the last file descriptor referring to the underlying open
+     * file description, the resources associated with the open file description are
+     * freed; if the file descriptor was the last reference to a file which has been
+     * removed using {@code unlink}, the file is deleted.
+     *
+     * @param fd
+     *            a file descriptor
+     * @return returns zero on success. On error, -1 is returned, and {@code errno}
+     *         is set appropriately.
+     *         <p>
+     *         {@code close()} should not be retried after an error.
+     */
+    int close(int fd);
+
+    /**
+     * Causes the regular file referenced by {@code fd} to be truncated to a size of
+     * precisely {@code length} bytes.
+     * <p>
+     * If the file previously was larger than this size, the extra data is lost. If
+     * the file previously was shorter, it is extended, and the extended part reads
+     * as null bytes ('\0').
+     * <p>
+     * The file must be open for writing
+     *
+     * @param fd
+     *            a file descriptor
+     * @param length
+     *            the number of bytes to truncate or extend the file to
+     * @return On success, zero is returned. On error, -1 is returned, and
+     *         {@code errno} is set appropriately.
+     */
+    int ftruncate(int fd, off_t length);
+
+    /**
+     * Creates a new mapping in the virtual address space of the calling process.
+     *
+     * @param addr
+     *            The starting address for the new mapping.
+     *            <p>
+     *            If {@code addr} is NULL, then the kernel chooses the
+     *            (page-aligned) address at which to create the mapping; this is the
+     *            most portable method of creating a new mapping. If {@code addr} is
+     *            not NULL, then the kernel takes it as a hint about where to place
+     *            the mapping; on Linux, the kernel will pick a nearby page boundary
+     *            (but always above or equal to the value specified by
+     *            {@code /proc/sys/vm/mmap_min_addr}) and attempt to create the
+     *            mapping there. If another mapping already exists there, the kernel
+     *            picks a new address that may or may not depend on the hint. The
+     *            address of the new mapping is returned as the result of the call.
+     * @param length
+     *            Specifies the length of the mapping (which must be greater than
+     *            0).
+     * @param prot
+     *            describes the desired memory protection of the mapping (and must
+     *            not conflict with the open mode of the file). It is either
+     *            {@code PROT_NONE} or the bitwise OR of one or more of
+     *            {@code PROT_READ}, {@code PROT_WRITE}, or {@code PROT_EXEC}.
+     * @param flags
+     *            determines whether updates to the mapping are visible to other
+     *            processes mapping the same region, and whether updates are carried
+     *            through to the underlying file. This behavior is determined by
+     *            including exactly one of {@code MAP_SHARED},
+     *            {@code MAP_SHARED_VALIDATE}, or {@code MAP_PRIVATE}. In addition,
+     *            0 or more additional flags can be ORed in {@code flags}.
+     * @param fd
+     *            The file descriptor for the object to be mapped. After the
+     *            {@code mmap()} call has returned, the file descriptor can be
+     *            closed immediately without invalidating the mapping.
+     * @param offset
+     *            The contents of a file mapping (as opposed to an anonymous
+     *            mapping), are initialized using {@code length} bytes starting at
+     *            offset {@code offset} in the file (or other object) referred to by
+     *            the file descriptor, {@code fd}. {@code offset} must be a multiple
+     *            of the page size as returned by {@code sysconf(_SC_PAGE_SIZE)}.
+     * @return On success, returns a pointer to the mapped area. On error, the value
+     *         {@code MAP_FAILED} (that is, (void *) -1) is returned, and
+     *         {@code errno} is set to indicate the cause of the error.
+     */
+    Pointer mmap(Pointer addr, size_t length, int prot, int flags, int fd, off_t offset);
+
+    /**
+     * Flushes changes made to the in-core copy of a file that was mapped into
+     * memory using {@link LibCAPI#mmap(Pointer, size_t, int, int, int, off_t)} back
+     * to the filesystem. Without use of this call, there is no guarantee that
+     * changes are written back before {@link #munmap(Pointer, size_t)} is called.
+     * To be more precise, the part of the file that corresponds to the memory area
+     * starting at {@code addr} and having length {@code length} is updated.
+     *
+     * @param addr
+     *            The start of the memory area to sync to the filesystem.
+     * @param length
+     *            The length of the memory area to sync to the filesystem.
+     * @param flags
+     *            The flags argument should specify exactly one of {@code MS_ASYNC}
+     *            and {@code MS_SYNC}, and may additionally include the
+     *            {@code MS_INVALIDATE} bit.
+     * @return On success, zero is returned. On error, -1 is returned, and
+     *         {@code errno} is set appropriately.
+     */
+    int msync(Pointer addr, size_t length, int flags);
+
+    /**
+     * Deletes the mappings for the specified address range, and causes further
+     * references to addresses within the range to generate invalid memory
+     * references. The region is also automatically unmapped when the process is
+     * terminated. On the other hand, closing the file descriptor does not unmap the
+     * region.
+     * <p>
+     * It is not an error if the indicated range does not contain any mapped pages.
+     *
+     * @param addr
+     *            The base address from which to delete mappings. The address addr
+     *            must be a multiple of the page size (but length need not be).
+     * @param length
+     *            The length from the base address to delete mappings. All pages
+     *            containing a part of the indicated range are unmapped, and
+     *            subsequent references to these pages will generate
+     *            {@code SIGSEGV}.
+     * @return On success, returns 0. On failure, it returns -1, and {@code errno}
+     *         is set to indicate the cause of the error (probably to
+     *         {@code EINVAL}).
+     */
+    int munmap(Pointer addr, size_t length);
 }

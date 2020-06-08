@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 Daniel Widdis, All Rights Reserved
+/* Copyright (c) 2017,2020 Daniel Widdis, All Rights Reserved
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
@@ -38,7 +38,7 @@ import com.sun.jna.platform.unix.LibCAPI;
 /**
  * LibC structures and functions unique to Linux
  */
-public interface LibC extends LibCAPI, Library {
+public interface LibC extends LibCAPI, ErrNo, Fcntl, Mman, Library {
     String NAME = "c";
     LibC INSTANCE = Native.load(NAME, LibC.class);
 
