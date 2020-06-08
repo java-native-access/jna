@@ -44,6 +44,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.unix.LibCAPI.off_t;
 import com.sun.jna.platform.unix.LibCAPI.size_t;
+import com.sun.jna.platform.unix.LibCUtil;
 
 import junit.framework.TestCase;
 
@@ -63,8 +64,9 @@ public class LibRTTest extends TestCase {
         assertNotEquals("Failed to shm_open " + share + ". Error: " + Native.getLastError(), -1, fd);
         try {
             // Multiply by 4 to handle all possible encodings
-            size_t length = new size_t(4 * (share.length() + 1));
-            off_t truncLen = new off_t(4 * (share.length() + 1));
+            int bufLen = 4 * (share.length() + 1);
+            size_t length = new size_t(bufLen);
+            off_t truncLen = new off_t(bufLen);
             // Allocate memory to the share (fills with null bytes)
             int ret = LIBC.ftruncate(fd, truncLen);
             assertNotEquals("Failed to ftruncate. Error: " + Native.getLastError(), -1, ret);
@@ -93,8 +95,8 @@ public class LibRTTest extends TestCase {
             // So let's not recreate it, instead get a file descriptor to the existing share
             fd = LIBRT.shm_open(share, O_RDWR, S_IRWXU);
             assertNotEquals("Failed to re-open " + share + ". Error: " + Native.getLastError(), -1, fd);
-            // Map another pointer to the share.
-            Pointer q = LIBC.mmap(null, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, off_t.ZERO);
+            // Map another pointer to the share. Use the util version to test it
+            Pointer q = LibCUtil.mmap(null, bufLen, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
             assertNotEquals("Failed mmap to existing share. Error: " + Native.getLastError(), MAP_FAILED, q);
             // Close the file descriptor
             ret = LIBC.close(fd);
