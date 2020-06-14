@@ -42,7 +42,6 @@ import org.junit.Test;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.unix.LibCAPI.off_t;
 import com.sun.jna.platform.unix.LibCAPI.size_t;
 import com.sun.jna.platform.unix.LibCUtil;
 
@@ -66,12 +65,11 @@ public class LibRTTest extends TestCase {
             // Multiply by 4 to handle all possible encodings
             int bufLen = 4 * (share.length() + 1);
             size_t length = new size_t(bufLen);
-            off_t truncLen = new off_t(bufLen);
             // Allocate memory to the share (fills with null bytes)
-            int ret = LIBC.ftruncate(fd, truncLen);
+            int ret = LibCUtil.ftruncate(fd, bufLen);
             assertNotEquals("Failed to ftruncate. Error: " + Native.getLastError(), -1, ret);
             // Map a pointer to the share. Offset must be a multiple of page size
-            Pointer p = LIBC.mmap(null, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, off_t.ZERO);
+            Pointer p = LibCUtil.mmap(null, bufLen, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
             assertNotEquals("Failed mmap to new share. Error: " + Native.getLastError(), MAP_FAILED, p);
             // We can now close the file descriptor
             ret = LIBC.close(fd);

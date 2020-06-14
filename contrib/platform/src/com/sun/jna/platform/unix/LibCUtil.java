@@ -35,31 +35,22 @@ public class LibCUtil {
 
     private static final NativeLibrary LIBC = NativeLibrary.getInstance("c");
 
-    /** Size of a native <code>off_t</code> type, in bytes. */
-    public static final int OFF_T_SIZE;
-    static {
-        // Observations shows, that without LFS, on linux, solaris, aix, mac OS and
-        // windows (apart from cygwin32) sizeof(off_t) == sizeof(long)
-        int size = Native.LONG_SIZE;
-        // On 64-bit, off_t is 64 bit, otherwise test compiler flags that would create
-        // 64-bit versions of off_t functions
-        if (size < 8) {
-            try {
-                LIBC.getFunction("mmap64", Function.THROW_LAST_ERROR);
-                // on 32-bit, mmap64 only exists when off_t is 64-bit
-                size = 8;
-            } catch (UnsatisfiedLinkError ex) {
-            }
-        }
-        OFF_T_SIZE = size;
-    }
-
-    private static Function mmap;
+    private static Function mmap = null;
+    private static boolean mmap64 = false;
+    private static Function ftruncate = null;
+    private static boolean ftruncate64 = false;
     static {
         try {
             mmap = LIBC.getFunction("mmap64", Function.THROW_LAST_ERROR);
+            mmap64 = true;
         } catch (UnsatisfiedLinkError ex) {
             mmap = LIBC.getFunction("mmap", Function.THROW_LAST_ERROR);
+        }
+        try {
+            ftruncate = LIBC.getFunction("ftruncate64", Function.THROW_LAST_ERROR);
+            ftruncate64 = true;
+        } catch (UnsatisfiedLinkError ex) {
+            ftruncate = LIBC.getFunction("ftruncate", Function.THROW_LAST_ERROR);
         }
     }
 
@@ -123,15 +114,55 @@ public class LibCUtil {
         params[2] = prot;
         params[3] = flags;
         params[4] = fd;
-        if (OFF_T_SIZE == 4) {
+        if (mmap64 || Native.LONG_SIZE > 4) {
+            params[5] = offset;
+        } else {
             require32Bit(offset, "offset");
             params[5] = (int) offset;
-        } else {
-            params[5] = offset;
         }
         return mmap.invokePointer(params);
     }
 
+    /**
+     * Causes the regular file referenced by {@code fd} to be truncated to a size of
+     * precisely {@code length} bytes.
+     * <p>
+     * If the file previously was larger than this size, the extra data is lost. If
+     * the file previously was shorter, it is extended, and the extended part reads
+     * as null bytes ('\0').
+     * <p>
+     * The file must be open for writing
+     *
+     * @param fd
+     *            a file descriptor
+     * @param length
+     *            the number of bytes to truncate or extend the file to
+     * @return On success, zero is returned. On error, -1 is returned, and
+     *         {@code errno} is set appropriately.
+     */
+    public static int ftruncate(int fd, long length) {
+        Object[] params = new Object[2];
+        params[0] = fd;
+        if (ftruncate64 || Native.LONG_SIZE > 4) {
+            params[1] = length;
+        } else {
+            require32Bit(length, "length");
+            params[1] = (int) length;
+        }
+        return ftruncate.invokeInt(params);
+    }
+
+    /**
+     * Test that a value is 32-bit, throwing a custom exception otherwise
+     *
+     * @param val
+     *            The value to test
+     * @param value
+     *            The name of the value, to be inserted in the exception message if
+     *            not 32-bit
+     * @throws IllegalArgumentException
+     *             if {@code val} is not 32-bit
+     */
     public static void require32Bit(long val, String value) {
         if (val > Integer.MAX_VALUE) {
             throw new IllegalArgumentException(value + " exceeds 32bit");

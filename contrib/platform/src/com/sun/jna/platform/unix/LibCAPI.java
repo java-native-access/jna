@@ -77,6 +77,9 @@ public interface LibCAPI extends Reboot, Resource {
      * systems, the bit width of this type may be dependent on compile-time options
      * in the end-user's library. The parameter {@code ilp32OffBig} permits this
      * type to be defined as 64-bit on a 32-bit operating system.
+     * <p>
+     * Portable versions of C library methods which ensure appropriate bit width for
+     * {@code off_t} arguments are defined in {@link LibCUtil}.
      *
      * @see <A HREF=
      *      "https://pubs.opengroup.org/onlinepubs/009695399/utilities/c99.html#tagtcjh_11">IEEE
@@ -86,7 +89,6 @@ public interface LibCAPI extends Reboot, Resource {
      *      Std 1003.1-2017 (POSIX v7)</A>
      */
     class off_t extends IntegerType {
-        public static final off_t ZERO = new off_t();
 
         private static final long serialVersionUID = 1L;
 
@@ -128,7 +130,7 @@ public interface LibCAPI extends Reboot, Resource {
          *            If {@code true}, use 64-bit width.
          */
         public off_t(long value, boolean ilp32OffBig) {
-            super(ilp32OffBig ? 8 : LibCUtil.OFF_T_SIZE, value);
+            super(ilp32OffBig ? 8 : Native.LONG_SIZE, value);
         }
     }
 
@@ -222,74 +224,8 @@ public interface LibCAPI extends Reboot, Resource {
     int close(int fd);
 
     /**
-     * Causes the regular file referenced by {@code fd} to be truncated to a size of
-     * precisely {@code length} bytes.
-     * <p>
-     * If the file previously was larger than this size, the extra data is lost. If
-     * the file previously was shorter, it is extended, and the extended part reads
-     * as null bytes ('\0').
-     * <p>
-     * The file must be open for writing
-     *
-     * @param fd
-     *            a file descriptor
-     * @param length
-     *            the number of bytes to truncate or extend the file to
-     * @return On success, zero is returned. On error, -1 is returned, and
-     *         {@code errno} is set appropriately.
-     */
-    int ftruncate(int fd, off_t length);
-
-    /**
-     * Creates a new mapping in the virtual address space of the calling process.
-     *
-     * @param addr
-     *            The starting address for the new mapping.
-     *            <p>
-     *            If {@code addr} is NULL, then the kernel chooses the
-     *            (page-aligned) address at which to create the mapping; this is the
-     *            most portable method of creating a new mapping. If {@code addr} is
-     *            not NULL, then the kernel takes it as a hint about where to place
-     *            the mapping; on Linux, the kernel will pick a nearby page boundary
-     *            (but always above or equal to the value specified by
-     *            {@code /proc/sys/vm/mmap_min_addr}) and attempt to create the
-     *            mapping there. If another mapping already exists there, the kernel
-     *            picks a new address that may or may not depend on the hint. The
-     *            address of the new mapping is returned as the result of the call.
-     * @param length
-     *            Specifies the length of the mapping (which must be greater than
-     *            0).
-     * @param prot
-     *            describes the desired memory protection of the mapping (and must
-     *            not conflict with the open mode of the file). It is either
-     *            {@code PROT_NONE} or the bitwise OR of one or more of
-     *            {@code PROT_READ}, {@code PROT_WRITE}, or {@code PROT_EXEC}.
-     * @param flags
-     *            determines whether updates to the mapping are visible to other
-     *            processes mapping the same region, and whether updates are carried
-     *            through to the underlying file. This behavior is determined by
-     *            including exactly one of {@code MAP_SHARED},
-     *            {@code MAP_SHARED_VALIDATE}, or {@code MAP_PRIVATE}. In addition,
-     *            0 or more additional flags can be ORed in {@code flags}.
-     * @param fd
-     *            The file descriptor for the object to be mapped. After the
-     *            {@code mmap()} call has returned, the file descriptor can be
-     *            closed immediately without invalidating the mapping.
-     * @param offset
-     *            The contents of a file mapping (as opposed to an anonymous
-     *            mapping), are initialized using {@code length} bytes starting at
-     *            offset {@code offset} in the file (or other object) referred to by
-     *            the file descriptor, {@code fd}. {@code offset} must be a multiple
-     *            of the page size as returned by {@code sysconf(_SC_PAGE_SIZE)}.
-     * @return On success, returns a pointer to the mapped area. On error, the value
-     *         {@code MAP_FAILED} (that is, (void *) -1) is returned, and
-     *         {@code errno} is set to indicate the cause of the error.
-     */
-    Pointer mmap(Pointer addr, size_t length, int prot, int flags, int fd, off_t offset);
-
-    /**
      * Flushes changes made to the in-core copy of a file that was mapped into
-     * memory using {@link LibCAPI#mmap(Pointer, size_t, int, int, int, off_t)} back
+     * memory using {@link LibCUtil#mmap(Pointer, long, int, int, int, long)} back
      * to the filesystem. Without use of this call, there is no guarantee that
      * changes are written back before {@link #munmap(Pointer, size_t)} is called.
      * To be more precise, the part of the file that corresponds to the memory area
