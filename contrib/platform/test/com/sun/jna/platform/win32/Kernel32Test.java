@@ -1180,6 +1180,28 @@ public class Kernel32Test extends TestCase {
         }
     }
 
+    public void testGetThreadList() throws IOException {
+        HANDLE threadEnumHandle = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPTHREAD,
+                new WinDef.DWORD(0));
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(threadEnumHandle));
+        try {
+            Tlhelp32.THREADENTRY32.ByReference threadEntry = new Tlhelp32.THREADENTRY32.ByReference();
+
+            assertTrue(Kernel32.INSTANCE.Thread32First(threadEnumHandle, threadEntry));
+
+            List<Integer> threadIdList = new ArrayList<Integer>();
+            threadIdList.add(threadEntry.th32ThreadID);
+
+            while (Kernel32.INSTANCE.Thread32Next(threadEnumHandle, threadEntry)) {
+                threadIdList.add(threadEntry.th32ThreadID);
+            }
+
+            assertTrue(threadIdList.size() > 4);
+        } finally {
+            Kernel32Util.closeHandle(threadEnumHandle);
+        }
+    }
+
     public final void testGetPrivateProfileInt() throws IOException {
         final File tmp = File.createTempFile("testGetPrivateProfileInt", "ini");
         tmp.deleteOnExit();
