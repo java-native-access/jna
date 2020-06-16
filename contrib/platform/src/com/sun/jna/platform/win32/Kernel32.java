@@ -2386,6 +2386,37 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     boolean Process32Next(HANDLE hSnapshot, Tlhelp32.PROCESSENTRY32 lppe);
 
     /**
+     * Retrieves information about the first thread of any process encountered in a
+     * system snapshot.
+     *
+     * @param hSnapshot
+     *            A handle to the snapshot returned from a previous call to the
+     *            CreateToolhelp32Snapshot function.
+     * @param lpte
+     *            A pointer to a THREADENTRY32 structure.
+     * @return Returns TRUE if the first entry of the thread list has been copied to
+     *         the buffer or FALSE otherwise. The ERROR_NO_MORE_FILES error value is
+     *         returned by the GetLastError function if no threads exist or the
+     *         snapshot does not contain thread information.
+     */
+    boolean Thread32First(HANDLE hSnapshot, Tlhelp32.THREADENTRY32 lpte);
+
+    /**
+     * Retrieves information about the next process recorded in a system snapshot.
+     *
+     * @param hSnapshot
+     *            A handle to the snapshot returned from a previous call to the
+     *            CreateToolhelp32Snapshot function.
+     * @param lpte
+     *            A pointer to a THREADENTRY32 structure.
+     * @return Returns TRUE if the next entry of the thread list has been copied to
+     *         the buffer or FALSE otherwise. The ERROR_NO_MORE_FILES error value is
+     *         returned by the GetLastError function if no threads exist or the
+     *         snapshot does not contain thread information.
+     */
+    boolean Thread32Next(HANDLE hSnapshot, Tlhelp32.THREADENTRY32 lpte);
+
+    /**
      * The SetEnvironmentVariable function sets the contents of the specified
      * environment variable for the current process.
      *

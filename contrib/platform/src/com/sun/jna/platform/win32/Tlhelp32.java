@@ -22,9 +22,8 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
@@ -172,10 +171,77 @@ public interface Tlhelp32 {
     }
 
     /**
+     * Describes an entry from a list of the threads executing in the system when a
+     * snapshot was taken.
+     */
+    @FieldOrder({ "dwSize", "cntUsage", "th32ThreadID", "th32OwnerProcessID", "tpBasePri", "tpDeltaPri", "dwFlags" })
+    public static class THREADENTRY32 extends Structure {
+
+        public static class ByReference extends THREADENTRY32 implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        /**
+         * The size of the structure, in bytes. Before calling the Thread32First
+         * function, set this member to sizeof(THREADENTRY32). If you do not initialize
+         * dwSize, Thread32First fails.
+         */
+        int dwSize;
+
+        /**
+         * This member is no longer used and is always set to zero.
+         */
+        int cntUsage;
+
+        /**
+         * The thread identifier, compatible with the thread identifier returned by the
+         * CreateProcess function.
+         */
+        int th32ThreadID;
+
+        /**
+         * The identifier of the process that created the thread.
+         */
+        int th32OwnerProcessID;
+
+        /**
+         * The kernel base priority level assigned to the thread. The priority is a
+         * number from 0 to 31, with 0 representing the lowest possible thread priority.
+         * For more information, see KeQueryPriorityThread.
+         */
+        NativeLong tpBasePri;
+
+        /**
+         * This member is no longer used and is always set to zero.
+         */
+        NativeLong tpDeltaPri;
+
+        /**
+         * This member is no longer used and is always set to zero.
+         */
+        int dwFlags;
+
+        public THREADENTRY32() {
+            dwSize = size();
+        }
+
+        public THREADENTRY32(Pointer memory) {
+            super(memory);
+            read();
+        }
+    }
+
+    /**
      * Describes an entry from a list of the modules belonging to the specified
      * process.
      *
-     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=vs.85).aspx">MSDN</a>
+     * @see <a href=
+     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=vs.85).aspx">MSDN</a>
      */
     @FieldOrder({"dwSize", "th32ModuleID", "th32ProcessID", "GlblcntUsage",
         "ProccntUsage", "modBaseAddr", "modBaseSize", "hModule",
