@@ -35,7 +35,6 @@ import static com.sun.jna.platform.linux.Mman.PROT_READ;
 import static com.sun.jna.platform.linux.Mman.PROT_WRITE;
 import static org.junit.Assert.assertNotEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
 
