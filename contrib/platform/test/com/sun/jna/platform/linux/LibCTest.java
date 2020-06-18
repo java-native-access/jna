@@ -23,24 +23,18 @@
  */
 package com.sun.jna.platform.linux;
 
-import com.sun.jna.Native;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Test;
-
-import com.sun.jna.platform.linux.LibC.Statvfs;
-import com.sun.jna.platform.linux.LibC.Sysinfo;
-import com.sun.jna.platform.unix.LibCAPI.off_t;
-import com.sun.jna.platform.unix.LibCAPI.size_t;
-import com.sun.jna.platform.unix.LibCAPI.ssize_t;
-
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import org.junit.Test;
+
+import com.sun.jna.Native;
+import com.sun.jna.platform.linux.LibC.Statvfs;
+import com.sun.jna.platform.linux.LibC.Sysinfo;
+import com.sun.jna.platform.unix.LibCAPI.size_t;
+import com.sun.jna.platform.unix.LibCAPI.ssize_t;
 
 import junit.framework.TestCase;
 
@@ -56,10 +50,6 @@ public class LibCTest extends TestCase {
         assertEquals("Wrong size_t value", VALUE, st.longValue());
         ssize_t sst = new ssize_t(VALUE);
         assertEquals("Wrong ssize_t value", VALUE, sst.longValue());
-        off_t ot = new off_t(VALUE);
-        assertEquals("Wrong off_t value", VALUE, ot.longValue());
-        ot = new off_t(VALUE, true);
-        assertEquals("Wrong 64 bit off_t value", VALUE, ot.longValue());
     }
 
     @Test
@@ -97,19 +87,5 @@ public class LibCTest extends TestCase {
         assertTrue(vfs.f_bfree.longValue() <= vfs.f_blocks.longValue());
         assertTrue(vfs.f_ffree.longValue() <= vfs.f_files.longValue());
         assertTrue(vfs.f_namemax.longValue() > 0);
-    }
-
-    private static List<String> mounts() throws IOException, InterruptedException {
-        Process p = Runtime.getRuntime().exec("mount");
-
-        ArrayList<String> mounts = new ArrayList<String>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            mounts.add(line);
-        }
-        p.waitFor();
-        reader.close();
-        return mounts;
     }
 }

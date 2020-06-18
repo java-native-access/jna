@@ -29,7 +29,10 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 
 /**
- * Utility class supporting variable-width types in the C Library
+ * Utility class supporting variable-width types in the C Library. Portable code
+ * should avoid using {@code off_t} because it is dependent upon features
+ * selected at compile-time. This class provides helper methods that safely
+ * avoid these types by using 64-bit mappings when available.
  */
 public class LibCUtil {
 
