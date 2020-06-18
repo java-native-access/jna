@@ -37,6 +37,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 
 import org.junit.Test;
 
@@ -54,10 +55,16 @@ public class LibRTTest extends TestCase {
 
     @Test
     public void testMmapToShm() throws IOException {
-        // Get a suitably random filename of the form "/somename"
-        File f = File.createTempFile("mmapToShm", "test");
-        String share = "/" + f.getName();
-        f.delete();
+        // Get a suitably random filename of the form "/somename" to use as both the
+        // share virtual filename and the string to store
+        // Use same algorithm as File.CreateTempFile without creating a file
+        long n = new SecureRandom().nextLong();
+        if (n == Long.MIN_VALUE) {
+            n = 0; // corner case
+        } else {
+            n = Math.abs(n);
+        }
+        String share = "/mmapToShm" + Long.toString(n) + "test";
         // Get a file descriptor to the share.
         int fd = LIBRT.shm_open(share, O_RDWR | O_CREAT | O_EXCL, S_IRWXU);
         assertNotEquals("Failed to shm_open " + share + ". Error: " + Native.getLastError(), -1, fd);
