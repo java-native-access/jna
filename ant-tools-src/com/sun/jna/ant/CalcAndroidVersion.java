@@ -22,7 +22,7 @@
  * containing JNA, in file "AL2.0".
  */
 
-package com.sun.jna;
+package com.sun.jna.ant;
 
 import java.io.IOException;
 import org.apache.tools.ant.Project;

@@ -99,7 +99,7 @@ auxiliary.show.customizer.message=<message>
             </compilation-unit>
             <compilation-unit>
                 <package-root>ant-tools-src</package-root>
-                <classpath mode="compile">src:lib/ant.jar</classpath>
+                <classpath mode="compile">src:lib/ant.jar:lib/asm-8.0.1.jar</classpath>
                 <source-level>1.6</source-level>
             </compilation-unit>
         </java-data>
