@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -265,6 +263,32 @@ public interface Psapi extends StdCallLibrary {
      * @see <a href="http://msdn.microsoft.com/en-us/library/ms683210(VS.85).aspx">MSDN</a>
      */
     boolean GetPerformanceInfo(PERFORMANCE_INFORMATION pPerformanceInformation, int cb);
+
+    /**
+     * Retrieves the process identifier for each process object in the system. <br>
+     * It is a good idea to use a large array, because it is hard to predict how
+     * many processes there will be at the time you call EnumProcesses. <br>
+     * To determine how many processes were enumerated, divide the pBytesReturned
+     * value by sizeof(DWORD). There is no indication given when the buffer is too
+     * small to store all process identifiers. Therefore, if pBytesReturned equals
+     * cb, consider retrying the call with a larger array. <br>
+     * To obtain process handles for the processes whose identifiers you have just
+     * obtained, call the OpenProcess function.
+     *
+     * @param lpidProcess
+     *            A pointer to an array that receives the list of process
+     *            identifiers
+     * @param cb
+     *            The size of the lpidProcess array, in bytes.
+     * @param lpcbNeeded
+     *            The number of bytes returned in the pProcessIds array.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. To get extended error
+     *         information, call GetLastError.
+     * @see <a href=
+     *      "https://docs.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocesses">MSDN</a>
+     */
+    boolean EnumProcesses(int[] lpidProcess, int cb, IntByReference lpcbNeeded);
 
     @FieldOrder({"lpBaseOfDll", "SizeOfImage", "EntryPoint"})
     class MODULEINFO extends Structure {

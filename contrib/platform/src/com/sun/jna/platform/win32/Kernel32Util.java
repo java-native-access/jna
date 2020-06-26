@@ -855,6 +855,47 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
+     * This function retrieves the full path of the executable file of a given process identifier.
+     *
+     * @param pid
+     *          Identifier for the running process
+     * @param dwFlags
+     *          0 - The name should use the Win32 path format.
+     *          1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format.
+     *
+     * @return the full path of the process's executable file of null if failed. To get extended error information,
+     *         call GetLastError.
+     */
+    public static final String QueryFullProcessImageName(int pid, int dwFlags) {
+        HANDLE hProcess = null;
+        Win32Exception we = null;
+
+        try {
+            hProcess = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION | WinNT.PROCESS_VM_READ, false, pid);
+            if (hProcess == null) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+            return QueryFullProcessImageName(hProcess, dwFlags);
+        } catch (Win32Exception e) {
+            we = e;
+            throw we; // re-throw to invoke finally block
+        } finally {
+            try {
+                closeHandle(hProcess);
+            } catch (Win32Exception e) {
+                if (we == null) {
+                    we = e;
+                } else {
+                    we.addSuppressed(e);
+                }
+            }
+            if (we != null) {
+                throw we;
+            }
+        }
+    }
+
+    /**
      *
      * This function retrieves the full path of the executable file of a given process.
      *
@@ -868,10 +909,16 @@ public abstract class Kernel32Util implements WinDef {
      *         call GetLastError.
      */
     public static final String QueryFullProcessImageName(HANDLE hProcess, int dwFlags) {
-        char[] path = new char[WinDef.MAX_PATH];
-        IntByReference lpdwSize = new IntByReference(path.length);
-        if (Kernel32.INSTANCE.QueryFullProcessImageName(hProcess, 0, path, lpdwSize))
-            return new String(path).substring(0, lpdwSize.getValue());
+        int size = WinDef.MAX_PATH; // Start with MAX_PATH, then increment with 1024 each iteration
+        IntByReference lpdwSize = new IntByReference();
+        do {
+            char[] lpExeName = new char[size];
+            lpdwSize.setValue(size);
+            if (Kernel32.INSTANCE.QueryFullProcessImageName(hProcess, dwFlags, lpExeName, lpdwSize)) {
+                return new String(lpExeName, 0, lpdwSize.getValue());
+            }
+            size += 1024;
+        } while (Kernel32.INSTANCE.GetLastError() == Kernel32.ERROR_INSUFFICIENT_BUFFER);
         throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     }
 

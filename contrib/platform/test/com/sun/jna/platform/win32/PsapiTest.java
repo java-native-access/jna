@@ -248,4 +248,29 @@ public class PsapiTest {
         assertTrue(Psapi.INSTANCE.GetPerformanceInfo(perfInfo, perfInfo.size()));
         assertTrue(perfInfo.ProcessCount.intValue() > 0);
     }
+
+    @Test
+    public void testEnumProcesses() {
+        int size = 0;
+        int[] lpidProcess = null;
+        IntByReference lpcbNeeded = new IntByReference();
+        do {
+            size += 1024;
+            lpidProcess = new int[size];
+            if (!Psapi.INSTANCE.EnumProcesses(lpidProcess, size * DWORD.SIZE, lpcbNeeded)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+        } while (size == lpcbNeeded.getValue() / DWORD.SIZE);
+        assertTrue("Size of pid list in bytes should be a multiple of " + DWORD.SIZE, lpcbNeeded.getValue() % DWORD.SIZE == 0);
+
+        int myPid = Kernel32.INSTANCE.GetCurrentProcessId();
+        boolean foundMyPid = false;
+        for (int i = 0; i < lpcbNeeded.getValue() / DWORD.SIZE; i++) {
+            if (lpidProcess[i] == myPid) {
+                foundMyPid = true;
+                break;
+            }
+        }
+        assertTrue("List should contain my pid", foundMyPid);
+    }
 }

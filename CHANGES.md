@@ -19,6 +19,7 @@ Features
 * [#1200](https://github.com/java-native-access/jna/pull/1200): Add mappings for `libudev` to `c.s.j.p.linux.Udev` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1202](https://github.com/java-native-access/jna/pull/1202): Add mappings supporting shared memory including `c.s.j.p.unix.LibCAPI` types `size_t` and `ssize_t`, `c.s.j.p.linux.LibC` methods `munmap()`, `msync()`, and `close()`, `c.s.j.p.unix.LibCUtil` mapping `mmap()` and `ftruncate()`, and `c.s.j.p.linux.LibRT` methods `shm_open()` and `shm_unlink()` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1209](https://github.com/java-native-access/jna/pull/1209): Add mappings for `Thread32First` and `Thread32Next` to `c.s.j.p.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1214](https://github.com/java-native-access/jna/pull/1214): Add mapping for EnumProcesses to `c.s.j.p.win32.Psapi` and `c.s.j.p.win32.PsapiUtil` - [@T-Svensson](https://github.com/T-Svensson/).
 
 Bug Fixes
 ---------

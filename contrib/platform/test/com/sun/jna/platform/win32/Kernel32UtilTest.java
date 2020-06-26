@@ -313,13 +313,27 @@ public class Kernel32UtilTest extends TestCase {
     }
 
     public final void testQueryFullProcessImageName() {
-        HANDLE h = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, Kernel32.INSTANCE.GetCurrentProcessId());
+        int pid = Kernel32.INSTANCE.GetCurrentProcessId();
+
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, pid);
         assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
         try {
             String name = Kernel32Util.QueryFullProcessImageName(h, 0);
+            assertNotNull("Failed to query process image name, null path returned", name);
             assertTrue("Failed to query process image name, empty path returned", name.length() > 0);
         } finally {
             Kernel32Util.closeHandle(h);
+        }
+
+        String name = Kernel32Util.QueryFullProcessImageName(pid, 0);
+        assertNotNull("Failed to query process image name, null path returned", name);
+        assertTrue("Failed to query process image name, empty path returned", name.length() > 0);
+
+        try {
+            Kernel32Util.QueryFullProcessImageName(0, 0); // the system process
+            fail("Should never reach here");
+        } catch (Win32Exception expected) {
+            assertEquals("Should get Invalid Parameter error", Kernel32.ERROR_INVALID_PARAMETER, expected.getErrorCode());
         }
     }
 
