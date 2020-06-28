@@ -242,16 +242,28 @@ public class NativeLibrary {
             }
             // Search framework libraries on OS X
             else if (Platform.isMac() && !libraryName.endsWith(".dylib")) {
-                LOG.log(DEBUG_LOAD_LEVEL, "Looking for matching frameworks");
-                libraryPath = matchFramework(libraryName);
-                if (libraryPath != null) {
+                if (System.getProperty("os.version").compareTo("10.16") >= 0) {
                     try {
-                        LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryPath);
-                        handle = Native.open(libraryPath, openFlags);
+                        LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryName);
+                        handle = Native.open(libraryName, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) {
                         LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e2.getMessage());
                         exceptions.add(e2);
+                    }
+                }
+                else {
+                    LOG.log(DEBUG_LOAD_LEVEL, "Looking for matching frameworks");
+                    libraryPath = matchFramework(libraryName);
+                    if (libraryPath != null) {
+                        try {
+                            LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryPath);
+                            handle = Native.open(libraryPath, openFlags);
+                        }
+                        catch(UnsatisfiedLinkError e2) {
+                            LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e2.getMessage());
+                            exceptions.add(e2);
+                        }
                     }
                 }
             }

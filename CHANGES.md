@@ -26,6 +26,7 @@ Bug Fixes
 * [#1183](https://github.com/java-native-access/jna/pull/1183): `c.s.j.p.win32.WinDef.CHARByReference#getValue` should only read one byte - [@dbwiddis](https://github.com/dbwiddis).
 * [#1184](https://github.com/java-native-access/jna/pull/1184): `c.s.j.p.win32.WinDef.ULONGLONG` should always be 8 bytes - [@dbwiddis](https://github.com/dbwiddis).
 * [#1196](https://github.com/java-native-access/jna/pull/1196): `c.s.j.p.win32.WinNT.LARGE_INTEGER` needs to populate both union fields - [@dbwiddis](https://github.com/dbwiddis).
+* [#1216](https://github.com/java-native-access/jna/pull/1216): Failure loading frameworks on macOS 11 - [@dkocher](https://github.com/dkocher).
 
 Release 5.5.0
 =============
