@@ -247,26 +247,81 @@ public class NativeLibraryTest extends TestCase {
         process.getFunction("printf");
     }
 
-    private String expected(String f) {
-        return new File(f).exists() ? f : null;
-    }
-
-    public void testMatchFramework() {
+    public void testLoadFoundationFramework() {
         if (!Platform.isMac()) {
             return;
         }
-        final String[][] MAPPINGS = {
-            // Depending on the system, /Library/Frameworks may or may not
-            // have anything in it.
-            { "QtCore", expected("/Library/Frameworks/QtCore.framework/QtCore") },
-            { "Adobe AIR", expected("/Library/Frameworks/Adobe AIR.framework/Adobe AIR") },
+        assertNotNull(NativeLibrary.getInstance("Foundation"));
+    }
 
-            { "QuickTime", expected("/System/Library/Frameworks/QuickTime.framework/QuickTime") },
-            { "QuickTime.framework/Versions/Current/QuickTime", expected("/System/Library/Frameworks/QuickTime.framework/Versions/Current/QuickTime") },
-        };
-        for (int i=0;i < MAPPINGS.length;i++) {
-            assertEquals("Wrong framework mapping", MAPPINGS[i][1], NativeLibrary.matchFramework(MAPPINGS[i][0]));
+    public void testMatchSystemFramework() {
+        if (!Platform.isMac()) {
+            return;
         }
+
+        assertEquals("Wrong framework mapping", 1,
+                NativeLibrary.matchFramework("/System/Library/Frameworks/Foundation.framework/Foundation").length);
+        assertEquals("Wrong framework mapping", "/System/Library/Frameworks/Foundation.framework/Foundation",
+                NativeLibrary.matchFramework("/System/Library/Frameworks/Foundation.framework/Foundation")[0]);
+
+        assertEquals("Wrong framework mapping", 1,
+                NativeLibrary.matchFramework("/System/Library/Frameworks/Foundation").length);
+        assertEquals("Wrong framework mapping", "/System/Library/Frameworks/Foundation.framework/Foundation",
+                NativeLibrary.matchFramework("/System/Library/Frameworks/Foundation")[0]);
+    }
+
+    public void testMatchOptionalFrameworkExists() {
+        if (!Platform.isMac()) {
+            return;
+        }
+
+        if(!new File("/System/Library/Frameworks/QuickTime.framework").exists()) {
+            return;
+        }
+
+        assertEquals("Wrong framework mapping", 1,
+                NativeLibrary.matchFramework("QuickTime").length);
+        assertEquals("Wrong framework mapping", "/System/Library/Frameworks/QuickTime.framework/QuickTime",
+                NativeLibrary.matchFramework("QuickTime")[0]);
+
+        assertEquals("Wrong framework mapping", 1,
+                NativeLibrary.matchFramework("QuickTime.framework/Versions/Current/QuickTime").length);
+        assertEquals("Wrong framework mapping", "/System/Library/Frameworks/QuickTime.framework/Versions/Current/QuickTime",
+                NativeLibrary.matchFramework("QuickTime.framework/Versions/Current/QuickTime")[0]);
+    }
+
+    public void testMatchOptionalFrameworkNotFound() {
+        if (!Platform.isMac()) {
+            return;
+        }
+
+        if(new File(System.getProperty("user.home") + "/Library/Frameworks/QuickTime.framework").exists()) {
+            return;
+        }
+        if(new File("/Library/Frameworks/QuickTime.framework").exists()) {
+            return;
+        }
+        if(new File("/System/Library/Frameworks/QuickTime.framework").exists()) {
+            return;
+        }
+
+        assertEquals("Wrong framework mapping", 3,
+                NativeLibrary.matchFramework("QuickTime").length);
+        assertEquals("Wrong framework mapping", System.getProperty("user.home") + "/Library/Frameworks/QuickTime.framework/QuickTime",
+                NativeLibrary.matchFramework("QuickTime")[0]);
+        assertEquals("Wrong framework mapping", "/Library/Frameworks/QuickTime.framework/QuickTime",
+                NativeLibrary.matchFramework("QuickTime")[1]);
+        assertEquals("Wrong framework mapping", "/System/Library/Frameworks/QuickTime.framework/QuickTime",
+                NativeLibrary.matchFramework("QuickTime")[2]);
+
+        assertEquals("Wrong framework mapping", 3,
+                NativeLibrary.matchFramework("QuickTime.framework/Versions/Current/QuickTime").length);
+        assertEquals("Wrong framework mapping", System.getProperty("user.home") + "/Library/Frameworks/QuickTime.framework/Versions/Current/QuickTime",
+                NativeLibrary.matchFramework("QuickTime.framework/Versions/Current/QuickTime")[0]);
+        assertEquals("Wrong framework mapping", "/Library/Frameworks/QuickTime.framework/Versions/Current/QuickTime",
+                NativeLibrary.matchFramework("QuickTime.framework/Versions/Current/QuickTime")[1]);
+        assertEquals("Wrong framework mapping", "/System/Library/Frameworks/QuickTime.framework/Versions/Current/QuickTime",
+                NativeLibrary.matchFramework("QuickTime.framework/Versions/Current/QuickTime")[2]);
     }
 
     public void testLoadLibraryWithOptions() {
