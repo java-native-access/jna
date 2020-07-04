@@ -28,7 +28,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import com.sun.jna.Native;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * @author lgoldstein
@@ -52,7 +52,7 @@ public class Kernel32EnvironmentVarsTest extends AbstractWin32TestSupport {
             int     size=Kernel32.INSTANCE.GetEnvironmentVariable(name, data, data.length);
             assertEquals("Mismatched retrieved length for " + name, data.length - 1 /* w/o the '\0' */, size);
 
-            String  actual=Native.toString(data);
+            String actual = W32StringUtil.toString(data);
             assertEquals("Mismatched retrieved value for " + name, expected, actual);
         }
     }
@@ -67,9 +67,9 @@ public class Kernel32EnvironmentVarsTest extends AbstractWin32TestSupport {
             assertEquals("Mismatched required buffer size", expected.length() + 1, size);
 
             char[] data = new char[size];
-            assertEquals("Mismatched retrieved variable data length", size - 1, Kernel32.INSTANCE.GetEnvironmentVariable(name, data, size));
+            assertEquals("Mismatched retrieved variable data length", size - 1, Kernel32.INSTANCE.GetEnvironmentVariable(name, data, data.length));
 
-            String  actual=Native.toString(data);
+            String actual = W32StringUtil.toString(data);
             assertEquals("Mismatched retrieved variable value", expected, actual);
         } finally {
             assertCallSucceeded("Clean up variable", Kernel32.INSTANCE.SetEnvironmentVariable(name, null));

@@ -39,6 +39,7 @@ import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Ported from Winbase.h (kernel32.dll/kernel services).
@@ -784,14 +785,14 @@ public interface WinBase extends WinDef, BaseTSD {
          * @return String containing the file name
          */
         public String getFileName() {
-            return Native.toString(cFileName);
+            return W32StringUtil.toString(cFileName);
         }
 
         /**
          * @return String containing the alternate file name
          */
         public String getAlternateFileName() {
-            return Native.toString(cAlternateFileName);
+            return W32StringUtil.toString(cAlternateFileName);
         }
     }
 

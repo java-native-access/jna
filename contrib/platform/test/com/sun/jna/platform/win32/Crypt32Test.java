@@ -28,6 +28,7 @@ import java.security.cert.X509Certificate;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32StringUtil;
 import com.sun.jna.platform.win32.WinCrypt.*;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.Memory;
@@ -116,7 +117,7 @@ public class Crypt32Test extends TestCase {
                     assertTrue("CryptProtectData(Crypt)",
                             Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
                                     null, null, null, 0, pDataDecrypted));
-                    assertEquals(description, pDescription.getValue().getWideString(0));
+                    assertEquals(description, W32StringUtil.toString(pDescription.getValue()));
                     assertArrayEquals(payload, pDataDecrypted.getData());
                 } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
@@ -152,7 +153,7 @@ public class Crypt32Test extends TestCase {
                     assertTrue("CryptUnprotectData(WithEntropy)",
                             Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
                                     pEntropy, null, null, 0, pDataDecrypted));
-                    assertEquals(description, pDescription.getValue().getWideString(0));
+                    assertEquals(description, W32StringUtil.toString(pDescription.getValue()));
                     assertArrayEquals(payload, pDataDecrypted.getData());
                 } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
@@ -384,7 +385,7 @@ public class Crypt32Test extends TestCase {
                 mem,
                 requiredSize);
 
-        assertEquals(TESTCERT_CN, mem.getWideString(0));
+        assertEquals(TESTCERT_CN, W32StringUtil.toString(mem));
 
         String utilResult = Crypt32Util.CertNameToStr(WinCrypt.X509_ASN_ENCODING, WinCrypt.CERT_SIMPLE_NAME_STR, pc.pCertInfo.Issuer);
 

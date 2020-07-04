@@ -89,6 +89,7 @@ import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 import junit.framework.TestCase;
 
@@ -100,7 +101,7 @@ public class Kernel32Test extends TestCase {
         System.out.println("Operating system: "
                 + lpVersionInfo.dwMajorVersion.longValue() + "." + lpVersionInfo.dwMinorVersion.longValue()
                 + " (" + lpVersionInfo.dwBuildNumber + ")"
-                + " [" + Native.toString(lpVersionInfo.szCSDVersion) + "]");
+                + " [" + W32StringUtil.toString(lpVersionInfo.szCSDVersion) + "]");
         junit.textui.TestRunner.run(Kernel32Test.class);
     }
 
@@ -272,13 +273,13 @@ public class Kernel32Test extends TestCase {
         char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH + 1];
         lpnSize.setValue(buffer.length);
         assertTrue("Failed to retrieve expected computer name", Kernel32.INSTANCE.GetComputerName(buffer, lpnSize));
-        String expected = Native.toString(buffer);
+        String expected = W32StringUtil.toString(buffer);
 
         // reset
         lpnSize.setValue(buffer.length);
         Arrays.fill(buffer, '\0');
         assertTrue("Failed to retrieve extended computer name", Kernel32.INSTANCE.GetComputerNameEx(WinBase.COMPUTER_NAME_FORMAT.ComputerNameNetBIOS, buffer, lpnSize));
-        String  actual = Native.toString(buffer);
+        String actual = W32StringUtil.toString(buffer);
 
         assertEquals("Mismatched names", expected, actual);
     }
@@ -560,7 +561,7 @@ public class Kernel32Test extends TestCase {
         assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
         assertTrue(lpVersionInfo.dwPlatformId.longValue() > 0);
         assertTrue(lpVersionInfo.dwBuildNumber.longValue() > 0);
-        assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);
+        assertTrue(W32StringUtil.toString(lpVersionInfo.szCSDVersion).length() >= 0);
     }
 
     public void testGetVersionEx_OSVERSIONINFOEX() {
@@ -1221,11 +1222,11 @@ public class Kernel32Test extends TestCase {
 
         DWORD len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "existingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
         assertEquals(3, len.intValue());
-        assertEquals("ABC", Native.toString(buffer));
+        assertEquals("ABC", W32StringUtil.toString(buffer));
 
         len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "missingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
         assertEquals(3, len.intValue());
-        assertEquals("DEF", Native.toString(buffer));
+        assertEquals("DEF", W32StringUtil.toString(buffer));
     }
 
     public final void testWritePrivateProfileString() throws IOException {
@@ -1266,7 +1267,7 @@ public class Kernel32Test extends TestCase {
         final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSection("X", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
 
         assertEquals(len.intValue(), 7);
-        assertEquals(new String(buffer), "A=1\0B=X\0\0");
+        assertEquals("A=1\0B=X\0\0", W32StringUtil.toRawString(buffer));
     }
 
     public final void testGetPrivateProfileSectionNames() throws IOException {
@@ -1284,7 +1285,7 @@ public class Kernel32Test extends TestCase {
         final char[] buffer = new char[7];
         final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSectionNames(buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
         assertEquals(len.intValue(), 5);
-        assertEquals(new String(buffer), "S1\0S2\0\0");
+        assertEquals("S1\0S2\0\0", W32StringUtil.toRawString(buffer));
     }
 
     public final void testWritePrivateProfileSection() throws IOException {

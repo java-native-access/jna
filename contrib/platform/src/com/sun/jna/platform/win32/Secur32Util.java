@@ -29,6 +29,7 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecPkgInfo;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Secur32 Utility API.
@@ -81,7 +82,7 @@ public abstract class Secur32Util {
             throw new Win32Exception(Native.getLastError());
         }
 
-        return Native.toString(buffer);
+        return W32StringUtil.toString(buffer);
     }
 
     /**

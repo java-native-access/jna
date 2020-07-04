@@ -58,7 +58,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -113,6 +112,8 @@ import com.sun.jna.platform.win32.WinUser.WNDENUMPROC;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32StringUtil;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -1273,7 +1274,7 @@ public class WindowUtils {
             final int length = User32.INSTANCE.GetWindowText(hwnd, title,
                                                              title.length);
 
-            return Native.toString(Arrays.copyOfRange(title, 0, length));
+            return W32StringUtil.toString(title, 0, length);
         }
 
         @Override

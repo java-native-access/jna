@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Pdh.PDH_COUNTER_PATH_ELEMENTS;
 import com.sun.jna.platform.win32.Pdh.PDH_RAW_COUNTER;
 import com.sun.jna.platform.win32.PdhUtil.PdhEnumObjectItems;
@@ -40,6 +39,7 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * @author lgoldstein
@@ -166,7 +166,7 @@ public class PdhTest extends AbstractWin32TestSupport {
         pcchBufferSize.setValue(new DWORD(szFullPathBuffer.length));
         assertErrorSuccess("PdhMakeCounterPath", pdh.PdhMakeCounterPath(pathElements, szFullPathBuffer,  pcchBufferSize, 0), true);
 
-        return Native.toString(szFullPathBuffer);
+        return W32StringUtil.toString(szFullPathBuffer);
     }
 
     @Test

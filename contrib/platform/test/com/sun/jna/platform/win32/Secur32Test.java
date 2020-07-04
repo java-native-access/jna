@@ -24,7 +24,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
@@ -37,6 +36,8 @@ import com.sun.jna.platform.win32.Sspi.SecPkgInfo.ByReference;
 import com.sun.jna.platform.win32.Sspi.TimeStamp;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
+
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
@@ -67,7 +68,7 @@ public class Secur32Test extends TestCase {
         char[] buffer = new char[len.getValue() + 1];
         assertTrue(Secur32.INSTANCE.GetUserNameEx(
                 Secur32.EXTENDED_NAME_FORMAT.NameSamCompatible, buffer, len));
-        String username = Native.toString(buffer);
+        String username = W32StringUtil.toString(buffer);
         assertTrue(username.length() > 0);
     }
 

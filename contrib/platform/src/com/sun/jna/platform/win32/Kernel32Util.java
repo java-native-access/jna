@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Kernel32 utility API.
@@ -65,7 +67,7 @@ public abstract class Kernel32Util implements WinDef {
         if (!Kernel32.INSTANCE.GetComputerName(buffer, lpnSize)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return Native.toString(buffer);
+        return W32StringUtil.toString(buffer);
     }
 
     /**
@@ -201,7 +203,7 @@ public abstract class Kernel32Util implements WinDef {
 
         Pointer ptr = buffer.getValue();
         try {
-            String s = ptr.getWideString(0);
+            String s = W32StringUtil.toString(ptr);
             return s.trim();
         } finally {
             freeLocalMemory(ptr);
@@ -245,12 +247,11 @@ public abstract class Kernel32Util implements WinDef {
      * @return Path.
      */
     public static String getTempPath() {
-        DWORD nBufferLength = new DWORD(WinDef.MAX_PATH);
-        char[] buffer = new char[nBufferLength.intValue()];
-        if (Kernel32.INSTANCE.GetTempPath(nBufferLength, buffer).intValue() == 0) {
+        char[] buffer = new char[WinDef.MAX_PATH];
+        if (Kernel32.INSTANCE.GetTempPath(new DWORD(buffer.length), buffer).intValue() == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return Native.toString(buffer);
+        return W32StringUtil.toString(buffer);
     }
 
     public static void deleteFile(String filename) {
@@ -277,7 +278,7 @@ public abstract class Kernel32Util implements WinDef {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
-        return Native.toStringList(buf, 0, bufSize);
+        return Arrays.asList(W32StringUtil.fromJoinedStringArray(buf));
     }
 
     /**
@@ -382,7 +383,7 @@ public abstract class Kernel32Util implements WinDef {
         if (size <= 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return Native.toString(buffer);
+        return W32StringUtil.toString(buffer);
     }
 
     /**
@@ -636,7 +637,7 @@ public abstract class Kernel32Util implements WinDef {
         final char buffer[] = new char[1024];
         Kernel32.INSTANCE.GetPrivateProfileString(lpAppName, lpKeyName,
                 lpDefault, buffer, new DWORD(buffer.length), lpFileName);
-        return Native.toString(buffer);
+        return W32StringUtil.toString(buffer);
     }
 
     public static final void writePrivateProfileString(final String appName,
@@ -741,7 +742,7 @@ public abstract class Kernel32Util implements WinDef {
         if (Kernel32.INSTANCE.GetPrivateProfileSection(appName, buffer, new DWORD(buffer.length), fileName).intValue() == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return new String(buffer).split("\0");
+        return W32StringUtil.fromJoinedStringArray(buffer);
     }
 
     /**
@@ -760,7 +761,7 @@ public abstract class Kernel32Util implements WinDef {
         if (Kernel32.INSTANCE.GetPrivateProfileSectionNames(buffer, new DWORD(buffer.length), fileName).intValue() == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return new String(buffer).split("\0");
+        return W32StringUtil.fromJoinedStringArray(buffer);
     }
 
     /**
@@ -915,7 +916,7 @@ public abstract class Kernel32Util implements WinDef {
             char[] lpExeName = new char[size];
             lpdwSize.setValue(size);
             if (Kernel32.INSTANCE.QueryFullProcessImageName(hProcess, dwFlags, lpExeName, lpdwSize)) {
-                return new String(lpExeName, 0, lpdwSize.getValue());
+                return W32StringUtil.toString(lpExeName);
             }
             size += 1024;
         } while (Kernel32.INSTANCE.GetLastError() == Kernel32.ERROR_INSUFFICIENT_BUFFER);
@@ -951,16 +952,14 @@ public abstract class Kernel32Util implements WinDef {
             try {
                 t = new Pointer(Long.parseLong(type));
             } catch (NumberFormatException e) {
-                t = new Memory(Native.WCHAR_SIZE * (type.length() + 1));
-                t.setWideString(0, type);
+                t = W32StringUtil.allocateBuffer(type);
             }
 
             Pointer n = null;
             try {
                 n = new Pointer(Long.parseLong(name));
             } catch (NumberFormatException e) {
-                n = new Memory(Native.WCHAR_SIZE * (name.length() + 1));
-                n.setWideString(0, name);
+                n = W32StringUtil.allocateBuffer(name);
             }
 
             HRSRC hrsrc = Kernel32.INSTANCE.FindResource(target, n, t);
@@ -1039,7 +1038,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (Pointer.nativeValue(type) <= 65535) {
                     types.add(Pointer.nativeValue(type) + "");
                 } else {
-                    types.add(type.getWideString(0));
+                    types.add(W32StringUtil.toString(type));
                 }
                 return true;
             }
@@ -1054,13 +1053,13 @@ public abstract class Kernel32Util implements WinDef {
                 if (Pointer.nativeValue(type) <= 65535) {
                     typeName = Pointer.nativeValue(type) + "";
                 } else {
-                    typeName = type.getWideString(0);
+                    typeName = W32StringUtil.toString(type);
                 }
 
                 if (Pointer.nativeValue(name) < 65535) {
                     result.get(typeName).add(Pointer.nativeValue(name) + "");
                 } else {
-                    result.get(typeName).add(name.getWideString(0));
+                    result.get(typeName).add(W32StringUtil.toString(name));
                 }
 
                 return true;
@@ -1084,8 +1083,7 @@ public abstract class Kernel32Util implements WinDef {
                 try {
                     pointer = new Pointer(Long.parseLong(typeName));
                 } catch (NumberFormatException e) {
-                    pointer = new Memory(Native.WCHAR_SIZE * (typeName.length() + 1));
-                    pointer.setWideString(0, typeName);
+                    pointer = W32StringUtil.allocateBuffer(typeName);
                 }
 
                 boolean callResult = Kernel32.INSTANCE.EnumResourceNames(target, pointer, ernp, null);

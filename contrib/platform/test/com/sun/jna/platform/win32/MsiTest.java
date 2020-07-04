@@ -25,6 +25,7 @@ package com.sun.jna.platform.win32;
 import java.util.Arrays;
 
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 import junit.framework.TestCase;
 
@@ -36,27 +37,27 @@ public class MsiTest extends TestCase {
     public void testMsiEnumComponents() {
         char[] componentBuffer = new char[40];
         assertEquals("MsiEnumComponents", W32Errors.ERROR_SUCCESS, Msi.INSTANCE.MsiEnumComponents(new WinDef.DWORD(0), componentBuffer));
-        String component = new String(componentBuffer).trim();
+        String component = W32StringUtil.toString(componentBuffer);
         assertFalse("Component is empty", component.isEmpty());
     }
 
     public void testMsiGetProductCodeW() {
         char[] componentBuffer = new char[40];
         assertEquals("MsiEnumComponents", W32Errors.ERROR_SUCCESS, Msi.INSTANCE.MsiEnumComponents(new WinDef.DWORD(0), componentBuffer));
-        String component = new String(componentBuffer).trim();
+        String component = W32StringUtil.toString(componentBuffer);
         assertFalse("Component is empty", component.isEmpty());
 
         char[] productBuffer = new char[40];
         assertEquals("MsiGetProductCode", W32Errors.ERROR_SUCCESS, Msi.INSTANCE.MsiGetProductCode(component, productBuffer));
 
-        String product = new String(productBuffer).trim();
+        String product = W32StringUtil.toString(productBuffer);
         assertFalse("Product is empty", product.isEmpty());
     }
 
     public void testMsiLocateComponentW() {
         char[] componentBuffer = new char[40];
         assertEquals("MsiEnumComponents", W32Errors.ERROR_SUCCESS, Msi.INSTANCE.MsiEnumComponents(new WinDef.DWORD(0), componentBuffer));
-        String component = new String(componentBuffer).trim();
+        String component = W32StringUtil.toString(componentBuffer);
         assertFalse("Component is empty", component.isEmpty());
 
         char[] pathBuffer = new char[WinDef.MAX_PATH];
@@ -72,13 +73,13 @@ public class MsiTest extends TestCase {
     public void testMsiGetComponentPathW() {
         char[] componentBuffer = new char[40];
         assertEquals("MsiEnumComponents", W32Errors.ERROR_SUCCESS, Msi.INSTANCE.MsiEnumComponents(new WinDef.DWORD(0), componentBuffer));
-        String component = new String(componentBuffer).trim();
+        String component = W32StringUtil.toString(componentBuffer);
         assertFalse("Component is empty", component.isEmpty());
 
         char[] productBuffer = new char[40];
         assertEquals("MsiGetProductCode", W32Errors.ERROR_SUCCESS,  Msi.INSTANCE.MsiGetProductCode(component, productBuffer));
 
-        String product = new String(productBuffer).trim();
+        String product = W32StringUtil.toString(productBuffer);
         assertFalse("Product is empty", product.isEmpty());
 
         char[] pathBuffer = new char[WinDef.MAX_PATH];

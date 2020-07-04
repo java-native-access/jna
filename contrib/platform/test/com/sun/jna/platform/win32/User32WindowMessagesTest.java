@@ -31,7 +31,6 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
@@ -48,6 +47,7 @@ import com.sun.jna.platform.win32.WinUser.MSG;
 import com.sun.jna.platform.win32.WinUser.WNDCLASSEX;
 import com.sun.jna.platform.win32.WinUser.WNDENUMPROC;
 import com.sun.jna.platform.win32.WinUser.WindowProc;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Demonstration of windows message api of complex structures like WM_COPYDATA.
@@ -314,7 +314,7 @@ public class User32WindowMessagesTest extends AbstractWin32TestSupport {
 
             char[] windowText = new char[512];
             assertCallSucceeded("GetClassName", User32.INSTANCE.GetClassName(hWnd, windowText, windowText.length) != 0);
-            String className = Native.toString(windowText);
+            String className = W32StringUtil.toString(windowText);
 
             if (windowClass.equalsIgnoreCase(className)) {
                 // Found handle. No determine root window...

@@ -30,6 +30,7 @@ import com.sun.jna.platform.win32.WinRas.RASCREDENTIALS;
 import com.sun.jna.platform.win32.WinRas.RASDIALPARAMS;
 import com.sun.jna.platform.win32.WinRas.RASENTRY;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * @author drrobison@openroadsconsulting.com
@@ -53,14 +54,8 @@ public class Rasapi32Test extends TestCase {
     public void testRasGetErrorString() {
         char[] msg = new char[1024];
         assertEquals(W32Errors.ERROR_SUCCESS, Rasapi32.INSTANCE.RasGetErrorString(632, msg, msg.length));
-        int len = 0;
-        for (; len < msg.length; len++) {
-            if (msg[len] == 0) {
-                break;
-            }
-        }
         if (AbstractWin32TestSupport.isEnglishLocale) {
-            assertEquals("An incorrect structure size was detected.", new String(msg, 0, len));
+            assertEquals("An incorrect structure size was detected.", W32StringUtil.toString(msg));
         } else {
             System.err.println("testRasGetErrorString test can only be run with english locale.");
         }
@@ -82,7 +77,7 @@ public class Rasapi32Test extends TestCase {
 
     public void testRasGetEntryDialParams() {
         RASDIALPARAMS.ByReference rasDialParams = new RASDIALPARAMS.ByReference();
-        System.arraycopy(rasDialParams.szEntryName, 0, "TEST".toCharArray(), 0, "TEST".length());
+        W32StringUtil.setString("TEST", rasDialParams.szEntryName, 0);
         BOOLByReference lpfPassword = new BOOLByReference();
         int err = Rasapi32.INSTANCE.RasGetEntryDialParams(null, rasDialParams, lpfPassword);
         assertEquals(623, err);

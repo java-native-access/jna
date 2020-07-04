@@ -94,6 +94,7 @@ import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.ptr.ShortByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 import junit.framework.TestCase;
 
@@ -151,7 +152,7 @@ public class Advapi32Test extends TestCase {
         assertTrue(Advapi32.INSTANCE.LookupAccountName(
                 null, accountName, pSidMemory, pSid, referencedDomainName, pDomain, peUse));
         assertEquals(SID_NAME_USE.SidTypeUser, peUse.getPointer().getInt(0));
-        assertTrue(Native.toString(referencedDomainName).length() > 0);
+        assertTrue(W32StringUtil.toString(referencedDomainName).length() > 0);
     }
 
     public void testIsValidSid() {
@@ -224,8 +225,8 @@ public class Advapi32Test extends TestCase {
             assertTrue(Advapi32.INSTANCE.LookupAccountSid(null, value,
                     name, cchName, referencedDomainName, cchReferencedDomainName, peUse));
             assertEquals(5, peUse.getPointer().getInt(0)); // SidTypeWellKnownGroup
-            String nameString = Native.toString(name);
-            String referencedDomainNameString = Native.toString(referencedDomainName);
+            String nameString = W32StringUtil.toString(name);
+            String referencedDomainNameString = W32StringUtil.toString(referencedDomainName);
             assertTrue(nameString.length() > 0);
             if (AbstractWin32TestSupport.isEnglishLocale) {
                 assertEquals("Everyone", nameString);
@@ -248,7 +249,7 @@ public class Advapi32Test extends TestCase {
 
             Pointer conv = convertedSidStringPtr.getValue();
             try {
-                String convertedSidString = conv.getWideString(0);
+                String convertedSidString = W32StringUtil.toString(conv);
                 assertEquals("Mismatched SID string", convertedSidString, sidString);
             } finally {
                 Kernel32Util.freeLocalMemory(conv);
@@ -556,9 +557,9 @@ public class Advapi32Test extends TestCase {
                 phKey.getValue(), "JNAAdvapi32Test", 0, null, 0, WinNT.KEY_ALL_ACCESS,
                 null, phkTest, lpdwDisposition));
         // write a REG_SZ value
-        char[] lpData = Native.toCharArray("Test");
+        Memory lpData = W32StringUtil.allocateBuffer("Test");
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegSetValueEx(
-                phkTest.getValue(), "REG_SZ", 0, WinNT.REG_SZ, lpData, lpData.length * 2));
+                phkTest.getValue(), "REG_SZ", 0, WinNT.REG_SZ, lpData, (int)lpData.size()));
         // re-read the REG_SZ value
         IntByReference lpType = new IntByReference();
         IntByReference lpcbData = new IntByReference();
@@ -569,7 +570,7 @@ public class Advapi32Test extends TestCase {
         char[] buffer = new char[lpcbData.getValue()];
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryValueEx(
                 phkTest.getValue(), "REG_SZ", 0, lpType, buffer, lpcbData));
-        assertEquals("Test", Native.toString(buffer));
+        assertEquals("Test", W32StringUtil.toString(buffer));
         // delete the test key
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(
                 phkTest.getValue()));
@@ -651,7 +652,7 @@ public class Advapi32Test extends TestCase {
             IntByReference lpcchValueName = new IntByReference(lpcMaxSubKeyLen.getValue() + 1);
             assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegEnumKeyEx(
                     phKey.getValue(), i, name, lpcchValueName, null, null, null, null));
-            assertEquals(Native.toString(name).length(), lpcchValueName.getValue());
+            assertEquals(W32StringUtil.toString(name).length(), lpcchValueName.getValue());
         }
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
     }
@@ -673,7 +674,7 @@ public class Advapi32Test extends TestCase {
             assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegEnumValue(
                     phKey.getValue(), i, name, lpcchValueName, null,
                     lpType, (Pointer) null, null));
-            assertEquals(Native.toString(name).length(), lpcchValueName.getValue());
+            assertEquals(W32StringUtil.toString(name).length(), lpcchValueName.getValue());
         }
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
     }
@@ -723,7 +724,7 @@ public class Advapi32Test extends TestCase {
 
         Pointer conv = convertedSidStringPtr.getValue();
         try {
-            String convertedSidString = conv.getWideString(0);
+            String convertedSidString = W32StringUtil.toString(conv);
             assertEquals("Mismatched SID string", EVERYONE, convertedSidString);
         } finally {
             Kernel32Util.freeLocalMemory(conv);
@@ -1225,7 +1226,7 @@ public class Advapi32Test extends TestCase {
         IntByReference cchName = new IntByReference(lpName.length);
         assertTrue(Advapi32.INSTANCE.LookupPrivilegeName(null, luid, lpName, cchName));
         assertEquals(WinNT.SE_BACKUP_NAME.length(), cchName.getValue());
-        assertEquals(WinNT.SE_BACKUP_NAME, Native.toString(lpName));
+        assertEquals(WinNT.SE_BACKUP_NAME, W32StringUtil.toString(lpName));
     }
 
     public void testAdjustTokenPrivileges() {

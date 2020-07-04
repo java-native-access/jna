@@ -27,7 +27,6 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.LMShare.SHARE_INFO_2;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winnetwk.ConnectFlag;
@@ -38,8 +37,7 @@ import com.sun.jna.platform.win32.Winnetwk.RESOURCETYPE;
 import com.sun.jna.platform.win32.Winnetwk.RESOURCEUSAGE;
 import com.sun.jna.platform.win32.Winnetwk.UNIVERSAL_NAME_INFO;
 import com.sun.jna.ptr.IntByReference;
-import static com.sun.jna.win32.W32APIOptions.DEFAULT_OPTIONS;
-import static com.sun.jna.win32.W32APIOptions.UNICODE_OPTIONS;
+import com.sun.jna.win32.W32StringUtil;
 
 import junit.framework.TestCase;
 
@@ -266,9 +264,7 @@ public class MprTest extends TestCase {
         lpnSize.setValue(buffer.length);
         assertTrue(Kernel32.INSTANCE.GetComputerName(buffer, lpnSize));
         // Return string with computer name
-        String computerName = new String(buffer);
-        computerName = computerName.trim();
-        return computerName;
+        return W32StringUtil.toString(buffer);
     }
 
     /**

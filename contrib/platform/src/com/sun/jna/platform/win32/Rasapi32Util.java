@@ -36,6 +36,7 @@ import com.sun.jna.platform.win32.WinRas.RASENTRY;
 import com.sun.jna.platform.win32.WinRas.RASPPPIP;
 import com.sun.jna.platform.win32.WinRas.RasDialFunc2;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Rasapi32 utility API.
@@ -120,9 +121,7 @@ public abstract class Rasapi32Util {
         char[] msg = new char[1024];
         int err = Rasapi32.INSTANCE.RasGetErrorString(code, msg, msg.length);
         if (err != WinError.ERROR_SUCCESS) return "Unknown error " + code;
-        int len = 0;
-        for (; len < msg.length; len++) if (msg[len] == 0) break;
-        return new String(msg, 0, len);
+        return W32StringUtil.toString(msg);
     }
 
     /**
@@ -158,7 +157,9 @@ public abstract class Rasapi32Util {
 
         // find connection
         for (int i = 0; i < lpcConnections.getValue(); i++) {
-            if (new String(connections[i].szEntryName).equals(connName)) return connections[i].hrasconn;
+            if (W32StringUtil.toString(connections[i].szEntryName).equals(connName)) {
+                return connections[i].hrasconn;
+            }
         }
         return null;
     }
@@ -240,7 +241,7 @@ public abstract class Rasapi32Util {
     public static RASDIALPARAMS getPhoneBookDialingParams(String entryName) throws Ras32Exception {
         synchronized (phoneBookMutex) {
             RASDIALPARAMS.ByReference rasDialParams = new RASDIALPARAMS.ByReference();
-            System.arraycopy(rasDialParams.szEntryName, 0, entryName.toCharArray(), 0, entryName.length());
+            W32StringUtil.setString(entryName, rasDialParams.szEntryName, 0);
             BOOLByReference lpfPassword = new BOOLByReference();
             int err = Rasapi32.INSTANCE.RasGetEntryDialParams(null, rasDialParams, lpfPassword);
             if (err != WinError.ERROR_SUCCESS) throw new Ras32Exception(err);
@@ -265,7 +266,7 @@ public abstract class Rasapi32Util {
 
         // set the dialing parameters
         RASDIALPARAMS.ByReference rasDialParams = new RASDIALPARAMS.ByReference();
-        System.arraycopy(entryName.toCharArray(), 0, rasDialParams.szEntryName, 0, entryName.length());
+        W32StringUtil.setString(entryName, rasDialParams.szEntryName, 0);
         System.arraycopy(credentials.szUserName, 0, rasDialParams.szUserName, 0, credentials.szUserName.length);
         System.arraycopy(credentials.szPassword, 0, rasDialParams.szPassword, 0, credentials.szPassword.length);
         System.arraycopy(credentials.szDomain, 0, rasDialParams.szDomain, 0, credentials.szDomain.length);
@@ -298,7 +299,7 @@ public abstract class Rasapi32Util {
 
         // set the dialing parameters
         RASDIALPARAMS.ByReference rasDialParams = new RASDIALPARAMS.ByReference();
-        System.arraycopy(entryName.toCharArray(), 0, rasDialParams.szEntryName, 0, entryName.length());
+        W32StringUtil.setString(entryName, rasDialParams.szEntryName, 0);
         System.arraycopy(credentials.szUserName, 0, rasDialParams.szUserName, 0, credentials.szUserName.length);
         System.arraycopy(credentials.szPassword, 0, rasDialParams.szPassword, 0, credentials.szPassword.length);
         System.arraycopy(credentials.szDomain, 0, rasDialParams.szDomain, 0, credentials.szDomain.length);

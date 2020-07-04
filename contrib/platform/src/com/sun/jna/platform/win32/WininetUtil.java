@@ -32,6 +32,7 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Wininet.INTERNET_CACHE_ENTRY_INFO;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Reusable functions that use WinInet
@@ -113,7 +114,9 @@ public class WininetUtil {
             }
 
             for (INTERNET_CACHE_ENTRY_INFO item : items) {
-                cacheItems.put(item.lpszSourceUrlName.getWideString(0), item.lpszLocalFileName == null ? "" : item.lpszLocalFileName.getWideString(0));
+                String key = W32StringUtil.toString(item.lpszSourceUrlName);
+                String value = item.lpszLocalFileName == null ? "" : W32StringUtil.toString(item.lpszLocalFileName);
+                cacheItems.put(key, value);
             }
 
         } catch (Win32Exception e) {

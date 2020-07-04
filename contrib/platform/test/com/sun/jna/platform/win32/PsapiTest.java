@@ -41,6 +41,7 @@ import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Applies API tests on {@link Psapi}.
@@ -94,23 +95,17 @@ public class PsapiTest {
                             .contains(searchSubStr));
 
             // check default function
-            final int memAllocSize = 1025 * Native.WCHAR_SIZE;
-            final Memory filePathDefault = new Memory(memAllocSize);
+            Memory filePathDefault = W32StringUtil.allocateBuffer(1025);
             length = Psapi.INSTANCE.GetModuleFileNameEx(process, null,
-                    filePathDefault, (memAllocSize / Native.WCHAR_SIZE) - 1);
+                    filePathDefault, (int)filePathDefault.size() - 1);
             if (length == 0) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
             assertTrue(
-                    "Path didn't contain '"
-                    + searchSubStr
-                    + "': "
-                    + Native.toString(filePathDefault.getCharArray(0,
-                            memAllocSize / Native.WCHAR_SIZE)),
-                    Native.toString(
-                            filePathDefault.getCharArray(0, memAllocSize
-                                    / Native.WCHAR_SIZE)).toLowerCase()
+                    "Path didn't contain '" + searchSubStr + "': "
+                    + W32StringUtil.toString(filePathDefault),
+                    W32StringUtil.toString(filePathDefault).toLowerCase()
                             .contains(searchSubStr));
         } finally {
             w.dispose();
@@ -220,8 +215,8 @@ public class PsapiTest {
             assertTrue("Handle to my process should not be null", me != null);
 
             char[] buffer = new char[256];
-            Psapi.INSTANCE.GetProcessImageFileName(me, buffer, 256);
-            String path = new String(buffer);
+            Psapi.INSTANCE.GetProcessImageFileName(me, buffer, buffer.length);
+            String path = W32StringUtil.toString(buffer);
             assertTrue("Image path should contain 'java' and '.exe'", path.contains("java") && path.contains(".exe"));
         } catch (Win32Exception e) {
             we = e;

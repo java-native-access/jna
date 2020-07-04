@@ -39,6 +39,7 @@ import com.sun.jna.platform.win32.WinUser.MSG;
 import com.sun.jna.platform.win32.WinUser.RAWINPUTDEVICELIST;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.win32.W32StringUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationHandler;
@@ -293,16 +294,32 @@ public final class User32Util {
         if (target == null) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        Pointer lpBuffer = new Memory(Native.POINTER_SIZE);
-        x = User32.INSTANCE.LoadString(target, index, lpBuffer, 0);
-        if (0 == x) {
-            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-        }
 
         if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
-            return new String(lpBuffer.getPointer(0).getCharArray(0, x));
+            Pointer lpBuffer = new Memory(Native.POINTER_SIZE);
+            int length = User32.INSTANCE.LoadString(target, index, lpBuffer, 0);
+            if (length == 0) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            Pointer resourcePointer = lpBuffer.getPointer(0);
+            return W32StringUtil.toString(resourcePointer, 0, length);
         } else {
-            return new String(lpBuffer.getPointer(0).getByteArray(0, x), Native.getDefaultStringEncoding());
+            // ANSI version of LoadString does not properly handle cchBufferMax=0
+            // See https://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/8d8c5382-1867-460a-a18f-70dc425ffe2f/
+            int cchBufferMax = 0;
+            Memory lpBuffer;
+            int length;
+            do {
+                cchBufferMax += 256;
+                lpBuffer = W32StringUtil.allocateBuffer(cchBufferMax);
+                length = User32.INSTANCE.LoadString(target, index, lpBuffer, cchBufferMax);
+                if (length == 0) {
+                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                }
+            } while (lpBuffer.size() - 1  /* w/o the '\0' */ == length);
+
+            return W32StringUtil.toString(lpBuffer);
         }
     }
 

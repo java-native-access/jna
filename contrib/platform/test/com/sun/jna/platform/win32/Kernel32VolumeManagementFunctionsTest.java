@@ -32,6 +32,7 @@ import org.junit.Test;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupport {
     public Kernel32VolumeManagementFunctionsTest() {
@@ -149,7 +150,7 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
         try {
             int foundPaths = 0;
             do {
-                String volumeGUID = Native.toString(lpszVolumeName);
+                String volumeGUID = W32StringUtil.toString(lpszVolumeName);
                 testEnumVolumeMountMoints(volumeGUID);
                 foundPaths += testGetVolumePathNamesForVolumeName(volumeGUID);
             } while(Kernel32.INSTANCE.FindNextVolume(hFindVolume, lpszVolumeName, lpszVolumeName.length));
@@ -190,7 +191,7 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
 
         try {
             do {
-                String name = Native.toString(lpszVolumeMountPoint);
+                String name = W32StringUtil.toString(lpszVolumeMountPoint);
                 assertTrue("Empty mount point for " + volumeGUID, name.length() > 0);
 //                System.out.append('\t').append("testEnumVolumeMountMoints").append('[').append(volumeGUID).append(']').append(" - ").println(name);
             } while(Kernel32.INSTANCE.FindNextVolumeMountPoint(hFindVolumeMountPoint, lpszVolumeMountPoint, lpszVolumeMountPoint.length));

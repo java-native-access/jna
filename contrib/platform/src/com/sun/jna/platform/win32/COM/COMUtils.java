@@ -26,7 +26,6 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.LastErrorException;
 import java.util.ArrayList;
 
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.Advapi32Util;
@@ -42,6 +41,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * The Class COMUtils.
@@ -235,7 +235,7 @@ public abstract class COMUtils {
             for (int i = 0; i < infoKey.lpcSubKeys.getValue(); i++) {
                 EnumKey enumKey = Advapi32Util.registryRegEnumKey(
                         phkResult.getValue(), i);
-                subKey = Native.toString(enumKey.lpName);
+                subKey = W32StringUtil.toString(enumKey.lpName);
 
                 COMInfo comInfo = new COMInfo(subKey);
 
@@ -247,7 +247,7 @@ public abstract class COMUtils {
                 for (int y = 0; y < infoKey2.lpcSubKeys.getValue(); y++) {
                     EnumKey enumKey2 = Advapi32Util.registryRegEnumKey(
                             phkResult2.getValue(), y);
-                    String subKey2 = Native.toString(enumKey2.lpName);
+                    String subKey2 = W32StringUtil.toString(enumKey2.lpName);
 
                     if (subKey2.equals("InprocHandler32")) {
                         comInfo.inprocHandler32 = (String) Advapi32Util
