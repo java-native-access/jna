@@ -191,40 +191,40 @@ public interface Tlhelp32 {
          * function, set this member to sizeof(THREADENTRY32). If you do not initialize
          * dwSize, Thread32First fails.
          */
-        int dwSize;
+        public int dwSize;
 
         /**
          * This member is no longer used and is always set to zero.
          */
-        int cntUsage;
+        public int cntUsage;
 
         /**
          * The thread identifier, compatible with the thread identifier returned by the
          * CreateProcess function.
          */
-        int th32ThreadID;
+        public int th32ThreadID;
 
         /**
          * The identifier of the process that created the thread.
          */
-        int th32OwnerProcessID;
+        public int th32OwnerProcessID;
 
         /**
          * The kernel base priority level assigned to the thread. The priority is a
          * number from 0 to 31, with 0 representing the lowest possible thread priority.
          * For more information, see KeQueryPriorityThread.
          */
-        NativeLong tpBasePri;
+        public NativeLong tpBasePri;
 
         /**
          * This member is no longer used and is always set to zero.
          */
-        NativeLong tpDeltaPri;
+        public NativeLong tpDeltaPri;
 
         /**
          * This member is no longer used and is always set to zero.
          */
-        int dwFlags;
+        public int dwFlags;
 
         public THREADENTRY32() {
             dwSize = size();
