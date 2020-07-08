@@ -35,6 +35,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
 import com.sun.jna.platform.win32.WinCryptUtil.MANAGED_CRYPT_SIGN_MESSAGE_PARA;
+
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,11 +100,14 @@ public class Crypt32Test extends TestCase {
     }
 
     public void testCryptProtectUnprotectData() {
-        DATA_BLOB pDataIn = new DATA_BLOB("hello world");
+        final byte[] payload = Native.toByteArray("hello world");
+        final String description = "description";
+
+        DATA_BLOB pDataIn = new DATA_BLOB(payload);
         DATA_BLOB pDataEncrypted = new DATA_BLOB();
         try {
             assertTrue("CryptProtectData(Initial)",
-                    Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
+                    Crypt32.INSTANCE.CryptProtectData(pDataIn, description,
                             null, null, null, 0, pDataEncrypted));
             PointerByReference pDescription = new PointerByReference();
             try {
@@ -110,8 +116,8 @@ public class Crypt32Test extends TestCase {
                     assertTrue("CryptProtectData(Crypt)",
                             Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
                                     null, null, null, 0, pDataDecrypted));
-                    assertEquals("description", pDescription.getValue().getWideString(0));
-                    assertEquals("hello world", pDataDecrypted.pbData.getString(0));
+                    assertEquals(description, pDescription.getValue().getWideString(0));
+                    assertArrayEquals(payload, pDataDecrypted.getData());
                 } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
                 }
@@ -124,12 +130,15 @@ public class Crypt32Test extends TestCase {
     }
 
     public void testCryptProtectUnprotectDataWithEntropy() {
-        DATA_BLOB pDataIn = new DATA_BLOB("hello world");
+        final byte[] payload = Native.toByteArray("hello world");
+        final String description = "description";
+
+        DATA_BLOB pDataIn = new DATA_BLOB(payload);
         DATA_BLOB pEntropy = new DATA_BLOB("entropy");
         DATA_BLOB pDataEncrypted = new DATA_BLOB();
         try {
             assertTrue("CryptProtectData(Initial)",
-                    Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
+                    Crypt32.INSTANCE.CryptProtectData(pDataIn, description,
                             pEntropy, null, null, 0, pDataEncrypted));
             PointerByReference pDescription = new PointerByReference();
             try {
@@ -143,8 +152,8 @@ public class Crypt32Test extends TestCase {
                     assertTrue("CryptUnprotectData(WithEntropy)",
                             Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
                                     pEntropy, null, null, 0, pDataDecrypted));
-                    assertEquals("description", pDescription.getValue().getWideString(0));
-                    assertEquals("hello world", pDataDecrypted.pbData.getString(0));
+                    assertEquals(description, pDescription.getValue().getWideString(0));
+                    assertArrayEquals(payload, pDataDecrypted.getData());
                 } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
                 }
