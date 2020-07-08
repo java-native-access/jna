@@ -67,7 +67,9 @@ public class W32ServiceManagerTest extends TestCase {
         // It is expected, that these services are present
         List<String> expectedServices = new ArrayList<String>(4);
         expectedServices.add("Schedule");
-        expectedServices.add("SystemEventsBroker");
+        if (VersionHelpers.IsWindows8OrGreater()) {
+            expectedServices.add("SystemEventsBroker");
+        }
         expectedServices.add("Power");
         expectedServices.add("Netlogon");
 
