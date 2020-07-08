@@ -22,6 +22,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.win32.W32APITypeMapper;
+
 import junit.framework.TestCase;
 
 public class ShlwapiTest extends TestCase {
@@ -35,12 +37,14 @@ public class ShlwapiTest extends TestCase {
         assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\path1"));
         assertEquals(false, Shlwapi.INSTANCE.PathIsUNC("acme\\\\path4\\\\path5"));
         assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\"));
-        assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\UNC\\path1\\path2"));
-        assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\UNC\\path1"));
-        assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\UNC\\"));
         assertEquals(false, Shlwapi.INSTANCE.PathIsUNC("\\path1"));
         assertEquals(false, Shlwapi.INSTANCE.PathIsUNC("path1"));
         assertEquals(false, Shlwapi.INSTANCE.PathIsUNC("c:\\path1"));
-        assertEquals(false, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\c:\\path1"));
+        if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) { // UNC is only available on UNICODE API
+            assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\UNC\\path1\\path2"));
+            assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\UNC\\path1"));
+            assertEquals(true, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\UNC\\"));
+            assertEquals(false, Shlwapi.INSTANCE.PathIsUNC("\\\\?\\c:\\path1"));
+        }
     }
 }
