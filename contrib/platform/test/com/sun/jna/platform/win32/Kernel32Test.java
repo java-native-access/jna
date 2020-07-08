@@ -727,42 +727,39 @@ public class Kernel32Test extends TestCase {
             ShortByReference lpBuffer = new ShortByReference();
             IntByReference lpBytes = new IntByReference();
 
-            if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
+            AbstractWin32TestSupport.assertCallSucceeded("DeviceIoControl",
+                    Kernel32.INSTANCE.DeviceIoControl(hFile,
                     FSCTL_GET_COMPRESSION,
                     null,
                     0,
                     lpBuffer.getPointer(),
                     USHORT.SIZE,
                     lpBytes,
-                    null)) {
-                fail("DeviceIoControl failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+                    null));
             assertEquals(WinNT.COMPRESSION_FORMAT_NONE, lpBuffer.getValue());
             assertEquals(USHORT.SIZE, lpBytes.getValue());
 
             lpBuffer = new ShortByReference((short)WinNT.COMPRESSION_FORMAT_LZNT1);
 
-            if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
+            AbstractWin32TestSupport.assertCallSucceeded("DeviceIoControl",
+                    Kernel32.INSTANCE.DeviceIoControl(hFile,
                     FSCTL_SET_COMPRESSION,
                     lpBuffer.getPointer(),
                     USHORT.SIZE,
                     null,
                     0,
                     lpBytes,
-                    null)) {
-                fail("DeviceIoControl failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+                    null));
 
-            if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
+            AbstractWin32TestSupport.assertCallSucceeded("DeviceIoControl",
+                    Kernel32.INSTANCE.DeviceIoControl(hFile,
                     FSCTL_GET_COMPRESSION,
                     null,
                     0,
                     lpBuffer.getPointer(),
                     USHORT.SIZE,
                     lpBytes,
-                    null)) {
-                fail("DeviceIoControl failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+                    null));
             assertEquals(WinNT.COMPRESSION_FORMAT_LZNT1, lpBuffer.getValue());
             assertEquals(USHORT.SIZE, lpBytes.getValue());
 
@@ -795,9 +792,8 @@ public class Kernel32Test extends TestCase {
                     WinNT.FILE_ATTRIBUTE_DIRECTORY | WinNT.FILE_FLAG_BACKUP_SEMANTICS | WinNT.FILE_FLAG_OPEN_REPARSE_POINT,
                     null);
 
-            if (WinBase.INVALID_HANDLE_VALUE.equals(hFile)) {
-                fail("CreateFile failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+            AbstractWin32TestSupport.assertCallSucceeded("CreateFile",
+                    !WinBase.INVALID_HANDLE_VALUE.equals(hFile));
 
             try {
                 SymbolicLinkReparseBuffer symLinkReparseBuffer = new SymbolicLinkReparseBuffer(folder.getFileName().toString(),
@@ -806,7 +802,8 @@ public class Kernel32Test extends TestCase {
 
                 REPARSE_DATA_BUFFER lpBuffer = new REPARSE_DATA_BUFFER(WinNT.IO_REPARSE_TAG_SYMLINK, (short) 0, symLinkReparseBuffer);
 
-                assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
+                AbstractWin32TestSupport.assertCallSucceeded("DeviceIoControl",
+                        Kernel32.INSTANCE.DeviceIoControl(hFile,
                         FSCTL_SET_REPARSE_POINT,
                         lpBuffer.getPointer(),
                         lpBuffer.getSize(),
@@ -817,7 +814,8 @@ public class Kernel32Test extends TestCase {
 
                 Memory p = new Memory(REPARSE_DATA_BUFFER.sizeOf());
                 IntByReference lpBytes = new IntByReference();
-                assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
+                AbstractWin32TestSupport.assertCallSucceeded("DeviceIoControl",
+                        Kernel32.INSTANCE.DeviceIoControl(hFile,
                         FSCTL_GET_REPARSE_POINT,
                         null,
                         0,
@@ -828,7 +826,7 @@ public class Kernel32Test extends TestCase {
                 // Is a reparse point
                 lpBuffer = new REPARSE_DATA_BUFFER(p);
                 assertTrue(lpBytes.getValue() > 0);
-                assertTrue(lpBuffer.ReparseTag == WinNT.IO_REPARSE_TAG_SYMLINK);
+                assertEquals(WinNT.IO_REPARSE_TAG_SYMLINK, lpBuffer.ReparseTag);
                 assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getPrintName());
                 assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getSubstituteName());
             } finally {
@@ -1020,41 +1018,36 @@ public class Kernel32Test extends TestCase {
         try {
 
             Memory p = new Memory(FILE_BASIC_INFO.sizeOf());
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size()))) {
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileBasicInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())));
             FILE_BASIC_INFO fbi = new FILE_BASIC_INFO(p);
             // New file has non-zero creation time
             assertTrue(0 != fbi.CreationTime.getValue());
 
             p = new Memory(FILE_STANDARD_INFO.sizeOf());
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileStandardInfo, p, new DWORD(p.size()))) {
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileStandardInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileStandardInfo, p, new DWORD(p.size())));
             FILE_STANDARD_INFO fsi = new FILE_STANDARD_INFO(p);
             // New file has 1 link
             assertEquals(1, fsi.NumberOfLinks);
 
             p = new Memory(FILE_COMPRESSION_INFO.sizeOf());
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileCompressionInfo, p, new DWORD(p.size()))) {
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileCompressionInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileCompressionInfo, p, new DWORD(p.size())));
             FILE_COMPRESSION_INFO fci = new FILE_COMPRESSION_INFO(p);
             // Uncompressed file should be zero
             assertEquals(0, fci.CompressionFormat);
 
             p = new Memory(FILE_ATTRIBUTE_TAG_INFO.sizeOf());
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileAttributeTagInfo, p, new DWORD(p.size()))) {
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileAttributeTagInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileAttributeTagInfo, p, new DWORD(p.size())));
             FILE_ATTRIBUTE_TAG_INFO fati = new FILE_ATTRIBUTE_TAG_INFO(p);
             // New files have the archive bit
             assertEquals(WinNT.FILE_ATTRIBUTE_ARCHIVE, fati.FileAttributes);
 
             p = new Memory(FILE_ID_INFO.sizeOf());
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileIdInfo, p, new DWORD(p.size()))) {
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileIdInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileIdInfo, p, new DWORD(p.size())));
             FILE_ID_INFO fii = new FILE_ID_INFO(p);
             // Volume serial number should be non-zero
             assertFalse(fii.VolumeSerialNumber == 0);
@@ -1079,8 +1072,8 @@ public class Kernel32Test extends TestCase {
 
         try {
             Memory p = new Memory(FILE_BASIC_INFO.sizeOf());
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())))
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileBasicInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())));
 
             FILE_BASIC_INFO fbi = new FILE_BASIC_INFO(p);
             // Add TEMP attribute
@@ -1091,11 +1084,11 @@ public class Kernel32Test extends TestCase {
             fbi.LastWriteTime = new WinNT.LARGE_INTEGER(0);
             fbi.write();
 
-            if (false == Kernel32.INSTANCE.SetFileInformationByHandle(hFile, WinBase.FileBasicInfo, fbi.getPointer(), new DWORD(FILE_BASIC_INFO.sizeOf())))
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            AbstractWin32TestSupport.assertCallSucceeded("SetFileInformationByHandle for FileBasicInfo (" + FILE_BASIC_INFO.sizeOf() + " bytes)",
+                    Kernel32.INSTANCE.SetFileInformationByHandle(hFile, WinBase.FileBasicInfo, fbi.getPointer(), new DWORD(FILE_BASIC_INFO.sizeOf())));
 
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())))
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileBasicInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())));
 
             fbi = new FILE_BASIC_INFO(p);
             assertTrue((fbi.FileAttributes & WinNT.FILE_ATTRIBUTE_TEMPORARY) != 0);
@@ -1115,8 +1108,8 @@ public class Kernel32Test extends TestCase {
 
         try {
             FILE_DISPOSITION_INFO fdi = new FILE_DISPOSITION_INFO(true);
-            if (false == Kernel32.INSTANCE.SetFileInformationByHandle(hFile, WinBase.FileDispositionInfo, fdi.getPointer(), new DWORD(FILE_DISPOSITION_INFO.sizeOf())))
-                fail("SetFileInformationByHandle failed with " + Kernel32.INSTANCE.GetLastError());
+            AbstractWin32TestSupport.assertCallSucceeded("SetFileInformationByHandle for FileDispositionInfo (" + FILE_DISPOSITION_INFO.sizeOf() + " bytes)",
+                    Kernel32.INSTANCE.SetFileInformationByHandle(hFile, WinBase.FileDispositionInfo, fdi.getPointer(), new DWORD(FILE_DISPOSITION_INFO.sizeOf())));
 
         } finally {
             Kernel32.INSTANCE.CloseHandle(hFile);
@@ -1325,14 +1318,12 @@ public class Kernel32Test extends TestCase {
         Kernel32.INSTANCE.GetSystemTime(systemTime);
         WinBase.FILETIME fileTime = new WinBase.FILETIME();
 
-        if (false == Kernel32.INSTANCE.SystemTimeToFileTime(systemTime, fileTime)) {
-            fail("SystemTimeToFileTime failed with " + Kernel32.INSTANCE.GetLastError());
-        }
+        AbstractWin32TestSupport.assertCallSucceeded("SystemTimeToFileTime",
+                Kernel32.INSTANCE.SystemTimeToFileTime(systemTime, fileTime));
 
         WinBase.SYSTEMTIME newSystemTime = new WinBase.SYSTEMTIME();
-        if (false == Kernel32.INSTANCE.FileTimeToSystemTime(fileTime, newSystemTime)) {
-            fail("FileTimeToSystemTime failed with " + Kernel32.INSTANCE.GetLastError());
-        }
+        AbstractWin32TestSupport.assertCallSucceeded("FileTimeToSystemTime",
+                Kernel32.INSTANCE.FileTimeToSystemTime(fileTime, newSystemTime));
 
         assertEquals(systemTime.wYear, newSystemTime.wYear);
         assertEquals(systemTime.wDay, newSystemTime.wDay);
@@ -1359,9 +1350,8 @@ public class Kernel32Test extends TestCase {
         try {
 
             Memory p = new Memory(FILE_BASIC_INFO.sizeOf());
-            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size()))) {
-                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
-            }
+            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileBasicInfo (" + p.size() + " bytes)",
+                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())));
             FILE_BASIC_INFO fbi = new FILE_BASIC_INFO(p);
             FILETIME ft = new FILETIME(fbi.LastWriteTime);
             SYSTEMTIME stUTC = new SYSTEMTIME();
