@@ -139,7 +139,7 @@ public class Win32ServiceDemo {
 
         SC_HANDLE serviceManager = openServiceControlManager(null, Winsvc.SC_MANAGER_ALL_ACCESS);
 
-        if (serviceManager != null) {
+        try {
             SC_HANDLE service = Advapi32.INSTANCE.CreateService(
                     serviceManager,
                     serviceName,
@@ -160,6 +160,7 @@ public class Win32ServiceDemo {
             } else {
                 throw new IllegalStateException("Failed to install service ");
             }
+        } finally {
             Advapi32.INSTANCE.CloseServiceHandle(serviceManager);
         }
         return success;
@@ -175,13 +176,14 @@ public class Win32ServiceDemo {
 
         SC_HANDLE serviceManager = openServiceControlManager(null, Winsvc.SC_MANAGER_ALL_ACCESS);
 
-        if (serviceManager != null) {
+        try {
             SC_HANDLE service = Advapi32.INSTANCE.OpenService(serviceManager, serviceName, Winsvc.SERVICE_ALL_ACCESS);
 
             if (service != null) {
                 success = Advapi32.INSTANCE.DeleteService(service);
                 Advapi32.INSTANCE.CloseServiceHandle(service);
             }
+        } finally {
             Advapi32.INSTANCE.CloseServiceHandle(serviceManager);
         }
         return success;
@@ -197,13 +199,14 @@ public class Win32ServiceDemo {
 
         SC_HANDLE serviceManager = openServiceControlManager(null, WinNT.GENERIC_EXECUTE);
 
-        if (serviceManager != null) {
+        try {
             SC_HANDLE service = Advapi32.INSTANCE.OpenService(serviceManager, serviceName, WinNT.GENERIC_EXECUTE);
 
             if (service != null) {
                 success = Advapi32.INSTANCE.StartService(service, 0, null);
                 Advapi32.INSTANCE.CloseServiceHandle(service);
             }
+        } finally {
             Advapi32.INSTANCE.CloseServiceHandle(serviceManager);
         }
 
@@ -220,7 +223,7 @@ public class Win32ServiceDemo {
 
         SC_HANDLE serviceManager = openServiceControlManager(null, WinNT.GENERIC_EXECUTE);
 
-        if (serviceManager != null) {
+        try {
             SC_HANDLE service = Advapi32.INSTANCE.OpenService(serviceManager, serviceName, WinNT.GENERIC_EXECUTE);
 
             if (service != null) {
@@ -228,6 +231,7 @@ public class Win32ServiceDemo {
                 success = Advapi32.INSTANCE.ControlService(service, Winsvc.SERVICE_CONTROL_STOP, serviceStatus);
                 Advapi32.INSTANCE.CloseServiceHandle(service);
             }
+        } finally {
             Advapi32.INSTANCE.CloseServiceHandle(serviceManager);
         }
 
@@ -251,10 +255,15 @@ public class Win32ServiceDemo {
      *
      * @param machine name of the machine or null for localhost
      * @param access access flags
-     * @return handle to ServiceControlManager or null when failed
+     * @return handle to ServiceControlManager
+     * @throws Win32Exception If manager not opened
      */
     private static SC_HANDLE openServiceControlManager(String machine, int access) {
-        return Advapi32.INSTANCE.OpenSCManager(machine, null, access);
+        SC_HANDLE handle = Advapi32.INSTANCE.OpenSCManager(machine, null, access);
+        if (handle == null) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        return handle;
     }
 
     /**
