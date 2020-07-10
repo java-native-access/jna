@@ -44,7 +44,6 @@ import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
 import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.win32.W32APITypeMapper;
 import com.sun.jna.win32.W32StringUtil;
 
 /**
@@ -425,42 +424,23 @@ public abstract class Kernel32Util implements WinDef {
             return null;
         }
 
-        Map<String,String>  vars=new TreeMap<String,String>();
-        boolean             asWideChars=isWideCharEnvironmentStringBlock(lpszEnvironmentBlock, offset);
-        long                stepFactor=asWideChars ? 2L : 1L;
-        for (long    curOffset=offset; ; ) {
-            String  nvp=readEnvironmentStringBlockEntry(lpszEnvironmentBlock, curOffset, asWideChars);
-            int     len=nvp.length();
-            if (len == 0) { // found the ending '\0'
-                break;
-            }
-
-            int pos=nvp.indexOf('=');
-            if (pos < 0) {
+        Map<String,String> vars = new TreeMap<String,String>();
+        for (String nvp : W32StringUtil.fromJoinedStringArray(lpszEnvironmentBlock)) {
+            String[] parts = nvp.split("=", 2);
+            if (parts.length != 2) {
                 throw new IllegalArgumentException("Missing variable value separator in " + nvp);
             }
 
-            String  name=nvp.substring(0, pos), value=nvp.substring(pos + 1);
-            vars.put(name, value);
-
-            curOffset += (len + 1 /* skip the ending '\0' */) * stepFactor;
+            vars.put(parts[0], parts[1]);
         }
 
         return vars;
     }
 
     /**
-     * @param lpszEnvironmentBlock The environment block as received from the
-     * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
-     * function
-     * @param offset Offset within the block to look for the entry
-     * @param asWideChars If {@code true} then the block contains {@code wchar_t}
-     * instead of &quot;plain old&quot; {@code char}s
-     * @return A {@link String} containing the <code>name=value</code> pair or
-     * empty if reached end of block
-     * @see #isWideCharEnvironmentStringBlock
-     * @see #findEnvironmentStringBlockEntryEnd
+     * @deprecated Use {@link #getEnvironmentVariables(Pointer, long)}
      */
+    @Deprecated
     public static String readEnvironmentStringBlockEntry(Pointer lpszEnvironmentBlock, long offset, boolean asWideChars) {
         long endOffset=findEnvironmentStringBlockEntryEnd(lpszEnvironmentBlock, offset, asWideChars);
         int  dataLen=(int) (endOffset - offset);
@@ -490,17 +470,9 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
-     * @param lpszEnvironmentBlock The environment block as received from the
-     * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
-     * function
-     * @param offset Offset within the block to look for the entry
-     * @param asWideChars If {@code true} then the block contains {@code wchar_t}
-     * instead of &quot;plain old&quot; {@code char}s
-     * @return The offset of the <U>first</U> {@code '\0'} in the data block
-     * starting at the specified offset - can be the start offset itself if empty
-     * string.
-     * @see #isWideCharEnvironmentStringBlock
+     * @deprecated Use {@link #getEnvironmentVariables(Pointer, long)}
      */
+    @Deprecated
     public static long findEnvironmentStringBlockEntryEnd(Pointer lpszEnvironmentBlock, long offset, boolean asWideChars) {
         for (long curOffset=offset, stepSize=asWideChars ? 2L : 1L; ; curOffset += stepSize) {
             byte b=lpszEnvironmentBlock.getByte(curOffset);
@@ -511,32 +483,9 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
-     * <P>Attempts to determine whether the data block uses {@code wchar_t}
-     * instead of &quot;plain old&quot; {@code char}s. It does that by reading
-     * 2 bytes from the specified offset - the character value and its charset
-     * indicator - and examining them as follows:</P>
-     * <UL>
-     *      <LI>
-     *      If the charset indicator is non-zero then it is assumed to be
-     *      a &quot;plain old&quot; {@code char}s data block. <B>Note:</B>
-     *      the assumption is that the environment variable <U>name</U> (at
-     *      least) is ASCII.
-     *      </LI>
-     *
-     *      <LI>
-     *      Otherwise (i.e., zero charset indicator), it is assumed to be
-     *      a {@code wchar_t}
-     *      </LI>
-     * </UL>
-     * <B>Note:</B> the code takes into account the {@link ByteOrder} even though
-     * only {@link ByteOrder#LITTLE_ENDIAN} is the likely one
-     * @param lpszEnvironmentBlock The environment block as received from the
-     * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
-     * function
-     * @param offset offset
-     * @return {@code true} if the block contains {@code wchar_t} instead of
-     * &quot;plain old&quot; {@code char}s
+     * @deprecated Use {@link #getEnvironmentVariables(Pointer, long)}
      */
+    @Deprecated
     public static boolean isWideCharEnvironmentStringBlock(Pointer lpszEnvironmentBlock, long offset) {
         byte        b0=lpszEnvironmentBlock.getByte(offset);
         byte        b1=lpszEnvironmentBlock.getByte(offset + 1L);
@@ -548,6 +497,10 @@ public abstract class Kernel32Util implements WinDef {
         }
     }
 
+    /**
+     * @deprecated Use {@link #getEnvironmentVariables(Pointer, long)}
+     */
+    @Deprecated
     private static boolean isWideCharEnvironmentStringBlock(byte charsetIndicator) {
         // assume wchar_t for environment variables represents ASCII letters
         if (charsetIndicator != 0) {
@@ -1204,25 +1157,13 @@ public abstract class Kernel32Util implements WinDef {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
-        Memory resultMemory;
-        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-            resultMemory = new Memory(resultChars * Native.WCHAR_SIZE);
-        } else {
-            // return value is length in chars including terminating NULL,
-            // documentation for ANSI version says: buffer size should be the
-            // string length, plus terminating null character, plus one
-            resultMemory = new Memory(resultChars + 1);
-        }
+        Memory resultMemory = W32StringUtil.allocateBuffer(resultChars + 2);
         resultChars = Kernel32.INSTANCE.ExpandEnvironmentStrings(input, resultMemory, resultChars);
 
         if(resultChars == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
-        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-            return resultMemory.getWideString(0);
-        } else {
-            return resultMemory.getString(0);
-        }
+        return W32StringUtil.toString(resultMemory);
     }
 }

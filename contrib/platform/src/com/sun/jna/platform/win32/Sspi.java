@@ -28,6 +28,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Ported from Sspi.h.
@@ -803,7 +804,7 @@ public interface Sspi {
             if (sUserName == null) {
                 return null;
             }
-            return Boolean.getBoolean("w32.ascii") ? sUserName.getString(0) : sUserName.getWideString(0);
+            return W32StringUtil.toString(sUserName);
         }
 
         /**
@@ -940,14 +941,14 @@ public interface Sspi {
             if(sSignatureAlgorithmName == null) {
                 return null;
             }
-            return Boolean.getBoolean("w32.ascii") ? sSignatureAlgorithmName.getString(0) : sSignatureAlgorithmName.getWideString(0);
+            return W32StringUtil.toString(sSignatureAlgorithmName);
         }
 
         public synchronized String getEncryptAlgorithmName() {
             if(sEncryptAlgorithmName == null) {
                 return null;
             }
-            return Boolean.getBoolean("w32.ascii") ? sEncryptAlgorithmName.getString(0) : sEncryptAlgorithmName.getWideString(0);
+            return W32StringUtil.toString(sEncryptAlgorithmName);
         }
 
         public synchronized void free() {

@@ -72,20 +72,10 @@ public class MprTest extends TestCase {
             // Cancel any existing connections of the same name
             Mpr.INSTANCE.WNetCancelConnection2(resource.lpRemoteName, 0, true);
             // Establish a new one
-            Memory lpAccessName;
-            if(DEFAULT_OPTIONS==UNICODE_OPTIONS) {
-                lpAccessName = new Memory((WinDef.MAX_PATH + 1) * Native.WCHAR_SIZE);
-            } else {
-                lpAccessName = new Memory(WinDef.MAX_PATH + 1);
-            }
+            Memory lpAccessName = W32StringUtil.allocateBuffer(WinDef.MAX_PATH + 1);
             IntByReference lpAccessNameSize = new IntByReference(WinDef.MAX_PATH);
             assertEquals(WinError.ERROR_SUCCESS, Mpr.INSTANCE.WNetUseConnection(null, resource, null, null, 0, lpAccessName, lpAccessNameSize, null));
-            String accessName;
-            if(DEFAULT_OPTIONS==UNICODE_OPTIONS) {
-                accessName = lpAccessName.getWideString(0);
-            } else {
-                accessName = lpAccessName.getString(0);
-            }
+            String accessName = W32StringUtil.toString(lpAccessName);
             // System.out.println("Size: " + lpAccessNameSize.getValue());
             // System.out.println("lpAccessName: " + accessName);
             assertNotNull(accessName);

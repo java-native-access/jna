@@ -24,8 +24,8 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Cfgmgr32 utility API.
@@ -58,8 +58,6 @@ public abstract class Cfgmgr32Util {
      * @throws Cfgmgr32Exception
      */
     public static String CM_Get_Device_ID(int devInst) throws Cfgmgr32Exception {
-        int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
-
         // Get Device ID character count
         IntByReference pulLen = new IntByReference();
         int ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
@@ -68,11 +66,11 @@ public abstract class Cfgmgr32Util {
         }
 
         // Add one to length to allow null terminator
-        Memory buffer = new Memory((pulLen.getValue() + 1) * charToBytes);
+        Memory buffer = W32StringUtil.allocateBuffer(pulLen.getValue() + 1);
         // Zero the buffer (including the extra character)
         buffer.clear();
         // Fetch the buffer specifying only the current length
-        ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, pulLen.getValue(), 0);
+        ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, W32StringUtil.toSizeInCharacters(buffer), 0);
         // In the unlikely event the device id changes this might not be big
         // enough, try again. This happens rarely enough one retry should be
         // sufficient.
@@ -81,19 +79,15 @@ public abstract class Cfgmgr32Util {
             if (ret != Cfgmgr32.CR_SUCCESS) {
                 throw new Cfgmgr32Exception(ret);
             }
-            buffer = new Memory((pulLen.getValue() + 1) * charToBytes);
+            buffer = W32StringUtil.allocateBuffer(pulLen.getValue() + 1);
             buffer.clear();
-            ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, pulLen.getValue(), 0);
+            ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, W32StringUtil.toSizeInCharacters(buffer), 0);
         }
         // If we still aren't successful throw an exception
         if (ret != Cfgmgr32.CR_SUCCESS) {
             throw new Cfgmgr32Exception(ret);
         }
         // Convert buffer to Java String
-        if (charToBytes == 1) {
-            return buffer.getString(0);
-        } else {
-            return buffer.getWideString(0);
-        }
+        return W32StringUtil.toString(buffer);
     }
 }

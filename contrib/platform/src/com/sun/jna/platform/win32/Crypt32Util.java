@@ -25,10 +25,10 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Crypt32 utility API.
@@ -193,8 +193,6 @@ public abstract class Crypt32Util {
      * @return Returns the retrieved string.
      */
     public static String CertNameToStr(int dwCertEncodingType, int dwStrType, DATA_BLOB pName) {
-        int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
-
         // Initialize the signature structure.
         int requiredSize = Crypt32.INSTANCE.CertNameToStr(
                 dwCertEncodingType,
@@ -203,7 +201,7 @@ public abstract class Crypt32Util {
                 Pointer.NULL,
                 0);
 
-        Memory mem = new Memory(requiredSize * charToBytes);
+        Memory mem = W32StringUtil.allocateBuffer(requiredSize);
 
         // Initialize the signature structure.
         int resultBytes = Crypt32.INSTANCE.CertNameToStr(
@@ -215,10 +213,6 @@ public abstract class Crypt32Util {
 
         assert resultBytes == requiredSize;
 
-        if (Boolean.getBoolean("w32.ascii")) {
-            return mem.getString(0);
-        } else {
-            return mem.getWideString(0);
-        }
+        return W32StringUtil.toString(mem);
     }
 }

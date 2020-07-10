@@ -209,11 +209,11 @@ public interface Winsvc {
 
     public abstract class ChangeServiceConfig2Info extends Structure {
         public ChangeServiceConfig2Info() {
-            super(Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE);
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public ChangeServiceConfig2Info(Pointer p) {
-            super(p, ALIGN_DEFAULT, Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE);
+            super(p, ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
         }
     }
 

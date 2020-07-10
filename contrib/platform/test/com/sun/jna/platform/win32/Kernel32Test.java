@@ -522,7 +522,7 @@ public class Kernel32Test extends TestCase {
 
     public void testGetTempPath() {
         char[] buffer = new char[WinDef.MAX_PATH];
-        assertTrue(Kernel32.INSTANCE.GetTempPath(new DWORD(WinDef.MAX_PATH), buffer).intValue() > 0);
+        assertTrue(Kernel32.INSTANCE.GetTempPath(new DWORD(buffer.length), buffer).intValue() > 0);
     }
 
     public void testGetTickCount() throws InterruptedException {

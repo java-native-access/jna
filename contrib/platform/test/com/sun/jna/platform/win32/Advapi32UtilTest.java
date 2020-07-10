@@ -32,6 +32,7 @@ import java.io.FileWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
@@ -558,8 +559,8 @@ public class Advapi32UtilTest extends TestCase {
         Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
         String[] subKeys = Advapi32Util.registryGetKeys(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
         assertEquals(2, subKeys.length);
-        assertEquals(subKeys[0], "Key1");
-        assertEquals(subKeys[1], "Key2");
+        assertEquals("Key1", subKeys[0]);
+        assertEquals("Key2", subKeys[1]);
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
@@ -683,8 +684,7 @@ public class Advapi32UtilTest extends TestCase {
             throw new Win32Exception(rc);
         }
         try {
-            char[] data = new char[0];
-            rc = Advapi32.INSTANCE.RegSetValueEx(phkKey.getValue(), name, 0, valueType, data, 0);
+            rc = Advapi32.INSTANCE.RegSetValueEx(phkKey.getValue(), name, 0, valueType, Pointer.NULL, 0);
             if (rc != W32Errors.ERROR_SUCCESS) {
                 throw new Win32Exception(rc);
             }

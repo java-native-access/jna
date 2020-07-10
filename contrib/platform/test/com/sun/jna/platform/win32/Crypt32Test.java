@@ -376,9 +376,9 @@ public class Crypt32Test extends TestCase {
 
         assertEquals("Issuer Name length repored incorrectly", TESTCERT_CN.length() + 1, requiredSize);
 
-        Memory mem = new Memory(requiredSize * Native.WCHAR_SIZE);
+        Memory mem = W32StringUtil.allocateBuffer(requiredSize);
 
-        int resultSize = Crypt32.INSTANCE.CertNameToStr(
+        Crypt32.INSTANCE.CertNameToStr(
                 WinCrypt.X509_ASN_ENCODING,
                 pc.pCertInfo.Issuer,
                 WinCrypt.CERT_SIMPLE_NAME_STR,

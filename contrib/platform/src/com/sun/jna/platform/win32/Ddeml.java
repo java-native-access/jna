@@ -33,6 +33,7 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
+import com.sun.jna.win32.W32StringUtil;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -42,7 +43,6 @@ import com.sun.jna.platform.win32.WinDef.UINT_PTR;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.SECURITY_QUALITY_OF_SERVICE;
-import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from Ddeml.h. Microsoft Windows SDK 7.1.
@@ -434,11 +434,8 @@ public interface Ddeml extends StdCallLibrary {
 
         public String getStr() {
             int offset = fieldOffset("str");
-            if(W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
-                return getPointer().getWideString(offset);
-            } else {
-                return getPointer().getString(offset);
-            }
+            Pointer ptr = getPointer().share(offset);
+            return W32StringUtil.toString(ptr);
         }
     }
 

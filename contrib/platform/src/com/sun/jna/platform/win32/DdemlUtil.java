@@ -34,8 +34,8 @@ import com.sun.jna.platform.win32.Ddeml.HDDEDATA;
 import com.sun.jna.platform.win32.Ddeml.HSZ;
 import com.sun.jna.platform.win32.Ddeml.HSZPAIR;
 import com.sun.jna.platform.win32.User32Util.MessageLoopThread;
-import com.sun.jna.platform.win32.User32Util.MessageLoopThread.Handler;
-import com.sun.jna.win32.W32APIOptions;
+import com.sun.jna.win32.W32StringUtil;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -699,26 +699,10 @@ public abstract class DdemlUtil {
         }
 
         public String queryString(Ddeml.HSZ value) throws DdemlException {
-            int codePage;
-            int byteWidth;
-            if(W32APIOptions.DEFAULT_OPTIONS == W32APIOptions.UNICODE_OPTIONS) {
-                codePage = Ddeml.CP_WINUNICODE;
-                byteWidth = 2;
-            } else {
-                codePage = Ddeml.CP_WINANSI;
-                byteWidth = 1;
-            }
-            Memory buffer = new Memory((256 + 1) * byteWidth);
-            try {
-                int length = Ddeml.INSTANCE.DdeQueryString(idInst, value, buffer, 256, codePage);
-                if (W32APIOptions.DEFAULT_OPTIONS == W32APIOptions.UNICODE_OPTIONS) {
-                    return buffer.getWideString(0);
-                } else {
-                    return buffer.getString(0);
-                }
-            } finally {
-                buffer.valid();
-            }
+            int codePage = W32StringUtil.isAPITypeWide() ? Ddeml.CP_WINUNICODE : Ddeml.CP_WINANSI;
+            Memory buffer = W32StringUtil.allocateBuffer(256);
+            Ddeml.INSTANCE.DdeQueryString(idInst, value, buffer, W32StringUtil.toSizeInCharacters(buffer), codePage);
+            return W32StringUtil.toString(buffer);
         }
 
 

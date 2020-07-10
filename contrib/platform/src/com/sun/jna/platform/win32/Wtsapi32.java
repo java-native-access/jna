@@ -36,6 +36,7 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.win32.W32StringUtil;
 
 public interface Wtsapi32 extends StdCallLibrary {
 
@@ -229,8 +230,6 @@ public interface Wtsapi32 extends StdCallLibrary {
             "IncomingCompressedBytes", "OutgoingCompressedBytes", "WinStationName", "Domain", "UserName", "ConnectTime",
             "DisconnectTime", "LastInputTime", "LogonTime", "CurrentTime" })
     class WTSINFO extends Structure {
-        private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
-
         public int State; // WTS_CONNECTSTATE_CLASS
         public int SessionId;
         public int IncomingBytes;
@@ -239,9 +238,9 @@ public interface Wtsapi32 extends StdCallLibrary {
         public int OutgoingFrames;
         public int IncomingCompressedBytes;
         public int OutgoingCompressedBytes;
-        public final byte[] WinStationName = new byte[WINSTATIONNAME_LENGTH * CHAR_WIDTH];
-        public final byte[] Domain = new byte[DOMAIN_LENGTH * CHAR_WIDTH];
-        public final byte[] UserName = new byte[(USERNAME_LENGTH + 1) * CHAR_WIDTH];
+        public final byte[] WinStationName = new byte[WINSTATIONNAME_LENGTH * W32StringUtil.getCharWidth()];
+        public final byte[] Domain = new byte[DOMAIN_LENGTH * W32StringUtil.getCharWidth()];
+        public final byte[] UserName = new byte[(USERNAME_LENGTH + 1) * W32StringUtil.getCharWidth()];
         public LARGE_INTEGER ConnectTime;
         public LARGE_INTEGER DisconnectTime;
         public LARGE_INTEGER LastInputTime;
@@ -291,7 +290,8 @@ public interface Wtsapi32 extends StdCallLibrary {
         }
 
         private String getStringAtOffset(int offset) {
-            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+            Pointer ptr = getPointer().share(offset);
+            return W32StringUtil.toString(ptr);
         }
     }
 

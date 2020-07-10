@@ -47,7 +47,7 @@ import com.sun.jna.win32.W32APITypeMapper;
 public interface ShellAPI extends StdCallLibrary {
 
     int STRUCTURE_ALIGNMENT = Platform.is64Bit() ? Structure.ALIGN_DEFAULT : Structure.ALIGN_NONE;
-    TypeMapper TYPE_MAPPER = Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE;
+    TypeMapper TYPE_MAPPER = W32APITypeMapper.DEFAULT;
 
     int FO_MOVE = 0x0001;
     int FO_COPY = 0x0002;

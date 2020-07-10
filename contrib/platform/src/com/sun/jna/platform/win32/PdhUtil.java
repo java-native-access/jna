@@ -24,12 +24,14 @@
 package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Pdh utility API.
@@ -37,8 +39,6 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
  * @author widdis[at]gmail[dot]com
  */
 public abstract class PdhUtil {
-    private static final int CHAR_TO_BYTES = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
-
     // This REG_MULTI_SZ value in HKLM provides English counters regardless of
     // the current locale setting
     private static final String ENGLISH_COUNTER_KEY = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\\009";
@@ -75,13 +75,13 @@ public abstract class PdhUtil {
                 return "";
             }
             // Allocate buffer and call again
-            mem = new Memory(pcchNameBufferSize.getValue().intValue() * CHAR_TO_BYTES);
+            mem = W32StringUtil.allocateBuffer(pcchNameBufferSize.getValue().intValue());
             result = Pdh.INSTANCE.PdhLookupPerfNameByIndex(szMachineName, dwNameIndex, mem, pcchNameBufferSize);
         } else {
             // XP branch: try increasing buffer sizes until successful
             for (int bufferSize = 32; bufferSize <= Pdh.PDH_MAX_COUNTER_NAME; bufferSize *= 2) {
                 pcchNameBufferSize = new DWORDByReference(new DWORD(bufferSize));
-                mem = new Memory(bufferSize * CHAR_TO_BYTES);
+                mem = W32StringUtil.allocateBuffer(bufferSize);
                 result = Pdh.INSTANCE.PdhLookupPerfNameByIndex(szMachineName, dwNameIndex, mem, pcchNameBufferSize);
                 if (result != PdhMsg.PDH_INVALID_ARGUMENT && result != PdhMsg.PDH_INSUFFICIENT_BUFFER) {
                     break;
@@ -93,11 +93,7 @@ public abstract class PdhUtil {
         }
 
         // Convert buffer to Java String
-        if (CHAR_TO_BYTES == 1) {
-            return mem.getString(0); // NOSONAR squid:S2259
-        } else {
-            return mem.getWideString(0); // NOSONAR squid:S2259
-        }
+        return W32StringUtil.toString(mem); // NOSONAR squid:S2259
     }
 
     /**
@@ -159,8 +155,8 @@ public abstract class PdhUtil {
      */
     public static PdhEnumObjectItems PdhEnumObjectItems(String szDataSource, String szMachineName, String szObjectName,
             int dwDetailLevel) {
-        List<String> counters = new ArrayList<String>();
-        List<String> instances = new ArrayList<String>();
+        List<String> counters = Collections.emptyList();
+        List<String> instances = Collections.emptyList();
 
         // Call once to get string lengths
         DWORDByReference pcchCounterListLength = new DWORDByReference(new DWORD(0));
@@ -175,57 +171,27 @@ public abstract class PdhUtil {
         Memory mszInstanceList = null;
 
         if (pcchCounterListLength.getValue().intValue() > 0) {
-            mszCounterList = new Memory(pcchCounterListLength.getValue().intValue() * CHAR_TO_BYTES);
+            mszCounterList = W32StringUtil.allocateBuffer(pcchCounterListLength.getValue().intValue() + 2);
         }
 
         if (pcchInstanceListLength.getValue().intValue() > 0) {
-            mszInstanceList = new Memory(pcchInstanceListLength.getValue().intValue() * CHAR_TO_BYTES);
+            mszInstanceList = W32StringUtil.allocateBuffer(pcchInstanceListLength.getValue().intValue() + 2);
         }
 
         result = Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, mszCounterList,
                 pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
 
-        if(result != WinError.ERROR_SUCCESS) {
+        if (result != WinError.ERROR_SUCCESS) {
             throw new PdhException(result);
         }
 
         // Fetch counters
         if (mszCounterList != null) {
-            int offset = 0;
-            while (offset < mszCounterList.size()) {
-                String s = null;
-                if (CHAR_TO_BYTES == 1) {
-                    s = mszCounterList.getString(offset);
-                } else {
-                    s = mszCounterList.getWideString(offset);
-                }
-                // list ends with double null
-                if (s.isEmpty()) {
-                    break;
-                }
-                counters.add(s);
-                // Increment for string + null terminator
-                offset += (s.length() + 1) * CHAR_TO_BYTES;
-            }
+            counters = Arrays.asList(W32StringUtil.fromJoinedStringArray(mszCounterList));
         }
 
-        if(mszInstanceList != null) {
-            int offset = 0;
-            while (offset < mszInstanceList.size()) {
-                String s = null;
-                if (CHAR_TO_BYTES == 1) {
-                    s = mszInstanceList.getString(offset);
-                } else {
-                    s = mszInstanceList.getWideString(offset);
-                }
-                // list ends with double null
-                if (s.isEmpty()) {
-                    break;
-                }
-                instances.add(s);
-                // Increment for string + null terminator
-                offset += (s.length() + 1) * CHAR_TO_BYTES;
-            }
+        if (mszInstanceList != null) {
+            instances = Arrays.asList(W32StringUtil.fromJoinedStringArray(mszInstanceList));
         }
 
         return new PdhEnumObjectItems(counters, instances);
