@@ -294,7 +294,7 @@ public class User32WindowMessagesTest extends AbstractWin32TestSupport {
 
     public HWND determineHWNDFromWindowClass(String windowClass) {
         CallBackFindWindowHandleByWindowclass cb = new CallBackFindWindowHandleByWindowclass(windowClass);
-        User32.INSTANCE.EnumWindows(cb, null);
+        assertCallSucceeded("Find HWND for " + windowClass, User32.INSTANCE.EnumWindows(cb, null));
         return cb.getFoundHwnd();
 
     }
@@ -313,7 +313,7 @@ public class User32WindowMessagesTest extends AbstractWin32TestSupport {
         public boolean callback(HWND hWnd, Pointer data) {
 
             char[] windowText = new char[512];
-            User32.INSTANCE.GetClassName(hWnd, windowText, 512);
+            assertCallSucceeded("GetClassName", User32.INSTANCE.GetClassName(hWnd, windowText, windowText.length) != 0);
             String className = Native.toString(windowText);
 
             if (windowClass.equalsIgnoreCase(className)) {
