@@ -1049,7 +1049,7 @@ public class Kernel32Test extends TestCase {
             }
             FILE_ATTRIBUTE_TAG_INFO fati = new FILE_ATTRIBUTE_TAG_INFO(p);
             // New files have the archive bit
-            assertEquals(WinNT.FILE_ATTRIBUTE_ARCHIVE, fati.FileAttributes);
+            assertEquals(WinNT.FILE_ATTRIBUTE_ARCHIVE, fati.FileAttributes & WinNT.FILE_ATTRIBUTE_ARCHIVE);
 
             p = new Memory(FILE_ID_INFO.sizeOf());
             if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileIdInfo, p, new DWORD(p.size()))) {
