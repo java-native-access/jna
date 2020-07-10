@@ -27,6 +27,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.TypeMapper;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -859,6 +860,8 @@ public interface Winsvc {
      */
     @FieldOrder({"lpServiceName", "lpDisplayName", "ServiceStatusProcess"})
     public static class ENUM_SERVICE_STATUS_PROCESS extends Structure {
+        public static final TypeMapper TYPE_MAPPER = W32APITypeMapper.DEFAULT;
+
         /**
          * The name of a service in the service control manager database. The
          * maximum string length is 256 characters. The service control manager
