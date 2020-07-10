@@ -35,6 +35,7 @@ import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.LUID;
+import com.sun.jna.win32.W32StringUtil;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
@@ -267,13 +268,13 @@ public interface WinRas {
          * modem connection on the first available modem port, in which case a
          * non-empty szPhoneNumber must be provided.
          */
-        public char[] szEntryName = new char[RAS_MaxEntryName + 1];
+        public byte[] szEntryName = new byte[(RAS_MaxEntryName + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains an overriding phone number. An
          * empty string ("") indicates that the phone-book entry's phone number
          * should be used. If szEntryName is "", szPhoneNumber cannot be "".
          */
-        public char[] szPhoneNumber = new char[RAS_MaxPhoneNumber + 1];
+        public byte[] szPhoneNumber = new byte[(RAS_MaxPhoneNumber + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains a callback phone number. An
          * empty string ("") indicates that callback should not be used. This
@@ -281,26 +282,26 @@ public interface WinRas {
          * permission on the RAS server. An asterisk indicates that the number
          * stored in the phone book should be used for callback.
          */
-        public char[] szCallbackNumber = new char[RAS_MaxCallbackNumber + 1];
+        public byte[] szCallbackNumber = new byte[(RAS_MaxCallbackNumber + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains the user's user name. This
          * string is used to authenticate the user's access to the remote access
          * server.
          */
-        public char[] szUserName = new char[UNLEN + 1];
+        public byte[] szUserName = new byte[(UNLEN + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains the user's password. This
          * string is used to authenticate the user's access to the remote access
          * server.
          */
-        public char[] szPassword = new char[PWLEN + 1];
+        public byte[] szPassword = new byte[(PWLEN + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains the domain on which
          * authentication is to occur. An empty string ("") specifies the domain
          * in which the remote access server is a member. An asterisk specifies
          * the domain stored in the phone book for the entry.
          */
-        public char[] szDomain = new char[DNLEN + 1];
+        public byte[] szDomain = new byte[(DNLEN + 1) * W32StringUtil.getCharWidth()];
     }
 
     /**
@@ -339,23 +340,23 @@ public interface WinRas {
          * established using an empty entry name, this string consists of a
          * PERIOD followed by the connection phone number.
          */
-        public char[] szEntryName = new char[RAS_MaxEntryName + 1];
+        public byte[] szEntryName = new byte[(RAS_MaxEntryName + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains the device type through which
          * the connection is made. See RASENTRY for a list of possible device
          * types.
          */
-        public char[] szDeviceType = new char[RAS_MaxDeviceType + 1];
+        public byte[] szDeviceType = new byte[(RAS_MaxDeviceType + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains the device name through which
          * the connection is made.
          */
-        public char[] szDeviceName = new char[RAS_MaxDeviceName + 1];
+        public byte[] szDeviceName = new byte[(RAS_MaxDeviceName + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that specifies the full path and file name
          * of a phone-book (PBK) file.
          */
-        public char[] szPhonebook = new char[MAX_PATH];
+        public byte[] szPhonebook = new byte[MAX_PATH * W32StringUtil.getCharWidth()];
         /**
          * For multilink connections, a value that specifies the subentry
          * one-based index of a connected link.
@@ -542,14 +543,14 @@ public interface WinRas {
          * An array that contains a null-terminated string that is the client's IP address on the RAS connection.
          * This address string has the form a.b.c.d.
          */
-        public char[] szIpAddress = new char[RAS_MaxIpAddress + 1];
+        public byte[] szIpAddress = new byte[(RAS_MaxIpAddress + 1) * W32StringUtil.getCharWidth()];
         /**
          * An array that contains a null-terminated string that is the server's IP address on the RAS connection.
          * This string is in a.b.c.d form.
          * PPP does not require that servers provide this address, but servers will consistently return the address anyway.
          * Other PPP vendors may not provide the address. If the address is not available, this member returns an empty string, "".
          */
-        public char[] szServerIpAddress = new char[RAS_MaxIpAddress + 1];
+        public byte[] szServerIpAddress = new byte[(RAS_MaxIpAddress + 1) * W32StringUtil.getCharWidth()];
         /**
          * A value that specifies IPCP options for the local client.
          */
@@ -645,17 +646,17 @@ public interface WinRas {
          * A string that specifies the type of the current device, if available. For example, common device types supported by
          * RAS are "modem", "pad", "switch", "ISDN", or "null". See RASENTRY for a complete list of possible device types.
          */
-        public char[] szDeviceType = new char[RAS_MaxDeviceType + 1];
+        public byte[] szDeviceType = new byte[(RAS_MaxDeviceType + 1) * W32StringUtil.getCharWidth()];
         /**
          * A string that specifies the name of the current device, if available. This would be the name of the modem -
          * for example, "Hayes SmartModem 2400"; the name of the PAD, for example "US Sprint"; or the name of a
          * switch device, for example "Racal-Guardata".
          */
-        public char[] szDeviceName = new char[RAS_MaxDeviceName + 1];
+        public byte[] szDeviceName = new byte[(RAS_MaxDeviceName + 1) * W32StringUtil.getCharWidth()];
         /**
          * A string that indicates the phone number dialed for this specific connection.
          */
-        public char[] szPhoneNumber = new char[RAS_MaxPhoneNumber + 1];
+        public byte[] szPhoneNumber = new byte[(RAS_MaxPhoneNumber + 1) * W32StringUtil.getCharWidth()];
         /**
          * A RASTUNNELENDPOINT structure that contains the local client endpoint information of a virtual private network (VPN) endpoint.
          */
@@ -699,15 +700,15 @@ public interface WinRas {
         /**
          * Specifies a null-terminated string that contains a user name.
          */
-        public char[] szUserName = new char[UNLEN + 1];
+        public byte[] szUserName = new byte[(UNLEN + 1) * W32StringUtil.getCharWidth()];
         /**
          * Specifies a null-terminated string that contains a password.
          */
-        public char[] szPassword = new char[PWLEN + 1];
+        public byte[] szPassword = new byte[(PWLEN + 1) * W32StringUtil.getCharWidth()];
         /**
          * A null-terminated string that contains a domain name.
          */
-        public char[] szDomain = new char[DNLEN + 1];
+        public byte[] szDomain = new byte[(DNLEN + 1) * W32StringUtil.getCharWidth()];
     }
 
     /**
@@ -780,12 +781,12 @@ public interface WinRas {
          * For example, "206" is a valid area code; "(206)" is not. This member is ignored unless the dwfOptions member
          * specifies the RASEO_UseCountryAndAreaCodes flag.
          */
-        public char[] szAreaCode = new char[RAS_MaxAreaCode + 1];
+        public byte[] szAreaCode = new byte[(RAS_MaxAreaCode + 1) * W32StringUtil.getCharWidth()];
         /**
          * Specifies a null-terminated device-type specific destination string.
          * The following table describes the contents of the szLocalPhoneNumber member for various device types.
          */
-        public char[] szLocalPhoneNumber = new char[RAS_MaxPhoneNumber + 1];
+        public byte[] szLocalPhoneNumber = new byte[(RAS_MaxPhoneNumber + 1) * W32StringUtil.getCharWidth()];
         /**
          * Specifies the offset, in bytes, from the beginning of the structure to a list of consecutive null-terminated strings.
          * The last string is terminated by two consecutive null characters. The strings are alternate phone numbers that RAS
@@ -835,45 +836,45 @@ public interface WinRas {
          * Specifies a null-terminated string that contains the name of the script file.
          * The file name should be a full path. This field is only used for analog dial-up connections.
          */
-        public char[] szScript = new char[MAX_PATH];
+        public byte[] szScript = new byte[MAX_PATH * W32StringUtil.getCharWidth()];
         /**
          * Windows 2000 or later: This member is no longer supported. The szCustomDialDll member of the
          * RASENTRY structure specifies the path to the custom-dial DLL. For more information on custom dialers, see RAS Custom Dialers.
          */
-        public char[] szAutodialDll = new char[MAX_PATH];
+        public byte[] szAutodialDll = new byte[MAX_PATH * W32StringUtil.getCharWidth()];
         /**
          * Windows 2000 or later: This member is no longer supported. See RAS Custom Dialers for more information on custom dialers.
          */
-        public char[] szAutodialFunc = new char[MAX_PATH];
+        public byte[] szAutodialFunc = new byte[MAX_PATH * W32StringUtil.getCharWidth()];
         /**
          * Specifies a null-terminated string that indicates the RAS device type referenced by szDeviceName. This member can be one of the following string constants.
          */
-        public char[] szDeviceType = new char[RAS_MaxDeviceType + 1];
+        public byte[] szDeviceType = new byte[(RAS_MaxDeviceType + 1) * W32StringUtil.getCharWidth()];
         /**
          * Contains a null-terminated string that contains the name of a TAPI device to use with this phone-book entry, for example,
          * "XYZ Corp 28800 External". To enumerate all available RAS-capable devices, use the RasEnumDevices function.
          */
-        public char[] szDeviceName = new char[RAS_MaxDeviceName + 1];
+        public byte[] szDeviceName = new byte[(RAS_MaxDeviceName + 1) * W32StringUtil.getCharWidth()];
         /**
          * Contains a null-terminated string that identifies the X.25 PAD type. Set this member to "" unless the entry
          * should dial using an X.25 PAD. The szX25PadType string maps to a section name in PAD.INF.
          */
-        public char[] szX25PadType = new char[RAS_MaxPadType + 1];
+        public byte[] szX25PadType = new byte[(RAS_MaxPadType + 1) * W32StringUtil.getCharWidth()];
         /**
          * Contains a null-terminated string that identifies the X.25 address to which to connect .
          * Set this member to "" unless the entry should dial using an X.25 PAD or native X.25 device.
          */
-        public char[] szX25Address = new char[RAS_MaxX25Address + 1];
+        public byte[] szX25Address = new byte[(RAS_MaxX25Address + 1) * W32StringUtil.getCharWidth()];
         /**
          * Contains a null-terminated string that specifies the facilities to request from the X.25 host at connection.
          * This member is ignored if szX25Address is an empty string ("").
          */
-        public char[] szX25Facilities = new char[RAS_MaxFacilities + 1];
+        public byte[] szX25Facilities = new byte[(RAS_MaxFacilities + 1) * W32StringUtil.getCharWidth()];
         /**
          * Contains a null-terminated string that specifies additional connection information supplied to the X.25
          * host at connection. This member is ignored if szX25Address is an empty string ("").
          */
-        public char[] szX25UserData = new char[RAS_MaxUserData + 1];
+        public byte[] szX25UserData = new byte[(RAS_MaxUserData + 1) * W32StringUtil.getCharWidth()];
         /**
          * Reserved for future use
          */
@@ -947,7 +948,7 @@ public interface WinRas {
          * RasCustomDialDlg. These functions should have prototypes RasCustomDialFn and RasCustomHangUpFn as defined in Ras.h,
          * and RasCustomDialDlgFn and RasCustomEntryDlgFn as defined in Rasdlg.h.
          */
-        public char[] szCustomDialDll = new char[MAX_PATH];
+        public byte[] szCustomDialDll = new byte[MAX_PATH * W32StringUtil.getCharWidth()];
         /**
          * The VPN strategy to use when dialing a VPN connection. This member can have one of the following values.
          */
@@ -965,7 +966,7 @@ public interface WinRas {
          * Pointer to a string that specifies the Domain Name Service (DNS) suffix for the connection.
          * This string can be Unicode depending on the version of the structure you are using.
          */
-        public char[] szDnsSuffix = new char[RAS_MaxDnsSuffix];
+        public byte[] szDnsSuffix = new byte[RAS_MaxDnsSuffix * W32StringUtil.getCharWidth()];
         /**
          * Specifies the TCP window size for all TCP sessions that run over this connection.
          * Setting this value can increase the throughput of high-latency devices such as cellular phones.
@@ -975,14 +976,14 @@ public interface WinRas {
          * Pointer to a null-terminated string that specifies the full path and file name of a phone-book (PBK) file.
          * This phone-book file contains the entry specified by the szPrerequisiteEntry member. This member is used only for VPN connections.
          */
-        public char[] szPrerequisitePbk = new char[MAX_PATH];
+        public byte[] szPrerequisitePbk = new byte[MAX_PATH * W32StringUtil.getCharWidth()];
         /**
          * Pointer to a null-terminated string that specifies a phone-book entry.
          * This entry should exist in the phone-book file specified by the szPrerequisitePbk member.
          * The szPrerequisteEntry member specifies an entry that RAS dials prior to establishing the connection
          * specified by this RASENTRY structure. This member is used only for VPN connections.
          */
-        public char[] szPrerequisiteEntry = new char[RAS_MaxEntryName + 1];
+        public byte[] szPrerequisiteEntry = new byte[(RAS_MaxEntryName + 1) * W32StringUtil.getCharWidth()];
         /**
          * Specifies the number of times RAS attempts to redial a connection.
          */

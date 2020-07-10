@@ -30,10 +30,10 @@ import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.WinDef.HKL;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.win32.W32StringUtil;
 
 /**
  * Ported from WinUser.h Microsoft Windows SDK 6.0A.
@@ -1473,10 +1473,10 @@ public interface WinUser extends WinDef {
          * applications have no use for a display monitor name, and so can save some bytes
          * by using a MONITORINFO structure.
          */
-        public char[]  szDevice;
+        public byte[]  szDevice;
 
         public MONITORINFOEX() {
-            szDevice = new char[CCHDEVICENAME];
+            szDevice = new byte[CCHDEVICENAME * W32StringUtil.getCharWidth()];
             cbSize = size();
         }
     }

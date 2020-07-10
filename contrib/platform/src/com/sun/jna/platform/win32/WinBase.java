@@ -736,7 +736,7 @@ public interface WinBase extends WinDef, BaseTSD {
          * Any characters after the null terminator are random memory. Use function getFileName to
          * get a String with the name.</b>
          */
-        public char[] cFileName = new char[MAX_PATH];
+        public byte[] cFileName = new byte[MAX_PATH * W32StringUtil.getCharWidth()];
 
         /**
          * An alternative name for the file. This name is in the classic 8.3 file name format.
@@ -744,7 +744,7 @@ public interface WinBase extends WinDef, BaseTSD {
          * Any characters after the null terminator are random memory. Use function getAlternateFileName to
          * get a String with the alternate name.</b>
          */
-        public char[] cAlternateFileName = new char[14];
+        public byte[] cAlternateFileName = new byte[14 * W32StringUtil.getCharWidth()];
 
         public static int sizeOf() {
             return Native.getNativeSize(WIN32_FIND_DATA.class, null);
@@ -767,8 +767,8 @@ public interface WinBase extends WinDef, BaseTSD {
                 int nFileSizeLow,
                 int dwReserved0,
                 int dwReserved1,
-                char[] cFileName,
-                char[] cAlternateFileName) {
+                byte[] cFileName,
+                byte[] cAlternateFileName) {
             this.dwFileAttributes = dwFileAttributes;
             this.ftCreationTime = ftCreationTime;
             this.ftLastAccessTime = ftLastAccessTime;
