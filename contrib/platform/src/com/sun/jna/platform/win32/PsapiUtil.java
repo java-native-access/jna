@@ -31,7 +31,7 @@ import com.sun.jna.ptr.IntByReference;
 /**
  * Psapi utility API.
  *
- * @author Torbj&ouml;rn Svensson, azoff[at]svenskalinuxforeninen.se
+ * @author Torbj&ouml;rn Svensson, azoff[at]svenskalinuxforeningen.se
  */
 public abstract class PsapiUtil {
 
