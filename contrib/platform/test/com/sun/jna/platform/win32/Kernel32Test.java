@@ -1045,12 +1045,14 @@ public class Kernel32Test extends TestCase {
             // New files have the archive bit
             assertEquals(WinNT.FILE_ATTRIBUTE_ARCHIVE, fati.FileAttributes);
 
-            p = new Memory(FILE_ID_INFO.sizeOf());
-            AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileIdInfo (" + p.size() + " bytes)",
-                    Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileIdInfo, p, new DWORD(p.size())));
-            FILE_ID_INFO fii = new FILE_ID_INFO(p);
-            // Volume serial number should be non-zero
-            assertFalse(fii.VolumeSerialNumber == 0);
+            if (VersionHelpers.IsWindowsServer() && VersionHelpers.IsWindows8OrGreater()) {
+                p = new Memory(FILE_ID_INFO.sizeOf());
+                AbstractWin32TestSupport.assertCallSucceeded("GetFileInformationByHandleEx for FileIdInfo (" + p.size() + " bytes)",
+                        Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileIdInfo, p, new DWORD(p.size())));
+                FILE_ID_INFO fii = new FILE_ID_INFO(p);
+                // Volume serial number should be non-zero
+                assertFalse(fii.VolumeSerialNumber == 0);
+            }
         } finally {
             Kernel32.INSTANCE.CloseHandle(hFile);
         }
