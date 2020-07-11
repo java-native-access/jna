@@ -31,7 +31,7 @@ import org.junit.Test;
 /**
  * Applies API tests on {@link PsapiUtil}.
  *
- * @author Torbj&ouml;rn Svensson, azoff[at]svenskalinuxforeninen.se
+ * @author Torbj&ouml;rn Svensson, azoff[at]svenskalinuxforeningen.se
  */
 @SuppressWarnings("nls")
 public class PsapiUtilTest {
