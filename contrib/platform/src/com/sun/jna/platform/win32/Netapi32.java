@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.ParameterTypeMapper;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -136,6 +137,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return If the function succeeds, the return value is NERR_Success. If
      *         the function fails, the return value is a system error code.
      */
+    @ParameterTypeMapper(indexes = 0, types = WString.class)
     public int NetGetJoinInformation(String lpServer,
             PointerByReference lpNameBuffer, IntByReference BufferType);
 
@@ -176,6 +178,7 @@ public interface Netapi32 extends StdCallLibrary {
      *  to continue an existing local group search.
      * @return If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = 0, types = WString.class)
     public int NetLocalGroupEnum(String serverName, int level,
             PointerByReference bufptr, int prefmaxlen,
             IntByReference entriesread, IntByReference totalentries,
@@ -194,6 +197,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *     If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = {0, 1}, types = {WString.class, WString.class})
     public int NetGetDCName(String serverName, String domainName,
             PointerByReference bufptr);
 
@@ -270,6 +274,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *  If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = 0, types = WString.class)
     public int NetUserEnum(String servername, int level, int filter, PointerByReference bufptr,
             int prefmaxlen, IntByReference entriesread, IntByReference totalentries,
             IntByReference resume_handle);
@@ -303,6 +308,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *  If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = {0, 1}, types = {WString.class, WString.class})
     public int NetUserGetGroups(String servername, String username, int level,
             PointerByReference bufptr, int prefmaxlen,
             IntByReference entriesread, IntByReference totalentries);
@@ -346,6 +352,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *  If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = {0, 1}, types = {WString.class, WString.class})
     public int NetUserGetLocalGroups(String servername, String username, int level,
             int flags, PointerByReference bufptr, int prefmaxlen,
             IntByReference entriesread, IntByReference totalentries);
@@ -367,6 +374,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *  If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = 0, types = WString.class)
     public int NetUserAdd(String servername, int level,
             Structure buf, IntByReference parm_err);
 
@@ -382,6 +390,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *  If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = {0, 1}, types = {WString.class, WString.class})
     public int NetUserDel(String servername, String username);
 
     /**
@@ -402,6 +411,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *  If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = {0, 1, 2, 3}, types = {WString.class, WString.class, WString.class, WString.class})
     public int NetUserChangePassword(String domainname, String username,
             String oldpassword, String newpassword);
 
@@ -516,6 +526,7 @@ public interface Netapi32 extends StdCallLibrary {
      * @return
      *  If the function succeeds, the return value is NERR_Success.
      */
+    @ParameterTypeMapper(indexes = {0, 1}, types = {WString.class, WString.class})
     public int NetUserGetInfo(String servername, String username, int level, PointerByReference bufptr);
 
     /**
@@ -540,6 +551,7 @@ public interface Netapi32 extends StdCallLibrary {
      *  index is not returned on error. For more information, see the NetShareSetInfo function.
      * @return If the function succeeds, the return value is NERR_Success. If the function fails, the return value can be an error code as seen on MSDN.
      */
+    @ParameterTypeMapper(indexes = 0, types = WString.class)
     public int NetShareAdd(String servername, int level, Pointer buf, IntByReference parm_err);
 
     /**
@@ -555,5 +567,6 @@ public interface Netapi32 extends StdCallLibrary {
      * @return If the function succeeds, the return value is LMErr.NERR_Success.
      *  If the function fails, the return value can be an error code as seen on MSDN.
      */
+    @ParameterTypeMapper(indexes = {0, 1}, types = {WString.class, WString.class})
     public int NetShareDel(String servername, String netname, int reserved);
 }

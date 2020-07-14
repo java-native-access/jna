@@ -23,13 +23,13 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.ParameterTypeMapper;
 import com.sun.jna.Memory;
-import java.util.List;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
@@ -153,6 +153,7 @@ public interface OleAuto extends StdCallLibrary {
      * @return Null if there is insufficient memory or if a null pointer is
      *         passed in.
      */
+    @ParameterTypeMapper(indexes = 0, types = WString.class)
     BSTR SysAllocString(String sz);
 
     /**

@@ -22,6 +22,7 @@
  */
 package com.sun.jna;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
@@ -504,6 +505,45 @@ public class Function extends Pointer {
         Object arg = args[index];
         if (arg != null) {
             Class<?> type = arg.getClass();
+
+            // Try using custom mapping method for this argument.
+            // As parameter annotations was introduced in java8 and we should be compatible with java6, this
+            // should be replaced with parameter annotation as soon as we target java8.
+            if (invokingMethod != null) {
+                ParameterTypeMapper argTypeMapper = invokingMethod.getAnnotation(ParameterTypeMapper.class);
+                if (argTypeMapper != null) {
+                    Class<?>[] types = argTypeMapper.types();
+                    int[] indexes = argTypeMapper.indexes();
+
+                    if (types.length == indexes.length) { // length of types and argument number arrays must match!
+                        for (int i : indexes) {
+                            if (index == i) {
+                                // Map the type using the constructor for the type
+                                try {
+                                    arg = types[i].getDeclaredConstructor(type).newInstance(arg);
+                                    type = arg.getClass();
+                                } catch (InstantiationException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                } catch (NoSuchMethodException e) {
+                                    e.printStackTrace();
+                                } catch (SecurityException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    } else {
+                        throw new RuntimeException("Type array is of length " + types.length +
+                                " while argument index array is of length " + indexes.length);
+                    }
+                }
+            }
+
             ToNativeConverter converter = null;
             if (NativeMapped.class.isAssignableFrom(type)) {
                 converter = NativeMappedConverter.getInstance(type);

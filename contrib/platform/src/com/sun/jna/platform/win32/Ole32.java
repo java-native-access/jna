@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.ParameterTypeMapper;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.COM.Unknown;
@@ -88,6 +89,7 @@ public interface Ole32 extends StdCallLibrary {
      * @return This function can return the standard return values E_INVALIDARG,
      *         E_OUTOFMEMORY, and S_OK.
      */
+    @ParameterTypeMapper(indexes = 0, types = WTypes.LPOLESTR.class)
     HRESULT IIDFromString(String lpsz, GUID lpiid);
 
     /**
@@ -406,6 +408,7 @@ public interface Ole32 extends StdCallLibrary {
      *         are the only two functions that can be used to generate a CLSID
      *         for an OLE 1 object.
      */
+    @ParameterTypeMapper(indexes = 0, types = WTypes.LPOLESTR.class)
     HRESULT CLSIDFromProgID(String lpszProgID, CLSID.ByReference lpclsid);
 
     /**
@@ -432,6 +435,7 @@ public interface Ole32 extends StdCallLibrary {
      *
      *         REGDB_E_READREGDB The registry could not be opened for reading.
      */
+    @ParameterTypeMapper(indexes = 0, types = WTypes.LPOLESTR.class)
     HRESULT CLSIDFromString(String lpsz, CLSID.ByReference pclsid);
 
     /**

@@ -23,9 +23,11 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.ParameterTypeMapper;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
@@ -2706,6 +2708,7 @@ public interface Advapi32 extends StdCallLibrary {
      * function fails, the return value is zero. To get extended error
      * information, call GetLastError.
      */
+    @ParameterTypeMapper(indexes = 0, types = WString.class)
     boolean EncryptionDisable(String DirPath, boolean Disable);
 
     /**
