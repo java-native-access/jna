@@ -643,13 +643,9 @@ public abstract class DdemlUtil {
             if(value == null) {
                 return null;
             }
-            int codePage;
-            if(W32APIOptions.DEFAULT_OPTIONS == W32APIOptions.UNICODE_OPTIONS) {
-                codePage = Ddeml.CP_WINUNICODE;
-            } else {
-                codePage = Ddeml.CP_WINANSI;
-            }
-            Ddeml.HSZ handle = Ddeml.INSTANCE.DdeCreateStringHandle(idInst, value, codePage);
+            int codePage = W32StringUtil.isAPITypeWide() ? Ddeml.CP_WINUNICODE : Ddeml.CP_WINANSI;
+            Memory mem = W32StringUtil.allocateBuffer(value);
+            Ddeml.HSZ handle = Ddeml.INSTANCE.DdeCreateStringHandle(idInst, mem, codePage);
             if(handle == null) {
                 throw DdemlException.create(getLastError());
             }

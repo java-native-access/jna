@@ -2581,8 +2581,43 @@ public interface Ddeml extends StdCallLibrary {
      *   <li>{@link #DMLERR_NO_ERROR}</li>
      *   <li>{@link #DMLERR_SYS_ERROR}</li>
      * </ul>
+     *
+     * @deprecated Use {@link #DdeCreateStringHandle(int, Pointer, int)}
      */
+    @Deprecated
     public HSZ DdeCreateStringHandle(int idInst, String psz, int iCodePage);
+
+    /**
+     * Creates a handle that identifies the specified string. A Dynamic
+     * Data Exchange (DDE) client or server application can pass the string
+     * handle as a parameter to other Dynamic Data Exchange Management
+     * Library (DDEML) functions.
+     *
+     * @param idInst The application instance identifier obtained by a previous
+     * call to the {@link #DdeInitialize} function.
+     *
+     * @param psz The null-terminated string for which a handle is to be created.
+     * This string can be up to 255 characters. The reason for this limit is that
+     * DDEML string management functions are implemented using atoms.
+     *
+     * @param iCodePage The code page to be used to render the string. This
+     * value should be either {@link #CP_WINANSI} (the default code page) or
+     * {@link #CP_WINUNICODE}, depending on whether the ANSI or Unicode version of
+     * {@link #DdeInitialize} was called by the client application.
+     *
+     * @return If the function succeeds, the return value is a string handle.
+     *
+     * <p>If the function fails, the return value is 0L.</p>
+     *
+     * <p>The {@link #DdeGetLastError} function can be used to get the error code, which
+     * can be one of the following values:</p>
+     * <ul>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
+     *   <li>{@link #DMLERR_SYS_ERROR}</li>
+     * </ul>
+     */
+    public HSZ DdeCreateStringHandle(int idInst, Pointer psz, int iCodePage);
 
     /**
      * Copies text associated with a string handle into a buffer.

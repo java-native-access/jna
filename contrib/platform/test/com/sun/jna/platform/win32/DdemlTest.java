@@ -24,6 +24,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Ddeml.DdeCallback;
 import com.sun.jna.platform.win32.Ddeml.HDDEDATA;
@@ -62,12 +63,12 @@ public class DdemlTest {
         DWORDByReference pidInst = new DWORDByReference();
         int initResult = Ddeml.INSTANCE.DdeInitialize(pidInst, callback, Ddeml.APPCMD_CLIENTONLY, 0);
         assertEquals(Ddeml.DMLERR_NO_ERROR, initResult);
-
-        HSZ handle = Ddeml.INSTANCE.DdeCreateStringHandle(pidInst.getValue().intValue(), "Test", Ddeml.CP_WINUNICODE);
+        Memory mem = createMemoryForWideString("Test");
+        HSZ handle = Ddeml.INSTANCE.DdeCreateStringHandle(pidInst.getValue().intValue(), mem, Ddeml.CP_WINUNICODE);
         assertNotNull(handle);
 
-
-        Memory mem = new Memory(256 * 2); // String in DDE can not exceed 255 Chars
+        mem = new Memory(256 * Native.WCHAR_SIZE); // String in DDE can not exceed 255 Chars
+        mem.clear();
         Ddeml.INSTANCE.DdeQueryString(pidInst.getValue().intValue(), handle, mem, 256, Ddeml.CP_WINUNICODE);
 
         assertEquals("Test", mem.getWideString(0));
@@ -81,8 +82,9 @@ public class DdemlTest {
         for(int i = 0; i < 30; i++) {
             testString.append("0123456789");
         }
+        mem = createMemoryForWideString(testString.toString());
 
-        HSZ handle2 = Ddeml.INSTANCE.DdeCreateStringHandle(pidInst.getValue().intValue(), testString.toString(), Ddeml.CP_WINUNICODE);
+        HSZ handle2 = Ddeml.INSTANCE.DdeCreateStringHandle(pidInst.getValue().intValue(), mem, Ddeml.CP_WINUNICODE);
         assertNull(handle2);
 
         boolean uninitResult = Ddeml.INSTANCE.DdeUninitialize(pidInst.getValue().intValue());
@@ -108,13 +110,13 @@ public class DdemlTest {
         assertEquals(Ddeml.DMLERR_NO_ERROR, initResult);
 
         // Acquire dummy handle
-        HSZ hsz = Ddeml.INSTANCE.DdeCreateStringHandle(pidInst.getValue().intValue(), "Dummy", Ddeml.CP_WINUNICODE);
+        HSZ hsz = Ddeml.INSTANCE.DdeCreateStringHandle(pidInst.getValue().intValue(), createMemoryForWideString("Dummy"), Ddeml.CP_WINUNICODE);
 
         String testStringPart1 = "Hallo ";
         String testStringPart2 = "Welt";
 
         // Create Handle
-        Memory mem = new Memory(256 * 2); // String in DDE can not exceed 255 Chars
+        Memory mem = new Memory(256 * Native.WCHAR_SIZE); // String in DDE can not exceed 255 Chars
         mem.setWideString(0, testStringPart1);
         HDDEDATA data = Ddeml.INSTANCE.DdeCreateDataHandle(pidInst.getValue().intValue(), mem, testStringPart1.length() * 2, 0, hsz, WinUser.CF_UNICODETEXT, Ddeml.HDATA_APPOWNED);
 
@@ -143,5 +145,12 @@ public class DdemlTest {
 
         result = Ddeml.INSTANCE.DdeUninitialize(pidInst.getValue().intValue());
         assertTrue(result);
+    }
+
+    private Memory createMemoryForWideString(String str) {
+        Memory mem = new Memory((str.length() + 1) * Native.WCHAR_SIZE);
+        mem.clear();
+        mem.setWideString(0, str);
+        return mem;
     }
 }
