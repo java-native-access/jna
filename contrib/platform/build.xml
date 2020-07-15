@@ -221,6 +221,9 @@ com.sun.jna.platform.wince;version=${osgi.version}
       <echo>tests.platform.windows=${tests.platform.windows}</echo>
       <echo>tests.platform.linux=${tests.platform.linux}</echo>
       <echo>tests.platform.unix=${tests.platform.unix}</echo>
+      <propertyset id="native.api.windows">
+        <propertyref name="w32.ascii"/>
+      </propertyset>
       <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build.dir}">
         <!-- optionally run headless -->
         <syspropertyset refid="headless"/>
@@ -228,6 +231,8 @@ com.sun.jna.platform.wince;version=${osgi.version}
         <env key="${ld.preload.name}" file="${libjsig}"/>
         <!-- Ignore any system install of JNA -->
         <sysproperty key="jna.builddir" file="${file.reference.jna.build}"/>
+        <!-- Optionally force native API on Windows -->
+        <syspropertyset refid="native.api.windows"/>
         <jvmarg value="${vmopt.arch}"/>
         <classpath><path path="${run.test.classpath}"/><path path="${file.reference.jna.build}/test-classes"/></classpath>
         <formatter type="brief" usefile="false"/>

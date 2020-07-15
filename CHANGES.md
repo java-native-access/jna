@@ -7,6 +7,7 @@ Next Release (5.7.0)
 
 Features
 --------
+* [#1231](https://github.com/java-native-access/jna/pull/1231): The test suite can now be executed on Windows using either ANSI or UNICODE win32 API by passing `-Dw32.ascii=true/false` to ant. Previously, UNICODE was always used. - [@T-Svensson](https://github.com/T-Svensson/)
 
 Bug Fixes
 ---------
