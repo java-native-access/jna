@@ -32,9 +32,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
-import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.W32StringUtil;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
@@ -1876,10 +1876,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * Pointer to a null-terminated string, such as "Service Pack 3", that
          * indicates the latest Service Pack installed on the system.
          */
-        public char szCSDVersion[];
+        public byte szCSDVersion[];
 
         public OSVERSIONINFO() {
-            szCSDVersion = new char[128];
+            szCSDVersion = new byte[128 * W32StringUtil.getCharWidth()];
             dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFO)
         }
 
@@ -1933,7 +1933,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * the latest Service Pack installed on the system. If no Service Pack
          * has been installed, the string is empty.
          */
-        public char szCSDVersion[];
+        public byte szCSDVersion[];
 
         /**
          * The major version number of the latest Service Pack installed on the
@@ -1966,7 +1966,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public byte wReserved;
 
         public OSVERSIONINFOEX() {
-            szCSDVersion = new char[128];
+            szCSDVersion = new byte[128 * W32StringUtil.getCharWidth()];
             dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFOEX)
         }
 
@@ -2009,7 +2009,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          *         If no Service Pack has been installed, the string is empty.
          */
         public String getServicePack() {
-            return Native.toString(szCSDVersion);
+            return W32StringUtil.toString(szCSDVersion);
         }
 
         /**

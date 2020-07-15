@@ -70,7 +70,7 @@ public class VersionHelpers {
         dwlConditionMask = Kernel32.INSTANCE.VerSetConditionMask(dwlConditionMask, WinNT.VER_SERVICEPACKMAJOR,
                 (byte) WinNT.VER_GREATER_EQUAL);
 
-        return Kernel32.INSTANCE.VerifyVersionInfoW(osvi,
+        return Kernel32.INSTANCE.VerifyVersionInfo(osvi,
                 WinNT.VER_MAJORVERSION | WinNT.VER_MINORVERSION | WinNT.VER_SERVICEPACKMAJOR, dwlConditionMask);
     }
 
@@ -202,9 +202,6 @@ public class VersionHelpers {
      * @return true if the current OS is a Windows Server release.
      */
     public static boolean IsWindowsServer() {
-        // This should properly be OSVERSIONINFOEXW which is not defined in JNA.
-        // The OSVERSIONINFOEX structure in JNA is the (W) Unicode-compliant
-        // version.
         OSVERSIONINFOEX osvi = new OSVERSIONINFOEX();
         osvi.dwOSVersionInfoSize = new DWORD(osvi.size());
         osvi.wProductType = WinNT.VER_NT_WORKSTATION;
@@ -212,7 +209,7 @@ public class VersionHelpers {
         long dwlConditionMask = Kernel32.INSTANCE.VerSetConditionMask(0, WinNT.VER_PRODUCT_TYPE,
                 (byte) WinNT.VER_EQUAL);
 
-        return !Kernel32.INSTANCE.VerifyVersionInfoW(osvi, WinNT.VER_PRODUCT_TYPE, dwlConditionMask);
+        return !Kernel32.INSTANCE.VerifyVersionInfo(osvi, WinNT.VER_PRODUCT_TYPE, dwlConditionMask);
     }
 }
 

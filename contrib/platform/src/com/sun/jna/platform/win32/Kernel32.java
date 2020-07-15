@@ -26,8 +26,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -1511,17 +1509,22 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         {@link #GetLastError()} returns an error code other than
      *         {@link WinError#ERROR_OLD_WIN_VERSION}.
      */
+    boolean VerifyVersionInfo(OSVERSIONINFOEX lpVersionInformation, int dwTypeMask, long dwlConditionMask);
+
+    /**
+     * @deprecated Use {@link #VerifyVersionInfo(com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX, int, long)}
+     */
     boolean VerifyVersionInfoW(OSVERSIONINFOEX lpVersionInformation, int dwTypeMask, long dwlConditionMask);
 
     /**
      * Sets the bits of a 64-bit value to indicate the comparison operator to
      * use for a specified operating system version attribute. This function is
      * used to build the {@code dwlConditionMask} parameter of the
-     * {@link #VerifyVersionInfoW} function.
+     * {@link #VerifyVersionInfo} function.
      *
      * @param conditionMask
      *            A value to be passed as the {@code dwlConditionMask} parameter
-     *            of the {@link #VerifyVersionInfoW} function. The function
+     *            of the {@link #VerifyVersionInfo} function. The function
      *            stores the comparison information in the bits of this
      *            variable.
      *            <p>
@@ -1533,10 +1536,10 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *            {@link com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX} structure whose comparison
      *            operator is being set. This value corresponds to one of the
      *            bits specified in the {@code dwTypeMask} parameter for the
-     *            {@link #VerifyVersionInfoW} function.
+     *            {@link #VerifyVersionInfo} function.
      * @param condition
      *            The operator to be used for the comparison. The
-     *            {@link #VerifyVersionInfoW} function uses this operator to
+     *            {@link #VerifyVersionInfo} function uses this operator to
      *            compare a specified attribute value to the corresponding value
      *            for the currently running system.
      * @return The function returns the condition mask value.
