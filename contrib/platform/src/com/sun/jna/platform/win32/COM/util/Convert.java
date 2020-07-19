@@ -144,9 +144,9 @@ class Convert {
     }
 
     public static Object toJavaObject(VARIANT value, Class<?> targetClass, ObjectFactory factory, boolean addReference, boolean freeValue) {
-        if (null == value
-                || value.getVarType().intValue() == VT_EMPTY
-                || value.getVarType().intValue() == VT_NULL) {
+        int varType = (value != null) ? value.getVarType().intValue() : VT_NULL;
+
+        if (varType == VT_EMPTY || varType == VT_NULL) {
             return null;
         }
 
@@ -163,8 +163,9 @@ class Convert {
 
         VARIANT inputValue = value;
 
-        if (value.getVarType().intValue() == (VT_BYREF | VT_VARIANT)) {
+        if (varType == (VT_BYREF | VT_VARIANT)) {
             value = (VARIANT) value.getValue();
+            varType = value.getVarType().intValue();
         }
 
         // Passing null or Object.class as targetClass switch to default
@@ -173,9 +174,7 @@ class Convert {
 
             targetClass = null;
 
-            int varType = value.getVarType().intValue();
-
-            switch (value.getVarType().intValue()) {
+            switch (varType) {
                 case VT_UI1:
                 case VT_I1:
                     targetClass = Byte.class;
