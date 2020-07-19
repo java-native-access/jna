@@ -294,7 +294,7 @@ public class User32WindowMessagesTest extends AbstractWin32TestSupport {
 
     public HWND determineHWNDFromWindowClass(String windowClass) {
         CallBackFindWindowHandleByWindowclass cb = new CallBackFindWindowHandleByWindowclass(windowClass);
-        assertCallSucceeded("Find HWND for " + windowClass, User32.INSTANCE.EnumWindows(cb, null));
+        User32.INSTANCE.EnumWindows(cb, null);
         return cb.getFoundHwnd();
 
     }
