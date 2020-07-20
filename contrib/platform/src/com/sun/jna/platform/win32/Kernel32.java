@@ -26,8 +26,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -42,6 +41,9 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /** The instance. */
     Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
+
+    /** The UTF-8 codepage */
+    int CP_UTF8 = 65001;
 
     /**
      * <strong>LOAD_LIBRARY_AS_DATAFILE</strong> <br>
@@ -4178,4 +4180,113 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * error information, call GetLastError.</p>
      */
     boolean VirtualFreeEx( HANDLE hProcess, Pointer lpAddress, SIZE_T dwSize, int dwFreeType);
+
+    /**
+     * Maps a UTF-16 (wide character) string to a new character string. The new
+     * character string is not necessarily from a multibyte character set.
+     * 
+     * @param CodePage
+     *            Code page to use in performing the conversion. This parameter can
+     *            be set to the value of any code page that is installed or
+     *            available in the operating system.
+     * @param dwFlags
+     *            Flags indicating the conversion type.
+     * @param lpWideCharStr
+     *            Pointer to the Unicode string to convert.
+     * @param cchWideChar
+     *            Size, in characters, of the string indicated by
+     *            {@code lpWideCharStr}. Alternatively, this parameter can be set to
+     *            -1 if the string is null-terminated.
+     *            <p>
+     *            If this parameter is -1, the function processes the entire input
+     *            string, including the terminating null character. Therefore, the
+     *            resulting character string has a terminating null character, and
+     *            the length returned by the function includes this character.
+     *            <p>
+     *            If this parameter is set to a positive integer, the function
+     *            processes exactly the specified number of characters. If the
+     *            provided size does not include a terminating null character, the
+     *            resulting character string is not null-terminated, and the
+     *            returned length does not include this character.
+     * @param lpMultiByteStr
+     *            Pointer to a buffer that receives the converted string.
+     * @param cbMultiByte
+     *            Size, in bytes, of the buffer indicated by {@code lpMultiByteStr}.
+     *            If this parameter is set to 0, the function returns the required
+     *            buffer size for {@code lpMultiByteStr} and makes no use of the
+     *            output parameter itself.
+     * @param lpDefaultChar
+     *            Pointer to the character to use if a character cannot be
+     *            represented in the specified code page. The application sets this
+     *            parameter to NULL if the function is to use a system default
+     *            value. To obtain the system default character, the application can
+     *            call the {@code GetCPInfo} or {@code GetCPInfoEx} function.
+     *            <p>
+     *            For the {@code CP_UTF7} and {@code CP_UTF8} settings for
+     *            {@code CodePage}, this parameter must be set to NULL.
+     * @param lpUsedDefaultChar
+     *            Pointer to a flag that indicates if the function has used a
+     *            default character in the conversion. The flag is set to TRUE if
+     *            one or more characters in the source string cannot be represented
+     *            in the specified code page. Otherwise, the flag is set to FALSE.
+     *            This parameter can be set to NULL.
+     *            <p>
+     *            For the {@code CP_UTF7} and {@code CP_UTF8} settings for
+     *            {@code CodePage}, this parameter must be set to NULL.
+     * @return If successful, returns the number of bytes written to the buffer
+     *         pointed to by {@code lpMultiByteStr}. If the function succeeds and
+     *         {@code cbMultiByte} is 0, the return value is the required size, in
+     *         bytes, for the buffer indicated by {@code lpMultiByteStr}.
+     *         <p>
+     *         The function returns 0 if it does not succeed. To get extended error
+     *         information, the application can call {@link #GetLastError()}
+     */
+    int WideCharToMultiByte(int CodePage, int dwFlags, WString lpWideCharStr, int cchWideChar, Pointer lpMultiByteStr,
+            int cbMultiByte, CHARByReference lpDefaultChar, BOOLByReference lpUsedDefaultChar);
+
+    /**
+     * Maps a character string to a UTF-16 (wide character) string. The character
+     * string is not necessarily from a multibyte character set.
+     * 
+     * @param CodePage
+     *            Code page to use in performing the conversion. This parameter can
+     *            be set to the value of any code page that is installed or
+     *            available in the operating system.
+     * @param dwFlags
+     *            Flags indicating the conversion type.
+     * @param lpMultiByteStr
+     *            Pointer to the character string to convert.
+     * @param cbMultiByte
+     *            Size, in bytes, of the string indicated by the
+     *            {@code lpMultiByteStr} parameter. Alternatively, this parameter
+     *            can be set to -1 if the string is null-terminated.
+     *            <p>
+     *            If this parameter is -1, the function processes the entire input
+     *            string, including the terminating null character. Therefore, the
+     *            resulting Unicode string has a terminating null character, and the
+     *            length returned by the function includes this character.
+     *            <p>
+     *            If this parameter is set to a positive integer, the function
+     *            processes exactly the specified number of bytes. If the provided
+     *            size does not include a terminating null character, the resulting
+     *            Unicode string is not null-terminated, and the returned length
+     *            does not include this character.
+     * @param lpWideCharStr
+     *            Pointer to a buffer that receives the converted string.
+     * @param cchWideChar
+     *            Size, in characters, of the buffer indicated by
+     *            {@code lpWideCharStr}. If this value is 0, the function returns
+     *            the required buffer size, in characters, including any terminating
+     *            null character, and makes no use of the {@code lpWideCharStr}
+     *            buffer.
+     * @return Returns the number of characters written to the buffer indicated by
+     *         {@code lpWideCharStr} if successful. If the function succeeds and
+     *         {@code cchWideChar} is 0, the return value is the required size, in
+     *         characters, for the buffer indicated by {@code lpWideCharStr}.
+     *         <p>
+     *         The function returns 0 if it does not succeed. To get extended error
+     *         information, the application can call {@link #GetLastError()}
+     */
+    int MultiByteToWideChar(int CodePage, int dwFlags, String lpMultiByteStr, int cbMultiByte, Pointer lpWideCharStr,
+            int cchWideChar);
 }

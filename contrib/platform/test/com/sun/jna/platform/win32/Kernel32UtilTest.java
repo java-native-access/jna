@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Tlhelp32.MODULEENTRY32W;
 import com.sun.jna.platform.win32.WinNT.CACHE_RELATIONSHIP;
 import com.sun.jna.platform.win32.WinNT.GROUP_RELATIONSHIP;
@@ -56,6 +57,8 @@ import junit.framework.TestCase;
  * @author markus[at]headcrashing[dot]eu
  */
 public class Kernel32UtilTest extends TestCase {
+
+    private static final String JNA = "𝓙𝓪𝓿𝓪 𝓝𝓪𝓽𝓲𝓿𝓮 𝓐𝓬𝓬𝓮𝓼𝓼";
 
     public static void main(String[] args) throws Exception {
         System.out.println("Computer name: " + Kernel32Util.getComputerName());
@@ -491,5 +494,13 @@ public class Kernel32UtilTest extends TestCase {
                     || cache.type == PROCESSOR_CACHE_TYPE.CacheData || cache.type == PROCESSOR_CACHE_TYPE.CacheTrace);
             assertTrue(cache.associativity == WinNT.CACHE_FULLY_ASSOCIATIVE || cache.associativity > 0);
         }
+    }
+
+    public void testWideCharToUTF8() {
+        assertEquals(JNA, Kernel32Util.WideCharToUTF8(new WString(JNA)));
+    }
+
+    public void testUTF8ToWideChar() {
+        assertEquals(JNA, Kernel32Util.UTF8ToWideChar(JNA).toString());
     }
 }

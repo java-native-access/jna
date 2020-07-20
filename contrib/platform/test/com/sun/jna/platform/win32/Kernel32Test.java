@@ -31,6 +31,7 @@ import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_COMPRESSION;
 import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_REPARSE_POINT;
 import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_COMPRESSION;
 import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_REPARSE_POINT;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,6 +41,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,6 +63,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
@@ -93,6 +96,8 @@ import com.sun.jna.ptr.ShortByReference;
 import junit.framework.TestCase;
 
 public class Kernel32Test extends TestCase {
+
+    private static final String JNA = "𝓙𝓪𝓿𝓪 𝓝𝓪𝓽𝓲𝓿𝓮 𝓐𝓬𝓬𝓮𝓼𝓼";
 
     public static void main(String[] args) {
         OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO();
@@ -1890,5 +1895,37 @@ public class Kernel32Test extends TestCase {
         mutexHandle = Kernel32.INSTANCE.OpenMutex(WinNT.SYNCHRONIZE, false, "JNA-Test-Mutex");
 
         assertNull(mutexHandle);
+    }
+
+    public void testWideCharToMultiByte() {
+        // Add the null character so we get null terminator on output
+        WString utf16str = new WString(JNA + "\u0000");
+        // If cbMultiByte is 0, returns required length
+        int length = Kernel32.INSTANCE.WideCharToMultiByte(Kernel32.CP_UTF8, 0, utf16str, -1, null, 0, null, null);
+        assertNotEquals(0, length);
+        // Allocate the length
+        Memory utf8buffer = new Memory(length);
+        // Get the string
+        assertNotEquals(0, Kernel32.INSTANCE.WideCharToMultiByte(Kernel32.CP_UTF8, 0, utf16str, -1, utf8buffer, length,
+                null, null));
+        // Since we added null terminator on input we get it on output
+        String utf8str = utf8buffer.getString(0, StandardCharsets.UTF_8.name());
+        assertEquals(JNA, utf8str);
+    }
+
+    public void testMultiByteToWideChar() {
+        // Add the null character so we get null terminator on output
+        String utf8str = new String((JNA + "\u0000").getBytes(StandardCharsets.UTF_8));
+
+        // If cchWideChar is 0, returns required length
+        int length = Kernel32.INSTANCE.MultiByteToWideChar(Kernel32.CP_UTF8, 0, utf8str, -1, null, 0);
+        assertNotEquals(0, length);
+        // Allocate the length
+        Memory utf16buffer = new Memory(length);
+        // Get the string
+        assertNotEquals(0,
+                Kernel32.INSTANCE.MultiByteToWideChar(Kernel32.CP_UTF8, 0, utf8str, -1, utf16buffer, length));
+        // Since we added null terminator on input we get it on output
+        assertEquals(JNA, utf16buffer.getWideString(0));
     }
 }

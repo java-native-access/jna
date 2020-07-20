@@ -26,6 +26,7 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.sun.jna.LastErrorException;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -1226,5 +1228,58 @@ public abstract class Kernel32Util implements WinDef {
         } else {
             return resultMemory.getString(0);
         }
+    }
+
+    /**
+     * Convenience function wrapping {@link Kernel32#WideCharToMultiByte} using the
+     * UTF_8 code page.
+     *
+     * @param wideCharStr
+     *            A wide string in native UTF-16 encoding
+     * @return A string in UTF-8 encoding
+     */
+    public static String WideCharToUTF8(WString wideCharStr) {
+        // Add the null character so we get null terminator on output
+        WString utf16str = new WString(wideCharStr + "\u0000");
+        // If cbMultiByte is 0, returns required length
+        int length = Kernel32.INSTANCE.WideCharToMultiByte(Kernel32.CP_UTF8, 0, utf16str, -1, null, 0, null, null);
+        if (length == 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        // Allocate the length
+        Memory utf8buffer = new Memory(length);
+        // Get the string
+        if (0 == Kernel32.INSTANCE.WideCharToMultiByte(Kernel32.CP_UTF8, 0, utf16str, -1, utf8buffer, length, null,
+                null)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        // Since we added null terminator on input we get it on output
+        return utf8buffer.getString(0, StandardCharsets.UTF_8.name());
+    }
+
+    /**
+     * Convenience function wrapping {@link Kernel32#MultiByteToWideChar} using the
+     * UTF_8 code page.
+     *
+     * @param utf8Str
+     *            A string in UTF-8 encoding
+     * @return A wide string in native UTF-16 encoding
+     */
+    public static WString UTF8ToWideChar(String utf8Str) {
+        // Add the null character so we get null terminator on output
+        String utf8str = new String((utf8Str + "\u0000").getBytes(StandardCharsets.UTF_8));
+        // If cchWideChar is 0, returns required length
+        int length = Kernel32.INSTANCE.MultiByteToWideChar(Kernel32.CP_UTF8, 0, utf8str, -1, null, 0);
+        if (length == 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        // Allocate the length
+        Memory utf16buffer = new Memory(length);
+        // Get the string
+        if (0 == Kernel32.INSTANCE.MultiByteToWideChar(Kernel32.CP_UTF8, 0, utf8str, -1, utf16buffer, length)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        // Since we added null terminator on input we get it on output
+        return new WString(utf16buffer.getWideString(0));
     }
 }

@@ -9,6 +9,7 @@ Features
 --------
 * [#1217](https://github.com/java-native-access/jna/pull/1217): Add mappings for AIX `Perfstat` library to `c.s.j.p.unix.aix` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1231](https://github.com/java-native-access/jna/pull/1231): The test suite can now be executed on Windows using either ANSI or UNICODE win32 API by passing `-Dw32.ascii=true/false` to ant. Previously, UNICODE was always used. - [@T-Svensson](https://github.com/T-Svensson/)
+* [#1236](https://github.com/java-native-access/jna/pull/1236): Add `c.s.j.p.win32.Kernel32#MultiByteToWideChar` and `c.s.j.p.win32.Kernel32#WideCharToMultiByte` with util methods for UTF-8. - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
