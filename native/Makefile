@@ -11,7 +11,7 @@
 #
 #   Windows (x86/amd64/aarch64)
 #   Windows CE/Mobile (arm)
-#   Darwin/OS X (i386/x86_64/ppc)
+#   Darwin/OS X (i386/x86_64/ppc/arm64)
 #   Linux (i386/amd64/ppc/arm)
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   AIX (ppc/ppc64)
@@ -392,53 +392,62 @@ endif
 
 
 ifeq ($(OS),darwin)
-XCODE_VERSION=$(shell xcodebuild -version | grep Xcode | sed 's/^Xcode \([1-9]\).*/\1/g')
-JAVA_INCLUDES+=-I/System/Library/Frameworks/JavaVM.framework/Headers
-DEFAULT_ARCH=$(shell arch)
-ARCH=$(shell arch)
-HOST_CONFIG=--host $(ARCH)-apple-darwin
-FFI_ENV += CC="$(CC)" CFLAGS="-arch $(ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) -arch $(ARCH)"
-ALT_ARCHS=
-ifneq ($(ARCH),i386)
-ALT_ARCHS+=i386
-endif
-ifneq ($(ARCH),x86_64)
-ALT_ARCHS+=x86_64
-endif
-ifneq ($(ARCH),ppc)
-ifeq ($(XCODE_VERSION),3)
-# Xcode 3 options
-# not supported on XCode 4+
-ALT_ARCHS+=ppc
-else
-# Xcode 4+ options
-NO_COMPACT_UNWIND=-Wl,-no_compact_unwind
-endif
-endif
-LIBSFX=.dylib
-JNISFX=.jnilib
-ifneq ($(SDKROOT),)
-SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
-ISYSROOT=-isysroot $(SDKROOT)
-ARCHFLAGS=-arch i386 -arch x86_64
-ifeq ($(XCODE_VERSION),3)
-ARCHFLAGS+=-arch ppc
-endif
-endif
+  XCODE_VERSION=$(shell xcodebuild -version | grep Xcode | sed 's/^Xcode \([1-9][0-9]*\).*/\1/g')
+  JAVA_INCLUDES+=-I/System/Library/Frameworks/JavaVM.framework/Headers
+  DEFAULT_ARCH=$(shell arch)
+  ARCH=$(shell arch)
+  HOST_CONFIG=--host $(ARCH)-apple-darwin
+  FFI_ENV += CC="$(CC)" CFLAGS="-arch $(ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) -arch $(ARCH)"
+  ALT_ARCHS=
+  ARCHFLAGS=-arch $(ARCH)
 
-PCFLAGS+=$(ISYSROOT) -x objective-c
-# JAWT no longer supported on OSX
-CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT -DNO_JAWT
-LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
-  -compatibility_version $(shell echo ${JNA_JNI_VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
-  -current_version $(JNA_JNI_VERSION) \
-  -mmacosx-version-min=10.3 \
-  -framework Foundation \
-  $(NO_COMPACT_UNWIND) \
-  -install_name ${@F} \
-  $(SYSLIBROOT)
-# JAWT linkage handled by -framework JavaVM
-LIBS=
+  # No universal binary for arm64
+  ifneq ($(ARCH),arm64)
+    ifneq ($(ARCH),i386)
+      ifeq ($(shell test $(XCODE_VERSION) -lt 10; echo $$?),0)
+        ALT_ARCHS+=i386
+        ARCHFLAGS+=-arch i386
+      endif
+    endif
+    ifneq ($(ARCH),x86_64)
+      ALT_ARCHS+=x86_64
+      ARCHFLAGS+=-arch x86_64
+    endif
+    ifneq ($(ARCH),ppc)
+      ifeq ($(XCODE_VERSION),3)
+        # Xcode 3 options
+        # not supported on XCode 4+
+        ALT_ARCHS+=ppc
+        ARCHFLAGS+=-arch ppc
+      else
+        # Xcode 4+ options
+        NO_COMPACT_UNWIND=-Wl,-no_compact_unwind
+      endif
+    endif
+  endif
+
+  LIBSFX=.dylib
+  JNISFX=.jnilib
+  ifneq ($(SDKROOT),)
+    SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
+    ISYSROOT=-isysroot $(SDKROOT)
+  endif
+
+  PCFLAGS+=$(ISYSROOT) -x objective-c
+  # JAWT no longer supported on OSX
+  CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT -DNO_JAWT
+  LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ \
+    -compatibility_version $(shell echo ${JNA_JNI_VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
+    -current_version $(JNA_JNI_VERSION) \
+    -mmacosx-version-min=10.3 \
+    -framework Foundation \
+    $(NO_COMPACT_UNWIND) \
+    -install_name ${@F} \
+    $(SYSLIBROOT)
+  ifeq ($(shell test $(XCODE_VERSION) -lt 12; echo $$?),0)
+    # JAWT linkage handled by -framework JavaVM
+    LIBS+=-framework JavaVM
+  endif
 endif
 
 # Unfortunately, we have to use different libffi include files depending on
