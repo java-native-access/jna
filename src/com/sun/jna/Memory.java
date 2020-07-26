@@ -22,12 +22,9 @@
  */
 package com.sun.jna;
 
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.ArrayList;
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a
@@ -51,9 +48,71 @@ import java.util.WeakHashMap;
  * @see Pointer
  */
 public class Memory extends Pointer {
-    /** Keep track of all allocated memory so we can dispose of it before unloading. */
-    private static final Map<Memory, Boolean> allocatedMemory =
-            Collections.synchronizedMap(new WeakHashMap<Memory, Boolean>());
+
+    /**
+     * Keep track of all allocated memory so we can dispose of it before
+     * unloading. This is done using a doubly linked list to enable fast
+     * removal of tracked instances.
+     */
+    private static class LinkedReference extends WeakReference<Memory> {
+
+        private LinkedReference next;
+        private LinkedReference prev;
+
+        private LinkedReference(Memory referent) {
+            super(referent);
+        }
+
+        /**
+         * Add the given {@code instance} to the instance tracking.
+         *
+         * @param instance the instance to track
+         */
+        static LinkedReference track(Memory instance) {
+            // keep object allocation outside the syncronized block
+            LinkedReference entry = new LinkedReference(instance);
+
+            synchronized (LinkedReference.class) {
+                if (HEAD != null) {
+                    entry.next = HEAD;
+                    HEAD = HEAD.prev = entry;
+                } else {
+                    HEAD = entry;
+                }
+            }
+
+            return entry;
+        }
+
+        /**
+         * Remove the related instance from tracking and update the linked list.
+         */
+        private void unlink() {
+            synchronized (LinkedReference.class) {
+                LinkedReference next;
+
+                if (HEAD != this) {
+                    if (this.prev == null) {
+                        // this entry was detached before, e.g. disposeAll was called and finalizers are running now
+                        return;
+                    }
+
+                    next = this.prev.next = this.next;
+                } else {
+                    next = HEAD = HEAD.next;
+                }
+
+                if (next != null) {
+                    next.prev = this.prev;
+                }
+
+                // set prev to null to detect detached entries
+                this.prev = null;
+            }
+        }
+    }
+
+    private static LinkedReference HEAD; // the head of the doubly linked list used for instance tracking
 
     private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
@@ -66,13 +125,62 @@ public class Memory extends Pointer {
 
     /** Dispose of all allocated memory. */
     public static void disposeAll() {
-        // use a copy since dispose() modifies the map
-        Collection<Memory> refs = new LinkedList<Memory>(allocatedMemory.keySet());
-        for (Memory r : refs) {
-            r.dispose();
+        synchronized (LinkedReference.class) {
+            LinkedReference entry;
+
+            while ((entry = HEAD) != null) {
+                Memory memory = HEAD.get();
+
+                if (memory != null) {
+                    // dispose does the unlink call internal
+                    memory.dispose();
+                } else {
+                    HEAD.unlink();
+                }
+
+                if (HEAD == entry) {
+                    throw new IllegalStateException("the HEAD did not change");
+                }
+            }
         }
     }
 
+    /**
+     * Unit-testing only, ensure the doubly linked list is in a good shape.
+     *
+     * @return the number of tracked instances
+     */
+    static int integrityCheck() {
+        synchronized (LinkedReference.class) {
+            if (HEAD == null) {
+                return 0;
+            }
+
+            ArrayList<LinkedReference> entries = new ArrayList<LinkedReference>();
+            LinkedReference entry = HEAD;
+
+            while (entry != null) {
+                entries.add(entry);
+                entry = entry.next;
+            }
+
+            int index = entries.size() - 1;
+            entry = entries.get(index);
+
+            while (entry != null) {
+                if (entries.get(index) != entry) {
+                    throw new IllegalStateException(entries.get(index) + " vs. " + entry + " at index " + index);
+                }
+
+                entry = entry.prev;
+                index--;
+            }
+
+            return entries.size();
+        }
+    }
+
+    private final LinkedReference reference; // used to track the instance
     protected long size; // Size of the malloc'ed space
 
     /** Provide a view into the original memory.  Keeps an implicit reference
@@ -113,11 +221,13 @@ public class Memory extends Pointer {
         if (peer == 0)
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
 
-        allocatedMemory.put(this, Boolean.TRUE);
+        reference = LinkedReference.track(this);
     }
 
     protected Memory() {
         super();
+
+        reference = null;
     }
 
     /** Provide a view of this memory using the given offset as the base address.  The
@@ -182,11 +292,18 @@ public class Memory extends Pointer {
 
     /** Free the native memory and set peer to zero */
     protected synchronized void dispose() {
+        if (peer == 0) {
+            // someone called dispose before, the finalizer will call dispose again
+            return;
+        }
+
         try {
             free(peer);
         } finally {
-            allocatedMemory.remove(this);
             peer = 0;
+            // no null check here, tracking is only null for SharedMemory
+            // SharedMemory is overriding the dispose method
+            reference.unlink();
         }
     }
 
