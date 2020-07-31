@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -127,6 +128,16 @@ public abstract class Structure {
      */
     public interface ByReference { }
 
+    private static class PointerTracking {
+        private final Pointer pointer;
+        private final Object value;
+
+        PointerTracking(Pointer pointer, Object value) {
+            this.pointer = pointer;
+            this.value = value;
+        }
+    }
+
     /** Use the platform default alignment. */
     public static final int ALIGN_DEFAULT = 0;
     /** No alignment, place all fields on nearest 1-byte boundary */
@@ -157,7 +168,7 @@ public abstract class Structure {
     private Map<String, StructField> structFields;
     // Keep track of native C strings which have been allocated,
     // corresponding to String fields of this Structure
-    private final Map<String, Object> nativeStrings = new HashMap<String, Object>();
+    private final Map<StructField, PointerTracking> nativeStrings = new IdentityHashMap<StructField, PointerTracking>();
     private TypeMapper typeMapper;
     // This field is accessed by native code
     private long typeInfo;
@@ -508,8 +519,9 @@ public abstract class Structure {
             if (!contains(o)) {
                 ensureCapacity(count+1);
                 elements[count++] = o;
+                return true;
             }
-            return true;
+            return false;
         }
         private int indexOf(Structure s1) {
             for (int i=0;i < count;i++) {
@@ -579,10 +591,10 @@ public abstract class Structure {
         ensureAllocated();
 
         // Avoid redundant reads
-        if (busy().contains(this)) {
+        if (!busy().add(this)) {
             return;
         }
-        busy().add(this);
+
         if (this instanceof Structure.ByReference) {
             reading().put(getPointer(), this);
         }
@@ -593,7 +605,7 @@ public abstract class Structure {
         }
         finally {
             busy().remove(this);
-            if (reading().get(getPointer()) == this) {
+            if (this instanceof Structure.ByReference && reading().get(getPointer()) == this) {
                 reading().remove(getPointer());
             }
         }
@@ -740,8 +752,7 @@ public abstract class Structure {
 
         if (fieldType.equals(String.class)
             || fieldType.equals(WString.class)) {
-            nativeStrings.put(structField.name + ".ptr", memory.getPointer(offset));
-            nativeStrings.put(structField.name + ".val", result);
+            nativeStrings.put(structField, new PointerTracking(memory.getPointer(offset), result));
         }
 
         // Update the value on the Java field
@@ -769,10 +780,10 @@ public abstract class Structure {
         }
 
         // Avoid redundant writes
-        if (busy().contains(this)) {
+        if (!busy().add(this)) {
             return;
         }
-        busy().add(this);
+
         try {
             // Write all fields, except those marked 'volatile'
             for (StructField sf : fields().values()) {
@@ -845,8 +856,8 @@ public abstract class Structure {
             if (value != null) {
                 // If we've already allocated a native string here, and the
                 // string value is unchanged, leave it alone
-                if (nativeStrings.containsKey(structField.name + ".ptr")
-                    && value.equals(nativeStrings.get(structField.name + ".val"))) {
+                PointerTracking tracking = nativeStrings.get(structField);
+                if (tracking != null && value.equals(tracking.value)) {
                     return;
                 }
                 NativeString nativeString = wide
@@ -854,14 +865,12 @@ public abstract class Structure {
                     : new NativeString(value.toString(), encoding);
                 // Keep track of allocated C strings to avoid
                 // premature garbage collection of the memory.
-                nativeStrings.put(structField.name, nativeString);
+                nativeStrings.put(structField, new PointerTracking(nativeString.getPointer(), nativeString));
                 value = nativeString.getPointer();
             }
             else {
-                nativeStrings.remove(structField.name);
+                nativeStrings.remove(structField);
             }
-            nativeStrings.remove(structField.name + ".ptr");
-            nativeStrings.remove(structField.name + ".val");
         }
 
         try {
