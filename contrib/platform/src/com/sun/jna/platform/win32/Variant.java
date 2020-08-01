@@ -478,9 +478,9 @@ public interface Variant {
         }
 
         public Object getValue() {
-            this.read();
+            // this.read() is called by this.getVarType()
             int varType = this.getVarType().intValue();
-            switch (this.getVarType().intValue()) {
+            switch (varType) {
                 case VT_UI1:
                     return this._variant.__variant.readField("bVal");
                 case VT_I2:

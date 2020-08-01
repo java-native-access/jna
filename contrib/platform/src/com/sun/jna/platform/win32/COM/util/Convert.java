@@ -260,30 +260,22 @@ class Convert {
             result = value.dateValue();
         } else if (String.class.equals(targetClass)) {
             result = value.stringValue();
-        } else if (value.getValue() instanceof com.sun.jna.platform.win32.COM.Dispatch) {
-            com.sun.jna.platform.win32.COM.Dispatch d = (com.sun.jna.platform.win32.COM.Dispatch) value.getValue();
-            if (targetClass != null && targetClass.isInterface()) {
-                Object proxy = factory.createProxy(targetClass, d);
-                // must release a COM reference, createProxy adds one, as does the
-                // call
-                if (!addReference) {
-                    int n = d.Release();
-                }
-                result = proxy;
-            } else {
-                result = d;
-            }
         } else {
-            /*
-                WinDef.SCODE.class.equals(targetClass)
-                    || OaIdl.CURRENCY.class.equals(targetClass)
-                    || OaIdl.DECIMAL.class.equals(targetClass)
-                    || OaIdl.SAFEARRAY.class.equals(targetClass)
-                    || com.sun.jna.platform.win32.COM.IUnknown.class.equals(targetClass)
-                    || Variant.class.equals(targetClass)
-                    || PVOID.class.equals(targetClass
-             */
             result = value.getValue();
+            if (result instanceof com.sun.jna.platform.win32.COM.Dispatch) {
+                com.sun.jna.platform.win32.COM.Dispatch d = (com.sun.jna.platform.win32.COM.Dispatch) result;
+                if (targetClass != null && targetClass.isInterface()) {
+                    Object proxy = factory.createProxy(targetClass, d);
+                    // must release a COM reference, createProxy adds one, as does the
+                    // call
+                    if (!addReference) {
+                        int n = d.Release();
+                    }
+                    result = proxy;
+                } else {
+                    result = d;
+                }
+            }
         }
 
         if (IComEnum.class.isAssignableFrom(targetClass)) {
