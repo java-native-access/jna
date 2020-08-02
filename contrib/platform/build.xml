@@ -2,7 +2,9 @@
 <project name="platform"
          default="default"
          basedir="."
-         xmlns:as="antlib:org.codehaus.mojo.animal_sniffer">
+         xmlns:as="antlib:org.codehaus.mojo.animal_sniffer"
+         xmlns:if="ant:if"
+         xmlns:unless="ant:unless">
     <description>Builds and tests platform-specific code.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -111,32 +113,40 @@
         </macrodef>
     </target>
 
-    <target name="-pre-jar">
-        <tempfile deleteonexit="true" destdir="${build.dir}" property="tmp.manifest.file"/>
-        <manifest file="${tmp.manifest.file}" mode="replace">
-            <attribute name="Manifest-Version" value="1.0"/>
-            <attribute name="Implementation-Title" value="${impl.title}"/>
-            <attribute name="Implementation-Vendor" value="${vendor}"/>
-            <attribute name="Implementation-Version" value="${impl.version}"/>
-            <attribute name="Specification-Title" value="${spec.title}"/>
-            <attribute name="Specification-Vendor" value="${spec.vendor}"/>
-            <attribute name="Specification-Version" value="${spec.version}"/>
-            <attribute name="Automatic-Module-Name" value="com.sun.jna.platform"/>
-            <!--
-               OSGi Bundle attributes
-               See http://www.osgi.org/Specifications/Reference
-             -->
-            <attribute name="Bundle-Category" value="jni"/>
-            <attribute name="Bundle-ManifestVersion" value="2"/>
-            <attribute name="Bundle-Name" value="jna-platform"/>
-            <attribute name="Bundle-Description" value="JNA Platform Library"/>
-            <attribute name="Bundle-SymbolicName" value="com.sun.jna.platform"/>
-            <attribute name="Bundle-Version" value="${osgi.version}"/>
-            <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
-            <attribute name="Bundle-Vendor" value="${vendor}"/>
-            <attribute name="Require-Bundle" value="com.sun.jna;bundle-version=&quot;${osgi.version}&quot;"/>
-            <attribute name="Export-Package"
-                   value="
+    <target name="-prepare-anttools">
+        <subant antfile="build-ant-tools.xml" buildpath="${basedir}/../../"></subant>
+        <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${basedir}/../../build/ant-tools:${basedir}/../../lib/asm-8.0.1.jar" />
+        <taskdef name="CalcAndroidVersion" classname="com.sun.jna.ant.CalcAndroidVersion" classpath="${basedir}/../../build/ant-tools:${basedir}/../../lib/asm-8.0.1.jar" />
+        <taskdef name="ModuleGenerator" classname="com.sun.jna.ant.ModuleGenerator" classpath="${basedir}/../../build/ant-tools:${basedir}/../../lib/asm-8.0.1.jar" />
+    </target>
+
+    <macrodef name="build-manifest">
+        <attribute name="target" />
+        <attribute name="module-info" default="false" />
+        <sequential>
+            <manifest file="@{target}" mode="replace">
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Implementation-Title" value="${impl.title}"/>
+                <attribute name="Implementation-Vendor" value="${vendor}"/>
+                <attribute name="Implementation-Version" value="${impl.version}"/>
+                <attribute name="Specification-Title" value="${spec.title}"/>
+                <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+                <attribute name="Specification-Version" value="${spec.version}"/>
+                <!--
+                  OSGi Bundle attributes
+                  See http://www.osgi.org/Specifications/Reference
+                -->
+                <attribute name="Bundle-Category" value="jni"/>
+                <attribute name="Bundle-ManifestVersion" value="2"/>
+                <attribute name="Bundle-Name" value="jna-platform"/>
+                <attribute name="Bundle-Description" value="JNA Platform Library"/>
+                <attribute name="Bundle-SymbolicName" value="com.sun.jna.platform"/>
+                <attribute name="Bundle-Version" value="${osgi.version}"/>
+                <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
+                <attribute name="Bundle-Vendor" value="${vendor}"/>
+                <attribute name="Require-Bundle" value="com.sun.jna;bundle-version=&quot;${osgi.version}&quot;"/>
+                <attribute name="Export-Package"
+                           value="
 com.sun.jna.platform;version=${osgi.version},
 com.sun.jna.platform.dnd;version=${osgi.version},
 com.sun.jna.platform.linux;version=${osgi.version},
@@ -152,12 +162,62 @@ com.sun.jna.platform.win32.COM.util;version=${osgi.version},
 com.sun.jna.platform.win32.COM.util.annotation;version=${osgi.version},
 com.sun.jna.platform.wince;version=${osgi.version}
 "/>
-        </manifest>
+            </manifest>
+            <manifest file="@{target}" mode="update" if:true="@{module-info}">
+                <attribute name="Multi-Release" value="true"/>
+            </manifest>
+            <manifest file="@{target}" mode="update" unless:true="@{module-info}">
+                <attribute name="Automatic-Module-Name" value="com.sun.jna.platform"/>
+            </manifest>
+        </sequential>
+    </macrodef>
+
+    <target name="-pre-jar" depends="-prepare-anttools">
         <delete dir="${build.classes.dir}/META-INF" />
         <mkdir dir="${build.classes.dir}/META-INF"/>
         <copy todir="${build.classes.dir}/META-INF">
             <fileset dir="../../" includes="LICENSE,AL2.0,LGPL2.1"/>
         </copy>
+    </target>
+
+    <target name="-post-jar" depends="-prepare-anttools">
+        <delete dir="${build.dir}/manifest"/>
+        <mkdir dir="${build.dir}/manifest"/>
+        <build-manifest target="${build.dir}/manifest/module.mf" module-info="true"/>
+        <build-manifest target="${build.dir}/manifest/automatic.mf" module-info="false"/>
+        <ModuleGenerator
+            targetFile="${build.dir}/manifest/module-info.class"
+            name="com.sun.jna.platform"
+            version="${osgi.version}"
+            open="false"
+        >
+            <exports package="com.sun.jna.platform" />
+            <exports package="com.sun.jna.platform.dnd" />
+            <exports package="com.sun.jna.platform.linux" />
+            <exports package="com.sun.jna.platform.mac" />
+            <exports package="com.sun.jna.platform.unix" />
+            <exports package="com.sun.jna.platform.unix.aix" />
+            <exports package="com.sun.jna.platform.unix.solaris" />
+            <exports package="com.sun.jna.platform.win32" />
+            <exports package="com.sun.jna.platform.win32.COM" />
+            <exports package="com.sun.jna.platform.win32.COM.tlb" />
+            <exports package="com.sun.jna.platform.win32.COM.tlb.imp" />
+            <exports package="com.sun.jna.platform.win32.COM.util" />
+            <exports package="com.sun.jna.platform.win32.COM.util.annotation" />
+            <exports package="com.sun.jna.platform.wince" />
+            <requires module="java.logging" />
+            <requires module="java.desktop" />
+            <requires module="java.datatransfer" />
+            <requires module="com.sun.jna" />
+        </ModuleGenerator>
+        <move file="dist/jna-platform.jar" tofile="${build.dir}/jna-platform-base.jar" />
+        <jar jarfile="dist/jna-platform.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build.dir}/manifest/automatic.mf">
+            <zipfileset src="${build.dir}/jna-platform-base.jar" excludes="META-INF/MANIFEST.mf"/>
+        </jar>
+        <jar jarfile="dist/jna-platform-jpms.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build.dir}/manifest/module.mf">
+            <zipfileset src="${build.dir}/jna-platform-base.jar" excludes="META-INF/MANIFEST.mf"/>
+            <zipfileset dir="${build.dir}/manifest/" includes="module-info.class" prefix="META-INF/versions/9"/>
+        </jar>
     </target>
 
     <condition property="compatibility-check" value="true">
@@ -183,8 +243,8 @@ com.sun.jna.platform.wince;version=${osgi.version}
     <target name="test" depends="init,compile,compile-test,-pre-test-run,-check-java6-compatibility,-warn-java6-compatiblity" description="Run platform unit tests.">
       <echo>Running platform tests: ${test.src.dir}</echo>
       <property name="test.fork" value="yes"/>
-      <property name="reports.junit" location="${build}/reports/junit/${os.prefix}"/>
-      <property name="results.junit" location="${build}/junit-results/${os.prefix}"/>
+      <property name="reports.junit" location="${build.dir}/reports/junit/${os.prefix}"/>
+      <property name="results.junit" location="${build.dir}/junit-results/${os.prefix}"/>
       <mkdir dir="${results.junit}"/>
       <echo>Saving test results in ${results.junit}</echo>
       <condition property="tests.platform.mac" value="**/mac/**/*Test.java">

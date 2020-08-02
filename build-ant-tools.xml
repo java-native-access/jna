@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JNA" default="default" basedir=".">
+    <description>Builds and tests JNA</description>
+    <property name="build" value="build" />
+    <target name="default">
+        <mkdir dir="${build}/ant-tools" />
+        <javac classpath="lib/ant.jar:lib/asm-8.0.1.jar"
+               destdir="${build}/ant-tools"
+               includeantruntime="false"
+               encoding="UTF-8"
+        >
+            <src path="src" />
+            <src path="ant-tools-src" />
+            <include name="**/ELFAnalyser.java" />
+            <include name="**/BuildArmSoftFloatDetector.java" />
+            <include name="**/ant/*.java" />
+            <include name="**/ModuleGenerator.java" />
+        </javac>
+    </target>
+</project>

@@ -2,7 +2,8 @@
 <project name="JNA" default="default" basedir="." 
          xmlns:artifact="antlib:org.apache.maven.artifact.ant"
          xmlns:as="antlib:org.codehaus.mojo.animal_sniffer"
-         xmlns:if="ant:if">
+         xmlns:if="ant:if"
+         xmlns:unless="ant:unless">
   <description>Builds and tests JNA</description>
 
   <!-- Default build compiles all platform-independent stuff as well
@@ -37,6 +38,7 @@
   <property name="aar" value="${name}.aar"/>
   <property name="minjar" value="${name}-min.jar"/>
   <property name="testjar" value="${name}-test.jar"/>
+  <property name="jar-jpms" value="${name}-jpms.jar"/>
   <property name="debug" value="true"/>
   <property name="debug.native" value="false"/>
   <property name="cflags_extra.native" value=""/>
@@ -123,6 +125,7 @@
   </condition>
   <property name="dist-jar" value="${dist}/${jar}"/>
   <property name="dist-aar" value="${dist}/${aar}"/>
+  <property name="dist-jar-jpms" value="${dist}/${jar-jpms}"/>
 
   <!-- Maven -->
   <!-- define Maven coordinates -->
@@ -135,6 +138,7 @@
   <property name="platform-jar" value="${dist}/jna-platform.jar"/>
   <property name="platform-javadoc-jar" value="${dist}/platform-${jna.version}-javadoc.jar" />
   <property name="platform-sources-jar" value="${dist}/platform-${jna.version}-sources.jar" />
+  <property name="platform-jpms-jar" value="${dist}/jna-platform-jpms.jar" />
 
   <!-- defined maven snapshots and staging repository id and url -->
   <property name="maven-snapshots-repository-id" value="oss.sonatype.org" />
@@ -171,20 +175,10 @@
            classpathref="maven-ant-tasks.classpath" />
 
   <target name="-prepare-anttools">
-      <mkdir dir="${build}/ant-tools" />
-      <javac classpath="lib/ant.jar"
-             destdir="${build}/ant-tools"
-             includeantruntime="false"
-             encoding="UTF-8"
-      >
-          <src path="src" />
-          <src path="ant-tools-src" />
-          <include name="**/ELFAnalyser.java" />
-          <include name="**/BuildArmSoftFloatDetector.java" />
-          <include name="**/CalcAndroidVersion.java" />
-      </javac>
-      <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${build}/ant-tools" />
-      <taskdef name="CalcAndroidVersion" classname="com.sun.jna.CalcAndroidVersion" classpath="${build}/ant-tools" />
+      <subant antfile="build-ant-tools.xml" buildpath="${basedir}"></subant>
+      <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${build}/ant-tools:$lib/asm-8.0.1.jar" />
+      <taskdef name="CalcAndroidVersion" classname="com.sun.jna.ant.CalcAndroidVersion" classpath="${build}/ant-tools:lib/asm-8.0.1.jar" />
+      <taskdef name="ModuleGenerator" classname="com.sun.jna.ant.ModuleGenerator" classpath="${build}/ant-tools:lib/asm-8.0.1.jar" />
   </target>
 
   <target name="-dynamic-properties" depends="-prepare-anttools">
@@ -431,36 +425,38 @@
     <!-- Bundle native components with primary jar to facilitate
          easy distribution to common platforms.
       -->
-    <jar jarfile="${build}/${jar}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
-      <manifest>
-        <attribute name="Main-Class" value="com.sun.jna.Native"/>
-        <attribute name="Manifest-Version" value="1.0"/>
-        <attribute name="Implementation-Title" value="${impl.title}"/>
-        <attribute name="Implementation-Vendor" value="${vendor}"/>
-        <attribute name="Implementation-Version" value="${impl.version}"/>
-        <attribute name="Specification-Title" value="${spec.title}"/>
-        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
-        <attribute name="Specification-Version" value="${spec.version}"/>
-        <attribute name="Automatic-Module-Name" value="com.sun.jna"/>
-        <!--
-            OSGi Bundle attributes
-            See http://www.osgi.org/Specifications/Reference
-          -->
-        <attribute name="Bundle-Category" value="jni"/>
-        <attribute name="Bundle-ManifestVersion" value="2"/>
-        <attribute name="Bundle-Name" value="jna"/>
-        <attribute name="Bundle-Description" value="JNA Library"/>
-        <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
-        <attribute name="Bundle-Version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
-        <attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
-        <attribute name="Bundle-Vendor" value="${vendor}"/>
-        <attribute name="Bundle-ActivationPolicy" value="lazy"/>
-        <attribute name="Export-Package" value="com.sun.jna;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.ptr;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.win32;version=${jna.major}.${jna.minor}.${jna.revision}"/>
-        <!-- Note that no terminal "*" is included in this list,
-             which will force failure on unsupported platforms.
-          -->
-        <attribute name="Bundle-NativeCode"
-                   value="
+  <macrodef name="build-manifest">
+      <attribute name="target" />
+      <attribute name="module-info" default="false" />
+      <sequential>
+          <manifest file="@{target}" mode="replace">
+              <attribute name="Main-Class" value="com.sun.jna.Native"/>
+              <attribute name="Manifest-Version" value="1.0"/>
+              <attribute name="Implementation-Title" value="${impl.title}"/>
+              <attribute name="Implementation-Vendor" value="${vendor}"/>
+              <attribute name="Implementation-Version" value="${impl.version}"/>
+              <attribute name="Specification-Title" value="${spec.title}"/>
+              <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+              <attribute name="Specification-Version" value="${spec.version}"/>
+              <!--
+                OSGi Bundle attributes
+                See http://www.osgi.org/Specifications/Reference
+              -->
+              <attribute name="Bundle-Category" value="jni"/>
+              <attribute name="Bundle-ManifestVersion" value="2"/>
+              <attribute name="Bundle-Name" value="jna"/>
+              <attribute name="Bundle-Description" value="JNA Library"/>
+              <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
+              <attribute name="Bundle-Version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
+              <attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
+              <attribute name="Bundle-Vendor" value="${vendor}"/>
+              <attribute name="Bundle-ActivationPolicy" value="lazy"/>
+              <attribute name="Export-Package" value="com.sun.jna;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.ptr;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.win32;version=${jna.major}.${jna.minor}.${jna.revision}"/>
+              <!-- Note that no terminal "*" is included in this list,
+                 which will force failure on unsupported platforms.
+              -->
+              <attribute name="Bundle-NativeCode"
+                         value="
 com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win32,
 com/sun/jna/win32-x86-64/jnidispatch.dll;
@@ -525,7 +521,34 @@ processor=x86-64;osname=openbsd,
 com/sun/jna/darwin/libjnidispatch.jnilib;
 osname=macosx;processor=x86;processor=x86-64;processor=ppc
 "/>
-      </manifest>
+          </manifest>
+          <manifest file="@{target}" mode="update" if:true="@{module-info}">
+              <attribute name="Multi-Release" value="true"/>
+          </manifest>
+          <manifest file="@{target}" mode="update" unless:true="@{module-info}">
+              <attribute name="Automatic-Module-Name" value="com.sun.jna"/>
+          </manifest>
+      </sequential>
+  </macrodef>
+    <delete dir="${build}/manifest"/>
+    <mkdir dir="${build}/manifest"/>
+    <build-manifest target="${build}/manifest/module.mf" module-info="true"/>
+    <build-manifest target="${build}/manifest/automatic.mf" module-info="false"/>
+    <ModuleGenerator
+        targetFile="${build}/manifest/module-info.class"
+        name="com.sun.jna"
+        version="${jna.major}.${jna.minor}.${jna.revision}"
+        open="false"
+    >
+        <exports package="com.sun.jna" />
+        <exports package="com.sun.jna.ptr" />
+        <exports package="com.sun.jna.win32" />
+        <exports package="com.sun.jna.internal" to="com.sun.jna.platform"/>
+        <requires module="java.logging" />
+        <requires module="java.desktop" />
+        <opens package="com.sun.jna.darwin" />
+    </ModuleGenerator>
+    <jar jarfile="${build}/${jar}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build}/manifest/automatic.mf">
       <fileset dir="${classes}" excludes="${jar.omitted}">
         <patternset refid="jar-compiled"/>
       </fileset>
@@ -614,6 +637,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <zip zipfile="${build}/${minjar}">
       <zipfileset src="${build}/${jar}" excludes="**/*jnidispatch*"/>
     </zip>
+    <jar jarfile="${build}/jna-jpms.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build}/manifest/module.mf">
+      <zipfileset src="${build}/${jar}" excludes="META-INF/MANIFEST.mf"/>
+      <zipfileset dir="${build}/manifest/" includes="module-info.class" prefix="META-INF/versions/9"/>
+    </jar>
   </target>
 
   <target name="aar" depends="jar" description="Build Android Archive">
@@ -1363,8 +1390,8 @@ cd ..
   <target name="dist" depends="jar,aar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}" force="true" overwrite="true">
-      <fileset dir="${build}" includes="${jar},${minjar},${aar}"/>
-      <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar"/>
+      <fileset dir="${build}" includes="${jar},${minjar},${aar},${jar-jpms}"/>
+      <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar,jna-platform-jpms.jar"/>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
         <exclude name="out-of-date.jar"/>
@@ -1437,10 +1464,26 @@ cd ..
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${dist-jar-jpms}"/>
+      <arg value="-Dclassifier=jpms"/>
+      <arg value="-Dpackaging=jar"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
       <arg value="-Dsources=${platform-sources-jar}"/>
       <arg value="-Djavadoc=${platform-javadoc-jar}"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
+      <arg value="-DpomFile=${pom-platform}"/>
+      <arg value="-Dfile=${platform-jpms-jar}"/>
+      <arg value="-Dclassifier=jpms"/>
+      <arg value="-Dpackaging=jar"/>
     </artifact:mvn>
   </target>
 
@@ -1452,9 +1495,9 @@ cd ..
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
-      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-aar}"/>
-      <arg value="-Dtypes=jar,jar,aar"/>
-      <arg value="-Dclassifiers=sources,javadoc,"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-jar-jpms},${dist-aar}"/>
+      <arg value="-Dtypes=jar,jar,jar,aar"/>
+      <arg value="-Dclassifiers=sources,javadoc,jpms,"/>
     </artifact:mvn>
 
     <artifact:mvn failonerror="true">
@@ -1463,9 +1506,9 @@ cd ..
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
-      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
-      <arg value="-Dtypes=jar,jar"/>
-      <arg value="-Dclassifiers=sources,javadoc"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar},${platform-jpms-jar}"/>
+      <arg value="-Dtypes=jar,jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc,jpms"/>
     </artifact:mvn>
   </target>
 
@@ -1480,9 +1523,9 @@ cd ..
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
-      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-aar}"/>
-      <arg value="-Dclassifiers=sources,javadoc,"/>
-      <arg value="-Dtypes=jar,jar,aar"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-jar-jpms},${dist-aar}"/>
+      <arg value="-Dclassifiers=sources,javadoc,jpms,"/>
+      <arg value="-Dtypes=jar,jar,jar,aar"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
@@ -1493,9 +1536,9 @@ cd ..
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
-      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
-      <arg value="-Dclassifiers=sources,javadoc"/>
-      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar},${platform-jpms-jar}"/>
+      <arg value="-Dclassifiers=sources,javadoc,jpms"/>
+      <arg value="-Dtypes=jar,jar,jar"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
   </target>
