@@ -1607,6 +1607,38 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     boolean GetClassInfoEx(HINSTANCE hinst, String lpszClass, WNDCLASSEX lpwcx);
 
     /**
+     * Passes message information to the specified window procedure.
+     *
+     * @param lpPrevWndFunc
+     *            The previous window procedure. If this value is obtained by calling
+     *            the GetWindowLong function with the nIndex parameter set to GWL_WNDPROC
+     *            or DWL_DLGPROC, it is actually either the address of a window or dialog
+     *            box procedure, or a special internal value meaningful only to
+     *            CallWindowProc.
+     *
+     * @param hWnd
+     *            A handle to the window procedure to receive the message.
+     *
+     * @param Msg
+     *            The message.
+     *
+     * @param wParam
+     *            Additional message information. The content of this parameter
+     *            depends on the value of the Msg parameter.
+     *
+     * @param lParam
+     *            Additional message information. The content of this parameter
+     *            depends on the value of the Msg parameter.
+     *
+     * @return The return value is the result of the message processing and depends on
+     *         the message.
+     *         <p>
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call {@link Kernel32#GetLastError}.
+     */
+    LRESULT CallWindowProc(Pointer lpPrevWndFunc, HWND hWnd, int Msg, WPARAM wParam, LPARAM lParam);
+
+    /**
      * Calls the default window procedure to provide default processing for any
      * window messages that an application does not process. This function
      * ensures that every message is processed. DefWindowProc is called with the
