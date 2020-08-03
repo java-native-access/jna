@@ -22,6 +22,7 @@
  */
 package com.sun.jna;
 
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ import java.util.ArrayList;
  */
 public class Memory extends Pointer {
 
+    private static ReferenceQueue<Memory> QUEUE = new ReferenceQueue<Memory>();
+    private static LinkedReference HEAD; // the head of the doubly linked list used for instance tracking
+
     /**
      * Keep track of all allocated memory so we can dispose of it before
      * unloading. This is done using a doubly linked list to enable fast
@@ -60,7 +64,7 @@ public class Memory extends Pointer {
         private LinkedReference prev;
 
         private LinkedReference(Memory referent) {
-            super(referent);
+            super(referent, QUEUE);
         }
 
         /**
@@ -69,6 +73,23 @@ public class Memory extends Pointer {
          * @param instance the instance to track
          */
         static LinkedReference track(Memory instance) {
+            // use a different lock here to allow the finialzier to unlink elements too
+            synchronized (QUEUE) {
+                LinkedReference stale;
+
+                // handle stale references here to avoid GC overheating when memory is limited
+                while ((stale = (LinkedReference) QUEUE.poll()) != null) {
+                    Memory memory = stale.get();
+
+                    if (memory != null) {
+                        // dispose does the unlink call internal
+                        memory.dispose();
+                    } else {
+                        stale.unlink();
+                    }
+                }
+            }
+
             // keep object allocation outside the syncronized block
             LinkedReference entry = new LinkedReference(instance);
 
@@ -112,8 +133,6 @@ public class Memory extends Pointer {
         }
     }
 
-    private static LinkedReference HEAD; // the head of the doubly linked list used for instance tracking
-
     private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
     /** Force cleanup of memory that has associated NIO Buffers which have
@@ -140,6 +159,22 @@ public class Memory extends Pointer {
 
                 if (HEAD == entry) {
                     throw new IllegalStateException("the HEAD did not change");
+                }
+            }
+        }
+
+        synchronized (QUEUE) {
+            LinkedReference stale;
+
+            // try to release as mutch memory as possible
+            while ((stale = (LinkedReference) QUEUE.poll()) != null) {
+                Memory memory = stale.get();
+
+                if (memory != null) {
+                    // dispose does the unlink call internal
+                    memory.dispose();
+                } else {
+                    stale.unlink();
                 }
             }
         }
