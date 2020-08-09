@@ -321,7 +321,7 @@ endif
 endif
 
 # CC_OPTS only applied to objects build for jnidispatch, not for libffi
-# -Wno-unknown-warning-option 
+# -Wno-unknown-warning-option
 #                => Suppress warning for unknown warnings
 # -Werror        => Treat warnings as errors
 # -Wno-clobbered => Silence GCC warning about clobbered automatic variables.
@@ -329,6 +329,12 @@ endif
 #                   that implements "protected" mode. In that case an exception
 #                   is raised and the value of the potentially clobbered
 #                   variables is ignored.
+# -Wno-alloca-larger-than => Silence warnings about unbounded alloca calls in
+#                   the dispatch logic. GCC tries to assert, that the size of
+#                   the allocated memory is bounded and thus a check for the
+#                   variable needs to be inplace. For the JNA case, the size
+#                   comes from the Java side, so checks are not visible on the
+#                   C side and thus can't be checked there.
 #
 # Enable this only on GCC versions, that can work with it. It is assumed, that
 # GCC version 4.X is the lower bound. That version is problematic, as it
@@ -337,7 +343,7 @@ ifeq ($(CC),gcc)
     GCC_MAJOR_VERSION = $(shell gcc -dumpversion | cut -f 1 -d '.')
     ifneq ($(GCC_MAJOR_VERSION),4)
 	ifneq ($(GCC_MAJOR_VERSION),3)
-	    LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable
+	    LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable -Wno-alloca-larger-than
 	endif
     endif
 else
