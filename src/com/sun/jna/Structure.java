@@ -127,6 +127,17 @@ public abstract class Structure {
      */
     public interface ByReference { }
 
+    /** A class to keep NativeString instances alive and avoid writing the same value again and again */
+    private static class NativeStringTracking {
+
+        private final Object value;
+        private NativeString peer;
+
+        NativeStringTracking(Object lastValue) {
+            this.value = lastValue;
+        }
+    }
+
     /** Use the platform default alignment. */
     public static final int ALIGN_DEFAULT = 0;
     /** No alignment, place all fields on nearest 1-byte boundary */
@@ -157,7 +168,7 @@ public abstract class Structure {
     private Map<String, StructField> structFields;
     // Keep track of native C strings which have been allocated,
     // corresponding to String fields of this Structure
-    private final Map<String, Object> nativeStrings = new HashMap<String, Object>();
+    private final Map<String, NativeStringTracking> nativeStrings = new HashMap<String, NativeStringTracking>(8);
     private TypeMapper typeMapper;
     // This field is accessed by native code
     private long typeInfo;
@@ -343,14 +354,15 @@ public abstract class Structure {
                 this.memory.write(0, buf, 0, buf.length);
             }
             else {
-                // Ensure our memory pointer is initialized, even if we can't
-                // yet figure out a proper size/layout
-                this.memory = m.share(offset);
                 if (size == CALCULATE_SIZE) {
                     size = calculateSize(false);
                 }
                 if (size != CALCULATE_SIZE) {
                     this.memory = m.share(offset, size);
+                } else {
+                    // Ensure our memory pointer is initialized, even if we can't
+                    // yet figure out a proper size/layout
+                    this.memory = m.share(offset);
                 }
             }
             this.array = null;
@@ -438,6 +450,8 @@ public abstract class Structure {
     /** Clears the native memory associated with this Structure. */
     public void clear() {
         ensureAllocated();
+        // ensure the memory is released and the values are written again
+        nativeStrings.clear();
         memory.clear(size());
     }
 
@@ -508,8 +522,9 @@ public abstract class Structure {
             if (!contains(o)) {
                 ensureCapacity(count+1);
                 elements[count++] = o;
+                return true;
             }
-            return true;
+            return false;
         }
         private int indexOf(Structure s1) {
             for (int i=0;i < count;i++) {
@@ -579,10 +594,9 @@ public abstract class Structure {
         ensureAllocated();
 
         // Avoid redundant reads
-        if (busy().contains(this)) {
+        if (!busy().add(this)) {
             return;
         }
-        busy().add(this);
         if (this instanceof Structure.ByReference) {
             reading().put(getPointer(), this);
         }
@@ -593,7 +607,7 @@ public abstract class Structure {
         }
         finally {
             busy().remove(this);
-            if (reading().get(getPointer()) == this) {
+            if (this instanceof Structure.ByReference && reading().get(getPointer()) == this) {
                 reading().remove(getPointer());
             }
         }
@@ -740,8 +754,18 @@ public abstract class Structure {
 
         if (fieldType.equals(String.class)
             || fieldType.equals(WString.class)) {
-            nativeStrings.put(structField.name + ".ptr", memory.getPointer(offset));
-            nativeStrings.put(structField.name + ".val", result);
+            if (result != null) {
+                NativeStringTracking current = new NativeStringTracking(result);
+                NativeStringTracking previous = nativeStrings.put(structField.name, current);
+
+                if (previous != null) {
+                    // regardless of value changed or not, keep the old native string alive
+                    current.peer = previous.peer;
+                }
+            } else {
+                // the value is cleared, we don't need to keep the native string alive
+                nativeStrings.remove(structField.name);
+            }
         }
 
         // Update the value on the Java field
@@ -769,10 +793,9 @@ public abstract class Structure {
         }
 
         // Avoid redundant writes
-        if (busy().contains(this)) {
+        if (!busy().add(this)) {
             return;
         }
-        busy().add(this);
         try {
             // Write all fields, except those marked 'volatile'
             for (StructField sf : fields().values()) {
@@ -840,28 +863,29 @@ public abstract class Structure {
         // Java strings get converted to C strings, where a Pointer is used
         if (String.class == fieldType
             || WString.class == fieldType) {
-            // Allocate a new string in memory
-            boolean wide = fieldType == WString.class;
             if (value != null) {
+                NativeStringTracking current = new NativeStringTracking(value);
+                NativeStringTracking previous = nativeStrings.put(structField.name, current);
+
                 // If we've already allocated a native string here, and the
                 // string value is unchanged, leave it alone
-                if (nativeStrings.containsKey(structField.name + ".ptr")
-                    && value.equals(nativeStrings.get(structField.name + ".val"))) {
+                if (previous != null && value.equals(previous.value)) {
+                    // value is unchanged, keep the old native string alive
+                    current.peer = previous.peer;
                     return;
                 }
+                // Allocate a new string in memory
+                boolean wide = fieldType == WString.class;
                 NativeString nativeString = wide
                     ? new NativeString(value.toString(), true)
                     : new NativeString(value.toString(), encoding);
-                // Keep track of allocated C strings to avoid
-                // premature garbage collection of the memory.
-                nativeStrings.put(structField.name, nativeString);
+                // value is changed, keep the new native string alive
+                current.peer = nativeString;
                 value = nativeString.getPointer();
             }
             else {
                 nativeStrings.remove(structField.name);
             }
-            nativeStrings.remove(structField.name + ".ptr");
-            nativeStrings.remove(structField.name + ".val");
         }
 
         try {
