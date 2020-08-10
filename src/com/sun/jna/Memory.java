@@ -79,14 +79,7 @@ public class Memory extends Pointer {
 
                 // handle stale references here to avoid GC overheating when memory is limited
                 while ((stale = (LinkedReference) QUEUE.poll()) != null) {
-                    Memory memory = stale.get();
-
-                    if (memory != null) {
-                        // dispose does the unlink call internal
-                        memory.dispose();
-                    } else {
-                        stale.unlink();
-                    }
+                    stale.unlink();
                 }
             }
 
@@ -168,14 +161,7 @@ public class Memory extends Pointer {
 
             // try to release as mutch memory as possible
             while ((stale = (LinkedReference) QUEUE.poll()) != null) {
-                Memory memory = stale.get();
-
-                if (memory != null) {
-                    // dispose does the unlink call internal
-                    memory.dispose();
-                } else {
-                    stale.unlink();
-                }
+                stale.unlink();
             }
         }
     }
