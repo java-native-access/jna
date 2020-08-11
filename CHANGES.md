@@ -11,6 +11,7 @@ Features
 * [#1231](https://github.com/java-native-access/jna/pull/1231): The test suite can now be executed on Windows using either ANSI or UNICODE win32 API by passing `-Dw32.ascii=true/false` to ant. Previously, UNICODE was always used. - [@T-Svensson](https://github.com/T-Svensson/)
 * [#1237](https://github.com/java-native-access/jna/pull/1237): *Experimental:* Add artifacts that make jna and jna-platform named modules (provide `module-info.class`). The new artifacts are named `jna-jpms.jar` and `jna-platform-jpms.jar` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1242](https://github.com/java-native-access/jna/pull/1242): Add CallWindowProc to User32 - [@heldplayer](https://github.com/heldplayer).
+* [#1239](https://github.com/java-native-access/jna/pull/1239): Improve performance of allocation of `c.s.j.Memory` objects - [@joerg1985](https://github.com/joerg1985).
 
 Bug Fixes
 ---------
