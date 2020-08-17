@@ -43,17 +43,20 @@ import java.util.WeakHashMap;
 
 import com.sun.jna.win32.DLLCallback;
 
-/** Provides a reference to an association between a native callback closure
- * and a Java {@link Callback} closure.
+/**
+ * Provides a reference to an association between a native callback closure and
+ * a Java {@link Callback} closure.
  */
-
 public class CallbackReference extends WeakReference<Callback> {
 
+    // Access to callbackMap, directCallbackMap, pointerCallbackMap is protected
+    // by synchonizing on pointerCallbackMap
     static final Map<Callback, CallbackReference> callbackMap = new WeakHashMap<Callback, CallbackReference>();
     static final Map<Callback, CallbackReference> directCallbackMap = new WeakHashMap<Callback, CallbackReference>();
     static final Map<Pointer, Reference<Callback>> pointerCallbackMap = new WeakHashMap<Pointer, Reference<Callback>>();
     // Track memory allocations associated with this closure (usually String args)
-    static final Map<Object, Object> allocations = new WeakHashMap<Object, Object>();
+    static final Map<Object, Object> allocations =
+            Collections.synchronizedMap(new WeakHashMap<Object, Object>());
     // Global map of allocated closures to facilitate centralized cleanup
     private static final Map<CallbackReference, Reference<CallbackReference>> allocatedMemory =
             Collections.synchronizedMap(new WeakHashMap<CallbackReference, Reference<CallbackReference>>());
@@ -619,7 +622,7 @@ public class CallbackReference extends WeakReference<Callback> {
                     Function.INTEGER_TRUE : Function.INTEGER_FALSE;
             } else if (cls == String.class || cls == WString.class) {
                 return getNativeString(value, cls == WString.class);
-            } else if (cls == String[].class || cls == WString.class) {
+            } else if (cls == String[].class || cls == WString[].class) {
                 StringArray sa = cls == String[].class
                     ? new StringArray((String[])value, encoding)
                     : new StringArray((WString[])value);
