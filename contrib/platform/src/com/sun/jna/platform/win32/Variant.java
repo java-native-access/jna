@@ -773,14 +773,15 @@ public interface Variant {
             }
 
             public ByReference(VARIANT[] variantArg) {
-                this.variantArg = variantArg;
+                super(variantArg);
             }
         }
 
-        public VARIANT[] variantArg = new VARIANT[1];
+        public VARIANT[] variantArg;
 
         public VariantArg() {
             super();
+            variantArg = new VARIANT[1];
         }
 
         /**
@@ -789,6 +790,7 @@ public interface Variant {
          */
         public VariantArg(Pointer pointer) {
             super(pointer);
+            variantArg = new VARIANT[1];
         }
 
         public VariantArg(VARIANT[] variantArg) {
