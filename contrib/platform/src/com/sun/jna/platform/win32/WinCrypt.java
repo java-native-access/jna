@@ -129,10 +129,12 @@ public interface WinCrypt {
             if (cAttribute == 0) {
                 return new CRYPT_ATTRIBUTE[0];
             } else {
-                return (CRYPT_ATTRIBUTE[]) Structure.newInstance(
-                        CERT_EXTENSION.class,
+                CRYPT_ATTRIBUTE[] result = (CRYPT_ATTRIBUTE[]) Structure.newInstance(
+                        CRYPT_ATTRIBUTE.class,
                         rgAttribute)
                         .toArray(cAttribute);
+                result[0].read();
+                return result;
             }
         }
     }
@@ -248,25 +250,29 @@ public interface WinCrypt {
         public int cExtension;
         public Pointer rgExtension;
 
-        public CTL_ENTRY[] getRgExtension() {
+        public CTL_ENTRY[] getRgCTLEntry() {
             if (cCTLEntry == 0) {
                 return new CTL_ENTRY[0];
             } else {
-                return (CTL_ENTRY[]) Structure.newInstance(
+                CTL_ENTRY[] result = (CTL_ENTRY[]) Structure.newInstance(
                         CTL_ENTRY.class,
                         rgCTLEntry)
                         .toArray(cCTLEntry);
+                result[0].read();
+                return result;
             }
         }
 
-        public CERT_EXTENSION[] getRgCTLEntry() {
+        public CERT_EXTENSION[] getRgExtension() {
             if (cExtension == 0) {
                 return new CERT_EXTENSION[0];
             } else {
-                return (CERT_EXTENSION[]) Structure.newInstance(
+                CERT_EXTENSION[] result = (CERT_EXTENSION[]) Structure.newInstance(
                         CERT_EXTENSION.class,
                         rgExtension)
                         .toArray(cExtension);
+                result[0].read();
+                return result;
             }
         }
     }
@@ -638,14 +644,14 @@ public interface WinCrypt {
         public Pointer rgExtension;
 
         public CERT_EXTENSION[] getRgExtension() {
-            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = Structure.newInstance(
-                        CERT_EXTENSION.class,
-                        rgExtension.getPointer(i * Native.POINTER_SIZE));
-                elements[i].read();
+            if(cExtension == 0) {
+                return new CERT_EXTENSION[0];
             }
-            return elements;
+            CERT_EXTENSION[] ces = (CERT_EXTENSION[]) Structure
+                .newInstance(CERT_EXTENSION.class, rgExtension)
+                .toArray(cExtension);
+            ces[0].read();
+            return ces;
         }
     }
 
@@ -676,14 +682,14 @@ public interface WinCrypt {
         public Pointer rgExtension;
 
         public CERT_EXTENSION[] getRgExtension() {
-            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = Structure.newInstance(
-                        CERT_EXTENSION.class,
-                        rgExtension.getPointer(i * Native.POINTER_SIZE));
-                elements[i].read();
+            if(cExtension == 0) {
+                return new CERT_EXTENSION[0];
             }
-            return elements;
+            CERT_EXTENSION[] ces = (CERT_EXTENSION[]) Structure
+                .newInstance(CERT_EXTENSION.class, rgExtension)
+                .toArray(cExtension);
+            ces[0].read();
+            return ces;
         }
     }
 
@@ -743,14 +749,15 @@ public interface WinCrypt {
         public Pointer rgExtension;
 
         public CERT_EXTENSION[] getRgExtension() {
-            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = Structure.newInstance(
-                        CERT_EXTENSION.class,
-                        rgExtension.getPointer(i * Native.POINTER_SIZE));
-                elements[i].read();
+            if(cExtension == 0) {
+                return new CERT_EXTENSION[0];
+            } else {
+                CERT_EXTENSION[] result = (CERT_EXTENSION[]) Structure
+                        .newInstance(CERT_EXTENSION.class, rgExtension)
+                        .toArray(cExtension);
+                result[0].read();
+                return result;
             }
-            return elements;
         }
     }
 
@@ -778,25 +785,27 @@ public interface WinCrypt {
         public Pointer rgExtension;
 
         public CRL_ENTRY[] getRgCRLEntry() {
-            CRL_ENTRY[] elements = new CRL_ENTRY[cCRLEntry];
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = Structure.newInstance(
-                        CRL_ENTRY.class,
-                        rgCRLEntry.getPointer(i * Native.POINTER_SIZE));
-                elements[i].read();
+            if (cCRLEntry == 0) {
+                return new CRL_ENTRY[0];
+            } else {
+                CRL_ENTRY[] result = (CRL_ENTRY[]) Structure
+                        .newInstance(CRL_ENTRY.class, rgCRLEntry)
+                        .toArray(cCRLEntry);
+                result[0].read();
+                return result;
             }
-            return elements;
         }
 
         public CERT_EXTENSION[] getRgExtension() {
-            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = Structure.newInstance(
-                        CERT_EXTENSION.class,
-                        rgExtension.getPointer(i * Native.POINTER_SIZE));
-                elements[i].read();
+            if (cExtension == 0) {
+                return new CERT_EXTENSION[0];
+            } else {
+                CERT_EXTENSION[] result = (CERT_EXTENSION[]) Structure
+                        .newInstance(CERT_EXTENSION.class, rgExtension)
+                        .toArray(cExtension);
+                result[0].read();
+                return result;
             }
-            return elements;
         }
     }
 
@@ -1613,4 +1622,121 @@ public interface WinCrypt {
      * called functions. For details, see Remarks.
      */
     int CERT_CLOSE_STORE_CHECK_FLAG = 0x00000002;
+    /** encoded single certificate */
+    int CERT_QUERY_CONTENT_CERT = 1;
+    /** encoded single CTL */
+    int CERT_QUERY_CONTENT_CTL = 2;
+    /** encoded single CRL */
+    int CERT_QUERY_CONTENT_CRL = 3;
+    /** serialized store */
+    int CERT_QUERY_CONTENT_SERIALIZED_STORE = 4;
+    /** serialized single certificate */
+    int CERT_QUERY_CONTENT_SERIALIZED_CERT = 5;
+    /** serialized single CTL */
+    int CERT_QUERY_CONTENT_SERIALIZED_CTL = 6;
+    /** serialized single CRL */
+    int CERT_QUERY_CONTENT_SERIALIZED_CRL = 7;
+    /** a PKCS#7 signed message */
+    int CERT_QUERY_CONTENT_PKCS7_SIGNED = 8;
+    /** a PKCS#7 message, such as enveloped message. But it is not a signed message,  */
+    int CERT_QUERY_CONTENT_PKCS7_UNSIGNED = 9;
+    /** a PKCS7 signed message embedded in a file */
+    int CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED = 10;
+    /** an encoded PKCS#10 */
+    int CERT_QUERY_CONTENT_PKCS10 = 11;
+    /** an encoded PFX BLOB */
+    int CERT_QUERY_CONTENT_PFX = 12;
+    /** an encoded CertificatePair (contains forward and/or reverse cross certs) */
+    int CERT_QUERY_CONTENT_CERT_PAIR = 13;
+    /** an encoded PFX BLOB, which was loaded to phCertStore */
+    int CERT_QUERY_CONTENT_PFX_AND_LOAD = 14;
+
+    /** encoded single certificate */
+    int CERT_QUERY_CONTENT_FLAG_CERT = (1 << CERT_QUERY_CONTENT_CERT);
+
+    /** encoded single CTL */
+    int CERT_QUERY_CONTENT_FLAG_CTL = (1 << CERT_QUERY_CONTENT_CTL);
+
+    /** encoded single CRL */
+    int CERT_QUERY_CONTENT_FLAG_CRL = (1 << CERT_QUERY_CONTENT_CRL);
+
+    /** serialized store */
+    int CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE = (1 << CERT_QUERY_CONTENT_SERIALIZED_STORE);
+
+    /** serialized single certificate */
+    int CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT = (1 << CERT_QUERY_CONTENT_SERIALIZED_CERT);
+
+    /** serialized single CTL */
+    int CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL = (1 << CERT_QUERY_CONTENT_SERIALIZED_CTL);
+
+    /** serialized single CRL */
+    int CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL = (1 << CERT_QUERY_CONTENT_SERIALIZED_CRL);
+
+    /** an encoded PKCS#7 signed message */
+    int CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED = (1 << CERT_QUERY_CONTENT_PKCS7_SIGNED);
+
+    /** an encoded PKCS#7 message.  But it is not a signed message */
+    int CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED = (1 << CERT_QUERY_CONTENT_PKCS7_UNSIGNED);
+
+    /** the content includes an embedded PKCS7 signed message */
+    int CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED = (1 << CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED);
+
+    /** an encoded PKCS#10 */
+    int CERT_QUERY_CONTENT_FLAG_PKCS10 = (1 << CERT_QUERY_CONTENT_PKCS10);
+
+    /** an encoded PFX BLOB */
+    int CERT_QUERY_CONTENT_FLAG_PFX = (1 << CERT_QUERY_CONTENT_PFX);
+
+    /** an encoded CertificatePair (contains forward and/or reverse cross certs) */
+    int CERT_QUERY_CONTENT_FLAG_CERT_PAIR = (1 << CERT_QUERY_CONTENT_CERT_PAIR);
+
+    /** an encoded PFX BLOB, and we do want to load it (not included in {@link #CERT_QUERY_CONTENT_FLAG_ALL} */
+    int CERT_QUERY_CONTENT_FLAG_PFX_AND_LOAD = (1 << CERT_QUERY_CONTENT_PFX_AND_LOAD);
+
+    /** content can be any type */
+    int CERT_QUERY_CONTENT_FLAG_ALL = CERT_QUERY_CONTENT_FLAG_CERT
+        | CERT_QUERY_CONTENT_FLAG_CTL
+        | CERT_QUERY_CONTENT_FLAG_CRL
+        | CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE
+        | CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT
+        | CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL
+        | CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL
+        | CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED
+        | CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED
+        | CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED
+        | CERT_QUERY_CONTENT_FLAG_PKCS10
+        | CERT_QUERY_CONTENT_FLAG_PFX
+        | CERT_QUERY_CONTENT_FLAG_CERT_PAIR;
+
+    /** the content is in binary format */
+    int CERT_QUERY_FORMAT_BINARY = 1;
+
+    /** the content is base64 encoded */
+    int CERT_QUERY_FORMAT_BASE64_ENCODED = 2;
+
+    /** the content is ascii hex encoded with "{ASN}" prefix */
+    int CERT_QUERY_FORMAT_ASN_ASCII_HEX_ENCODED = 3;
+
+    /** the content is in binary format */
+    int CERT_QUERY_FORMAT_FLAG_BINARY = ( 1 << CERT_QUERY_FORMAT_BINARY);
+
+    /** the content is base64 encoded */
+    int CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED = ( 1 << CERT_QUERY_FORMAT_BASE64_ENCODED);
+
+    /** the content is ascii hex encoded with "{ASN}" prefix */
+    int CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED  = ( 1 << CERT_QUERY_FORMAT_ASN_ASCII_HEX_ENCODED);
+
+    /** the content can be of any format */
+    int CERT_QUERY_FORMAT_FLAG_ALL = CERT_QUERY_FORMAT_FLAG_BINARY
+        | CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED
+        | CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED;
+
+    /**
+     * The object is stored in a file.
+     */
+    int CERT_QUERY_OBJECT_FILE = 0x00000001;
+    /**
+     * The object is stored in a structure in memory.
+     */
+    int CERT_QUERY_OBJECT_BLOB = 0x00000002;
 }
