@@ -34,22 +34,38 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
+import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_CONTENT_FLAG_ALL;
+import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_CONTENT_FLAG_PFX_AND_LOAD;
+import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_FORMAT_FLAG_ALL;
+import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_OBJECT_FILE;
+import static com.sun.jna.platform.win32.WinCrypt.PKCS_7_ASN_ENCODING;
+import static com.sun.jna.platform.win32.WinCrypt.X509_ASN_ENCODING;
 import com.sun.jna.platform.win32.WinCryptUtil.MANAGED_CRYPT_SIGN_MESSAGE_PARA;
+import com.sun.jna.win32.W32APIOptions;
 
 import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.CRLNumber;
+import org.bouncycastle.asn1.x509.CRLReason;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.cert.X509CRLHolder;
+import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -407,6 +423,201 @@ public class Crypt32Test extends TestCase {
         assertTrue("The status would be true since a valid certificate chain was not passed in.", status);
     }
 
+    public void testCertEnumCertificatesInStore() {
+        String SYSTEM_STORE_NAME = "ROOT";
+        WinCrypt.HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenSystemStore(null, SYSTEM_STORE_NAME);
+
+        int readCertificates = 0;
+        int readExtensions = 0;
+
+        {
+            CERT_CONTEXT.ByReference ctx = null;
+            while (true) {
+                ctx = Crypt32.INSTANCE.CertEnumCertificatesInStore(hCertStore, ctx == null ? null : ctx.getPointer());
+                if (ctx == null) {
+                    break;
+                }
+                // The certificates in the ROOT store should all be self-signed (they are trust-roots)
+                assertNotNull(ctx.pCertInfo.Issuer);
+                assertNotNull(ctx.pCertInfo.Subject);
+                assertFalse(decodeName(ctx.pCertInfo.Issuer).isEmpty());
+                assertFalse(decodeName(ctx.pCertInfo.Subject).isEmpty());
+                assertEquals(decodeName(ctx.pCertInfo.Issuer), decodeName(ctx.pCertInfo.Subject));
+                // System.out.printf("%20s: %s%n", "Issuer", decodeName(ctx.pCertInfo.Issuer));
+                // System.out.printf("%20s: %s%n", "Subject", decodeName(ctx.pCertInfo.Subject));
+                readCertificates++;
+                for (CERT_EXTENSION ce : ctx.pCertInfo.getRgExtension()) {
+                    // System.out.println("\t" + ce.pszObjId);
+                    // System.out.println("\t" + ce.fCritical);
+                    // System.out.println("\t" + ce.Value.pbData);
+                    assertNotNull(ce.pszObjId);
+                    assertNotNull(ce.fCritical);
+                    assertNotNull(ce.Value);
+                    readExtensions++;
+                }
+            }
+        }
+        Crypt32.INSTANCE.CertCloseStore(hCertStore, 0);
+
+        assertTrue(readCertificates > 0);
+        assertTrue(readExtensions > 0);
+
+        System.out.printf("Enumerated %d certificates and %d extensions%n", readCertificates, readExtensions);
+    }
+
+    public void testCyptQueryObject_CertEnumCRLsInStore() throws IOException {
+        Path tempPath = createTestCrl();
+        String path = tempPath.toAbsolutePath().toString();
+        Memory unicodePath = new Memory((path.length() + 1) * Native.WCHAR_SIZE);
+        unicodePath.clear();
+        unicodePath.setWideString(0, path);
+        IntByReference pdwMsgAndCertEncodingType = new IntByReference();
+        IntByReference pdwContentType = new IntByReference();
+        IntByReference pdwFormatType = new IntByReference();
+        PointerByReference phCertStore = new PointerByReference();
+        assertTrue(Crypt32.INSTANCE.CryptQueryObject(
+                CERT_QUERY_OBJECT_FILE,
+                unicodePath,
+                CERT_QUERY_CONTENT_FLAG_ALL | CERT_QUERY_CONTENT_FLAG_PFX_AND_LOAD,
+                CERT_QUERY_FORMAT_FLAG_ALL,
+                0,
+                pdwMsgAndCertEncodingType,
+                pdwContentType,
+                pdwFormatType,
+                phCertStore, null, null));
+        // System.out.println(pdwMsgAndCertEncodingType.getValue());
+        // System.out.println(pdwContentType.getValue());
+        // System.out.println(pdwFormatType.getValue());
+        assertEquals(X509_ASN_ENCODING, pdwMsgAndCertEncodingType.getValue());
+        assertEquals(3, pdwContentType.getValue());
+        assertEquals(1, pdwFormatType.getValue());
+        HCERTSTORE hCertStore = new HCERTSTORE(phCertStore.getValue());
+
+        int readCrls = 0;
+        int readEntries = 0;
+        int readExtensions = 0;
+        int readExtensionsOfEntries = 0;
+
+        {
+            CRL_CONTEXT.ByReference ctx = null;
+            while (true) {
+                ctx = Crypt32.INSTANCE.CertEnumCRLsInStore(hCertStore, ctx == null ? null : ctx.getPointer());
+                if (ctx == null) {
+                    break;
+                }
+                assertNotNull(ctx);
+                assertNotNull(ctx.pCrlInfo.Issuer);
+                assertTrue(decodeName(ctx.pCrlInfo.Issuer).length() > 0);
+                for (CERT_EXTENSION ce : ctx.pCrlInfo.getRgExtension()) {
+                    // System.out.println(ce.pszObjId);
+                    // System.out.println(ce.fCritical);
+                    // System.out.println(ce.Value);
+                    assertNotNull(ce.pszObjId);
+                    assertNotNull(ce.fCritical);
+                    assertNotNull(ce.Value);
+                    readExtensions++;
+                }
+                for(CRL_ENTRY ce: ctx.pCrlInfo.getRgCRLEntry()) {
+                    // System.out.println(ce.RevocationDate);
+                    // System.out.println(ce.SerialNumber);
+                    for(CERT_EXTENSION ce2: ce.getRgExtension()) {
+                        // System.out.println(ce2.pszObjId);
+                        // System.out.println(ce2.fCritical);
+                        // System.out.println(ce2.Value);
+                        readExtensionsOfEntries++;
+                    }
+                    readEntries++;
+                }
+                readCrls++;
+            }
+        }
+        Crypt32.INSTANCE.CertCloseStore(hCertStore, 0);
+
+        assertTrue(readCrls > 0);
+        assertTrue(readExtensions > 0);
+        assertTrue(readEntries > 0);
+
+        System.out.printf("Enumerated %d crl, %d extensions, %d entries, %d extensions of entries%n", readCrls, readExtensions, readEntries, readExtensionsOfEntries);
+
+        Files.delete(tempPath);
+    }
+
+    public void testCyptQueryObject_CertEnumCTLsInStore() throws IOException, InterruptedException {
+        // Export the windows system certificates as an stl file - this file
+        // can then be read and contains a CTL
+        Path tempFile = Files.createTempFile("authroot-local", ".stl");
+        if(Files.exists(tempFile)) {
+            Files.delete(tempFile);
+        }
+        String path = tempFile.toAbsolutePath().toString();
+        String escapedPath = path.replace("\\", "\\\\");
+        String exportFormat = "powershell -Command \"[IO.File]::WriteAllBytes('" + escapedPath + "',(Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\SystemCertificates\\AuthRoot\\AutoUpdate').EncodedCtl)\"";
+        Runtime.getRuntime().exec(exportFormat).waitFor(10, TimeUnit.SECONDS);
+        Memory unicodePath = new Memory((path.length() + 1) * Native.WCHAR_SIZE);
+        unicodePath.clear();
+        unicodePath.setWideString(0, path);
+        IntByReference pdwMsgAndCertEncodingType = new IntByReference();
+        IntByReference pdwContentType = new IntByReference();
+        IntByReference pdwFormatType = new IntByReference();
+        PointerByReference phCertStore = new PointerByReference();
+        assertTrue(Crypt32.INSTANCE.CryptQueryObject(
+                CERT_QUERY_OBJECT_FILE,
+                unicodePath,
+                CERT_QUERY_CONTENT_FLAG_ALL,
+                CERT_QUERY_FORMAT_FLAG_ALL,
+                0,
+                pdwMsgAndCertEncodingType,
+                pdwContentType,
+                pdwFormatType,
+                phCertStore, null, null));
+        assertEquals(PKCS_7_ASN_ENCODING | X509_ASN_ENCODING, pdwMsgAndCertEncodingType.getValue());
+        assertEquals(2, pdwContentType.getValue());
+        assertEquals(1, pdwFormatType.getValue());
+        HCERTSTORE hCertStore = new HCERTSTORE(phCertStore.getValue());
+
+        int readCtls = 0;
+        int readEntries = 0;
+        int readExtensions = 0;
+        int readAttributes = 0;
+
+        {
+            CTL_CONTEXT.ByReference ctx = null;
+            while (true) {
+                ctx = Crypt32.INSTANCE.CertEnumCTLsInStore(hCertStore, ctx == null ? null : ctx.getPointer());
+                if (ctx == null) {
+                    break;
+                }
+                assertNotNull(ctx);
+                for (CERT_EXTENSION ce : ctx.pCtlInfo.getRgExtension()) {
+                    assertNotNull(ce.pszObjId);
+                    assertNotNull(ce.fCritical);
+                    assertNotNull(ce.Value);
+                    readExtensions++;
+                }
+                for(CTL_ENTRY ce: ctx.pCtlInfo.getRgCTLEntry()) {
+                    // System.out.println(Base64.getEncoder().encodeToString(ce.SubjectIdentifier.getData()));
+                    for(CRYPT_ATTRIBUTE ca: ce.getRgAttribute()) {
+                        // System.out.println(ca.pszObjId);
+                        readAttributes++;
+                    }
+                    readEntries++;
+                }
+                readCtls++;
+            }
+        }
+        Crypt32.INSTANCE.CertCloseStore(hCertStore, 0);
+
+        assertTrue(readCtls > 0);
+        // No way was found how to add extensions
+        // assertTrue(readExtensions > 0);
+        assertTrue(readEntries > 0);
+        assertTrue(readAttributes > 0);
+
+        Files.delete(tempFile);
+
+        System.out.printf("Enumerated %d ctl, %d extensions, %d entries, %d attributes%n", readCtls, readExtensions, readEntries, readAttributes);
+    }
+
     private boolean createTestCertificate() {
         try {
             KeyStore keyStore = KeyStore.getInstance("Windows-MY", "SunMSCAPI");
@@ -442,6 +653,38 @@ public class Crypt32Test extends TestCase {
         return true;
     }
 
+    private Path createTestCrl() {
+        try {
+            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+
+            Path tempFile = Files.createTempFile("jna-test", ".crl");
+
+            SecureRandom sr = SecureRandom.getInstanceStrong();
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048, sr);
+
+            KeyPair caPair = kpg.genKeyPair();
+
+            ContentSigner caSigner = new JcaContentSignerBuilder("SHA1withRSA").setProvider("BC").build(caPair.getPrivate());
+
+            X509v2CRLBuilder crlBuilder = new X509v2CRLBuilder(new X500Name("CN=CA"), new Date());
+            crlBuilder.setNextUpdate(new Date(new Date().getTime() + 30l * 24 * 60 * 60 * 1000));
+            crlBuilder.addCRLEntry(new BigInteger("3"), new Date(2014 - 1900, 12 - 1, 1), CRLReason.privilegeWithdrawn);
+            crlBuilder.addExtension(Extension.cRLNumber, false, new CRLNumber(new BigInteger("2")));
+            X509CRLHolder holder = crlBuilder.build(caSigner);
+
+            try (OutputStream fos = Files.newOutputStream(tempFile)) {
+                fos.write(holder.getEncoded());
+            }
+
+            return tempFile;
+        } catch (RuntimeException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     private boolean removeTestCertificate() {
         try {
             KeyStore keyStore = KeyStore.getInstance("Windows-MY", "SunMSCAPI");
@@ -472,6 +715,18 @@ public class Crypt32Test extends TestCase {
                 } catch (IOException ex) {
                 }
             }
+        }
+    }
+
+    private static String decodeName(WinCrypt.DATA_BLOB blob) {
+        int charCount = 512;
+        boolean wide = W32APIOptions.DEFAULT_OPTIONS == W32APIOptions.UNICODE_OPTIONS;
+        Memory buffer = new Memory(charCount * (wide ? Native.WCHAR_SIZE : 1));
+        Crypt32.INSTANCE.CertNameToStr(1, blob, 3, buffer, charCount);
+        if(wide) {
+            return buffer.getWideString(0);
+        } else {
+            return buffer.getString(0);
         }
     }
 }

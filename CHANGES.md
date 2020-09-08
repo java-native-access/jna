@@ -17,6 +17,7 @@ Features
 Bug Fixes
 ---------
 * [#1244](https://github.com/java-native-access/jna/issues/1244): Fix building on GCC 10 - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1252](https://github.com/java-native-access/jna/issues/1252): - Fix bindings of `CTL_ENTRY#getRgAttribute`, `CTL_INFO#getRgCTLEntry`, `CTL_INFO#getRgExtension`, `CERT_EXTENSIONS#getRgExtension`, `CERT_INFO#getRgExtension`, `CRL_INFO#getRgCRLEntry`, `CRL_INFO#getRgExtension`, `CRL_ENTRY#getRgExtension`. Add bindings for `CertEnumCertificatesInStore`, `CertEnumCTLsInStore`, `CertEnumCRLsInStore` and `CryptQueryObject` in `c.s.j.p.win32.Crypt32`.<br> *WARNING:* The signatures for `CTL_INFO#getRgCTLEntry` and `CTL_INFO#getRgExtension` were changed - as the original signatures were obviously wrong and read the wrong attributes, it is not considered an API break - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.6.0
 =============

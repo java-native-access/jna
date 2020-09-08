@@ -501,4 +501,170 @@ public interface Crypt32 extends StdCallLibrary {
      *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa387314(v=vs.85).aspx">MSDN</a>
      */
     HCERTSTORE PFXImportCertStore(DATA_BLOB pPFX, WTypes.LPWSTR szPassword, int dwFlags);
+
+    /**
+     * The CertEnumCertificatesInStore function retrieves the first or next
+     * certificate in a certificate store. Used in a loop, this function can
+     * retrieve in sequence all certificates in a certificate store.
+     *
+     * @param hCertStore       A handle of a certificate store.
+     * @param pPrevCertContext A pointer to the {@link CERT_CONTEXT} of the
+     *                         previous certificate context found.
+     * <p>
+     * This parameter must be NULL to begin the enumeration and get the first
+     * certificate in the store. Successive certificates are enumerated by
+     * setting {@code pPrevCertContext} to the pointer returned by a previous
+     * call to the function. This function frees the {@link CERT_CONTEXT}
+     * referenced by non-NULL values of this parameter.</p>
+     *
+     * <p>
+     * For logical stores, including collection stores, a duplicate of the
+     * pCertContext returned by this function cannot be used to begin a new
+     * subsequence of enumerations because the duplicated certificate loses the
+     * initial enumeration state. The enumeration skips any certificate
+     * previously deleted by CertDeleteCertificateFromStore.</p>
+     *
+     * @return If the function succeeds, the function returns a pointer to the
+     *         next {@link CERT_CONTEXT} in the store. If no more certificates
+     *         exist in the store, the function returns {@code NULL}.
+     *
+     * <p>
+     * For extended error information, call GetLastError. Some possible error
+     * codes follow.</p>
+     *
+     * <table>
+     * <tr><th>Value</th><th>Description</th></tr>
+     * <tr><td>E_INVALIDARG</td><td>The handle in the {@code hCertStore}
+     * parameter is not the same as that in the certificate context pointed to
+     * by {@code pPrevCertContext}.</td></tr>
+     * <tr><td>CRYPT_E_NOT_FOUND</td><td>No certificates were found. This
+     * happens if the store is empty or if the function reached the end of the
+     * store's list.</td></tr>
+     * <tr><td>ERROR_NO_MORE_FILES</td><td>Applies to external stores. No
+     * certificates were found. This happens if the store is empty or if the
+     * function reached the end of the store's list. </td></tr>
+     * </table>
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certenumcertificatesinstore">MSDN</a>
+     */
+    CERT_CONTEXT.ByReference CertEnumCertificatesInStore(HCERTSTORE hCertStore, Pointer pPrevCertContext);
+
+    /**
+     * The CertEnumCTLsInStore function retrieves the first or next certificate
+     * trust list (CTL) context in a certificate store. Used in a loop, this
+     * function can retrieve in sequence all CTL contexts in a certificate
+     * store.
+     *
+     * @param hCertStore      A handle of a certificate store.
+     * @param pPrevCtlContext A pointer to the previous {@link CTL_CONTEXT}
+     *                        structure found. It must be {@code NULL} to get
+     *                        the first CTL in the store. Successive CTLs are
+     *                        enumerated by setting {@code pPrevCtlContext} to
+     *                        the pointer returned by a previous call. This
+     *                        function frees the {@link CTL_CONTEXT} referenced
+     *                        by non-NULL values of this parameter. The
+     *                        enumeration skips any CTLs previously deleted by
+     *                        CertDeleteCTLFromStore.
+     *
+     * @return If the function succeeds, the return value is a pointer to a
+     *         read-only CTL_CONTEXT.
+     *
+     * <p>
+     * If the function fails and a CTL is not found, the return value is NULL.
+     * For extended error information, call GetLastError.</p>
+     *
+     * <table>
+     * <tr><th>Value</th><th>Description</th></tr>
+     * <tr><td>E_INVALIDARG</td><td>The handle in the {@code hCertStore}
+     * parameter is not the same as that in the CTL context pointed to by the
+     * {@code pPrevCtlContext} parameter. </td></tr>
+     * <tr><td>CRYPT_E_NOT_FOUND</td><td>Either no CTLs exist in the store, or
+     * the function reached the end of the store's list.</td></tr>
+     * </table>
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certenumctlsinstore">MSDN</a>
+     */
+    CTL_CONTEXT.ByReference CertEnumCTLsInStore(HCERTSTORE hCertStore, Pointer pPrevCtlContext);
+
+    /**
+     * The CertEnumCRLsInStore function retrieves the first or next certificate
+     * revocation list (CRL) context in a certificate store. Used in a loop,
+     * this function can retrieve in sequence all CRL contexts in a certificate
+     * store. store.
+     *
+     * @param hCertStore      A handle of a certificate store.
+     * @param pPrevCrlContext A pointer to the previous {@link CRL_CONTEXT}
+     *                        structure found. The {@code code pPrevCrlContext}
+     *                        parameter must be {@code NULL} to get the first
+     *                        CRL in the store. Successive CRLs are enumerated
+     *                        by setting {@code pPrevCrlContext} to the pointer
+     *                        returned by a previous call to the function. This
+     *                        function frees the CRL_CONTEXT referenced by
+     *                        non-NULL values of this parameter. The enumeration
+     *                        skips any CRLs previously deleted by
+     *                        CertDeleteCRLFromStore.
+     *
+     * @return If the function succeeds, the return value is a pointer to the
+     *         next {@link CRL_CONTEXT} in the store.
+     *
+     * <p>
+     * {@code NULL} is returned if the function fails. For extended error
+     * information, call GetLastError. Some possible error codes follow.</p>
+     *
+     * <table>
+     * <tr><th>Value</th><th>Description</th></tr>
+     * <tr><td>E_INVALIDARG</td><td>The handle in the {code hCertStore}
+     * parameter is not the same as that in the certificate context pointed to
+     * by {@code pPrevCrlContext}.</td></tr>
+     * <tr><td>CRYPT_E_NOT_FOUND</td><td>No CRL was found. This happens if the
+     * store is empty or the end of the store's list is reached. </td></tr>
+     * </table>
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certenumcrlsinstore">MSDN</a>
+     */
+    CRL_CONTEXT.ByReference CertEnumCRLsInStore(HCERTSTORE hCertStore, Pointer pPrevCrlContext);
+
+    /**
+     * The CryptQueryObject function retrieves information about the contents of
+     * a cryptography API object, such as a certificate, a certificate
+     * revocation list, or a certificate trust list. The object can either
+     * reside in a structure in memory or be contained in a file.
+     *
+     * @param dwObjectType
+     * @param pvObject
+     * @param dwExpectedContentTypeFlags
+     * @param dwExpectedFormatTypeFlags
+     * @param dwFlags
+     * @param pdwMsgAndCertEncodingType
+     * @param pdwContentType
+     * @param pdwFormatType
+     * @param phCertStore
+     * @param phMsg
+     * @param ppvContext
+     *
+     * @return If the function succeeds, the function returns nonzero.
+     *
+     * <p>
+     * If the function fails, it returns zero. For extended error information,
+     * call GetLastError.</p>
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptqueryobject">MSDN</a>
+     */
+    boolean CryptQueryObject(
+        int dwObjectType,
+        Pointer pvObject,
+        int dwExpectedContentTypeFlags,
+        int dwExpectedFormatTypeFlags,
+        int dwFlags,
+        IntByReference pdwMsgAndCertEncodingType,
+        IntByReference pdwContentType,
+        IntByReference pdwFormatType,
+        PointerByReference phCertStore,
+        PointerByReference phMsg,
+        PointerByReference ppvContext
+    );
 }
