@@ -53,11 +53,16 @@ import com.sun.jna.platform.win32.COM.ConnectionPointContainer;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IDispatchCallback;
+import com.sun.jna.platform.win32.COM.ITypeInfo;
+import com.sun.jna.platform.win32.COM.TypeInfo;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
+import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.util.Arrays;
 
 /**
  * This object acts as the invocation handler for interfaces annotated with
@@ -291,7 +296,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
             ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
             if (null == comInterfaceAnnotation) {
                 throw new COMException(
-                        "advise: Interface must define a value for either iid via the ComInterface annotation");
+                        "advise: Interface must define a value for iid or name via the ComInterface annotation");
             }
             final IID iid = this.getIID(comInterfaceAnnotation);
 
@@ -331,7 +336,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
             ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
             if (null == comInterfaceAnnotation) {
                 throw new COMException(
-                        "unadvise: Interface must define a value for iid via the ComInterface annotation");
+                        "unadvise: Interface must define a value for iid or name via the ComInterface annotation");
             }
             IID iid = this.getIID(comInterfaceAnnotation);
 
@@ -353,6 +358,37 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
     }
 
     // --------------------- IDispatch ------------------------------
+
+    @Override
+    public ITypeInfo getTypeInfo() {
+        com.sun.jna.platform.win32.COM.IDispatch mayBeDispatch = ProxyObject.this.getRawDispatch();
+
+        PointerByReference pDispatch = new PointerByReference();
+        HRESULT hr = mayBeDispatch.QueryInterface(new REFIID(IDispatch.IID_IDISPATCH), pDispatch);
+
+        if (!WinNT.S_OK.equals(hr)) {
+            // the raw this patch is not guaranteed to be an IDispatch,
+            // e.g. the runnning object table assumes all are IDispatch
+            return null;
+        }
+
+        Dispatch dispatch = new Dispatch(pDispatch.getValue());
+
+        WinDef.UINTByReference count = new WinDef.UINTByReference();
+        HRESULT hrCount = dispatch.GetTypeInfoCount(count);
+        COMUtils.checkRC(hrCount);
+
+        if (count.getValue().intValue() == 0) {
+            return null;
+        }
+
+        PointerByReference ptypeInfo = new PointerByReference();
+        HRESULT hrType = dispatch.GetTypeInfo(new WinDef.UINT(0), factory.getLCID(), ptypeInfo);
+        COMUtils.checkRC(hrType);
+
+        return new TypeInfo(ptypeInfo.getValue());
+    }
+
     @Override
     public <T> void setProperty(String name, T value) {
         DISPID dispID = resolveDispId(this.getRawDispatch(), name);
@@ -482,7 +518,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
             ComInterface comInterfaceAnnotation = comInterface.getAnnotation(ComInterface.class);
             if (null == comInterfaceAnnotation) {
                 throw new COMException(
-                        "queryInterface: Interface must define a value for iid via the ComInterface annotation");
+                        "queryInterface: Interface must define a value for iid or name via the ComInterface annotation"
+                );
             }
             final IID iid = this.getIID(comInterfaceAnnotation);
             final PointerByReference ppvObject = new PointerByReference();
@@ -513,10 +550,83 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
     private IID getIID(ComInterface annotation) {
         String iidStr = annotation.iid();
+        String nameStr = annotation.name();
         if (null != iidStr && !iidStr.isEmpty()) {
             return new IID(iidStr);
+        } else if (null != nameStr && !nameStr.isEmpty()) {
+            ITypeInfo typeInfo;
+
+            try {
+                typeInfo = ProxyObject.this.getTypeInfo();
+            } catch (COMException e) {
+                throw new COMException("failed to read type infos to resolve the interface name.", e);
+            }
+
+            if (typeInfo == null) {
+                throw new COMException("no type infos provided to resolve the interface name.");
+            }
+
+            String[] allImplemented = null;
+
+            try {
+                TypeInfoUtil typeInfoUtil = new TypeInfoUtil(typeInfo);
+
+                OaIdl.TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
+                IID typeIid = new IID(typeAttr.guid);
+                typeInfoUtil.ReleaseTypeAttr(typeAttr);
+
+                int nImplemented = typeAttr.cImplTypes.intValue();
+                allImplemented = new String[nImplemented + 1];
+
+                for (int i = -1; i < nImplemented; i++) {
+                    ITypeInfo info;
+
+                    if (i != -1) {
+                        OaIdl.HREFTYPE refTypeOfImplType = typeInfoUtil.getRefTypeOfImplType(i);
+                        info = typeInfoUtil.getRefTypeInfo(refTypeOfImplType);
+                    } else {
+                        info = typeInfo;
+                    }
+
+                    WTypes.BSTRByReference pBstrName = new WTypes.BSTRByReference();
+                    // MEMBERID_NIL will return the documentation for the type
+                    info.GetDocumentation(OaIdl.MEMBERID_NIL, pBstrName, null, null, null);
+
+                    WTypes.BSTR bstrName = pBstrName.getValue();
+                    String implName = bstrName.toString();
+                    OleAuto.INSTANCE.SysFreeString(bstrName);
+
+                    if (nameStr.equals(implName)) {
+                        if (i != -1) {
+                            // discover the guid if the implemented type
+                            TypeInfoUtil implTypeInfoUtil = new TypeInfoUtil(info);
+                            OaIdl.TYPEATTR implTypeAttr = implTypeInfoUtil.getTypeAttr();
+                            IID iid = new IID(implTypeAttr.guid);
+                            implTypeInfoUtil.ReleaseTypeAttr(implTypeAttr);
+
+                            return iid;
+                        } else {
+                            return typeIid;
+                        }
+                    } else {
+                        allImplemented[i + 1] = implName;
+                    }
+                }
+            } catch (COMException e) {
+                throw new COMException("failed to read implemented type infos to resolve the interface name.", e);
+            }
+
+            if ("IUnknown".equals(nameStr)) {
+                // the implemented interfaces does not contain IUnkown, we handle this to avoid unexpected behaviour
+                return com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
+            } else if (allImplemented != null) {
+                throw new COMException("interface '" + nameStr + "' is not implemented"
+                        + ", all implemented interfaces are: " + Arrays.asList(allImplemented), new HRESULT(WinNT.E_NOINTERFACE));
+            } else {
+                throw new COMException("interface '" + nameStr + "' is not implemented", new HRESULT(WinNT.E_NOINTERFACE));
+            }
         } else {
-            throw new COMException("ComInterface must define a value for iid");
+            throw new COMException("ComInterface must define a value for iid or name");
         }
     }
 

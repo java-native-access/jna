@@ -23,13 +23,17 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.COM.ITypeInfo;
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 
 /**
  * Java friendly version of {@link com.sun.jna.platform.win32.COM.IDispatch}.
  *
  */
+@ComInterface(iid = "00020400-0000-0000-C000-000000000046")
 public interface IDispatch extends IUnknown {
+    ITypeInfo getTypeInfo();
     <T> void setProperty(String name, T value);
     <T> T getProperty(Class<T> returnType, String name, Object... args);
     <T> T invokeMethod(Class<T> returnType, String name, Object... args);
