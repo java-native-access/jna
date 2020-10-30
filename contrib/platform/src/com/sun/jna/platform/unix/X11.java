@@ -978,7 +978,8 @@ public interface X11 extends Library {
     int ColormapNotify = 32;
     int ClientMessage = 33;
     int MappingNotify = 34;
-    int LASTEvent = 35;   // must be bigger than any event #
+    int GenericEvent = 35;
+    int LASTEvent = 36;   // must be bigger than any event #
 
     /* Key masks. Used as modifiers to GrabButton and GrabKey, results of QueryPointer,
        state in various key-, mouse-, and button-related events. */
@@ -1466,6 +1467,8 @@ public interface X11 extends Library {
         public XMappingEvent xmapping;
         public XErrorEvent xerror;
         public XKeymapEvent xkeymap;
+        public XGenericEvent xgeneric;
+        public XGenericEventCookie xcookie;
         public NativeLong[] pad = new NativeLong[24];
     }
 
@@ -1893,6 +1896,31 @@ public interface X11 extends Library {
         public byte key_vector[] = new byte[32];
     }
 
+    /**
+     * This event is the standard event for all newer extensions.
+     */
+    @FieldOrder({"type", "serial", "send_event", "display", "extension", "evtype"})
+    class XGenericEvent extends Structure {
+        public int type;            // of event. Always GenericEvent
+        public NativeLong serial;   // # of last request processed by server
+        public int send_event;      // true if this came from a SendEvent request
+        public Display display;     // Display the event was read from
+        public int extension;       // major opcode of extension that caused the event
+        public int evtype;          // actual event type
+    }
+
+    @FieldOrder({"type", "serial", "send_event", "display", "extension", "evtype", "cookie", "data"})
+    class XGenericEventCookie extends Structure {
+        public int type;            // of event. Always GenericEvent
+        public NativeLong serial;   // # of last request processed by server
+        public int send_event;      // true if this came from a SendEvent request
+        public Display display;     // Display the event was read from
+        public int extension;       // major opcode of extension that caused the event
+        public int evtype;          // actual event type
+        public int cookie;
+        public Pointer data;
+    }
+
     int XSelectInput(Display display, Window window, NativeLong eventMask);
     int XSendEvent(Display display, Window w, int propagate, NativeLong event_mask, XEvent event_send);
 
@@ -1905,6 +1933,9 @@ public interface X11 extends Library {
     boolean XCheckMaskEvent(Display display, NativeLong event_mask, XEvent event_return);
     boolean XCheckTypedEvent(Display display, int event_type, XEvent event_return);
     boolean XCheckTypedWindowEvent(Display display, Window w, int event_type, XEvent event_return);
+
+    boolean XGetEventData(Display display, XGenericEventCookie cookie);
+    void XFreeEventData(Display display, XGenericEventCookie cookie);
 
     /** Returns an {@link XWMHints} which must be freed by {@link #XFree}.
      * @param display target Display
