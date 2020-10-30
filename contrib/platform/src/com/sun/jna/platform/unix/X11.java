@@ -1895,11 +1895,11 @@ public interface X11 extends Library {
         public Window window;
         public byte key_vector[] = new byte[32];
     }
-    
+
     /**
      * This event is the standard event for all newer extensions.
      */
-    @FieldOrder({"type", "serial", "send_event", "display", "extension", "evtype"})     
+    @FieldOrder({"type", "serial", "send_event", "display", "extension", "evtype"})
     class XGenericEvent extends Structure {
         public int type;            // of event. Always GenericEvent
         public NativeLong serial;   // # of last request processed by server
