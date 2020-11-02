@@ -1934,6 +1934,9 @@ public interface X11 extends Library {
     boolean XCheckTypedEvent(Display display, int event_type, XEvent event_return);
     boolean XCheckTypedWindowEvent(Display display, Window w, int event_type, XEvent event_return);
 
+    boolean XGetEventData(Display display, XGenericEventCookie cookie);
+    void XFreeEventData(Display display, XGenericEventCookie cookie);
+    
     /** Returns an {@link XWMHints} which must be freed by {@link #XFree}.
      * @param display target Display
      * @param window target Window
