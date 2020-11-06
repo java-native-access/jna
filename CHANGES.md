@@ -13,6 +13,7 @@ Features
 * [#1242](https://github.com/java-native-access/jna/pull/1242): Add CallWindowProc to User32 - [@heldplayer](https://github.com/heldplayer).
 * [#1239](https://github.com/java-native-access/jna/pull/1239): Improve performance of allocation of `c.s.j.Memory` objects - [@joerg1985](https://github.com/joerg1985).
 * [#1246](https://github.com/java-native-access/jna/pull/1246): Improve performance of `c.s.j.Structure#read` and `c.s.j.Structure#write` - [@joerg1985](https://github.com/joerg1985).
+* [#1263](https://github.com/java-native-access/jna/pull/1263): Add LowLevelMouseProc - [@nordiakt](https://github.com/nordiakt)
 
 Bug Fixes
 ---------
