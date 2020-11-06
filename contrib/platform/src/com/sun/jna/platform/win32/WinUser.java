@@ -369,6 +369,10 @@ public interface WinUser extends WinDef {
         boolean callback(HWND hWnd, Pointer data);
     }
 
+    public interface LowLevelMouseProc extends HOOKPROC {
+        LRESULT callback(int nCode, WPARAM wParam, MSLLHOOKSTRUCT lParam);
+    }
+
     public interface LowLevelKeyboardProc extends HOOKPROC {
         LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT lParam);
     }
@@ -609,6 +613,15 @@ public interface WinUser extends WinDef {
      * window.
      */
     int ICON_SMALL2 = 2;
+
+    @FieldOrder({"pt", "mouseData", "flags", "time", "dwExtraInfo"})
+    public class MSLLHOOKSTRUCT extends Structure {
+        public POINT pt;
+        public DWORD mouseData;
+        public DWORD flags;
+        public DWORD time;
+        public ULONG_PTR dwExtraInfo;
+    }
 
     @FieldOrder({"vkCode", "scanCode", "flags", "time", "dwExtraInfo"})
     public class KBDLLHOOKSTRUCT extends Structure {
