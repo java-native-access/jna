@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jnacontrib.w32keyhook" default="jar" basedir=".">
-    <description>Builds, tests, and runs the project jnacontrib.w32keyhook.</description>
+<project name="jnacontrib.w32windowhooks" default="jar" basedir=".">
+    <description>Builds, tests, and runs the project jnacontrib.w32windowhooks.</description>
     <!-- Locations -->
     <property name="src"                location="."/>
     <property name="build"              location="build"/>
     <property name="jna-dist"           location="../../../dist"/>
 
     <property name="classes"       location="${build}/classes"/>
-    <property name="jar"           location="${build}/demo-w32keyhook.jar"/>
+    <property name="jar"           location="${build}/demo-w32windowhooks.jar"/>
     <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
-    <property name="main-class"		value="com.sun.jna.contrib.demo.KeyHook" />
+    <property name="main-class"		value="com.sun.jna.contrib.demo.WindowHooks" />
 
     <path id="classpath">
         <fileset file="${file.reference.jna.jar}"/>
