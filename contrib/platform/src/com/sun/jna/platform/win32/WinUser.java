@@ -617,9 +617,9 @@ public interface WinUser extends WinDef {
     @FieldOrder({"pt", "mouseData", "flags", "time", "dwExtraInfo"})
     public class MSLLHOOKSTRUCT extends Structure {
         public POINT pt;
-        public DWORD mouseData;
-        public DWORD flags;
-        public DWORD time;
+        public int mouseData;
+        public int flags;
+        public int time;
         public ULONG_PTR dwExtraInfo;
     }
 
