@@ -285,6 +285,17 @@ public interface X11 extends Library {
     // TODO: define structure
     class XImage extends PointerType { }
 
+    /**
+     * The XQueryExtension function determines if the named extension is present.
+     * @param display Specifies the connection to the X server.
+     * @param name Specifies the extension name.
+     * @param major_opcode_return Returns the major opcode.
+     * @param first_event_return Returns the first event code, if any.
+     * @param first_error_return Returns the first error code, if any.
+     * @return if present
+     */
+    boolean XQueryExtension(Display display, String name, IntByReference major_opcode_return, IntByReference first_event_return, IntByReference first_error_return);
+
     /** Definition (incomplete) of the Xext library. */
     interface Xext extends Library {
         Xext INSTANCE = Native.load("Xext", Xext.class);
