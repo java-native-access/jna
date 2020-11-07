@@ -116,6 +116,24 @@ public class X11Test extends TestCase {
         Assert.assertArrayEquals("Sent protocols were not equal to returned procols for XGetWMProtocols", sentAtoms, receivedAtoms);
     }
 
+    public void testXQueryExtension() {
+        final IntByReference opcode = new IntByReference(0);
+        final IntByReference first_event = new IntByReference(0);
+        final IntByReference first_error = new IntByReference(0);
+
+        // check if the XTEST extension is available
+        if (X11.INSTANCE.XQueryExtension(display, "XTEST", opcode, first_event, first_error)) {
+            // Opcode for extension should be assigned in range 128-255
+            Assert.assertTrue("Value for opcode should be between 128-255.", (opcode.getValue() & 0x80) > 0);
+            // No first_event defined for XTEST
+            Assert.assertEquals("Wrong value for first_event returned", 0, first_event.getValue());
+            // No first_error defined for XTEST
+            Assert.assertEquals("Wrong value for first_error returned", 0, first_error.getValue());
+        } else {
+            // XTEST extension is not supported by the X server
+        }
+    }
+
     public void testStructureFieldOrder() {
         StructureFieldOrderInspector.batchCheckStructureGetFieldOrder(X11.class, null, true);
     }
