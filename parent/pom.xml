@@ -13,7 +13,7 @@
     <url>https://github.com/java-native-access/jna</url>
     <licenses>
         <license>
-            <name>LGPL, version 2.1</name>
+            <name>LGPL, version 2.1 or later</name>
             <url>http://www.gnu.org/licenses/licenses.html</url>
             <distribution>repo</distribution>
         </license>
