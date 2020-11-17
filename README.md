@@ -22,6 +22,7 @@ Projects Using JNA
 ==================
 JNA is a mature library with dozens of contributors and hundreds of commercial and non-commercial projects that use it.  If you're using JNA, feel free to [tell us about it](http://groups.google.com/group/jna-users).  Include some details about your company, project name, purpose and size and tell us how you use the library.
 
+- [jAlbum](https://jalbum.net): Desktop based web gallery software for any web site.
 - [Apache Cassandra](http://cassandra.apache.org): Large-scale NoSQL data store.
 - [Rococoa](https://github.com/iterate-ch/rococoa): Java bindings to the Mac OS X Cocoa framework, by Duncan McGregor.
 - [jna-posix](http://kenai.com/projects/jna-posix): Common POSIX Functions for Java.
