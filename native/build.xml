@@ -15,7 +15,13 @@
     <condition property="os.prefix" value="win32-${jre.arch}">
         <os family="windows"/>
     </condition>
-    <!-- Darwin builds are universal, no arch required -->
+    <condition property="os.prefix" value="darwin-aarch64">
+        <and>
+            <os family="mac"/>
+            <equals arg1="${jre.arch}" arg2="aarch64"/>
+        </and>
+    </condition>
+    <!-- Intel Darwin builds are universal, no arch required -->
     <condition property="os.prefix" value="darwin">
         <os family="mac"/>
     </condition>
@@ -235,6 +241,9 @@
         <condition property="ARCH" value="armv7">
             <equals arg1="${os.prefix}" arg2="android-armv7"/>
         </condition>
+        <condition property="ARCH" value="arm64">
+            <equals arg1="${os.prefix}" arg2="darwin-aarch64"/>
+        </condition>
         <condition property="ARCH" value="aarch64">
             <matches string="${os.prefix}" pattern="-aarch64$"/>
         </condition>
@@ -280,6 +289,12 @@
             <isset property="SDKROOT"/>
         </condition>
         <property name="xcode" value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform"/>
+        <condition property="make.SDKROOT" value="SDKROOT=${xcode}/Developer/SDKs/MacOSX11.0.sdk">
+            <and>
+                <equals arg1="${os.prefix}" arg2="darwin-aarch64" trim="true"/>
+                <available file="${xcode}/Developer/SDKs/MacOSX11.0.sdk"/>
+            </and>
+        </condition>
         <condition property="make.SDKROOT" value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.11.sdk">
             <and>
                 <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>

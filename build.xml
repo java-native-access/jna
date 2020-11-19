@@ -276,7 +276,13 @@
     <condition property="os.prefix" value="win32-${jre.arch}">
       <equals arg1="${build.os.family}" arg2="windows"/>
     </condition>
-    <!-- Darwin builds are universal, no arch required -->
+    <condition property="os.prefix" value="darwin-aarch64">
+      <and>
+        <os family="mac"/>
+        <equals arg1="${jre.arch}" arg2="aarch64"/>
+      </and>
+    </condition>
+    <!-- Intel Darwin builds are universal, no arch required -->
     <condition property="os.prefix" value="darwin">
       <equals arg1="${build.os.family}" arg2="mac"/>
     </condition>
@@ -522,6 +528,8 @@ processor=x86-64;osname=openbsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
 osname=macosx;processor=x86;processor=x86-64;processor=ppc
+com/sun/jna/darwin-aarch64/libjnidispatch.jnilib;
+osname=macosx;processor=aarch64
 "/>
           </manifest>
           <manifest file="@{target}" mode="update" if:true="@{module-info}">
@@ -566,6 +574,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/darwin.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/darwin"/>
+      <zipfileset src="${lib.native}/darwin-aarch64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/darwin-aarch64"/>
       <zipfileset src="${lib.native}/linux-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-x86"/>
@@ -788,6 +799,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   <target name="-native-api-check" depends="javah" unless="jni.valid">
     <echo>Invalidating native code, new checksum is ${md5}</echo>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/darwin.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/darwin-aarch64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-aarch64.jar" overwrite="true"/>
@@ -882,6 +894,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="ARCH" value="armv7">
       <equals arg1="${os.prefix}" arg2="android-armv7"/>
     </condition>
+    <condition property="ARCH" value="arm64">
+      <equals arg1="${os.prefix}" arg2="darwin-aarch64"/>
+    </condition>
     <condition property="ARCH" value="aarch64">
       <matches string="${os.prefix}" pattern="-aarch64$"/>
     </condition>
@@ -919,6 +934,12 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <isset property="SDKROOT"/>
     </condition>
     <property name="xcode" value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform"/>
+    <condition property="make.SDKROOT" value="SDKROOT=${xcode}/Developer/SDKs/MacOSX11.0.sdk">
+      <and>
+        <equals arg1="${os.prefix}" arg2="darwin-aarch64" trim="true"/>
+        <available file="${xcode}/Developer/SDKs/MacOSX11.0.sdk"/>
+      </and>
+    </condition>
     <condition property="make.SDKROOT"
 	       value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.11.sdk">
       <and>
