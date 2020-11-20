@@ -42,8 +42,8 @@ public class VarArgsTest extends TestCase {
         }
         public int addVarArgs(String fmt, Number... args);
         public String returnStringVarArgs(String fmt, Object... args);
-        public void modifyStructureVarArgs(String fmt, Object arg1, Object... args);
-        public String returnStringVarArgs2(String... args);
+        public void modifyStructureVarArgs(String fmt, Object... args);
+        public String returnStringVarArgs2(String fmt, String... args);
     }
     TestLibrary lib;
     @Override
