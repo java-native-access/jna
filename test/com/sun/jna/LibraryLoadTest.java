@@ -203,13 +203,12 @@ public class LibraryLoadTest extends TestCase implements Paths {
     public void testLoadFrameworkLibrary() {
         if (Platform.isMac()) {
             final String PATH = "/System/Library/Frameworks/CoreServices.framework";
-            assertTrue("CoreServices not present on this setup, expected at " + PATH, new File(PATH).exists());
             try {
                 NativeLibrary lib = NativeLibrary.getInstance("CoreServices");
                 assertNotNull("CoreServices not found", lib);
             }
             catch(UnsatisfiedLinkError e) {
-                fail("Should search /System/Library/Frameworks");
+                failCoreServices("Should search /System/Library/Frameworks: ", e, PATH);
             }
         }
     }
@@ -218,13 +217,12 @@ public class LibraryLoadTest extends TestCase implements Paths {
         if (Platform.isMac()) {
             final String PATH = "/System/Library/Frameworks/CoreServices";
             final String FRAMEWORK = PATH + ".framework";
-            assertTrue("CoreServices not present on this setup, expected at " + FRAMEWORK, new File(FRAMEWORK).exists());
             try {
                 NativeLibrary lib = NativeLibrary.getInstance(PATH);
                 assertNotNull("CoreServices not found", lib);
             }
             catch(UnsatisfiedLinkError e) {
-                fail("Should try FRAMEWORK.framework/FRAMEWORK if the absolute framework (truncated) path given exists: " + e);
+                failCoreServices("Should try FRAMEWORK.framework/FRAMEWORK if the absolute framework (truncated) path given exists: ", e, FRAMEWORK);
             }
         }
     }
@@ -232,15 +230,21 @@ public class LibraryLoadTest extends TestCase implements Paths {
     public void testLoadFrameworkLibraryAbsoluteFull() {
         if (Platform.isMac()) {
             final String PATH = "/System/Library/Frameworks/CoreServices.framework/CoreServices";
-            assertTrue("CoreServices not present on this setup, expected at " + PATH, new File(PATH).exists());
             try {
                 NativeLibrary lib = NativeLibrary.getInstance(PATH);
                 assertNotNull("CoreServices not found", lib);
             }
             catch(UnsatisfiedLinkError e) {
-                fail("Should try FRAMEWORK verbatim if the absolute path given exists: " + e);
+                failCoreServices("Should try FRAMEWORK verbatim if the absolute path given exists: ", e, PATH);
             }
         }
+    }
+
+    private void failCoreServices(String message, UnsatisfiedLinkError e, String expectedPath) {
+        if (!new File(expectedPath).exists()) {
+            message = "CoreServices not present on this setup, expected at " + expectedPath + "\n" + message;
+        }
+        fail(message + e);
     }
 
     public void testHandleObjectMethods() {
