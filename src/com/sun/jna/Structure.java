@@ -2080,10 +2080,8 @@ public abstract class Structure {
                         size = sf.size;
                     }
                 }
-                if( (! Platform.isWindows()) && (
-                        (Platform.isIntel() && Platform.is64Bit())
-                        || (Platform.isARM())
-                    )) {
+                if ((Platform.isIntel() && Platform.is64Bit() && !Platform.isWindows())
+                    || Platform.isARM()) {
                     // System V x86-64 ABI requires, that in a union aggregate,
                     // that contains Integer and Double members, the parameters
                     // must be passed in the integer registers. I.e. in the case
