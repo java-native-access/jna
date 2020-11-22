@@ -1,20 +1,72 @@
 version: 1.0.{build}
-image: Visual Studio 2015
+
+# speed up cloning
+shallow_clone: true
+clone_depth: 10
+
+environment:
+  matrix:
+    - TARGET_ARCH: x86_64
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      CYGWIN_PACKAGES: git,make,automake,libtool,mingw64-x86_64-gcc-g++,mingw64-x86_64-gcc-core
+      CHOCO_PACKAGES: ant cygwin
+      CYGWIN_SETUP: cygwinsetup.exe # from choco
+      JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+
+    - TARGET_ARCH: x86
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      CYGWIN_PACKAGES: git,make,automake,libtool,mingw64-i686-gcc-g++,mingw64-i686-gcc-core
+      CHOCO_PACKAGES: ant cygwin
+      CYGWIN_SETUP: cygwinsetup.exe # from choco
+      JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0 # 32-bit
+
+    - TARGET_ARCH: aarch64
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019 # provides cygwin, mingw
+      CYGWIN_PACKAGES: make,automake,libtool
+      CHOCO_PACKAGES: ant
+      CYGWIN_SETUP: setup-x86_64.exe # from appveyor
+      JAVA_HOME: C:\Program Files\Java\jdk1.8.0
 
 install:
-- cmd: set PATH=%PATH%;c:\cygwin64;c:\cygwin64\bin
-- cmd: choco install -y -f -i ant
-- cmd: choco install -y -f -i cygwin
-- cmd: C:\cygwin64\cygwinsetup.exe --root C:\cygwin64 --local-package-dir C:\cygwin64\packages --quiet-mode --no-desktop --no-startmenu --packages git,make,automake,automake1.15,libtool,mingw64-x86_64-gcc-g++,mingw64-x86_64-gcc-core,gcc-g++
-- cmd: set JAVA_HOME=C:\Program Files\Java\jdk1.8.0
-- cmd: set PATH=%JAVA_HOME%\bin;%PATH%
-- cmd: set PATH=c:\cygwin64;c:\cygwin64\bin;%PATH%
-- cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64'
+    # Must prepend cygwin PATH to avoid "cygheap base mismatch" from Git\usr\bin\sed
+  - cmd: set PATH=C:\cygwin64;C:\cygwin64\bin;%JAVA_HOME%\bin;%PATH%;
+  - cmd: choco install -y -f -i %CHOCO_PACKAGES%
+  - cmd: '%CYGWIN_SETUP% --root C:\cygwin64 --local-package-dir C:\cygwin64\packages --quiet-mode --no-desktop --no-startmenu --packages %CYGWIN_PACKAGES%'
+
+# Setup msvc environment
+for:
+  - # VS 2015: x64
+    matrix:
+      only:
+        - TARGET_ARCH: x86_64
+    before_build:
+        - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64'
+    before_test:
+        - cmd: net start spooler
+    test_script:
+        - cmd: ant test
+        - cmd: ant test-platform
+
+  - # VS 2015: x86
+    matrix:
+      only:
+        - TARGET_ARCH: x86
+    before_build:
+        - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86'
+    before_test:
+        - cmd: net start spooler
+    test_script:
+        - cmd: ant test
+        - cmd: ant test-platform
+
+  - # VS 2019: aarch64
+    matrix:
+      only:
+        - TARGET_ARCH: aarch64
+    before_build:
+        - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64_arm64'
+    test_script:
+        - cmd: echo Skipping tests
 
 build_script:
-- cmd: ant dist
-
-test_script:
-- cmd: net start spooler
-- cmd: ant test
-- cmd: ant test-platform
+  - cmd: ant -Dos.prefix=win32-%TARGET_ARCH% dist
