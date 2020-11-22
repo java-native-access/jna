@@ -465,6 +465,8 @@ com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win,
 com/sun/jna/win32-x86-64/jnidispatch.dll;
 processor=x86-64;osname=win,
+com/sun/jna/win32-aarch64/jnidispatch.dll;
+processor=aarch64;osname=win,
 com/sun/jna/w32ce-arm/jnidispatch.dll;
 processor=arm;osname=wince,
 
@@ -627,6 +629,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/win32-x86-64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-x86-64"/>
+      <zipfileset src="${lib.native}/win32-aarch64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/win32-aarch64"/>
       <zipfileset src="${lib.native}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
@@ -744,7 +749,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </condition>
     <!-- args are based on GNU grep, other versions may differ -->
     <apply dir="${build.headers}" executable="${grep}" parallel="true"
-           failonerror="${grep.required}" relative="true" output="${md5.file}">
+           failonerror="${grep.required}" relative="true" output="${md5.file}"
+           error="${md5.file}.error">
       <arg value="-A"/>
       <arg value="1"/>
       <arg value="JNIEXPORT"/>
@@ -784,6 +790,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/darwin.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86-64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-aarch64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/w32ce-arm.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86-64.jar" overwrite="true"/>
@@ -876,7 +883,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <equals arg1="${os.prefix}" arg2="android-armv7"/>
     </condition>
     <condition property="ARCH" value="aarch64">
-      <equals arg1="${os.prefix}" arg2="android-aarch64"/>
+      <matches string="${os.prefix}" pattern="-aarch64$"/>
     </condition>
     <condition property="ARCH" value="x86">
       <equals arg1="${os.prefix}" arg2="android-x86"/>

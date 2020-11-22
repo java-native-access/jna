@@ -129,8 +129,9 @@ public final class Platform {
         RO_FIELDS = osType != WINDOWSCE;
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
-        HAS_DLL_CALLBACKS = osType == WINDOWS;
         ARCH = getCanonicalArchitecture(System.getProperty("os.arch"), osType);
+        // Windows aarch64 callbacks disabled via ASMFN_OFF (no mingw support)
+        HAS_DLL_CALLBACKS = osType == WINDOWS && !ARCH.startsWith("aarch");
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
     }
     private Platform() { }

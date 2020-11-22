@@ -9,7 +9,7 @@
 #
 # Supported platforms (built and tested):
 #
-#   Windows 2000/XP/2003/Vista (x86/amd64)
+#   Windows (x86/amd64/aarch64)
 #   Windows CE/Mobile (arm)
 #   Darwin/OS X (i386/x86_64/ppc)
 #   Linux (i386/amd64/ppc/arm)
@@ -246,8 +246,21 @@ LIBS=psapi.lib
 ARSFX=.lib
 ifeq ($(ARCH),amd64)
 CC+= -m64
+FFI_TARGET=$(FFI_SRC)/src/x86/ffitarget.h
+else ifeq ($(ARCH),aarch64)
+# Force $(CC) fallback; avoid arch mismatch
+WINDRES=false
+# Disable mingw; no aarch64 support
+MINGW=
+FFI_CONFIG+=--host=aarch64-cygwin
+# Skip building assembly callback functions
+CDEFINES+= -DASMFN_OFF
+DLLCB=
+CC+= -marm64
+FFI_CONFIG+=--host=aarch64-cygwin
 endif
-FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
+FFI_TARGET?=$(FFI_SRC)/src/$(ARCH)/ffitarget.h
+FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_TARGET) include
 FFI_ENV+=LD="$(LD)" CPP="$(CPP)" CXXCPP="$(CPP)"
 EXTRAOBJS+=$(DLLCB)
 

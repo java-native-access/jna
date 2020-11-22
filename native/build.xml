@@ -236,7 +236,7 @@
             <equals arg1="${os.prefix}" arg2="android-armv7"/>
         </condition>
         <condition property="ARCH" value="aarch64">
-            <equals arg1="${os.prefix}" arg2="android-aarch64"/>
+            <matches string="${os.prefix}" pattern="-aarch64$"/>
         </condition>
         <condition property="ARCH" value="x86">
             <equals arg1="${os.prefix}" arg2="android-x86"/>
