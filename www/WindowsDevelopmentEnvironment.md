@@ -1,122 +1,130 @@
 Setting up a Windows Development Environment
 ============================================
 
-Java
-----
+This builds the library based on the Visual C++ compiler, but can be [adjusted to work without](#mingw-only) if needed.
 
-For a 32-bit build, set `JAVA_HOME` to a 32-bit JDK, eg. `C:\Program Files (x86)\java\jdk1.6.0_24`. 
-For a 64-bit build, set `JAVA_HOME` to a 64-bit JDK, eg. `C:\Program Files\java\jdk1.6.0_24`. 
+### Background
 
-Native
-------
-
-### MSVC / Visual Studio
-
-JNA uses the free MS Visual Studio C++ Express compiler to compile
-native bits if MSVC is set in the environment. The MS compiler provides
+JNA uses the Microsoft Visual Studio C++ compiler (MSVC) to compile
+native bits when MSVC is detected in the environment. The MSVC compiler provides
 structured event handling (SEH), which allows JNA to trap native faults when
-run in protected mode. 
+run in protected mode.   It does this using libffi's `native/libffi/msvcc.sh`
+wrapper script, which converts Makefile `gcc` commands to MSVC-compatible
+(e.g. `cl.exe`, etc) calls.
 
-On 64-bit windows, you will still need to install mingw64 in order to
+For x86, x86_64, you will still need to install mingw64 in order to
 compile a small bit of inline assembly.
 
-To use the MS compiler, ensure that the appropriate 32-bit or 64-bit versions
-of cl.exe/ml.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and
-LIB environment variables are set properly (as in VCVARS.BAT). 
+To use the MSVC compiler, the appropriate x86 or x86_64 versions
+of `cl.exe`/`ml(64).exe`/`link.exe` must be in your `PATH`
+and that the `INCLUDE` and `LIB` environment variables are set properly.
 
-Sample configuration setting up INCLUDE/LIB (see an alternative below):
-
-```shell
+We'll set these automatically using `VsDevCmd.bat`
+<details>
+	<summary>Prefer to use <code>bash</code> instead?</summary>
+	
+```bash
 export MSVC="/c/Program Files (x86)/Microsoft Visual Studio 10.0/vc"
 export WSDK="/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A"
 export WSDK_64="/c/Program Files/Microsoft SDKs/Windows/v7.1"
 
 export INCLUDE="$(cygpath -m "$MSVC")/include;$(cygpath -m "$WSDK")/include"
-# for 64-bit target
+# for x86_64 target
 export LIB="$(cygpath -m "$MSVC")/lib/amd64;$(cygpath -m "$WSDK_64")/lib/x64"
-# for 32-bit target
+# for x86 target
 export LIB="$(cygpath -m "$MSVC")/lib;$(cygpath -m "$WSDK")/lib"
 ```
 
-### mingw
+**Warning:** The below steps are for `cmd` only.  If you're choosing to use `bash`, you'll need to adjust each command as needed.
 
-Install [cygwin](http://www.cygwin.com/).
+   </details>
 
-When installing cygwin, include ssh, git, make, autotools, and mingw{32|64}-g++.
-Ensure the mingw compiler (i686-pc-mingw32-gcc.exe or i686-pc-mingw64-gcc.exe) is on your path.
+### Prerequisites
+Starting pont: A clean Windows 10 64-bit Installation with all patches
 
-If `cl.exe` is found on your %PATH%, you'll need to invoke `ant native
--DUSE_MSVC=false` in order to avoid using the MS compiler.
-
-### Issues
-
-#### Backslash R Command Not Found
-
-If you get errors such as `'\r': command not found`, run `dos2unix -f [filename]`
-for each file that it's complaining about.
-
-### Building
-
-Type `ant` from the top to build the project.
-
-Recipe for building on windows
-------------------------------
-
-This is the contents of a note I made for myself to be able to build JNA on
-windows.
-
-This builds the library based on the Visual C++ compiler.
-
-<pre>
-0. Start-Point: A clean Windows 10 Installation with all patches as of 2019-07-30
-1. Install Visual C++ Build Tools 2019 (https://visualstudio.microsoft.com/de/downloads/)
-   (Install "Windows 10 SDK", "MSVC v142 - VS 2019 C++-x64/x86-Buildtools", "Windows Universal CRT SDK")
-2. Install AdoptOpen JDK 8.0.222.10 (64 bit) (https://adoptopenjdk.net/index.html)
+1. Install Visual C++ Build Tools 2019 (https://visualstudio.microsoft.com/downloads/)
+   * Install `Windows 10 SDK`, `MSVC v142 - VS 2019 C++-x64/x86-Buildtools`, `Windows Universal CRT SDK`
+2. Install AdoptOpenJDK 8.0.222.10 for the target architecture (https://adoptopenjdk.net/index.html)
+3. Install ant (https://ant.apache.org/bindownload.cgi).
 3. Install Cygwin 64 Bit (https://cygwin.com/install.html)
-	- make
-	- automake
-	- automake1.15
-	- libtool
-	- mingw64-x86_64-gcc-g++ (Version 7.4.0-1)
-	- mingw64-x86_64-gcc-core (Version 7.4.0-1)
-	- gcc-g++
-        - git
-4. Open a cmd for the following actions
-5. Point JAVA_HOME to the root of a 64 Bit JDK,
-   set JAVA_HOME=c:\Program Files\AdoptOpenJDK\jdk-8.0.222.10-hotspot
-6. Ensure ant is accessible from the PATH
-   set PATH=c:\temp\apache-ant-1.9.11\bin;%PATH%
-7, Include 64 Bit Cygwin in the path
-   set PATH=c:\cygwin64\bin\;%PATH%
-8. Setup the Visual Studio build environment for 64 Bit builds
-   "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=amd64
-9. Run native build
+	- `make`, `automake`, `automake1.15`, `libtool`
+   - `git`
+   - `gcc-g++` (See table)
+      | x86_64 | x86 | aarch64 |
+      |----------|-------|-----------|
+      | `gcc-g++`<br>`mingw64-x86_64-gcc-g++` <br>`mingw64-x86_64-gcc-core` | `gcc-g++`<br>`mingw64-i686-gcc-g++` <br>`mingw64-i686-gcc-core` | `gcc-g++` |
 
-For 32bit:
+### Steps
 
-0. Start-Point: A clean Windows 10 Installation with all patches as of 2019-07-30
-1. Install Visual C++ Build Tools 2019 (https://visualstudio.microsoft.com/de/downloads/)
-   (Install "Windows 10 SDK", "VC++ 2017 Version 15.7 v14.14 toolset", "Windows Universal CRT SDK")
-2. Install AdoptOpen JDK 8.0.222.10 (32 bit) (https://adoptopenjdk.net/index.html)
-3. Install Cygwin 32 Bit (https://cygwin.com/install.html)
-	- make
-	- automake
-	- automake1.15
-	- libtool
-        - mingw64-i686-gcc-g++ (Version 7.4.0-1)
-        - mingw64-i686-gcc-core (Version 7.4.0-1)
-	- gcc-g++
-        - git
-4. Open a cmd for the following actions
-5. Point JAVA_HOME to the root of a 32 Bit JDK,
-   set JAVA_HOME=c:\Program Files (x86)\AdoptOpenJDK\jdk-8.0.222.10-hotspot
-6. Ensure ant is accessible from the PATH
-   set PATH=c:\temp\apache-ant-1.9.11\bin;%PATH%
-7, Include 32 Bit Cygwin in the path
-   set PATH=c:\cygwin\bin\;%PATH%
-8. Setup the Visual Studio build environment for 32 Bit builds
-   "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=x86
-9. Run native build
-</pre>
+1. Open `cmd` for the following actions
+2. Point `JAVA_HOME` to the root of the target JDK:
+   #### JAVA_HOME `x86_64`
+   ```cmd
+   set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-8.0.222.10-hotspot
+   ```
+   
+   #### JAVA_HOME `x86`
+   ```cmd
+   set JAVA_HOME=C:\Program Files (x86)\AdoptOpenJDK\jdk-8.0.222.10-hotspot
+   ```
 
-To build without Visual C++, using only Cygwin, just skip steps 1 and 5.
+   #### JAVA_HOME `aarch64`
+   Native builds only.  For cross-compiling, use [`x86_64`](#JAVA_HOME-x86_64).
+   ```cmd
+   set JAVA_HOME=%USERPROFILE%\jdk-16-ea+19-windows-aarch64
+   ```
+
+3. Ensure `ant` is accessible from the `PATH`
+   ```cmd
+   set PATH=%USERPROFILE%\apache-ant-1.9.11\bin;%PATH%
+   ```
+4. Include 64 Bit Cygwin in the path
+   ```cmd
+   set PATH=C:\cygwin64\bin\;%PATH%
+   ```
+5. Setup the Visual Studio build environment using `vcvarsall` in `<host>_<target>` notation:
+   #### VsDevCmd `x86_64`
+   ```cmd
+   "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+   ```
+
+   #### VsDevCmd `x86`
+   ```cmd
+   "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64_x86
+   ```
+
+   #### VsDevCmd `aarch64`
+   ```cmd
+   "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64_arm64
+   ```
+
+6. Run the build
+   ```cmd
+   ant
+   ```
+
+   ... or if cross-compiling, specify the target architecture, e.g:
+   ```cmd
+   ant -Dos.prefix=win32-aarch64
+   ```
+
+### Mingw Only
+
+To build without Visual C++, using only Cygwin, just skip step 5 and skip installing the Visual C++ Build Tools 2019 . (Cygwin currently cannot build `aarch64` binaries, MSVC is needed)
+
+### Troubleshooting
+
+1. For native compiling or linking errors for MSVC builds after `VsDevCmd.bat` was run for a different/wrong architecture:
+   - Close and reopen `cmd`
+   - Configure `PATH`, `JAVA_HOME` again per target architecture.
+   - Run `ant clean`
+   - Start the build again.
+1. For native compiling or linking errors for MSVC builds, toggle on debug mode in `native/libffi/msvcc.sh`:
+   ```diff
+   - verbose=
+   + verbose=1
+   ```
+2. Re-run ant with detailed output:
+   ```
+   ant -DEXTRA_MAKE_OPTS="--debug=v"
+   ```
