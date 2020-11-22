@@ -181,6 +181,9 @@ ffi_prep_cif_machdep(ffi_cif *cif)
     {
       ffi_type *t = cif->arg_types[i];
 
+#if defined(_M_IX86)
+      if (cif->abi != FFI_STDCALL)
+#endif
       bytes = FFI_ALIGN (bytes, t->alignment);
       bytes += FFI_ALIGN (t->size, FFI_SIZEOF_ARG);
     }
