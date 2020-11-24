@@ -81,6 +81,10 @@ public class CoreFoundationTest {
 
         desc.release();
         cfAwesome.release();
+
+        CFStringRef cfEmpty = CFStringRef.createCFString("");
+        assertTrue(cfEmpty.stringValue().equals(""));
+        cfEmpty.release();
     }
 
     @Test

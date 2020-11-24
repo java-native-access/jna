@@ -488,15 +488,18 @@ public interface CoreFoundation extends Library {
          */
         public String stringValue() {
             CFIndex length = INSTANCE.CFStringGetLength(this);
+            if (length.longValue() == 0) {
+                return "";
+            }
             CFIndex maxSize = INSTANCE.CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
             if (maxSize.intValue() == kCFNotFound) {
-                return null;
+                throw new StringIndexOutOfBoundsException("CFString maximum number of bytes exceeds LONG_MAX.");
             }
             Memory buf = new Memory(maxSize.longValue());
             if (0 != INSTANCE.CFStringGetCString(this, buf, maxSize, kCFStringEncodingUTF8)) {
                 return buf.getString(0, "UTF8");
             }
-            return null;
+            throw new IllegalArgumentException("CFString conversion fails or the provided buffer is too small.");
         }
     }
 
