@@ -1,0 +1,9 @@
+*             text=auto
+Makefile*     text eol=lf
+*.am          text eol=lf
+*.m4          text eol=lf
+*.sh          text eol=lf
+*.sub         text eol=lf
+*.guess       text eol=lf
+*.host        text eol=lf
+libtool*      text eol=lf
