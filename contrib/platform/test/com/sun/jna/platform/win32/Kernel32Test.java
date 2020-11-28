@@ -91,6 +91,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
 
 import junit.framework.TestCase;
+import org.junit.Assume;
 
 public class Kernel32Test extends TestCase {
 
@@ -1381,13 +1382,31 @@ public class Kernel32Test extends TestCase {
 
     @Test
     public void testCreateRemoteThread() {
+        Assume.assumeTrue("testCreateRemoteThread is only implemented for x86 + x86-64", Platform.isIntel());
+
         Pointer addr = Kernel32.INSTANCE.VirtualAllocEx(
             Kernel32.INSTANCE.GetCurrentProcess(), null, new SIZE_T(4096),
             MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-        // mov eax, ecx; ret; int3
         Memory localBuffer = new Memory(4096);
-        localBuffer.setInt(0, 0xccc3c18b);
+        localBuffer.clear();
+
+        if (Platform.is64Bit()) {
+            // mov eax, ecx; ret; int3
+            localBuffer.setByte(0, (byte) 0x8b); // MOV
+            localBuffer.setByte(1, (byte) 0xc1); // ECX -> EAX
+            localBuffer.setByte(2, (byte) 0xc3); // RET
+            localBuffer.setByte(3, (byte) 0xcc); // INT3
+        } else {
+            // mov eax, esp + 4; ret; int3
+            localBuffer.setByte(0, (byte) 0x8b); // MOV
+            localBuffer.setByte(1, (byte) 0x44); // ESP + 4bytes-> EAX
+            localBuffer.setByte(2, (byte) 0x24); //
+            localBuffer.setByte(3, (byte) 0x04); //
+            localBuffer.setByte(4, (byte) 0xc3); // RET
+            localBuffer.setByte(5, (byte) 0xcc); // INT3
+        }
+
         IntByReference bytesWritten = new IntByReference();
         Kernel32.INSTANCE.WriteProcessMemory(Kernel32.INSTANCE.GetCurrentProcess(),
             addr, localBuffer, 4096, bytesWritten);
