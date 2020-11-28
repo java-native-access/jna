@@ -82,6 +82,8 @@ typedef enum _callconv {
     CALLCONV_C = com_sun_jna_Function_C_CONVENTION,
 #ifdef _WIN32
     CALLCONV_STDCALL = com_sun_jna_Function_ALT_CONVENTION,
+    CALLCONV_THISCALL = com_sun_jna_Function_THISCALL_CONVENTION,
+    CALLCONV_FASTCALL = com_sun_jna_Function_FASTCALL_CONVENTION,
 #endif
 } callconv_t;
 

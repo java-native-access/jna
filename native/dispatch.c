@@ -629,6 +629,22 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     abi = FFI_STDCALL;
 #endif
     break;
+  case CALLCONV_THISCALL:
+#if defined(_WIN64) || defined(_WIN32_WCE)
+    // Ignore requests for thiscall on win64/wince
+    abi = FFI_DEFAULT_ABI;
+#else
+    abi = FFI_THISCALL;
+#endif
+    break;
+  case CALLCONV_FASTCALL:
+#if defined(_WIN64) || defined(_WIN32_WCE)
+    // Ignore requests for fastcall on win64/wince
+    abi = FFI_DEFAULT_ABI;
+#else
+    abi = FFI_FASTCALL;
+#endif
+    break;
 #endif // _WIN32
   default:
     abi = (int)callconv;
@@ -3412,6 +3428,8 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   jint* cvts = conversions ? (*env)->GetIntArrayElements(env, conversions, NULL) : NULL;
 #if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
   if (cc == CALLCONV_STDCALL) abi = FFI_STDCALL;
+  else if (cc == CALLCONV_THISCALL) abi = FFI_THISCALL;
+  else if (cc == CALLCONV_FASTCALL) abi = FFI_FASTCALL;
 #endif
   if (!(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)) {
     char msg[MSG_SIZE];

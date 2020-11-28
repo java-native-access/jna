@@ -70,6 +70,12 @@ public class Function extends Pointer {
     /** First alternate convention (currently used only for w32 stdcall). */
     @java.lang.annotation.Native
     public static final int ALT_CONVENTION = 0x3F;
+    /** thiscall alternate convention (used only for w32 thiscall). */
+    @java.lang.annotation.Native
+    public static final int THISCALL_CONVENTION = 0x1F;
+    /** fastcall alternate convention (used only for w32 fastcall). */
+    @java.lang.annotation.Native
+    public static final int FASTCALL_CONVENTION = 0xF;
 
     @java.lang.annotation.Native
     private static final int MASK_CC = 0x3F;
