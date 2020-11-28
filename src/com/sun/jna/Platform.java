@@ -314,9 +314,6 @@ public final class Platform {
                 break;
             case Platform.MAC:
                 osPrefix = "darwin";
-                if (arch.startsWith("aarch64")) {
-                    osPrefix += "-aarch64";
-                }
                 break;
             case Platform.LINUX:
                 osPrefix = "linux-" + arch;
