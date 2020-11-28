@@ -33,6 +33,7 @@ import org.junit.runner.JUnitCore;
 
 import com.sun.jna.CallbackReference;
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
@@ -442,8 +443,14 @@ public class User32WindowMessagesTest extends AbstractWin32TestSupport {
         }
 
         SubClassedWindowProc subclass = new SubClassedWindowProc();
-        subclass.oldWindowProc = User32.INSTANCE.SetWindowLongPtr(hwndToSubclass, WinUser.GWL_WNDPROC,
-                CallbackReference.getFunctionPointer(subclass));
+        if(Platform.is64Bit()) {
+            subclass.oldWindowProc = User32.INSTANCE.SetWindowLongPtr(hwndToSubclass, WinUser.GWL_WNDPROC,
+                    CallbackReference.getFunctionPointer(subclass));
+        } else {
+            // From MSDN: When compiling for 32-bit Windows, SetWindowLongPtr is defined as a call to the SetWindowLong function.
+            User32.INSTANCE.SetWindowLong(hwndToSubclass, WinUser.GWL_WNDPROC,
+                (int) Pointer.nativeValue(CallbackReference.getFunctionPointer(subclass)));
+        }
     }
 
     /**
