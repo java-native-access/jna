@@ -23,9 +23,11 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Native;
 import java.util.Arrays;
 
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 
 /**
@@ -53,5 +55,36 @@ public abstract class PsapiUtil {
         } while (size == lpcbNeeded.getValue() / DWORD.SIZE);
 
         return Arrays.copyOf(lpidProcess, lpcbNeeded.getValue() / DWORD.SIZE);
+    }
+
+    /**
+     * Retrieves the name of the executable file for the specified process.
+     *
+     * @param hProcess
+     *            A handle to the process. The handle must have the
+     *            PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION
+     *            access right. For more information, see Process Security and
+     *            Access Rights. <br>
+     *            Windows Server 2003 and Windows XP: The handle must have the
+     *            PROCESS_QUERY_INFORMATION access right.
+     * @return ame of the executable file for the specified process.
+     * @throws Win32Exception in case an error occurs
+     * @see <a href="http://msdn.microsoft.com/en-us/library/ms683217(VS.85).aspx">MSDN</a>
+     */
+    public static String GetProcessImageFileName(HANDLE process) {
+        int size = 2048;
+        while (true) {
+            final char[] filePath = new char[size];
+            int length = Psapi.INSTANCE.GetProcessImageFileName(process,
+                filePath, filePath.length);
+            if(length == 0) {
+                if(Native.getLastError() != WinError.ERROR_INSUFFICIENT_BUFFER) {
+                    throw new Win32Exception(Native.getLastError());
+                }
+                size += 2048;
+            } else {
+                return Native.toString(filePath);
+            }
+        }
     }
 }

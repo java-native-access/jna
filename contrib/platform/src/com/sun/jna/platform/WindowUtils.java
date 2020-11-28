@@ -85,9 +85,12 @@ import com.sun.jna.platform.unix.X11.Xext;
 import com.sun.jna.platform.unix.X11.Xrender.XRenderPictFormat;
 import com.sun.jna.platform.win32.GDI32;
 import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.Psapi;
+import com.sun.jna.platform.win32.PsapiUtil;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
+import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.HDC;
@@ -99,6 +102,7 @@ import com.sun.jna.platform.win32.WinDef.LRESULT;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
+import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinGDI;
 import com.sun.jna.platform.win32.WinGDI.BITMAP;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
@@ -1278,33 +1282,81 @@ public class WindowUtils {
 
         @Override
         public String getProcessFilePath(final HWND hwnd) {
-            final char[] filePath = new char[2048];
             final IntByReference pid = new IntByReference();
             User32.INSTANCE.GetWindowThreadProcessId(hwnd, pid);
 
-            final HANDLE process = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION | WinNT.PROCESS_VM_READ,
-                                                                 false, pid.getValue());
+            // GetProcessImageFileName requires PROCESS_QUERY_INFORMATION on
+            // older windows versions so try that first. If we fail to get
+            // access to that information fallback to
+            // PROCESS_QUERY_LIMITED_INFORMATION. This allows reading image
+            // paths from processes running with elevated privileges (at least
+            // worked successfully for a setup program started from a network
+            // share)
+            HANDLE process = Kernel32.INSTANCE.OpenProcess(
+                    WinNT.PROCESS_QUERY_INFORMATION,
+                    false,
+                    pid.getValue());
+
             if (process == null) {
                 if(Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_ACCESS_DENIED) {
                     throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                 } else {
-                    // Ignore windows, that can't be accessed
-                    return "";
+                    process = Kernel32.INSTANCE.OpenProcess(
+                            WinNT.PROCESS_QUERY_LIMITED_INFORMATION,
+                            false,
+                            pid.getValue());
+
+                    if (process == null) {
+                        if (Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_ACCESS_DENIED) {
+                            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                        } else {
+                            // Ignore windows, that can't be accessed
+                            return "";
+                        }
+                    }
                 }
             }
 
             try {
-                final int length = Psapi.INSTANCE.GetModuleFileNameExW(process,
-                                                                       null, filePath, filePath.length);
-                if (length == 0) {
-                    if(Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_INVALID_HANDLE) {
-                        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                    } else {
-                        // ignore invalid handles
-                        return "";
-                    }
+                String processImagePath = PsapiUtil.GetProcessImageFileName(process);
+
+                // GetProcessImageFileName returns the file name as a device
+                // filename in the form \Device\Harddisk5\. To make this more
+                // familiar and keep compatibility with QueryModuleName try to
+                // map back to known path (DOS path or UNC path)
+
+                // Map Mup to UNC path
+                if(processImagePath.startsWith("\\Device\\Mup\\")) {
+                    return "\\" + processImagePath.substring(11);
                 }
-                return Native.toString(filePath).trim();
+
+                // Format of FindFirstVolume is
+                // \\?\Volume{00000000-0000-0000-0000-000000000000}\
+                char[] volumeUUID = new char[50];
+                HANDLE h = Kernel32.INSTANCE.FindFirstVolume(volumeUUID, 50);
+                if (h == null || h.equals(WinBase.INVALID_HANDLE_VALUE)) {
+                    throw new Win32Exception(Native.getLastError());
+                }
+                try {
+                    do {
+                        String volumePath = Native.toString(volumeUUID);
+                        for (String s : Kernel32Util.getVolumePathNamesForVolumeName(volumePath)) {
+                            if (s.matches("[a-zA-Z]:\\\\")) {
+                                for (String path : Kernel32Util.queryDosDevice(s.substring(0, 2), 1024)) {
+                                    if(processImagePath.startsWith(path)) {
+                                        return s + processImagePath.substring(path.length() + 1);
+                                    }
+                                }
+                            }
+                        }
+                    } while (Kernel32.INSTANCE.FindNextVolume(h, volumeUUID, 50));
+                    if (Native.getLastError() != WinError.ERROR_NO_MORE_FILES) {
+                        throw new Win32Exception(Native.getLastError());
+                    }
+                } finally {
+                    Kernel32.INSTANCE.FindVolumeClose(h);
+                }
+                return processImagePath;
             } finally {
                 Kernel32.INSTANCE.CloseHandle(process);
             }

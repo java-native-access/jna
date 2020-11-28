@@ -226,6 +226,8 @@ public interface Psapi extends StdCallLibrary {
     boolean GetModuleInformation(HANDLE hProcess, HMODULE hModule, MODULEINFO lpmodinfo, int cb);
 
     /**
+     * Retrieves the name of the executable file for the specified process.
+     *
      * @param hProcess
      *            A handle to the process. The handle must have the
      *            PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION
