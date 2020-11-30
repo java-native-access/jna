@@ -1112,20 +1112,16 @@ cd ..
       <equals arg1="${os.prefix}" arg2="darwin"/>
     </condition>
     <property name="build.native.universal" value="${build}/native-darwin-universal"/>
-    <mkdir if:set="is_darwin" dir="${build.native.universal}/intel"/>
-    <mkdir if:set="is_darwin" dir="${build.native.universal}/aarch64"/>
+    <delete if:set="is_darwin" dir="${build.native.universal}"/>
     <copy if:set="is_darwin" todir="${build.native.universal}/intel">
-      <zipfileset src="${lib.native}/darwin-intel.jar" includes="*jnidispatch*"/>
+      <zipfileset src="${lib.native}/darwin-intel.jar" includes="*jnidispatch*" erroronmissingarchive="false"/>
     </copy>
     <copy if:set="is_darwin" todir="${build.native.universal}/aarch64">
-      <zipfileset src="${lib.native}/darwin-aarch64.jar" includes="*jnidispatch*"/>
+      <zipfileset src="${lib.native}/darwin-aarch64.jar" includes="*jnidispatch*" erroronmissingarchive="false"/>
     </copy>
-    <exec if:set="is_darwin" executable="lipo" dir="${build.native.universal}" failonerror="true">
-      <arg value="-create"/>
-      <arg value="-output"/>
-      <arg value="libjnidispatch.jnilib"/>
-      <arg value="intel/libjnidispatch.jnilib"/>
-      <arg value="aarch64/libjnidispatch.jnilib"/>
+    <exec if:set="is_darwin" executable="sh" dir="${build.native.universal}" failonerror="true" >
+      <arg value="-c"/>
+      <arg value="lipo -create -output libjnidispatch.jnilib */libjnidispatch.jnilib &amp;&amp; lipo -info libjnidispatch.jnilib"/>
     </exec>
     <jar if:set="is_darwin" jarfile="${build}/${os.prefix}.jar" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${build}/native-${os.prefix}-universal" includes="libjnidispatch.jnilib"/>
