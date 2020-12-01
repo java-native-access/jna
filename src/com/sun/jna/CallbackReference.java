@@ -41,8 +41,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import com.sun.jna.win32.DLLCallback;
-
 /**
  * Provides a reference to an association between a native callback closure and
  * a Java {@link Callback} closure.
@@ -67,6 +65,20 @@ public class CallbackReference extends WeakReference<Callback> {
             PROXY_CALLBACK_METHOD = CallbackProxy.class.getMethod("callback", new Class[] { Object[].class });
         } catch(Exception e) {
             throw new Error("Error looking up CallbackProxy.callback() method");
+        }
+    }
+    
+    private static final Class<?> DLL_CALLBACK_CLASS;
+    
+    static {
+        if (Platform.isWindows()) {
+            try {
+                DLL_CALLBACK_CLASS = Class.forName("com.sun.jna.win32.DLLCallback");
+            } catch(ClassNotFoundException e) {
+                throw new Error("Error loading DLLCallback class", e);
+            }
+        } else {
+            DLL_CALLBACK_CLASS = null;
         }
     }
 
@@ -215,7 +227,8 @@ public class CallbackReference extends WeakReference<Callback> {
             nativeParamTypes = method.getParameterTypes();
             returnType = method.getReturnType();
             int flags = Native.CB_OPTION_DIRECT;
-            if (callback instanceof DLLCallback) {
+            if (DLL_CALLBACK_CLASS != null
+                && DLL_CALLBACK_CLASS.isInstance(callback)) {
                 flags |= Native.CB_OPTION_IN_DLL;
             }
             peer = Native.createNativeCallback(callback, method,
@@ -261,7 +274,8 @@ public class CallbackReference extends WeakReference<Callback> {
                     + " requires custom type conversion";
                 throw new IllegalArgumentException(msg);
             }
-            int flags = callback instanceof DLLCallback
+            int flags = DLL_CALLBACK_CLASS != null
+                && DLL_CALLBACK_CLASS.isInstance(callback)
                 ? Native.CB_OPTION_IN_DLL : 0;
             peer = Native.createNativeCallback(proxy, PROXY_CALLBACK_METHOD,
                                                nativeParamTypes, returnType,
