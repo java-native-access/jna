@@ -68,14 +68,14 @@ public class CallbackReference extends WeakReference<Callback> {
         }
     }
     
-    private static final Class<Callback> DLL_CALLBACK_CLASS;
+    private static final Class<?> DLL_CALLBACK_CLASS;
     
     static {
         if (Platform.isWindows()) {
             try {
                 DLL_CALLBACK_CLASS = Class.forName("com.sun.jna.win32.DLLCallback");
-            } catch(Exception e) {
-                throw new Error("Error loading DLLCallback class");
+            } catch(ClassNotFoundException e) {
+                throw new Error("Error loading DLLCallback class", e);
             }
         } else {
             DLL_CALLBACK_CLASS = null;
