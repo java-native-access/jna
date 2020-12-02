@@ -790,7 +790,7 @@ ffi_prep_closure_loc (ffi_closure *closure,
                       void *user_data,
                       void *codeloc)
 {
-  if (cif->abi != FFI_SYSV)
+  if (cif->abi != FFI_SYSV && cif->abi != FFI_WIN64)
     return FFI_BAD_ABI;
 
   void (*start)(void);
@@ -851,7 +851,7 @@ ffi_prep_go_closure (ffi_go_closure *closure, ffi_cif* cif,
 {
   void (*start)(void);
 
-  if (cif->abi != FFI_SYSV)
+  if (cif->abi != FFI_SYSV && cif->abi != FFI_WIN64)
     return FFI_BAD_ABI;
 
   if (cif->flags & AARCH64_FLAG_ARG_V)
@@ -891,10 +891,17 @@ ffi_closure_SYSV_inner (ffi_cif *cif,
 			void *stack, void *rvalue, void *struct_rvalue)
 {
   void **avalue = (void**) alloca (cif->nargs * sizeof (void*));
-  int i, h, nargs, flags;
+  int i, h, nargs, flags, isvariadic = 0;
   struct arg_state state;
 
   arg_init (&state);
+
+  flags = cif->flags;
+  if (flags & AARCH64_FLAG_VARARG)
+  {
+    isvariadic = 1;
+    flags &= ~AARCH64_FLAG_VARARG;
+  }
 
   for (i = 0, nargs = cif->nargs; i < nargs; i++)
     {
@@ -930,8 +937,7 @@ ffi_closure_SYSV_inner (ffi_cif *cif,
 	  if (h)
 	    {
 	      n = 4 - (h & 3);
-#ifdef _WIN32  /* for handling armasm calling convention */
-              if (cif->is_variadic)
+              if (cif->abi == FFI_WIN64 && isvariadic)
                 {
                   if (state.ngrn + n <= N_X_ARG_REG)
                     {
@@ -957,7 +963,6 @@ ffi_closure_SYSV_inner (ffi_cif *cif,
                 }
               else
                 {
-#endif  /* for handling armasm calling convention */
                   if (state.nsrn + n <= N_V_ARG_REG)
                     {
                       void *reg = &context->v[state.nsrn];
@@ -970,9 +975,7 @@ ffi_closure_SYSV_inner (ffi_cif *cif,
                       avalue[i] = allocate_to_stack(&state, stack,
                                                    ty->alignment, s);
                     }
-#ifdef _WIN32  /* for handling armasm calling convention */
                 }
-#endif  /* for handling armasm calling convention */
             }
           else if (s > 16)
             {
@@ -1013,7 +1016,6 @@ ffi_closure_SYSV_inner (ffi_cif *cif,
 #endif
     }
 
-  flags = cif->flags;
   if (flags & AARCH64_RET_IN_MEM)
     rvalue = struct_rvalue;
 
