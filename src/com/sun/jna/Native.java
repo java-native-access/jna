@@ -664,6 +664,7 @@ public final class Native implements Version {
                     if (field.getType() == cls
                         && Modifier.isStatic(field.getModifiers())) {
                         // Ensure the field gets initialized by reading it
+                        field.setAccessible(true); // interface might be private
                         libraries.put(cls, new WeakReference<Object>(field.get(null)));
                         break;
                     }
