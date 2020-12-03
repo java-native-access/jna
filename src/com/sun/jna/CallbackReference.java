@@ -67,9 +67,9 @@ public class CallbackReference extends WeakReference<Callback> {
             throw new Error("Error looking up CallbackProxy.callback() method");
         }
     }
-    
+
     private static final Class<?> DLL_CALLBACK_CLASS;
-    
+
     static {
         if (Platform.isWindows()) {
             try {
