@@ -1256,7 +1256,7 @@ cd ..
       </and>
     </condition>
     <property name="tests.platform" value=""/>
-    <property name="tests.include" value="com/sun/jna/*Test.java"/>
+    <property name="tests.include" value="com/sun/jna/*Test.java com/sun/jna/different_package/*Test.java"/>
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
     <condition property="java.awt.headless" value="true">
@@ -1282,7 +1282,7 @@ cd ..
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
         <fileset dir="${test.src}" excludes="${tests.exclude-patterns}">
-          <include name="${tests.include}"/>
+          <patternset includes="${tests.include}"/>
           <include name="${tests.platform}"/>
           <exclude name="${tests.exclude}"/>
         </fileset>
