@@ -24,6 +24,7 @@ Bug Fixes
 * [#1275](https://github.com/java-native-access/jna/issues/1275): Fix `CFStringRef#stringValue` for empty Strings - [@dyorgio](https://github.com/dyorgio).
 * [#1279](https://github.com/java-native-access/jna/issues/1279): Remove `DLLCallback` import from `CallbackReference` - [@dyorgio](https://github.com/dyorgio).
 * [#1278](https://github.com/java-native-access/jna/pull/1278): Improve compatibility of `c.s.j.p.WindowUtils#getProcessFilePath` and fix unittests for windows 32bit intel  - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1284](https://github.com/java-native-access/jna/pull/1284): Fix illegal access exceptions, when retrieving options for private library interfaces with an instance field - [@fkistner](https://github.com/fkistner).
 
 Release 5.6.0
 =============
