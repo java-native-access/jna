@@ -285,15 +285,16 @@ public class CallbacksTest extends TestCase implements Paths {
         }
     }
 
-    public void testThrowOnMultiplyMappedCallback() {
-        try {
-            Pointer p = new Pointer(getName().hashCode());
-            CallbackReference.getCallback(TestLibrary.VoidCallback.class, p);
-            CallbackReference.getCallback(TestLibrary.ByteCallback.class, p);
-            fail("Multiply-mapped callback should fail");
-        }
-        catch(IllegalStateException e) {
-        }
+    public void testAcceptMultiplyMappedCallbacks() {
+        Pointer p = new Pointer(getName().hashCode());
+
+        Callback cbV1 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, p);
+        Callback cbB1 = CallbackReference.getCallback(TestLibrary.ByteCallback.class, p);
+        Callback cbV2 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, p);
+        Callback cbB2 = CallbackReference.getCallback(TestLibrary.ByteCallback.class, p);
+
+        assertSame(cbV1, cbV2);
+        assertSame(cbB1, cbB2);
     }
 
     public void testNoMethodCallback() {
