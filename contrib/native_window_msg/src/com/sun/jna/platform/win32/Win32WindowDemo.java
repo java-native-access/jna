@@ -51,7 +51,7 @@ public class Win32WindowDemo implements WindowProc {
      */
     public Win32WindowDemo() {
         // define new window class
-        String windowClass = new String("MyWindowClass");
+        String windowClass = "MyWindowClass";
         HMODULE hInst = Kernel32.INSTANCE.GetModuleHandle("");
 
         WNDCLASSEX wClass = new WNDCLASSEX();
@@ -123,6 +123,7 @@ public class Win32WindowDemo implements WindowProc {
      * .win32.WinDef.HWND, int, com.sun.jna.platform.win32.WinDef.WPARAM,
      * com.sun.jna.platform.win32.WinDef.LPARAM)
      */
+    @Override
     public LRESULT callback(HWND hwnd, int uMsg, WPARAM wParam, LPARAM lParam) {
         switch (uMsg) {
             case WinUser.WM_CREATE: {
@@ -152,7 +153,7 @@ public class Win32WindowDemo implements WindowProc {
      *
      * @return the last error
      */
-    public int getLastError() {
+    public final int getLastError() {
         int rc = Kernel32.INSTANCE.GetLastError();
 
         if (rc != 0)
@@ -294,9 +295,8 @@ public class Win32WindowDemo implements WindowProc {
                 DEV_BROADCAST_DEVICEINTERFACE bdif = new DEV_BROADCAST_DEVICEINTERFACE(bhdr.getPointer());
                 System.out.println("BROADCAST_DEVICEINTERFACE: " + action);
                 System.out.println("dbcc_devicetype: " + bdif.dbcc_devicetype);
-                System.out.println("dbcc_name: " + bdif.getDbcc_name());
-                System.out.println("dbcc_classguid: "
-                        + bdif.dbcc_classguid.toGuidString());
+                System.out.println("dbcc_name:       " + bdif.getDbcc_name());
+                System.out.println("dbcc_classguid:  " + bdif.dbcc_classguid.toGuidString());
                 break;
             }
             case DBT.DBT_DEVTYP_HANDLE: {
@@ -314,7 +314,9 @@ public class Win32WindowDemo implements WindowProc {
             case DBT.DBT_DEVTYP_PORT: {
                 // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363248.aspx
                 DEV_BROADCAST_PORT bpt = new DEV_BROADCAST_PORT(bhdr.getPointer());
-                System.out.println("BROADCAST_PORT: " + action);
+                System.out.println("BROADCAST_PORT:  " + action);
+                System.out.println("dbcp_devicetype: " + bpt.dbcp_devicetype);
+                System.out.println("dbcp_name:       " + bpt.getDbcpName());
                 break;
             }
             case DBT.DBT_DEVTYP_VOLUME: {
@@ -380,6 +382,7 @@ public class Win32WindowDemo implements WindowProc {
      * @param args
      *            the arguments
      */
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public static void main(String[] args) {
         new Win32WindowDemo();
     }
