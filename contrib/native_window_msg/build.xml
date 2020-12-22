@@ -2,14 +2,13 @@
 <project name="jnacontrib.native_window_msg" default="jar" basedir=".">
     <description>Builds, tests, and runs the project jnacontrib.native_window_msg.</description>
     <!-- Locations -->
-    <property name="src"                location="./src"/>
-    <property name="build"              location="build"/>
-    <property name="jna-dist"           location="../../dist"/>
-
-    <property name="classes"       location="${build}/classes"/>
-    <property name="jar"           location="${build}/demo-nativewindowmsg.jar"/>
+    <property name="src"                    location="./src"/>
+    <property name="build"                  location="build"/>
+    <property name="jna-dist"               location="../../dist"/>
+    <property name="classes"                location="${build}/classes"/>
+    <property name="jar"                    location="${build}/demo-nativewindowmsg.jar"/>
     <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
-    <property name="main-class"			value="com.sun.jna.platform.win32.Win32WindowDemo.java" />
+    <property name="main-class"             value="com.sun.jna.platform.win32.Win32WindowDemo" />
 
     <path id="classpath">
         <fileset file="${file.reference.jna.jar}"/>

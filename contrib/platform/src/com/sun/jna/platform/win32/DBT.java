@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -33,6 +31,9 @@ import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.HDEVNOTIFY;
+import com.sun.jna.win32.W32APITypeMapper;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 /**
  * Based on dbt.h (various types)
@@ -96,7 +97,7 @@ public interface DBT {
     @FieldOrder({"dbch_size", "dbch_devicetype", "dbch_reserved"})
     public class DEV_BROADCAST_HDR extends Structure {
         /** The dbch_size. */
-        public int dbch_size = size();
+        public int dbch_size;
 
         /** The dbch_devicetype. */
         public int dbch_devicetype;
@@ -160,7 +161,7 @@ public interface DBT {
     @FieldOrder({"dbco_size", "dbco_devicetype", "dbco_reserved", "dbco_identifier", "dbco_suppfunc"})
     public class DEV_BROADCAST_OEM extends Structure {
         /** The dbco_size. */
-        public int dbco_size = size();
+        public int dbco_size;
 
         /** The dbco_devicetype. */
         public int dbco_devicetype;
@@ -199,7 +200,7 @@ public interface DBT {
     @FieldOrder({"dbcd_size", "dbcd_devicetype", "dbcd_reserved", "dbcd_devnode"})
     public class DEV_BROADCAST_DEVNODE extends Structure {
         /** The dbcd_size. */
-        public int dbcd_size = size();
+        public int dbcd_size;
 
         /** The dbcd_devicetype. */
         public int dbcd_devicetype;
@@ -235,7 +236,7 @@ public interface DBT {
     @FieldOrder({"dbcv_size", "dbcv_devicetype", "dbcv_reserved", "dbcv_unitmask", "dbcv_flags"})
     public class DEV_BROADCAST_VOLUME extends Structure {
         /** The dbcv_size. */
-        public int dbcv_size = size();
+        public int dbcv_size;
 
         /** The dbcv_devicetype. */
         public int dbcv_devicetype;
@@ -280,7 +281,7 @@ public interface DBT {
     @FieldOrder({"dbcp_size", "dbcp_devicetype", "dbcp_reserved", "dbcp_name"})
     public class DEV_BROADCAST_PORT extends Structure {
         /** The dbcp_size. */
-        public int dbcp_size = size();
+        public int dbcp_size;
 
         /** The dbcp_devicetype. */
         public int dbcp_devicetype;
@@ -289,7 +290,7 @@ public interface DBT {
         public int dbcp_reserved;
 
         /** The dbcp_name. */
-        public char[] dbcp_name = new char[1];
+        public byte[] dbcp_name = new byte[1];
 
         /**
          * Instantiates a new dev broadcast port.
@@ -308,6 +309,26 @@ public interface DBT {
             super(memory);
             read();
         }
+
+        @Override
+        public void read() {
+            int size = getPointer().getInt(0); // Read dbcp_size (first field in structure)
+            this.dbcp_name = new byte[size - this.fieldOffset("dbcp_name")];
+            super.read();
+        }
+
+        /**
+         * Gets the dbcc_name.
+         *
+         * @return the dbcp_name
+         */
+        public String getDbcpName() {
+            if(W32APITypeMapper.DEFAULT == W32APITypeMapper.ASCII) {
+                return Native.toString(this.dbcp_name);
+            } else {
+                return new String(this.dbcp_name, StandardCharsets.UTF_16LE);
+            }
+        }
     }
 
     /**
@@ -317,7 +338,7 @@ public interface DBT {
                 "dbcn_reserved", "dbcn_resource", "dbcn_flags"})
     public class DEV_BROADCAST_NET extends Structure {
         /** The dbcn_size. */
-        public int dbcn_size = size();
+        public int dbcn_size;
 
         /** The dbcn_devicetype. */
         public int dbcn_devicetype;
@@ -396,11 +417,19 @@ public interface DBT {
          */
         public DEV_BROADCAST_DEVICEINTERFACE(Pointer memory) {
             super(memory);
-            this.dbcc_size = (Integer) this.readField("dbcc_size");
-            // figure out how long dbcc_name should be based on the size
-            int len = 1 + this.dbcc_size - size();
-            this.dbcc_name = new char[len];
             read();
+        }
+
+        @Override
+        public void read() {
+            if(W32APITypeMapper.DEFAULT == W32APITypeMapper.ASCII) {
+                Logger.getLogger(DBT.class.getName()).warning("DEV_BROADCAST_DEVICEINTERFACE must not be used with w32.ascii = true!");
+            }
+            int size = getPointer().getInt(0); // Read dbcc_size (first field in structure)
+            // figure out how long dbcc_name should be based on the size
+            int len = (size - this.fieldOffset("dbcc_name")) / Native.WCHAR_SIZE;
+            this.dbcc_name = new char[len];
+            super.read();
         }
 
         /**
@@ -420,7 +449,7 @@ public interface DBT {
         "dbch_hdevnotify", "dbch_eventguid", "dbch_nameoffset", "dbch_data"})
     public class DEV_BROADCAST_HANDLE extends Structure {
         /** The dbch_size. */
-        public int dbch_size = size();
+        public int dbch_size;
 
         /** The dbch_devicetype. */
         public int dbch_devicetype;
@@ -441,7 +470,7 @@ public interface DBT {
         public LONG dbch_nameoffset;
 
         /** The dbch_data. */
-        public byte[] dbch_data;
+        public byte[] dbch_data = new byte[1];
 
         /**
          * Instantiates a new dev broadcast handle.
