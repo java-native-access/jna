@@ -36,7 +36,9 @@ jobs:
           brew install libtool --force
       - name: Checkstyle
         if: contains(matrix.os, 'ubuntu') && contains(matrix.java, '8')
-        run: ant checkstyle
+        run: |
+          ant checkstyle
+          ant dist
       - name: Build with Ant
         run: |
           ant test
