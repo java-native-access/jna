@@ -1453,7 +1453,7 @@ cd ..
     </subant>
   </target>
 
-  <target name="install" depends="dist" description="Install jna and jna-platform artifacts into local maven repository">
+  <target name="install" depends="dist,-bootstrap-maven" description="Install jna and jna-platform artifacts into local maven repository">
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom}"/>
@@ -1495,7 +1495,7 @@ cd ..
   </target>
 
   <!-- NOTE: The 'deploy' target works only if the version (jna.version in build.xml) ends in '-SNAPSHOT'. -->
-  <target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
+  <target name="deploy" depends="dist,-bootstrap-maven" description="deploy snapshot version to Maven snapshot repository">
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
@@ -1522,7 +1522,7 @@ cd ..
 
   <property name="version-maven-gpg-plugin" value="1.4"/>
 
-  <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
+  <target name="stage" depends="dist,-bootstrap-maven" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the jna,  artifact -->
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
@@ -1548,6 +1548,28 @@ cd ..
       <arg value="-Dtypes=jar,jar,jar"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
+  </target>
+
+  <target name="-bootstrap-maven">
+      <artifact:remoteRepository id="remote.mavenCentral" url="https://repo1.maven.org/maven2/" />
+      <artifact:dependencies pathId="dependency.dummy">
+          <remoteRepository refid="remote.mavenCentral" />
+          <dependency groupId="org.apache.maven.plugins" artifactId="maven-gpg-plugin" version="1.4" type="maven-plugin"/>
+          <dependency groupId="org.apache.maven.plugins" artifactId="maven-deploy-plugin" version="2.7" type="maven-plugin"/>
+          <dependency groupId="org.apache.maven.plugins" artifactId="maven-install-plugin" version="2.5" type="maven-plugin"/>
+          <dependency groupId="org.apache.maven" artifactId="apache-maven" version="2.0.10" />
+          <dependency groupId="org.apache.maven" artifactId="maven-model" version="2.0.10" />
+          <dependency groupId="org.apache.maven" artifactId="maven-artifact" version="2.0.10" />
+          <dependency groupId="org.apache.maven" artifactId="maven-project" version="2.0.10" />
+          <dependency groupId="org.apache.maven" artifactId="maven-artifact-manager" version="2.0.10" />
+          <dependency groupId="org.apache.maven" artifactId="maven-plugin-registry" version="2.0.10" />
+          <dependency groupId="org.apache.maven" artifactId="maven-plugin-api" version="2.0.10" />
+          <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils" version="3.0.15" />
+      </artifact:dependencies>
+      <artifact:dependencies pathId="dependency.dummy2">
+          <remoteRepository refid="remote.mavenCentral" />
+          <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils" version="1.5.5" />
+      </artifact:dependencies>
   </target>
 
   <target name="checkstyle">
