@@ -33,7 +33,7 @@ import com.sun.jna.ptr.IntByReference;
 /**
  * Winspool Utility API.
  *
- * @author dblock[at]dblock.org, Ivan Ridao Freitas, Padrus
+ * @author dblock[at]dblock.org, Ivan Ridao Freitas, Padrus, Artem Vozhdayenko
  */
 public abstract class WinspoolUtil {
 
@@ -170,6 +170,9 @@ public abstract class WinspoolUtil {
                 pJobEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
                 pcReturned)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        if (pcReturned.getValue() <= 0) {
+            return new JOB_INFO_1[0];
         }
 
         pJobEnum.read();
