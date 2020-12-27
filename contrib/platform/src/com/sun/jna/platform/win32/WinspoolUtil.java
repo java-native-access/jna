@@ -23,6 +23,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.WinError.ERROR_INSUFFICIENT_BUFFER;
+import static com.sun.jna.platform.win32.WinError.ERROR_SUCCESS;
+
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winspool.JOB_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
@@ -165,11 +168,18 @@ public abstract class WinspoolUtil {
             return new JOB_INFO_1[0];
         }
 
-        JOB_INFO_1 pJobEnum = new JOB_INFO_1(pcbNeeded.getValue());
-        if (!Winspool.INSTANCE.EnumJobs(phPrinter.getValue(), 0, 255, 1,
-                pJobEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
-                pcReturned)) {
-            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        int lastError = ERROR_SUCCESS;
+        JOB_INFO_1 pJobEnum;
+        do {
+            pJobEnum = new JOB_INFO_1(pcbNeeded.getValue());
+            if (!Winspool.INSTANCE.EnumJobs(phPrinter.getValue(), 0, 255, 1,
+                    pJobEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
+                    pcReturned)) {
+                lastError = Kernel32.INSTANCE.GetLastError();
+            }
+        } while (lastError == ERROR_INSUFFICIENT_BUFFER);
+        if (lastError != ERROR_SUCCESS) {
+            throw new Win32Exception(lastError);
         }
         if (pcReturned.getValue() <= 0) {
             return new JOB_INFO_1[0];
