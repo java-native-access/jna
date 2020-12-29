@@ -25,16 +25,15 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 
 - [Apache Cassandra](http://cassandra.apache.org): Large-scale NoSQL data store.
 - [Rococoa](https://github.com/iterate-ch/rococoa): Java bindings to the Mac OS X Cocoa framework, by Duncan McGregor.
-- [jna-posix](http://kenai.com/projects/jna-posix): Common POSIX Functions for Java.
+- [jna-posix](https://github.com/jenkinsci/jna-posix): Common POSIX Functions for Java.
 - [JNAerator](https://github.com/nativelibs4java/JNAerator): Pronounced "generator", auto-generates JNA mappings from C headers, by Olivier Chafik.
-- [Freedom for Media in Java](http://fmj.sf.net) by Ken Larson/Dieter Krachtus.
-- [gstreamer for Java](http://code.google.com/p/gstreamer-java) by Wayne Meissner.
-- [Videolan](http://trac.videolan.org/jvlc/): JVLC Java Multimedia Library.
+- [Freedom for Media in Java](https://github.com/jitsi/fmj) by Ken Larson/Dieter Krachtus.
+- [GStreamer-Java](https://github.com/gstreamer-java/): Java bindings and utilities for [GStreamer 1.x](https://gstreamer.freedesktop.org/).
+- [VLCJ](https://github.com/caprica/vlcj): Java bindings for libVLC.
 - [SVNKit](http://svnkit.com): Pure Java Subversion client library.
-- [OmegaT Computer-Aided Translation](http://omegat.sf.net).
-- [IntelliJ IDEA](http://jetbrains.com) by JetBrains.
-- [NetBeans IDE](http://netbeans.org).
-- [Athena Backup](http://www.athenabackup.com) by Doug Patriarche.
+- [OmegaT Computer-Aided Translation](https://omegat.org/).
+- [IntelliJ IDEA](https://www.jetbrains.com/) by JetBrains.
+- [Apache NetBeans IDE](https://netbeans.apache.org/) by Apache Software Foundation.
 - [FileBot Media Renamer](http://www.filebot.net) by Reinhard Pointner.
 - [USB for Java](https://launchpad.net/libusb4j) by Mario Boikov.
 - [Waffle](https://github.com/dblock/waffle): Enables SSO on Windows in Java applications, by Daniel Doubrovkine.
@@ -46,12 +45,12 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [OSHI](https://github.com/oshi/oshi): Cross-platform Operating System and Hardware Information library for Java
 - [jAlbum](https://jalbum.net): Desktop based web gallery software for any web site.
 - [jacknji11](https://github.com/joelhockey/jacknji11): Provides a Java PKCS#11 interface.
+- [JNAJack](https://github.com/jaudiolibs/jnajack): Java bindings for [JACK Audio Connection Kit](https://jackaudio.org/).
 
 *Interesting Investigations/Experiments*
 
 - [Drive Lego Mindstorm NXT](http://epirsch.blogspot.com/2008/02/jna-love-nxt.html) by Emmanuel Pirsch.
 - [Detect User Inactivity](http://ochafik.free.fr/blog/?p=98) by Olivier Chafik.
-- [IAXClient Applet](http://callino.cc/jiaxcapplet/) provides VOIP for Java, by Wolfgang Pichler.
 
 There are also a number of examples and projects within the `contrib` directory of the JNA project itself.
 
