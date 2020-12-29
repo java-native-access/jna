@@ -45,6 +45,7 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [Domino JNA](https://github.com/klehmann/domino-jna): Cross-platform access to HCL Notes/Domino C API methods from Java
 - [OSHI](https://github.com/oshi/oshi): Cross-platform Operating System and Hardware Information library for Java
 - [jAlbum](https://jalbum.net): Desktop based web gallery software for any web site.
+- [jacknji11](https://github.com/joelhockey/jacknji11): Provides a Java PKCS#11 interface.
 
 *Interesting Investigations/Experiments*
 
