@@ -64,6 +64,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.Ntifs.REPARSE_DATA_BUFFER;
 import com.sun.jna.platform.win32.Ntifs.SymbolicLinkReparseBuffer;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
@@ -84,6 +85,7 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
@@ -1909,5 +1911,54 @@ public class Kernel32Test extends TestCase {
         mutexHandle = Kernel32.INSTANCE.OpenMutex(WinNT.SYNCHRONIZE, false, "JNA-Test-Mutex");
 
         assertNull(mutexHandle);
+    }
+
+    public void testApplicationRestart() {
+        try {
+            HRESULT insufficientBuffer = W32Errors.HRESULT_FROM_WIN32(WinError.ERROR_INSUFFICIENT_BUFFER);
+            HRESULT result;
+            String dummyCommandline = "/restart -f .\\filename.ext";
+            char[] dummyCommandlineArray = Native.toCharArray(dummyCommandline);
+            int dummyFlags = 2;
+            result = Kernel32.INSTANCE.RegisterApplicationRestart(dummyCommandlineArray, dummyFlags);
+            assertTrue(COMUtils.SUCCEEDED(result));
+
+            char[] queriedCommandlineArray = null;
+            IntByReference queriedSize = new IntByReference();
+            IntByReference queriedFlags = new IntByReference();
+
+            // Query without target buffer to determine required buffer size
+            result = Kernel32.INSTANCE.GetApplicationRestartSettings(Kernel32.INSTANCE.GetCurrentProcess(), queriedCommandlineArray, queriedSize, queriedFlags);
+
+            assertTrue(COMUtils.SUCCEEDED(result));
+            assertEquals(dummyCommandline.length() + 1, queriedSize.getValue());
+
+            // Check error reporting, use insufficient buffer size
+            queriedCommandlineArray = new char[1];
+            queriedSize.setValue(queriedCommandlineArray.length);
+            queriedFlags.setValue(-1);
+            result = Kernel32.INSTANCE.GetApplicationRestartSettings(Kernel32.INSTANCE.GetCurrentProcess(), queriedCommandlineArray, queriedSize, queriedFlags);
+
+            assertTrue(COMUtils.FAILED(result));
+            assertEquals(insufficientBuffer, result);
+            assertEquals(dummyCommandline.length() + 1, queriedSize.getValue());
+
+            // Now query with the right buffer size
+            queriedCommandlineArray = new char[queriedSize.getValue()];
+            queriedSize.setValue(queriedCommandlineArray.length);
+            queriedFlags.setValue(-1);
+            result = Kernel32.INSTANCE.GetApplicationRestartSettings(Kernel32.INSTANCE.GetCurrentProcess(), queriedCommandlineArray, queriedSize, queriedFlags);
+
+            assertTrue(COMUtils.SUCCEEDED(result));
+            assertEquals(dummyCommandline.length() + 1, queriedSize.getValue());
+            assertEquals(dummyFlags, queriedFlags.getValue());
+            assertEquals(dummyCommandline, Native.toString(queriedCommandlineArray));
+
+            result = Kernel32.INSTANCE.UnregisterApplicationRestart();
+            assertTrue(COMUtils.SUCCEEDED(result));
+        } finally {
+            // Last resort if test succeeds partially
+            Kernel32.INSTANCE.UnregisterApplicationRestart();
+        }
     }
 }

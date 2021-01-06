@@ -4178,4 +4178,114 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * error information, call GetLastError.</p>
      */
     boolean VirtualFreeEx( HANDLE hProcess, Pointer lpAddress, SIZE_T dwSize, int dwFreeType);
+
+    /**
+     * Registers the active instance of an application for restart.
+     *
+     * <p><strong>Usage Note</strong></p>
+     *
+     * <p>The registered callback is only invoked if the default error handling
+     * of the JVM does not intercept first. It was tested with OpenJDK and
+     * it was found, that the error handling of the JVM had to be disabled by
+     * running the process with "-XX:+UseOSErrorReporting".</p>
+     *
+     * @param pwzCommandline A pointer to a Unicode string that specifies the
+     *                       command-line arguments for the application when it
+     *                       is restarted. The maximum size of the command line
+     *                       that you can specify is RESTART_MAX_CMD_LINE
+     *                       characters. Do not include the name of the
+     *                       executable in the command line; this function adds
+     *                       it for you.
+     *
+     * <p>If this parameter is NULL or an empty string, the previously registered
+     * command line is removed. If the argument contains spaces, use quotes
+     * around the argument.</p>
+     *
+     * @param dwFlags        This parameter can be 0 or one or more of the
+     *                       following values.
+     *
+     * <table>
+     * <tr>
+     * <th>Value</th><th>Meaning</th>
+     * </tr>
+     * <tr><td>RESTART_NO_CRASH (1)</td><td>Do not restart the process if it terminates due to an unhandled exception.</td></tr>
+     * <tr><td>RESTART_NO_HANG (2)</td><td>Do not restart the process if it terminates due to the application not responding.</td></tr>
+     * <tr><td>RESTART_NO_PATCH (4)</td><td>Do not restart the process if it terminates due to the installation of an update.</td></tr>
+     * <tr><td>RESTART_NO_REBOOT (8)</td><td>Do not restart the process if the computer is restarted as the result of an update. </td></tr>
+     * </table>
+     *
+     * @return This function returns S_OK on success or one of the following
+     *         error codes.
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>E_FAIL</td><td>Internal error.</td></tr>
+     * <tr><td>E_INVALIDARG</td><td>The specified command line is too
+     * long.</td></tr>
+     * </table>
+     *
+     * @see <A HREF="https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-registerapplicationrestart">MSDN Entry</A>
+     */
+    HRESULT RegisterApplicationRestart(char[] pwzCommandline, int dwFlags);
+
+    /**
+     * Removes the active instance of an application from the restart list.
+     *
+     * @return This function returns S_OK on success or one of the following
+     *         error codes.
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>E_FAIL</td><td>Internal error.</td></tr>
+     * </table>
+     *
+     * @see <A HREF="https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-unregisterapplicationrestart">MSDN Entry</A>
+     */
+    HRESULT UnregisterApplicationRestart();
+
+    /**
+     * Retrieves the restart information registered for the specified process.
+     *
+     * @param hProcess       A handle to the process. This handle must have the
+     *                       PROCESS_VM_READ access right.
+     * @param pwzCommandline A pointer to a buffer that receives the restart
+     *                       command line specified by the application when it
+     *                       called the RegisterApplicationRestart function. The
+     *                       maximum size of the command line, in characters, is
+     *                       RESTART_MAX_CMD_LINE. Can be NULL if pcchSize is
+     *                       zero.
+     * @param pcchSize       On input, specifies the size of the pwzCommandLine
+     *                       buffer, in characters.
+     *
+     * <p>
+     * If the buffer is not large enough to receive the command line, the
+     * function fails with HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER) and
+     * sets this parameter to the required buffer size, in characters.</p>
+     * <p>
+     * On output, specifies the size of the buffer that was used.</p>
+     * <p>
+     * To determine the required buffer size, set pwzCommandLine to NULL and
+     * this parameter to zero. The size includes one for the null-terminator
+     * character. Note that the function returns S_OK, not
+     * HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER) in this case.</p>
+     *
+     * @param pdwFlags       A pointer to a variable that receives the flags
+     *                       specified by the application when it called the
+     *                       RegisterApplicationRestart function.
+     *
+     * @return This function returns S_OK on success or one of the following
+     *         error codes.
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>E_INVALIDARG</th><th>One or more parameters are not
+     * valid.</td></tr>
+     * <tr><td>HRESULT_FROM_WIN32(ERROR_NOT_FOUND)</th><th>The application did
+     * not register for restart.</td></tr>
+     * <tr><td>HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER)</th><th>The
+     * pwzCommandLine buffer is too small. The function returns the required
+     * buffer size in pcchSize. Use the required size to reallocate the
+     * buffer.</td></tr>
+     * </table>
+     *
+     * @see <A HREF="https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getapplicationrestartsettings">MSDN Entry</A>
+     */
+    HRESULT GetApplicationRestartSettings(HANDLE hProcess, char[] pwzCommandline, IntByReference pcchSize, IntByReference pdwFlags);
 }
