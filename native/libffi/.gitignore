@@ -5,10 +5,11 @@
 .dirstamp
 *.la
 Makefile
+!testsuite/libffi.bhaible/Makefile
 Makefile.in
 aclocal.m4
 compile
-config.*
+!.travis/compile
 configure
 depcomp
 doc/libffi.info
@@ -33,3 +34,5 @@ libffi.xcodeproj/xcuserdata
 libffi.xcodeproj/project.xcworkspace
 build_*/
 darwin_*/
+src/arm/trampoline.S
+**/texinfo.tex

@@ -5,7 +5,7 @@
    Originator:	        ARM Ltd. */
 
 /* { dg-do run } */
-/* { dg-output "" { xfail avr32*-*-* } } */
+/* { dg-output "" { xfail avr32*-*-* m68k-*-* alpha-*-* } } */
 
 #include "ffitest.h"
 #include <stdarg.h>

@@ -7,7 +7,6 @@
 /* { dg-do run } */
 
 #include "ffitest.h"
-#include <float.h>
 
 static float ABI_ATTR align_arguments(int i1,
                                       double f2,
@@ -17,11 +16,16 @@ static float ABI_ATTR align_arguments(int i1,
   return i1+f2+i3+f4;
 }
 
-int main (void)
+int main(void)
 {
   ffi_cif cif;
-  ffi_type *args[4] = {&ffi_type_int, &ffi_type_double, &ffi_type_int, &ffi_type_double};
-  float fa[2] = {1,2};
+  ffi_type *args[4] = {
+    &ffi_type_sint,
+    &ffi_type_double,
+    &ffi_type_sint,
+    &ffi_type_double
+  };
+  double fa[2] = {1,2};
   int ia[2] = {1,2};
   void *values[4] = {&ia[0], &fa[0], &ia[1], &fa[1]};
   float f, ff;
@@ -34,7 +38,7 @@ int main (void)
 
   ffi_call(&cif, FFI_FN(align_arguments), &f, values);
 
-  if (f - ff < FLT_EPSILON)
+  if (f == ff)
     printf("align arguments tests ok!\n");
   else
     CHECK(0);
