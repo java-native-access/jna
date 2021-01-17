@@ -42,19 +42,34 @@ export LIB="$(cygpath -m "$MSVC")/lib;$(cygpath -m "$WSDK")/lib"
 ### Prerequisites
 Starting pont: A clean Windows 10 64-bit Installation with all patches
 
-1. Install Visual C++ Build Tools 2019 (https://visualstudio.microsoft.com/downloads/)
-   * Install `Windows 10 SDK`, `MSVC v142 - VS 2019 C++-x64/x86-Buildtools`, `Windows Universal CRT SDK`
-2. Install AdoptOpenJDK 8.0.222.10 for the target architecture (https://adoptopenjdk.net/index.html)
+1. Install "Visual Studio Community 2019" or the "Build Tools for Visual Studio 2019"
+   (https://visualstudio.microsoft.com/downloads/)
+    * Windows 10 SDK
+    * MSVC v142 - VS 2019 C++-x64/x86-Buildtools
+    * MSVC v142 - VS 2019 C++-ARM64-Buildtools
+    * Windows Universal CRT SDK
+2. Install AdoptOpenJDK 8 for the target architecture (https://adoptopenjdk.net/index.html)
 3. Install ant (https://ant.apache.org/bindownload.cgi).
 3. Install Cygwin 64 Bit (https://cygwin.com/install.html)
-	- `make`, `automake`, `automake1.15`, `libtool`
-   - `git`
-   - `gcc-g++` (See table)
+    * make
+    * automake
+    * automake1.15
+    * libtool
+    * git
+    * gcc-g++ (See table)
+
       | x86_64 | x86 | aarch64 |
       |----------|-------|-----------|
       | `gcc-g++`<br>`mingw64-x86_64-gcc-g++` <br>`mingw64-x86_64-gcc-core` | `gcc-g++`<br>`mingw64-i686-gcc-g++` <br>`mingw64-i686-gcc-core` | `gcc-g++` |
 
 ### Steps
+
+_**Note**_: The paths below are samples and depend on the exact versions
+installed. For example for "Visual Studio Community 2019" `vcvarsall.bat` can
+be found here:
+`C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat`,
+while for "Build Tools for Visual Studio 2019" the file is found here:
+`C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat`.
 
 1. Open `cmd` for the following actions
 2. Point `JAVA_HOME` to the root of the target JDK:
@@ -103,9 +118,9 @@ Starting pont: A clean Windows 10 64-bit Installation with all patches
    ant
    ```
 
-   ... or if cross-compiling, specify the target architecture, e.g:
+   ... or if cross-compiling, specify the target architecture and only build the native library, e.g:
    ```cmd
-   ant -Dos.prefix=win32-aarch64
+   ant -Dos.prefix=win32-aarch64 native
    ```
 
 ### Mingw Only
