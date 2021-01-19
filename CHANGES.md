@@ -8,6 +8,7 @@ Next Release (5.7.0)
 Features
 --------
 * [#1264](https://github.com/java-native-access/jna/pull/1264): Update libffi to v3.3; Add Windows `aarch64` target. - [@tresf](https://github.com/tresf).
+* [#1293](https://github.com/java-native-access/jna/issues/1293): Bind part of Windows Application Recovery and Restart API: `RegisterApplicationRestart`, `UnregisterApplicationRestart` and `GetApplicationRestartSettings` in `c.s.j.p.w.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1217](https://github.com/java-native-access/jna/pull/1217): Add mappings for AIX `Perfstat` library to `c.s.j.p.unix.aix` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1231](https://github.com/java-native-access/jna/pull/1231): The test suite can now be executed on Windows using either ANSI or UNICODE win32 API by passing `-Dw32.ascii=true/false` to ant. Previously, UNICODE was always used. - [@T-Svensson](https://github.com/T-Svensson/)
 * [#1237](https://github.com/java-native-access/jna/pull/1237): *Experimental:* Add artifacts that make jna and jna-platform named modules (provide `module-info.class`). The new artifacts are named `jna-jpms.jar` and `jna-platform-jpms.jar` - [@matthiasblaesing](https://github.com/matthiasblaesing).
@@ -16,7 +17,7 @@ Features
 * [#1246](https://github.com/java-native-access/jna/pull/1246): Improve performance of `c.s.j.Structure#read` and `c.s.j.Structure#write` - [@joerg1985](https://github.com/joerg1985).
 * [#1260](https://github.com/java-native-access/jna/pull/1260): Add mapping for X11 generic events - [@lafoletc](https://github.com/lafoletc).
 * [#1265](https://github.com/java-native-access/jna/pull/1265): Add mapping for XQueryExtension - [@lafoletc](https://github.com/lafoletc).
-* [#1263](https://github.com/java-native-access/jna/pull/1263): Add LowLevelMouseProc - [@nordiakt](https://github.com/nordiakt)
+* [#1263](https://github.com/java-native-access/jna/pull/1263): Add LowLevelMouseProc - [@nordiakt](https://github.com/nordiakt).
 
 Bug Fixes
 ---------
