@@ -9,7 +9,7 @@
     <property name="classes"       location="${build}/classes"/>
     <property name="jar"           location="${build}/demo-w32printing.jar"/>
     <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
-    <property name="main-class"			value="com.sun.jna.platform.win32.Win32SpoolMonitor.java" />
+    <property name="main-class"			value="com.sun.jna.platform.win32.Win32SpoolMonitor" />
 
     <path id="classpath">
         <fileset file="${file.reference.jna.jar}"/>

@@ -28,6 +28,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
+import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -36,6 +37,7 @@ import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -150,6 +152,72 @@ public interface Winspool extends StdCallLibrary {
     public static final int PRINTER_ENUM_ICON7 = 0x00400000;
     public static final int PRINTER_ENUM_ICON8 = 0x00800000;
     public static final int PRINTER_ENUM_HIDE = 0x01000000;
+
+    public static final int PRINTER_NOTIFY_OPTIONS_REFRESH = 0x01;
+
+    public static final int PRINTER_NOTIFY_INFO_DISCARDED = 0x01;
+
+    public static final int PRINTER_NOTIFY_TYPE = 0x00;
+    public static final int JOB_NOTIFY_TYPE = 0x01;
+
+    public static final short PRINTER_NOTIFY_FIELD_SERVER_NAME = 0x00;
+    public static final short PRINTER_NOTIFY_FIELD_PRINTER_NAME = 0x01;
+    public static final short PRINTER_NOTIFY_FIELD_SHARE_NAME = 0x02;
+    public static final short PRINTER_NOTIFY_FIELD_PORT_NAME = 0x03;
+    public static final short PRINTER_NOTIFY_FIELD_DRIVER_NAME = 0x04;
+    public static final short PRINTER_NOTIFY_FIELD_COMMENT = 0x05;
+    public static final short PRINTER_NOTIFY_FIELD_LOCATION = 0x06;
+    public static final short PRINTER_NOTIFY_FIELD_DEVMODE = 0x07;
+    public static final short PRINTER_NOTIFY_FIELD_SEPFILE = 0x08;
+    public static final short PRINTER_NOTIFY_FIELD_PRINT_PROCESSOR = 0x09;
+    public static final short PRINTER_NOTIFY_FIELD_PARAMETERS = 0x0A;
+    public static final short PRINTER_NOTIFY_FIELD_DATATYPE = 0x0B;
+    public static final short PRINTER_NOTIFY_FIELD_SECURITY_DESCRIPTOR = 0x0C;
+    public static final short PRINTER_NOTIFY_FIELD_ATTRIBUTES = 0x0D;
+    public static final short PRINTER_NOTIFY_FIELD_PRIORITY = 0x0E;
+    public static final short PRINTER_NOTIFY_FIELD_DEFAULT_PRIORITY = 0x0F;
+    public static final short PRINTER_NOTIFY_FIELD_START_TIME = 0x10;
+    public static final short PRINTER_NOTIFY_FIELD_UNTIL_TIME = 0x11;
+    public static final short PRINTER_NOTIFY_FIELD_STATUS = 0x12;
+    public static final short PRINTER_NOTIFY_FIELD_STATUS_STRING = 0x13;
+    public static final short PRINTER_NOTIFY_FIELD_CJOBS = 0x14;
+    public static final short PRINTER_NOTIFY_FIELD_AVERAGE_PPM = 0x15;
+    public static final short PRINTER_NOTIFY_FIELD_TOTAL_PAGES = 0x16;
+    public static final short PRINTER_NOTIFY_FIELD_PAGES_PRINTED = 0x17;
+    public static final short PRINTER_NOTIFY_FIELD_TOTAL_BYTES = 0x18;
+    public static final short PRINTER_NOTIFY_FIELD_BYTES_PRINTED = 0x19;
+    public static final short PRINTER_NOTIFY_FIELD_OBJECT_GUID = 0x1A;
+    public static final short PRINTER_NOTIFY_FIELD_FRIENDLY_NAME = 0x1B;
+    public static final short PRINTER_NOTIFY_FIELD_BRANCH_OFFICE_PRINTING = 0x1C;
+
+    public static final short JOB_NOTIFY_FIELD_PRINTER_NAME = 0x00;
+    public static final short JOB_NOTIFY_FIELD_MACHINE_NAME = 0x01;
+    public static final short JOB_NOTIFY_FIELD_PORT_NAME = 0x02;
+    public static final short JOB_NOTIFY_FIELD_USER_NAME = 0x03;
+    public static final short JOB_NOTIFY_FIELD_NOTIFY_NAME = 0x04;
+    public static final short JOB_NOTIFY_FIELD_DATATYPE = 0x05;
+    public static final short JOB_NOTIFY_FIELD_PRINT_PROCESSOR = 0x06;
+    public static final short JOB_NOTIFY_FIELD_PARAMETERS = 0x07;
+    public static final short JOB_NOTIFY_FIELD_DRIVER_NAME = 0x08;
+    public static final short JOB_NOTIFY_FIELD_DEVMODE = 0x09;
+    public static final short JOB_NOTIFY_FIELD_STATUS = 0x0A;
+    public static final short JOB_NOTIFY_FIELD_STATUS_STRING = 0x0B;
+    public static final short JOB_NOTIFY_FIELD_SECURITY_DESCRIPTOR = 0x0C;
+    public static final short JOB_NOTIFY_FIELD_DOCUMENT = 0x0D;
+    public static final short JOB_NOTIFY_FIELD_PRIORITY = 0x0E;
+    public static final short JOB_NOTIFY_FIELD_POSITION = 0x0F;
+    public static final short JOB_NOTIFY_FIELD_SUBMITTED = 0x10;
+    public static final short JOB_NOTIFY_FIELD_START_TIME = 0x11;
+    public static final short JOB_NOTIFY_FIELD_UNTIL_TIME = 0x12;
+    public static final short JOB_NOTIFY_FIELD_TIME = 0x13;
+    public static final short JOB_NOTIFY_FIELD_TOTAL_PAGES = 0x14;
+    public static final short JOB_NOTIFY_FIELD_PAGES_PRINTED = 0x15;
+    public static final short JOB_NOTIFY_FIELD_TOTAL_BYTES = 0x16;
+    public static final short JOB_NOTIFY_FIELD_BYTES_PRINTED = 0x17;
+    public static final short JOB_NOTIFY_FIELD_REMOTE_JOB_ID = 0x18;
+
+    public static final int PRINTER_NOTIFY_CATEGORY_ALL = 0x001000;
+    public static final int PRINTER_NOTIFY_CATEGORY_3D = 0x002000;
 
     /**
      * The EnumPrinters function enumerates available printers, print servers,
@@ -566,6 +634,313 @@ public interface Winspool extends StdCallLibrary {
     boolean ClosePrinter(HANDLE hPrinter);
 
     /**
+     * The PRINTER_NOTIFY_OPTIONS structure specifies options for a change
+     * notification object that monitors a printer or print server.
+     *
+     * @see
+     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-options">
+     *     PRINTER_NOTIFY_OPTIONS structure
+     * </a>
+     */
+    @Structure.FieldOrder({ "Version", "Flags", "Count", "pTypes" })
+    public class PRINTER_NOTIFY_OPTIONS extends Structure {
+
+        /**
+         * The version of this structure. Set this member to 2.
+         */
+        public int Version = 2;
+
+        /**
+         * A bit flag. If you set the PRINTER_NOTIFY_OPTIONS_REFRESH flag in a
+         * call to the FindNextPrinterChangeNotification function, the function
+         * provides current data for all monitored printer information fields.
+         * The FindFirstPrinterChangeNotification function ignores the Flags
+         * member.
+         */
+        public int Flags;
+
+        /**
+         * The number of elements in the pTypes array.
+         */
+        public int Count;
+
+        /**
+         * A pointer to an array of PRINTER_NOTIFY_OPTIONS_TYPE structures. Use
+         * one element of this array to specify the printer information fields
+         * to monitor, and one element to specify the job information fields to
+         * monitor. You can monitor either printer information, job
+         * information, or both.
+         */
+        public PRINTER_NOTIFY_OPTIONS_TYPE.ByReference pTypes;
+
+    }
+
+    /**
+     * The PRINTER_NOTIFY_OPTIONS_TYPE structure specifies the set of printer
+     * or job information fields to be monitored by a printer change
+     * notification object.
+     *
+     * @see
+     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-options-type">
+     *     PRINTER_NOTIFY_OPTIONS_TYPE structure
+     * </a>
+     */
+    @Structure.FieldOrder({ "Type", "Reserved0", "Reserved1", "Reserved2",
+        "Count", "pFields" })
+    public class PRINTER_NOTIFY_OPTIONS_TYPE extends Structure {
+
+        public static class ByReference extends PRINTER_NOTIFY_OPTIONS_TYPE
+            implements Structure.ByReference {
+        }
+
+        /**
+         * The type to be watched.
+         */
+        public short Type;
+
+        /**
+         * Reserved.
+         */
+        public short Reserved0;
+
+        /**
+         * Reserved.
+         */
+        public int Reserved1;
+
+        /**
+         * Reserved.
+         */
+        public int Reserved2;
+
+        /**
+         * The number of elements in the pFields array.
+         */
+        public int Count;
+
+        /**
+         * A pointer to an array of values. Each element of the array specifies
+         * a job or printer information field of interest.
+         */
+        public Pointer pFields;
+
+        public void setFields(short[] fields) {
+            final long shortSizeInBytes = 2L;
+            Memory fieldsMemory = new Memory(fields.length * shortSizeInBytes);
+            fieldsMemory.write(0, fields, 0, fields.length);
+            pFields = fieldsMemory;
+            Count = fields.length;
+        }
+
+        public short[] getFields() {
+            return pFields.getShortArray(0, Count);
+        }
+    }
+
+    /**
+     * The PRINTER_NOTIFY_INFO structure contains printer information returned
+     * by the FindNextPrinterChangeNotification function. The function returns
+     * this information after a wait operation on a printer change notification
+     * object has been satisfied.
+     *
+     * @see
+     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-info">
+     *     PRINTER_NOTIFY_INFO structure
+     * </a>
+     */
+    @Structure.FieldOrder({ "Version", "Flags", "Count", "aData" })
+    public class PRINTER_NOTIFY_INFO extends Structure {
+
+        /**
+         * The version of this structure. Set this member to 2.
+         */
+        public int Version;
+
+        /**
+         * A bit flag that indicates the state of the notification structure. If
+         * the PRINTER_NOTIFY_INFO_DISCARDED bit is set, it indicates that some
+         * notifications had to be discarded.
+         */
+        public int Flags;
+
+        /**
+         * The number of PRINTER_NOTIFY_INFO_DATA elements in the aData array.
+         */
+        public int Count;
+
+        /**
+         * An array of PRINTER_NOTIFY_INFO_DATA structures. Each element of the
+         * array identifies a single job or printer information field, and
+         * provides the current data for that field.
+         */
+        public PRINTER_NOTIFY_INFO_DATA[] aData =
+            new PRINTER_NOTIFY_INFO_DATA[1];
+
+        @Override
+        public void read() {
+            int count = (Integer) readField("Count");
+            aData = new PRINTER_NOTIFY_INFO_DATA[count];
+            if (count == 0) {
+                Count = count;
+                Version = (Integer) readField("Version");
+                Flags = (Integer) readField("Flags");
+            } else {
+                super.read();
+            }
+        }
+
+    }
+
+    /**
+     * A struct containing non-numeric notification data - conditional content
+     * of a {@link NOTIFY_DATA} union.
+     */
+    @Structure.FieldOrder({ "cbBuf", "pBuf" })
+    public class NOTIFY_DATA_DATA extends Structure {
+
+        /**
+         * Indicates the size, in bytes, of the buffer pointed to by pBuf.
+         */
+        public int cbBuf;
+
+        /**
+         * Pointer to a buffer that contains the field's current data.
+         */
+        public Pointer pBuf;
+
+    }
+
+    /**
+     * A union of data information based on the Type and Field members of
+     * {@link PRINTER_NOTIFY_INFO_DATA}
+     */
+    public class NOTIFY_DATA extends Union {
+
+        /**
+         * Set if the notification data is numeric.
+         *
+         * An array of two DWORD values. For information fields that use only a
+         * single DWORD, the data is in adwData [0].
+         */
+        public int[] adwData = new int[2];
+
+        /**
+         * Set if the notification data is non-numeric.
+         */
+        public NOTIFY_DATA_DATA Data;
+
+    }
+
+    /**
+     * The PRINTER_NOTIFY_INFO_DATA structure identifies a job or printer
+     * information field and provides the current data for that field.
+     *
+     * @see
+     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-info-data">
+     *     PRINTER_NOTIFY_INFO_DATA structure
+     * </a>
+     */
+    @Structure.FieldOrder({ "Type", "Field", "Reserved", "Id", "NotifyData" })
+    public class PRINTER_NOTIFY_INFO_DATA extends Structure {
+
+        /**
+         * Indicates the type of information provided.
+         */
+        public short Type;
+
+        /**
+         * Indicates the field that changed.
+         */
+        public short Field;
+
+        /**
+         * Reserved.
+         */
+        public int Reserved;
+
+        /**
+         * Indicates the job identifier if the Type member specifies
+         * JOB_NOTIFY_TYPE. If the Type member specifies PRINTER_NOTIFY_TYPE,
+         * this member is undefined.
+         */
+        public int Id;
+
+        /**
+         * A union of data information based on the Type and Field members.
+         */
+        public NOTIFY_DATA NotifyData;
+
+        @Override
+        public void read() {
+            super.read();
+
+            boolean numericData;
+            if (Type == PRINTER_NOTIFY_TYPE) {
+                switch (Field) {
+                    case PRINTER_NOTIFY_FIELD_ATTRIBUTES:
+                        // Fall-through
+                    case PRINTER_NOTIFY_FIELD_PRIORITY:
+                        // Fall-through
+                    case PRINTER_NOTIFY_FIELD_DEFAULT_PRIORITY:
+                        // Fall-through
+                    case PRINTER_NOTIFY_FIELD_START_TIME:
+                        // Fall-through
+                    case PRINTER_NOTIFY_FIELD_UNTIL_TIME:
+                        // Fall-through
+                    case PRINTER_NOTIFY_FIELD_STATUS:
+                        // Fall-through
+                    case PRINTER_NOTIFY_FIELD_CJOBS:
+                        // Fall-through
+                    case PRINTER_NOTIFY_FIELD_AVERAGE_PPM:
+                        numericData = true;
+                    default:
+                        numericData = false;
+                }
+            } else {
+                switch (Field) {
+                    case JOB_NOTIFY_FIELD_STATUS:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_PRIORITY:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_POSITION:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_START_TIME:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_UNTIL_TIME:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_TIME:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_TOTAL_PAGES:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_PAGES_PRINTED:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_TOTAL_BYTES:
+                        // Fall-through
+                    case JOB_NOTIFY_FIELD_BYTES_PRINTED:
+                        numericData = true;
+                    default:
+                        numericData = false;
+                }
+            }
+            if (numericData) {
+                NotifyData.setType(int[].class);
+            } else {
+                NotifyData.setType(NOTIFY_DATA_DATA.class);
+            }
+            NotifyData.read();
+        }
+    }
+
+    @Deprecated
+    HANDLE FindFirstPrinterChangeNotification(
+            // _In_
+            HANDLE hPrinter,
+            int fdwFilter,
+            int fdwOptions,
+            // _In_opt_
+            LPVOID pPrinterNotifyOptions);
+
+    /**
      * The FindFirstPrinterChangeNotification function creates a change
      * notification object and returns a handle to the object. You can then use
      * this handle in a call to one of the wait functions to monitor changes to
@@ -614,9 +989,22 @@ public interface Winspool extends StdCallLibrary {
      */
     HANDLE FindFirstPrinterChangeNotification(
             // _In_
-            HANDLE hPrinter, int fdwFilter, int fdwOptions,
+            HANDLE hPrinter,
+            int fdwFilter,
+            int fdwOptions,
             // _In_opt_
-            LPVOID pPrinterNotifyOptions);
+            PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions);
+
+    @Deprecated
+    boolean FindNextPrinterChangeNotification(
+            // _In_
+            HANDLE hChange,
+            // _Out_opt_
+            DWORDByReference pdwChange,
+            // _In_opt_
+            LPVOID pPrinterNotifyOptions,
+            // _Out_opt_
+            LPVOID ppPrinterNotifyInfo);
 
     /**
      * The FindNextPrinterChangeNotification function retrieves information
@@ -689,9 +1077,9 @@ public interface Winspool extends StdCallLibrary {
             // _Out_opt_
             DWORDByReference pdwChange,
             // _In_opt_
-            LPVOID pPrinterNotifyOptions,
+            PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions,
             // _Out_opt_
-            LPVOID ppPrinterNotifyInfo);
+            PointerByReference ppPrinterNotifyInfo);
 
     /**
      * The FindClosePrinterChangeNotification function closes a change
@@ -715,6 +1103,27 @@ public interface Winspool extends StdCallLibrary {
     boolean FindClosePrinterChangeNotification(
             // _In_
             HANDLE hChange);
+
+    /**
+     * The FreePrinterNotifyInfo function frees a system-allocated buffer
+     * created by the FindNextPrinterChangeNotification function.
+     *
+     * @param pPrinterNotifyInfo
+     *            [in] Pointer to a PRINTER_NOTIFY_INFO buffer returned from a
+     *            call to the FindNextPrinterChangeNotification function.
+     *            FreePrinterNotifyInfo deallocates this buffer.
+     *
+     * @return If the function succeeds, the return value is a nonzero value. If
+     *         the function fails, the return value is zero.
+     *
+     * @see
+     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/freeprinternotifyinfo">
+     *     FreePrinterNotifyInfo function
+     * </a>
+     */
+    boolean FreePrinterNotifyInfo(
+            // _In_
+            Pointer pPrinterNotifyInfo);
 
     /**
      * The EnumJobs function retrieves information about a specified set of

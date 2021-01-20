@@ -9,7 +9,7 @@
     <property name="classes"       location="${build}/classes"/>
     <property name="jar"           location="${build}/demo-monitordemo.jar"/>
     <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
-    <property name="main-class"			value="com.sun.jna.contrib.demo.MonitorInfoDemo.java" />
+    <property name="main-class"			value="com.sun.jna.contrib.demo.MonitorInfoDemo" />
 
     <path id="classpath">
         <fileset file="${file.reference.jna.jar}"/>
