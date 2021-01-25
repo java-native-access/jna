@@ -392,7 +392,14 @@ endif
 
 
 ifeq ($(OS),darwin)
-  XCODE_VERSION=$(shell xcodebuild -version | grep Xcode | sed 's/^Xcode \([1-9][0-9]*\).*/\1/g')
+  ifneq ($(SDKROOT),)
+    CC=$(realpath $(SDKROOT)/../../../../../Toolchains/XcodeDefault.xctoolchain/usr/bin/clang)
+  else
+    CC=clang
+  endif
+  APPLE_CLANG_VERSION=$(shell $(CC) --version | grep version | sed 's/^Apple .* version \([1-9][0-9]*\).*/\1/g')
+  $(info Apple clang version $(APPLE_CLANG_VERSION))
+
   JAVA_INCLUDES+=-I/System/Library/Frameworks/JavaVM.framework/Headers
   DEFAULT_ARCH=$(shell arch)
   # Actual deployment target depends on SDK support
@@ -407,7 +414,7 @@ ifeq ($(OS),darwin)
   # No universal binary for arm64
   ifneq ($(ARCH),arm64)
     ifneq ($(ARCH),i386)
-      ifeq ($(shell test $(XCODE_VERSION) -lt 10; echo $$?),0)
+      ifeq ($(shell test $(APPLE_CLANG_VERSION) -lt 10; echo $$?),0)
         ALT_ARCHS+=i386
         ARCHFLAGS+=-arch i386
       endif
@@ -417,7 +424,7 @@ ifeq ($(OS),darwin)
       ARCHFLAGS+=-arch x86_64
     endif
     ifneq ($(ARCH),ppc)
-      ifeq ($(XCODE_VERSION),3)
+      ifeq ($(shell test $(APPLE_CLANG_VERSION) -lt 2; echo $$?),0)
         # Xcode 3 options
         # not supported on XCode 4+
         ALT_ARCHS+=ppc
@@ -446,7 +453,7 @@ ifeq ($(OS),darwin)
     $(NO_COMPACT_UNWIND) \
     -install_name ${@F} \
     $(SYSLIBROOT)
-  ifeq ($(shell test $(XCODE_VERSION) -lt 12; echo $$?),0)
+  ifeq ($(shell test $(APPLE_CLANG_VERSION) -lt 12; echo $$?),0)
     # JAWT linkage handled by -framework JavaVM
     LIBS+=-framework JavaVM
   endif
