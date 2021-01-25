@@ -395,11 +395,14 @@ ifeq ($(OS),darwin)
   XCODE_VERSION=$(shell xcodebuild -version | grep Xcode | sed 's/^Xcode \([1-9][0-9]*\).*/\1/g')
   JAVA_INCLUDES+=-I/System/Library/Frameworks/JavaVM.framework/Headers
   DEFAULT_ARCH=$(shell arch)
+  # Actual deployment target depends on SDK support
+  MACOSX_DEPLOYMENT_TARGET=10.3
+  MMACOSX_VERSION_MIN=-mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)
   ARCH=$(shell arch)
   HOST_CONFIG=--host $(ARCH)-apple-darwin
-  FFI_ENV += CC="$(CC)" CFLAGS="-arch $(ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) -arch $(ARCH)"
+  FFI_ENV += CC="$(CC)" CFLAGS="$(MMACOSX_VERSION_MIN) -arch $(ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) $(MMACOSX_VERSION_MIN) -arch $(ARCH)"
   ALT_ARCHS=
-  ARCHFLAGS=-arch $(ARCH)
+  ARCHFLAGS=$(MMACOSX_VERSION_MIN) -arch $(ARCH)
 
   # No universal binary for arm64
   ifneq ($(ARCH),arm64)
@@ -439,7 +442,6 @@ ifeq ($(OS),darwin)
   LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ \
     -compatibility_version $(shell echo ${JNA_JNI_VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
     -current_version $(JNA_JNI_VERSION) \
-    -mmacosx-version-min=10.3 \
     -framework Foundation \
     $(NO_COMPACT_UNWIND) \
     -install_name ${@F} \
@@ -456,13 +458,13 @@ endif
 $(BUILD)/%.o : %.c dispatch.h protect.h $(FFI_LIB)
 	@mkdir -p $(BUILD)
 ifneq ($(SDKROOT),)
-	$(CC) $(LOC_CC_OPTS) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)
+	$(CC) $(LOC_CC_OPTS) $(MMACOSX_VERSION_MIN) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)
 	for arch in $(ALT_ARCHS); do \
-	  $(CC) $(LOC_CC_OPTS) -arch $$arch -I$(BUILD)/libffi.$$arch/include $(CFLAGS) -c $< -o $@.$$arch; \
+	  $(CC) $(LOC_CC_OPTS) $(MMACOSX_VERSION_MIN) -arch $$arch -I$(BUILD)/libffi.$$arch/include $(CFLAGS) -c $< -o $@.$$arch; \
 	done
 	lipo -create -output $@ $@.*
 else
-	$(CC) $(CFLAGS) $(LOC_CC_OPTS) -c $< $(COUT)
+	$(CC) $(MMACOSX_VERSION_MIN) -arch $(ARCH) $(CFLAGS) $(LOC_CC_OPTS) -c $< $(COUT)
 endif
 
 all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC)
@@ -522,8 +524,8 @@ ifneq ($(SDKROOT),)
 	  if [ ! -f $(BUILD)/libffi.$$arch/Makefile ]; then \
 	    echo "Configuring libffi ($$arch)"; \
 	    (cd $(BUILD)/libffi.$$arch \
-	     && CC="$(CC)" CFLAGS="-arch $$arch $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" \
-                LDFLAGS="-arch $$arch" \
+	     && CC="$(CC)" CFLAGS="$(MMACOSX_VERSION_MIN) -arch $$arch $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" \
+                LDFLAGS="$(MMACOSX_VERSION_MIN) -arch $$arch" \
                $(FFI_SRC)/configure $(FFI_CONFIG) --host=$$arch-apple-darwin --disable-dependency-tracking); \
 	  fi; \
 	  $(MAKE) -C $(BUILD)/libffi.$$arch; \
