@@ -276,8 +276,7 @@
     <condition property="os.prefix" value="win32-${jre.arch}">
       <equals arg1="${build.os.family}" arg2="windows"/>
     </condition>
-    <!-- Darwin builds are universal, no arch required -->
-    <condition property="os.prefix" value="darwin">
+    <condition property="os.prefix" value="darwin-${jre.arch}">
       <equals arg1="${build.os.family}" arg2="mac"/>
     </condition>
     <condition property="os.prefix" value="sunos-${jre.arch}">
@@ -295,6 +294,14 @@
     <condition property="os.prefix" value="kfreebsd-${jre.arch}">
       <equals arg1="${build.os.name}" arg2="GNU/kFreeBSD"/>
     </condition>
+    <!-- Darwin's resource prefix lacks arch info, use "darwin" instead -->
+    <condition property="resource.prefix" value="darwin">
+        <matches string="${os.prefix}" pattern="^darwin-"/>
+    </condition>
+    <condition property="darwin.build" value="true">
+        <matches string="${os.prefix}" pattern="^darwin-"/>
+    </condition>
+    <property name="resource.prefix" value="${os.prefix}" description="fallback"/>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
     <!-- Keep all natives separate -->
     <property name="native.subdir" value="native-${os.prefix}"/>
@@ -315,6 +322,9 @@
     </condition>
     <condition property="ld.preload.name" value="LD_PRELOAD" else="IGNORE">
       <not><equals arg1="${libjsig}" arg2=""/></not>
+    </condition>
+    <condition property="native.jar" value="darwin.jar">
+      <matches string="${os.prefix}" pattern="^darwin-"/>
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/${native.subdir}"/>
@@ -521,7 +531,7 @@ com/sun/jna/openbsd-x86-64/libjnidispatch.so;
 processor=x86-64;osname=openbsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
-osname=macosx;processor=x86;processor=x86-64;processor=ppc
+osname=macosx;processor=x86;processor=x86-64;processor=aarch64;processor=ppc
 "/>
           </manifest>
           <manifest file="@{target}" mode="update" if:true="@{module-info}">
@@ -873,6 +883,21 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </condition>
     <property name="make.OS" value="IGNORE="/>
     <!-- Ensure Makefile ARCH property properly set -->
+    <condition property="ARCH" value="aarch64">
+      <matches string="${os.prefix}" pattern="-aarch64$"/>
+    </condition>
+    <condition property="ARCH" value="x86-64">
+      <matches string="${os.prefix}" pattern="-x86-64$"/>
+    </condition>
+    <condition property="ARCH" value="ppc">
+      <matches string="${os.prefix}" pattern="-ppc$"/>
+    </condition>
+    <condition property="ARCH" value="ppc64">
+      <matches string="${os.prefix}" pattern="-ppc64$"/>
+    </condition>
+    <condition property="ARCH" value="x86">
+      <matches string="${os.prefix}" pattern="-x86$"/>
+    </condition>
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
     </condition>
@@ -882,26 +907,11 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="ARCH" value="armv7">
       <equals arg1="${os.prefix}" arg2="android-armv7"/>
     </condition>
-    <condition property="ARCH" value="aarch64">
-      <matches string="${os.prefix}" pattern="-aarch64$"/>
-    </condition>
-    <condition property="ARCH" value="x86">
-      <equals arg1="${os.prefix}" arg2="android-x86"/>
-    </condition>
-    <condition property="ARCH" value="x86-64">
-      <equals arg1="${os.prefix}" arg2="android-x86-64"/>
-    </condition>
     <condition property="ARCH" value="mips">
       <equals arg1="${os.prefix}" arg2="android-mips"/>
     </condition>
     <condition property="ARCH" value="mips64">
       <equals arg1="${os.prefix}" arg2="android-mips64"/>
-    </condition>
-    <condition property="ARCH" value="ppc">
-      <equals arg1="${os.prefix}" arg2="aix-ppc"/>
-    </condition>
-    <condition property="ARCH" value="ppc64">
-      <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
     </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
@@ -918,49 +928,43 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="make.SDKROOT" value="SDKROOT=${SDKROOT}">
       <isset property="SDKROOT"/>
     </condition>
-    <property name="xcode" value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform"/>
-    <condition property="make.SDKROOT"
-	       value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.11.sdk">
+    <!-- If not manually provided, detect the SDKROOT in various locations:
+         - Modern build environments ("MacOSX.sdk", no version):
+           /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+
+         - macOS 10.8 and older:
+           /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX(version).sdk
+
+         - Prior versions:
+           /Developer/SDKs/MacOSX(version).sdk
+    -->
+    <condition property="make.SDKROOT" value="SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk">
       <and>
-        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
-        <available file="${xcode}/Developer/SDKs/MacOSX10.11.sdk"/>
+        <matches string="${os.prefix}" pattern="^darwin-"/>
+        <available file="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"/>
       </and>
     </condition>
-    <condition property="make.SDKROOT"
-	       value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.9.sdk">
+    <condition property="sdk-parent" value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs">
       <and>
-        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
-        <available file="${xcode}/Developer/SDKs/MacOSX10.9.sdk"/>
+        <matches string="${os.prefix}" pattern="^darwin-"/>
+        <available file="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"/>
       </and>
     </condition>
-    <condition property="make.SDKROOT"
-	       value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.8.sdk">
+    <condition property="sdk-parent" value="/Developer/SDKs">
       <and>
-        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
-        <available file="${xcode}/Developer/SDKs/MacOSX10.8.sdk"/>
+        <matches string="${os.prefix}" pattern="^darwin-"/>
+        <available file="/Developer/SDKs"/>
       </and>
     </condition>
-    <condition property="make.SDKROOT"
-	       value="SDKROOT=/Developer/SDKs/MacOSX10.6.sdk">
-      <and>
-        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
-        <available file="/Developer/SDKs/MacOSX10.6.sdk"/>
-      </and>
+    <!-- Multiple SDKs is common; find the most recent (sort -V requires 10.12+) -->
+    <exec executable="sh" dir="${sdk-parent}" outputproperty="sdk-latest" if:set="darwin.build" unless:set="make.SDKROOT">
+      <arg value="-c"/>
+      <arg line="&quot;ls -d MacOSX10.*.sdk | sort -t &quot;.&quot; -k2 -n | tail -1&quot;"/>
+    </exec>
+    <condition property="make.SDKROOT" value="SDKROOT=${sdk-parent}/${sdk-latest}" else="IGNORE=">
+      <isset property="sdk-latest"/>
     </condition>
-    <condition property="make.SDKROOT"
-	       value="SDKROOT=/Developer/SDKs/MacOSX10.5.sdk">
-      <and>
-        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
-        <available file="/Developer/SDKs/MacOSX10.5.sdk"/>
-      </and>
-    </condition>
-    <condition property="make.SDKROOT"
-	       value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
-      <and>
-        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
-        <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
-      </and>
-    </condition>
+
     <!-- Windows' drive letters and spaces in absolute paths wreak havoc on
          make -->
     <condition property="make.BUILD" value="BUILD=../${build}/${native.subdir}" else="BUILD=${build.native}">
@@ -989,7 +993,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <isset property="EXTRA_MAKE_OPTS"/>
     </condition>
     <!-- Native resource path within jna.jar -->
-    <property name="native.path" value="com/sun/jna/${os.prefix}"/>
+    <property name="native.path" value="com/sun/jna/${resource.prefix}"/>
 
     <!-- Default make program -->
     <property name="make" value="make"/>
@@ -1055,6 +1059,68 @@ cd ..
     </zip>
   </target>
 
+  <!-- 
+    Darwin prefers fat libraries. native/Makefile outputs a binary file for
+    one architecture. The binary is joined into a preexisting library pulled
+    from lib/native/darwin.jar using lipo.
+
+    If the preexisting library does not exist, or the library is thin and
+    only supports the target arch, the output binary will be renamed and
+    used in lieu of joining a fat lib.
+  -->
+  <macrodef name="darwin-lipo">
+    <sequential>
+      <available file="${lib.native}/${native.jar}" property="lib-available"/>
+      <unzip src="${lib.native}/${native.jar}" dest="${build.native}" if:true="${lib-available}">
+        <patternset>
+          <include name="libjnidispatch.jnilib"/>
+        </patternset>
+      </unzip>
+      <!--
+        Detect the arch that was just built.
+        Note, lipo -info will not exactly match that provided by ${ARCH}, this is OK
+      -->
+      <exec executable="lipo" dir="${build.native}" failonerror="true" outputproperty="lipo-info" if:true="${lib-available}">
+        <arg value="-info"/>
+        <arg value="libjnidispatch-${ARCH}.jnilib"/>
+      </exec>
+      <regexp id="lipo-regex" pattern="\b(\w+)$"/>
+      <loadresource property="lipo-arch" if:true="${lib-available}">
+          <propertyresource name="lipo-info"/>
+          <filterchain>
+              <tokenfilter>
+                  <filetokenizer/>
+                  <replaceregex pattern=".*\s" replace=""/>
+              </tokenfilter>
+          </filterchain>
+      </loadresource>
+      <!-- Use the detected arch to remove the old binary, and add the new binary to the fat library -->
+      <exec executable="lipo" dir="${build.native}" failonerror="false" if:true="${lib-available}">
+        <arg value="-remove"/>
+        <arg value="${lipo-arch}"/>
+        <arg value="libjnidispatch.jnilib"/>
+        <arg value="-output"/>
+        <arg value="libjnidispatch.jnilib"/>
+      </exec>
+      <exec executable="lipo" dir="${build.native}" failonerror="false" if:true="${lib-available}" resultproperty="lipo-result">
+        <arg value="-create"/>
+        <arg value="libjnidispatch.jnilib"/>
+        <arg value="libjnidispatch-${ARCH}.jnilib"/>
+        <arg value="-output"/>
+        <arg value="libjnidispatch.jnilib"/>
+      </exec>
+      <condition property="replace-lib" value="true">
+        <or>
+          <not>
+            <equals arg1="0" arg2="${lipo-result}"/>
+          </not>
+          <isfalse value="${lib-available}"/>
+        </or>
+      </condition>
+      <move file="${build.native}/libjnidispatch-${ARCH}.jnilib" tofile="${build.native}/libjnidispatch.jnilib" if:true="${replace-lib}" overwrite="true"/>
+    </sequential>
+  </macrodef>
+
   <target name="native" depends="-enable-native,javah,-native-api-check,-prepare-native" unless="-native"
           description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
     <exec executable="${make}" dir="${native}" failonerror="true">
@@ -1074,6 +1140,7 @@ cd ..
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
+    <darwin-lipo if:set="darwin.build"/>
     <mkdir dir="${classes}/${native.path}"/>
     <copy todir="${classes}/${native.path}">
       <fileset dir="${build.native}"
@@ -1132,13 +1199,13 @@ cd ..
       <exclude name="${tests.exclude}"/>
     </javac>
     <!-- Embed testlib-jar at root and at default resource path -->
-    <mkdir dir="${test.classes}/${os.prefix}"/>
+    <mkdir dir="${test.classes}/${resource.prefix}"/>
     <copy todir="${test.classes}">
       <fileset dir="${build.native}">
         <include name="*testlib-jar*"/>
       </fileset>
     </copy>
-    <copy todir="${test.classes}/${os.prefix}">
+    <copy todir="${test.classes}/${resource.prefix}">
       <fileset dir="${build.native}">
         <include name="*testlib-jar*"/>
       </fileset>
