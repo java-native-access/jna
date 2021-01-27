@@ -31,6 +31,10 @@ Bug Fixes
 * [#1278](https://github.com/java-native-access/jna/pull/1278): Improve compatibility of `c.s.j.p.WindowUtils#getProcessFilePath` and fix unittests for windows 32bit intel  - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1284](https://github.com/java-native-access/jna/pull/1284): Fix illegal access exceptions, when retrieving options for private library interfaces with an instance field - [@fkistner](https://github.com/fkistner).
 
+Breaking Changes
+----------------
+* Prebuild native library for darwin x86 (32bit java on mac OS) was removed
+
 Release 5.6.0
 =============
 
