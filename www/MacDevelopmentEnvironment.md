@@ -1,6 +1,54 @@
 Mac Development Environment
 ===========================
 
+### Prequisites
+* [Xcode](https://developer.apple.com/download/) with Command Line tools
+* The following tools: `ant autoconf automake libtool gettext`
+   * These are available via [Homebrew](https://brew.sh)
+      ```bash
+      brew install ant autoconf automake libtool gettext
+      ```
+
+   * ... or alternately via [MacPorts](https://www.macports.org/)
+
+### Compiling
+
+1. To compile and run unit tests for the current archecture:
+   ```bash
+   ant
+   ```
+
+2. To compile native components only and skip unit tests:
+   ```bash
+   ant native
+   ```
+
+3. To provide an alternate (older) macOS SDK:
+   ```bash
+   ant -DSDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
+   ```
+
+4. To cross-compile for an alternate architecture:
+   ```bash
+   # ARM64 (>= 11.0)
+   ant -Dos.prefix=darwin-aarch64
+
+   # x86 (<= 10.13)
+   ant -Dos.prefix=darwin-x86
+
+   # x86_64
+   ant -Dos.prefix=darwin-x86-64
+
+   # PPC (<= 10.5)
+   ant -Dos.prefix=darwin-ppc
+
+   # PPC64
+   ant -Dos.prefix=darwin-ppc64
+   ```
+
+### Troubleshooting
+
+
 * Xcode - If you only have the Xcode command line tools installed, and not the full Xcode UI, you may see build errors like this:
 
         native:
