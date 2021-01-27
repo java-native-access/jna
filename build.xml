@@ -882,21 +882,21 @@ osname=macosx;processor=x86;processor=x86-64;processor=aarch64;processor=ppc
       <matches pattern="^android-" string="${os.prefix}"/>
     </condition>
     <property name="make.OS" value="IGNORE="/>
-    <!-- Ensure Makefile ARCH property properly set -->
+    <!-- Ensure Makefile ARCH property properly set for darwin -->
     <condition property="ARCH" value="aarch64">
-      <matches string="${os.prefix}" pattern="-aarch64$"/>
-    </condition>
-    <condition property="ARCH" value="x86-64">
-      <matches string="${os.prefix}" pattern="-x86-64$"/>
-    </condition>
-    <condition property="ARCH" value="ppc">
-      <matches string="${os.prefix}" pattern="-ppc$"/>
-    </condition>
-    <condition property="ARCH" value="ppc64">
-      <matches string="${os.prefix}" pattern="-ppc64$"/>
+        <equals arg1="${os.prefix}" arg2="darwin-aarch64"/>
     </condition>
     <condition property="ARCH" value="x86">
-      <matches string="${os.prefix}" pattern="-x86$"/>
+        <equals arg1="${os.prefix}" arg2="darwin-x86"/>
+    </condition>
+    <condition property="ARCH" value="x86-64">
+        <equals arg1="${os.prefix}" arg2="darwin-x86-64"/>
+    </condition>
+    <condition property="ARCH" value="ppc">
+        <equals arg1="${os.prefix}" arg2="darwin-ppc"/>
+    </condition>
+    <condition property="ARCH" value="ppc64">
+        <equals arg1="${os.prefix}" arg2="darwin-ppc64"/>
     </condition>
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
@@ -907,11 +907,26 @@ osname=macosx;processor=x86;processor=x86-64;processor=aarch64;processor=ppc
     <condition property="ARCH" value="armv7">
       <equals arg1="${os.prefix}" arg2="android-armv7"/>
     </condition>
+    <condition property="ARCH" value="aarch64">
+      <matches string="${os.prefix}" pattern="-aarch64$"/>
+    </condition>
+    <condition property="ARCH" value="x86">
+      <equals arg1="${os.prefix}" arg2="android-x86"/>
+    </condition>
+    <condition property="ARCH" value="x86-64">
+      <equals arg1="${os.prefix}" arg2="android-x86-64"/>
+    </condition>
     <condition property="ARCH" value="mips">
       <equals arg1="${os.prefix}" arg2="android-mips"/>
     </condition>
     <condition property="ARCH" value="mips64">
       <equals arg1="${os.prefix}" arg2="android-mips64"/>
+    </condition>
+    <condition property="ARCH" value="ppc">
+      <equals arg1="${os.prefix}" arg2="aix-ppc"/>
+    </condition>
+    <condition property="ARCH" value="ppc64">
+      <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
     </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
