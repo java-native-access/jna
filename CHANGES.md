@@ -7,6 +7,7 @@ Next Release (5.7.0)
 
 Features
 --------
+* [#1301](https://github.com/java-native-access/jna/pull/1301/): Improve bindings of the printer notification functions (`FindFirstPrinterChangeNotification`, `FindNextPrinterChangeNotification`) in `c.s.j.p.w.Winspool` - [@ianjoneill](https://github.com/ianjoneill).
 * [#1238](https://github.com/java-native-access/jna/pull/1238): Add macOS `aarch64` architecture to universal `darwin` target. Cherry pick [libffi/libffi#577](https://github.com/libffi/libffi/pull/577). - [@fkistner](https://github.com/fkistner), [@Vzor-](https://github.com/Vzor-), [@tresf](https://github.com/tresf).
 * [#1264](https://github.com/java-native-access/jna/pull/1264): Update libffi to v3.3; Add Windows `aarch64` target. - [@tresf](https://github.com/tresf).
 * [#1293](https://github.com/java-native-access/jna/issues/1293): Bind part of Windows Application Recovery and Restart API: `RegisterApplicationRestart`, `UnregisterApplicationRestart` and `GetApplicationRestartSettings` in `c.s.j.p.w.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
