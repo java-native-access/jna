@@ -24,6 +24,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.UnsupportedEncodingException;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -31,7 +33,6 @@ import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Constant defined in WTypes.h
@@ -103,15 +104,33 @@ public interface WTypes {
             super(Pointer.NULL);
         }
 
+        /**
+         * Instantiate a BSTR from a pointer. The user is responsible for allocating and
+         * releasing memory for the {@link BSTR}, most commonly using
+         * {@link OleAuto#SysAllocString(String)} and
+         * {@link OleAuto#SysFreeString(BSTR)}
+         *
+         * @param pointer
+         *            A pointer to the string
+         */
         public BSTR(Pointer pointer) {
             super(pointer);
         }
 
+        /**
+         * @deprecated Use {@link OleAuto#SysAllocString(String)} and
+         *             {@link OleAuto#SysFreeString(BSTR)}
+         */
+        @Deprecated
         public BSTR(String value) {
             super();
             this.setValue(value);
         }
 
+        /**
+         * @deprecated Users should not change the value of an allocated {@link BSTR}.
+         */
+        @Deprecated
         public void setValue(String value) {
             if(value == null) {
                 value = "";
@@ -154,21 +173,56 @@ public interface WTypes {
             super(Native.POINTER_SIZE);
         }
 
+        /**
+         * Store a reference to the specified {@link BSTR}. This method does not
+         * maintain a reference to the object passed as an argument. The user is
+         * responsible for allocating and freeing the memory associated with this
+         * {@link BSTR}.
+         *
+         * @param value
+         *            The BSTR to be referenced. Only the pointer is stored as a
+         *            reference.
+         */
         public BSTRByReference(BSTR value) {
             this();
             setValue(value);
         }
 
+        /**
+         * Store a reference to the specified {@link BSTR}. This method does not
+         * maintain a reference to the object passed as an argument. The user is
+         * responsible for allocating and freeing the memory associated with this
+         * {@link BSTR}.
+         *
+         * @param value
+         *            The BSTR to be referenced. Only the pointer is stored as a
+         *            reference.
+         */
         public void setValue(BSTR value) {
             this.getPointer().setPointer(0, value.getPointer());
         }
 
+        /**
+         * Returns a copy of the {@link BSTR} referenced by this object. The memory
+         * associated with the {@link BSTR} may be referenced by other objects/threads
+         * which may also free the underlying native memory.
+         *
+         * @return A new {@link BSTR} object corresponding to the memory referenced by
+         *         this object.
+         */
         public BSTR getValue() {
             return new BSTR(getPointer().getPointer(0));
         }
 
+        /**
+         * Returns the String represented by the referenced {@link BSTR}.
+         *
+         * @return the referenced String, if the reference is not {@code null},
+         *         {@code null} otherwise.
+         */
         public String getString() {
-            return this.getValue().getValue();
+            BSTR b = this.getValue();
+            return b == null ? null : b.getValue();
         }
     }
 
