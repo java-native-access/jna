@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="compile-native" default="install">
+<project name="compile-native" default="install"
+         xmlns:if="ant:if"
+         xmlns:unless="ant:unless">
     <dirname property="module.root.folder" file="${ant.file}"/>
     <dirname property="workspace.root.folder" file="${module.root.folder}"/>
     <property name="jna.parent.folder" value="${workspace.root.folder}${file.separator}parent"/>
