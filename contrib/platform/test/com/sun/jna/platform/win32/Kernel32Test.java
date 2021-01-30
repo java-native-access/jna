@@ -1811,7 +1811,8 @@ public class Kernel32Test extends TestCase {
         // Set bit flags to 0x0001
         int previousMode = Kernel32.INSTANCE.SetErrorMode(0x0001);
         // Restore to previous state; 0x0001 is now "previous"
-        assertEquals(Kernel32.INSTANCE.SetErrorMode(previousMode), 0x0001);
+        // Since 0x0004 bit is sticky previous may be 0x0005
+        assertEquals(0x0001, Kernel32.INSTANCE.SetErrorMode(previousMode) & ~0x0004);
     }
 
 // Testcase is disabled, as kernel32 ordinal values are not stable.

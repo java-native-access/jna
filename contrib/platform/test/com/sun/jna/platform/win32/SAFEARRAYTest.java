@@ -198,11 +198,11 @@ public class SAFEARRAYTest {
         wrap.lock();
         int rowMax = wrap.getUBound(2);
         int columnMax = wrap.getUBound(1);
-        Object[][] result = new Object[(int) (rowMax + 1)][(int) (columnMax + 1)];
+        Object[][] result = new Object[rowMax + 1][columnMax + 1];
         for(int i = 0; i <= rowMax; i++) {
             for(int j = 0; j <= columnMax; j++) {
                 VARIANT cell = (VARIANT) wrap.getElement(i, j);
-                result[(int)i][(int) j] = cell.getValue();
+                result[i][j] = cell.getValue();
                 OleAuto.INSTANCE.VariantClear(cell);
             }
         }
@@ -214,11 +214,11 @@ public class SAFEARRAYTest {
         wrap.lock();
         int rowMax = wrap.getUBound(2);
         int columnMax = wrap.getUBound(1);
-        Object[][] result = new Object[(int) (rowMax + 1)][(int) (columnMax + 1)];
+        Object[][] result = new Object[rowMax + 1][columnMax + 1];
         for(int i = 0; i <= rowMax; i++) {
             for(int j = 0; j <= columnMax; j++) {
                 VARIANT cell = new VARIANT(wrap.ptrOfIndex(i, j));
-                result[(int)i][(int) j] = cell.getValue();
+                result[i][j] = cell.getValue();
             }
         }
         wrap.unlock();
@@ -498,6 +498,7 @@ public class SAFEARRAYTest {
      * Test assumption: The windows search provider is present and holds at least
      * five entries. If this assumption is not met, this test fails.
      */
+    @Ignore("Assumes windows search provider present with five entries")
     @Test
     public void testADODB() {
         ObjectFactory fact = new ObjectFactory();
@@ -770,6 +771,7 @@ public class SAFEARRAYTest {
         }
         private long value;
 
+        @Override
         public long getValue() {
             return this.value;
         }
@@ -791,6 +793,7 @@ public class SAFEARRAYTest {
         }
         private long value;
 
+        @Override
         public long getValue() {
             return this.value;
         }
