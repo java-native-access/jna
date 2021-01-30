@@ -1,4 +1,4 @@
-/* Copyright (c) 2018,2020 Daniel Widdis, All Rights Reserved
+/* Copyright (c) 2018,2020,2021 Daniel Widdis, All Rights Reserved
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
@@ -59,6 +59,50 @@ public interface IPHlpAPI extends Library {
     int AF_INET6 = 23; // The Internet Protocol version 6 (IPv6) address family.
     int AF_IRDA = 26; // The Infrared Data Association (IrDA) address family.
     int AF_BTH = 32; // The Bluetooth address family.
+
+    /**
+     * Defines the set of values used to indicate the type of table returned by
+     * calls to {@link #GetExtendedTcpTable}
+     */
+    interface TCP_TABLE_CLASS {
+        int TCP_TABLE_BASIC_LISTENER = 0;
+        int TCP_TABLE_BASIC_CONNECTIONS = 1;
+        int TCP_TABLE_BASIC_ALL = 2;
+        int TCP_TABLE_OWNER_PID_LISTENER = 3;
+        int TCP_TABLE_OWNER_PID_CONNECTIONS = 4;
+        int TCP_TABLE_OWNER_PID_ALL = 5;
+        int TCP_TABLE_OWNER_MODULE_LISTENER = 6;
+        int TCP_TABLE_OWNER_MODULE_CONNECTIONS = 7;
+        int TCP_TABLE_OWNER_MODULE_ALL = 8;
+    }
+
+    /**
+     * Defines the set of values used to indicate the type of table returned by
+     * calls to {@link #GetExtendedUdpTable}.
+     */
+    interface UDP_TABLE_CLASS {
+        int UDP_TABLE_BASIC = 0;
+        int UDP_TABLE_OWNER_PID = 1;
+        int UDP_TABLE_OWNER_MODULE = 2;
+    }
+
+    /**
+     * Enumerates different possible TCP states.
+     */
+    interface MIB_TCP_STATE {
+        int MIB_TCP_STATE_CLOSED = 1;
+        int MIB_TCP_STATE_LISTEN = 2;
+        int MIB_TCP_STATE_SYN_SENT = 3;
+        int MIB_TCP_STATE_SYN_RCVD = 4;
+        int MIB_TCP_STATE_ESTAB = 5;
+        int MIB_TCP_STATE_FIN_WAIT1 = 6;
+        int MIB_TCP_STATE_FIN_WAIT2 = 7;
+        int MIB_TCP_STATE_CLOSE_WAIT = 8;
+        int MIB_TCP_STATE_CLOSING = 9;
+        int MIB_TCP_STATE_LAST_ACK = 10;
+        int MIB_TCP_STATE_TIME_WAIT = 11;
+        int MIB_TCP_STATE_DELETE_TCB = 12;
+    }
 
     /**
      * The MIB_IFROW structure stores information about a particular interface.
@@ -265,6 +309,160 @@ public interface IPHlpAPI extends Library {
     }
 
     /**
+     * Contains information that describes an IPv4 TCP connection.
+     */
+    @FieldOrder({ "dwState", "dwLocalAddr", "dwLocalPort", "dwRemoteAddr", "dwRemotePort", "dwOwningPid" })
+    class MIB_TCPROW_OWNER_PID extends Structure {
+        public int dwState;
+        public int dwLocalAddr;
+        public int dwLocalPort;
+        public int dwRemoteAddr;
+        public int dwRemotePort;
+        public int dwOwningPid;
+    }
+
+    /**
+     * Contains a table of IPv4 TCP connections on the local computer.
+     */
+    @FieldOrder({ "dwNumEntries", "table" })
+    class MIB_TCPTABLE_OWNER_PID extends Structure {
+        public int dwNumEntries;
+        public MIB_TCPROW_OWNER_PID[] table = new MIB_TCPROW_OWNER_PID[1];
+
+        public MIB_TCPTABLE_OWNER_PID(Pointer buf) {
+            super(buf);
+            read();
+        }
+
+        @Override
+        public void read() {
+            // First element contains array size
+            this.dwNumEntries = getPointer().getInt(0);
+            if (this.dwNumEntries > 0) {
+                table = (MIB_TCPROW_OWNER_PID[]) new MIB_TCPROW_OWNER_PID().toArray(this.dwNumEntries);
+                super.read();
+            } else {
+                table = new MIB_TCPROW_OWNER_PID[0];
+            }
+        }
+    }
+
+    /**
+     * Contains information that describes an IPv6 TCP connection.
+     */
+    @FieldOrder({ "LocalAddr", "dwLocalScopeId", "dwLocalPort", "RemoteAddr", "dwRemoteScopeId", "dwRemotePort",
+            "State", "dwOwningPid" })
+    class MIB_TCP6ROW_OWNER_PID extends Structure {
+        public byte[] LocalAddr = new byte[16];
+        public int dwLocalScopeId;
+        public int dwLocalPort;
+        public byte[] RemoteAddr = new byte[16];
+        public int dwRemoteScopeId;
+        public int dwRemotePort;
+        public int State;
+        public int dwOwningPid;
+    }
+
+    /**
+     * Contains a table of IPv6 TCP connections on the local computer.
+     */
+    @FieldOrder({ "dwNumEntries", "table" })
+    class MIB_TCP6TABLE_OWNER_PID extends Structure {
+        public int dwNumEntries;
+        public MIB_TCP6ROW_OWNER_PID[] table = new MIB_TCP6ROW_OWNER_PID[1];
+
+        public MIB_TCP6TABLE_OWNER_PID(Pointer buf) {
+            super(buf);
+            read();
+        }
+
+        @Override
+        public void read() {
+            // First element contains array size
+            this.dwNumEntries = getPointer().getInt(0);
+            if (this.dwNumEntries > 0) {
+                table = (MIB_TCP6ROW_OWNER_PID[]) new MIB_TCP6ROW_OWNER_PID().toArray(this.dwNumEntries);
+                super.read();
+            } else {
+                table = new MIB_TCP6ROW_OWNER_PID[0];
+            }
+        }
+    }
+
+    /**
+     * Contains information that describes an IPv6 UDP connection.
+     */
+    @FieldOrder({ "dwLocalAddr", "dwLocalPort", "dwOwningPid" })
+    class MIB_UDPROW_OWNER_PID extends Structure {
+        public int dwLocalAddr;
+        public int dwLocalPort;
+        public int dwOwningPid;
+    }
+
+    /**
+     * Contains a table of IPv6 UDP connections on the local computer.
+     */
+    @FieldOrder({ "dwNumEntries", "table" })
+    class MIB_UDPTABLE_OWNER_PID extends Structure {
+        public int dwNumEntries;
+        public MIB_UDPROW_OWNER_PID[] table = new MIB_UDPROW_OWNER_PID[1];
+
+        public MIB_UDPTABLE_OWNER_PID(Pointer buf) {
+            super(buf);
+            read();
+        }
+
+        @Override
+        public void read() {
+            // First element contains array size
+            this.dwNumEntries = getPointer().getInt(0);
+            if (this.dwNumEntries > 0) {
+                table = (MIB_UDPROW_OWNER_PID[]) new MIB_UDPROW_OWNER_PID().toArray(this.dwNumEntries);
+                super.read();
+            } else {
+                table = new MIB_UDPROW_OWNER_PID[0];
+            }
+        }
+    }
+
+    /**
+     * Contains information that describes an IPv6 UDP connection.
+     */
+    @FieldOrder({ "ucLocalAddr", "dwLocalScopeId", "dwLocalPort", "dwOwningPid" })
+    class MIB_UDP6ROW_OWNER_PID extends Structure {
+        public byte[] ucLocalAddr = new byte[16];
+        public int dwLocalScopeId;
+        public int dwLocalPort;
+        public int dwOwningPid;
+    }
+
+    /**
+     * Contains a table of IPv6 UDP connections on the local computer.
+     */
+    @FieldOrder({ "dwNumEntries", "table" })
+    class MIB_UDP6TABLE_OWNER_PID extends Structure {
+        public int dwNumEntries;
+        public MIB_UDP6ROW_OWNER_PID[] table = new MIB_UDP6ROW_OWNER_PID[1];
+
+        public MIB_UDP6TABLE_OWNER_PID(Pointer buf) {
+            super(buf);
+            read();
+        }
+
+        @Override
+        public void read() {
+            // First element contains array size
+            this.dwNumEntries = getPointer().getInt(0);
+            if (this.dwNumEntries > 0) {
+                table = (MIB_UDP6ROW_OWNER_PID[]) new MIB_UDP6ROW_OWNER_PID().toArray(this.dwNumEntries);
+                super.read();
+            } else {
+                table = new MIB_UDP6ROW_OWNER_PID[0];
+            }
+        }
+    }
+
+    /**
      * The GetIfEntry function retrieves information for the specified interface on
      * the local computer.
      * <p>
@@ -387,4 +585,79 @@ public interface IPHlpAPI extends Library {
      *         {@link WinError#NO_ERROR}.
      */
     int GetUdpStatisticsEx(MIB_UDPSTATS Statistics, int Family);
+
+    /**
+     * Retrieves a table that contains a list of TCP endpoints available to the
+     * application.
+     *
+     * @param pTcpTable
+     *            A pointer to the table structure that contains the filtered TCP
+     *            endpoints available to the application.
+     * @param pdwSize
+     *            The estimated size of the structure returned in pTcpTable, in
+     *            bytes. If this value is set too small,
+     *            {@code ERROR_INSUFFICIENT_BUFFER} is returned by this function,
+     *            and this field will contain the correct size of the structure.
+     * @param bOrder
+     *            A value that specifies whether the TCP connection table should be
+     *            sorted. If this parameter is set to TRUE, the TCP endpoints in the
+     *            table are sorted in ascending order, starting with the lowest
+     *            local IP address. If this parameter is set to FALSE, the TCP
+     *            endpoints in the table appear in the order in which they were
+     *            retrieved. The following values are compared (as listed) when
+     *            ordering the TCP endpoints: Local IP address, Local scope ID
+     *            (applicable when the ulAf parameter is set to AF_INET6), Local TCP
+     *            port, Remote IP address, Remote scope ID (applicable when the ulAf
+     *            parameter is set to AF_INET6), Remote TCP port.
+     * @param ulAf
+     *            The version of IP used by the TCP endpoints.
+     * @param TableClass
+     *            The type of the TCP table structure to retrieve. This parameter
+     *            can be one of the values from the {@link TCP_TABLE_CLASS}
+     *            enumeration.
+     * @param Reserved
+     *            Reserved. This value must be zero.
+     * @return If the function succeeds, the return value is {@code NO_ERROR}. If
+     *         the function fails, the return value is an error code.
+     */
+    int GetExtendedTcpTable(Pointer pTcpTable, IntByReference pdwSize, boolean bOrder, int ulAf, int TableClass,
+            int Reserved);
+
+    /**
+     * Retrieves a table that contains a list of UDP endpoints available to the
+     * application.
+     *
+     * @param pUdpTable
+     *            A pointer to the table structure that contains the filtered UDP
+     *            endpoints available to the application.
+     * @param pdwSize
+     *            The estimated size of the structure returned in pTcpTable, in
+     *            bytes. If this value is set too small,
+     *            {@code ERROR_INSUFFICIENT_BUFFER} is returned by this function,
+     *            and this field will contain the correct size of the structure.
+     * @param bOrder
+     *            A value that specifies whether the TCP connection table should be
+     *            sorted. If this parameter is set to TRUE, the TCP endpoints in the
+     *            table are sorted in ascending order, starting with the lowest
+     *            local IP address. If this parameter is set to FALSE, the TCP
+     *            endpoints in the table appear in the order in which they were
+     *            retrieved. The following values are compared (as listed) when
+     *            ordering the TCP endpoints: Local IP address, Local scope ID
+     *            (applicable when the ulAf parameter is set to {@code AF_INET6}),
+     *            Local TCP port, Remote IP address, Remote scope ID (applicable
+     *            when the ulAf parameter is set to {@code AF_INET6}), Remote TCP
+     *            port.
+     * @param ulAf
+     *            The version of IP used by the UDP endpoints.
+     * @param TableClass
+     *            The type of the TCP table structure to retrieve. This parameter
+     *            can be one of the values from the {@link TCP_TABLE_CLASS}
+     *            enumeration.
+     * @param Reserved
+     *            Reserved. This value must be zero.
+     * @return If the function succeeds, the return value is {@code NO_ERROR}. If
+     *         the function fails, the return value is an error code.
+     */
+    int GetExtendedUdpTable(Pointer pUdpTable, IntByReference pdwSize, boolean bOrder, int ulAf, int TableClass,
+            int Reserved);
 }
