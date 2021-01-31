@@ -199,7 +199,7 @@ public class IPHlpAPITest {
     }
 
     @Test
-    void testTCPv4Connections() {
+    public void testTCPv4Connections() {
         // Get size needed
         IntByReference sizePtr = new IntByReference();
         assertEquals(WinError.ERROR_INSUFFICIENT_BUFFER,
@@ -230,7 +230,7 @@ public class IPHlpAPITest {
     }
 
     @Test
-    void testTCPv6Connections() {
+    public void testTCPv6Connections() {
         // Get size needed
         IntByReference sizePtr = new IntByReference();
         assertEquals(WinError.ERROR_INSUFFICIENT_BUFFER,
@@ -261,7 +261,7 @@ public class IPHlpAPITest {
     }
 
     @Test
-    void testUDPv4Connections() {
+    public void testUDPv4Connections() {
         // Get size needed
         IntByReference sizePtr = new IntByReference();
         assertEquals(WinError.ERROR_INSUFFICIENT_BUFFER,
@@ -289,7 +289,7 @@ public class IPHlpAPITest {
     }
 
     @Test
-    void testUDPv6Connections() {
+    public void testUDPv6Connections() {
         // Get size needed
         IntByReference sizePtr = new IntByReference();
         assertEquals(WinError.ERROR_INSUFFICIENT_BUFFER,
