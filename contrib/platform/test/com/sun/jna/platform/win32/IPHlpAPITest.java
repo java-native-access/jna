@@ -26,6 +26,7 @@ package com.sun.jna.platform.win32;
 import static com.sun.jna.platform.win32.IPHlpAPI.AF_INET;
 import static com.sun.jna.platform.win32.IPHlpAPI.AF_INET6;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
@@ -66,25 +67,18 @@ public class IPHlpAPITest {
                 MIB_IFROW ifRow = new MIB_IFROW();
                 ifRow.dwIndex = netint.getIndex();
                 assertEquals(WinError.NO_ERROR, IPHLP.GetIfEntry(ifRow));
-                // Bytes should exceed packets
                 // These originate from unsigned ints. Use standard Java
                 // widening conversion to long which does sign-extension,
                 // then drop any copies of the sign bit, to prevent the value
                 // being considered a negative one by Java if it is set
-                long bytesSent = (ifRow.dwOutOctets) & 0xffffffffL;
-                long packetsSent = (ifRow.dwOutUcastPkts) & 0xffffffffL;
-                if (packetsSent > 0) {
-                    assertTrue(bytesSent > packetsSent);
-                } else {
-                    assertEquals(0, bytesSent);
-                }
-                long bytesRecv = (ifRow.dwInOctets) & 0xffffffffL;
-                long packetsRecv = (ifRow.dwInUcastPkts) & 0xffffffffL;
-                if (packetsRecv > 0) {
-                    assertTrue(bytesRecv > packetsRecv);
-                } else {
-                    assertEquals(0, bytesRecv);
-                }
+                long bytesSent = ifRow.dwOutOctets & 0xffffffffL;
+                long packetsSent = ifRow.dwOutUcastPkts & 0xffffffffL;
+                long bytesRecv = ifRow.dwInOctets & 0xffffffffL;
+                long packetsRecv = ifRow.dwInUcastPkts & 0xffffffffL;
+                // Bytes should match or exceed minimum packet size of 20.
+                // It is possible to have bytes not part of a packet but not vice versa.
+                assertTrue(bytesSent >= packetsSent * 20L);
+                assertTrue(bytesRecv >= packetsRecv * 20L);
             }
         }
 
@@ -105,18 +99,11 @@ public class IPHlpAPITest {
                     // These originate from unsigned longs.
                     BigInteger bytesSent = new BigInteger(Long.toHexString(ifRow.OutOctets), 16);
                     BigInteger packetsSent = new BigInteger(Long.toHexString(ifRow.OutUcastPkts), 16);
-                    if (packetsSent.longValue() > 0) {
-                        assertEquals(1, bytesSent.compareTo(packetsSent));
-                    } else {
-                        assertEquals(0, bytesSent.compareTo(packetsSent));
-                    }
                     BigInteger bytesRecv = new BigInteger(Long.toHexString(ifRow.InOctets), 16);
                     BigInteger packetsRecv = new BigInteger(Long.toHexString(ifRow.InUcastPkts), 16);
-                    if (packetsRecv.longValue() > 0) {
-                        assertEquals(1, bytesRecv.compareTo(packetsRecv));
-                    } else {
-                        assertEquals(0, bytesRecv.compareTo(packetsRecv));
-                    }
+                    BigInteger minPacketSize = BigInteger.valueOf(20);
+                    assertNotEquals(-1, bytesSent.compareTo(packetsSent.multiply(minPacketSize)));
+                    assertNotEquals(-1, bytesRecv.compareTo(packetsRecv.multiply(minPacketSize)));
                 }
             }
         } else {

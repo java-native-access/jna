@@ -143,15 +143,19 @@ public class Advapi32Test extends TestCase {
         String accountName = "Administrator";
         assertFalse(Advapi32.INSTANCE.LookupAccountName(
                 null, accountName, null, pSid, null, pDomain, peUse));
-        assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
-        assertTrue(pSid.getValue() > 0);
-        Memory sidMemory = new Memory(pSid.getValue());
-        PSID pSidMemory = new PSID(sidMemory);
-        char[] referencedDomainName = new char[pDomain.getValue() + 1];
-        assertTrue(Advapi32.INSTANCE.LookupAccountName(
-                null, accountName, pSidMemory, pSid, referencedDomainName, pDomain, peUse));
-        assertEquals(SID_NAME_USE.SidTypeUser, peUse.getPointer().getInt(0));
-        assertTrue(Native.toString(referencedDomainName).length() > 0);
+        int lastError = Kernel32.INSTANCE.GetLastError();
+        // The Administrator account may not exist
+        if (lastError != W32Errors.ERROR_NONE_MAPPED) {
+            assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, lastError);
+            assertTrue(pSid.getValue() > 0);
+            Memory sidMemory = new Memory(pSid.getValue());
+            PSID pSidMemory = new PSID(sidMemory);
+            char[] referencedDomainName = new char[pDomain.getValue() + 1];
+            assertTrue(Advapi32.INSTANCE.LookupAccountName(null, accountName, pSidMemory, pSid, referencedDomainName,
+                    pDomain, peUse));
+            assertEquals(SID_NAME_USE.SidTypeUser, peUse.getPointer().getInt(0));
+            assertTrue(Native.toString(referencedDomainName).length() > 0);
+        }
     }
 
     public void testIsValidSid() {
