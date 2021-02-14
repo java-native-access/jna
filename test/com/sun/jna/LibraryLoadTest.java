@@ -100,7 +100,8 @@ public class LibraryLoadTest extends TestCase implements Paths {
     }
 
     public void testLoadFromJar() throws MalformedURLException {
-        NativeLibrary.getInstance("testlib-jar", new TestLoader(new File(TESTJAR)));
+        NativeLibrary.getInstance("testlib-jar", new TestLoader(new File(TESTJAR2)));
+        NativeLibrary.getInstance("testlib-jar", new TestLoader(new File(TESTJAR3)));
     }
 
     public void testLoadFromJarAbsolute() throws MalformedURLException {

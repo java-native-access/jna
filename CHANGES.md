@@ -7,6 +7,7 @@ Next Release (5.8.0)
 
 Features
 --------
+* [#1313](https://github.com/java-native-access/jna/issues/1313): Normalize `RESOURCE_PREFIX` for darwin to `darwin-$arch` and split jnidispatch library per architecture - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
@@ -19,6 +20,15 @@ Important Changes
   and `jna-platform-jpms`, without an classifier. The reason for this is, that
   the platform artifacts depend on the jna artifacts and need to pull in the
   right variant. This is not possible if the classifier is used.
+
+* `RESOURCE_PREFIX` for darwin (mac OS) was changed from `darwin` to
+  `darwin-$arch` as the fat binaries on mac OS causes various problems:
+  It was reported, that binaries were rejected from the appstore because x86
+  binaries were found in the application (jnidispatch for mac OS x86) and that
+  builds needed to be special cased so that the native library can be
+  assembled. The latter is also true for JNA.<br />
+  While the prefix is changed, the old prefix is still searched as a fallback
+  location, so if only a fat binary is present, it can still be loaded.
 
 Release 5.7.0
 =============

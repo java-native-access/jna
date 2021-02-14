@@ -38,16 +38,16 @@ public class PlatformTest extends TestCase {
         assertEquals("Wrong resource path Windows CE/arm", "w32ce-arm",
                      Platform.getNativeLibraryResourcePrefix(Platform.WINDOWSCE,
                                                              "arm", "Windows CE"));
-        assertEquals("Wrong resource path Mac/x86", "darwin",
+        assertEquals("Wrong resource path Mac/x86", "darwin-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.MAC,
                                                              "x86", "Darwin"));
-        assertEquals("Wrong resource path Mac/x86", "darwin",
+        assertEquals("Wrong resource path Mac/x86", "darwin-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.MAC,
                                                              "i386", "Darwin"));
-        assertEquals("Wrong resource path Mac/x86_64", "darwin",
+        assertEquals("Wrong resource path Mac/x86_64", "darwin-x86-64",
                      Platform.getNativeLibraryResourcePrefix(Platform.MAC,
                                                              "x86_64", "Mac"));
-        assertEquals("Wrong resource path Mac/aarch64", "darwin",
+        assertEquals("Wrong resource path Mac/aarch64", "darwin-aarch64",
                     Platform.getNativeLibraryResourcePrefix(Platform.MAC,
                                                              "aarch64", "Mac"));
         assertEquals("Wrong resource path Solaris/sparc", "sunos-sparc",

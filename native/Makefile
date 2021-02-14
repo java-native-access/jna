@@ -417,7 +417,7 @@ DEFAULT_ARCH=$(shell arch)
 HOST_CONFIG=--host $(DARWIN_ARCH)-apple-darwin
 FFI_ENV += CC="$(CC)" CFLAGS="-mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) -arch $(DARWIN_ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) -arch $(DARWIN_ARCH)"
 LIBSFX=.dylib
-JNISFX=-$(ARCH).jnilib
+JNISFX=.jnilib
 # JAWT no longer supported on OSX
 CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT -DNO_JAWT
 
