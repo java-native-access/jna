@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.java.dev.jna</groupId>
-  <artifactId>jna-platform</artifactId>
+  <artifactId>jna-platform-jpms</artifactId>
   <version>TEMPLATE</version>
   <packaging>jar</packaging>
 
@@ -53,7 +53,7 @@
   <dependencies>
     <dependency>
       <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
+      <artifactId>jna-jpms</artifactId>
       <version>TEMPLATE</version>
     </dependency>
   </dependencies>

@@ -152,9 +152,13 @@
 
   <property name="pom-base" value="pom-jna.xml" />
   <property name="pom-platform-base" value="pom-jna-platform.xml" />
+  <property name="pom-jpms-base" value="pom-jna-jpms.xml" />
+  <property name="pom-platform-jpms-base" value="pom-jna-platform-jpms.xml" />
 
   <property name="pom" value="${build}/pom-jna.xml" />
   <property name="pom-platform" value="${build}/pom-jna-platform.xml" />
+  <property name="pom-jpms" value="${build}/pom-jna-jpms.xml" />
+  <property name="pom-platform-jpms" value="${build}/pom-jna-platform-jpms.xml" />
 
   <target name="default" depends="test" description="Build and Test."/>
 
@@ -195,7 +199,7 @@
     <property name="build.os.family" value="other"/>
     <property name="build.os.arch" value="${os.arch}" />
     <property name="build.os.endianess" value="${sun.cpu.endian}" />
-    
+
     <condition property="-native" value="true">
       <not><isset property="build-native"/></not>
     </condition>
@@ -203,17 +207,30 @@
       <isset property="-native"/>
     </condition>
 
-    <copy file="${pom-base}" todir="${build}" />
-    <copy file="${pom-platform-base}" todir="${build}" />
+    <copy file="${pom-base}" tofile="${pom}" />
+    <copy file="${pom-platform-base}" tofile="${pom-platform}" />
+    <copy file="${pom-jpms-base}" tofile="${pom-jpms}" />
+    <copy file="${pom-platform-jpms-base}" tofile="${pom-platform-jpms}" />
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2"
+                   flags="g"
                    file="${pom}"/>
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2"
                    flags="g"
                    file="${pom-platform}"/>
+
+    <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
+                   replace="\1${jna.version}\2"
+                   flags="g"
+                   file="${pom-jpms}"/>
+
+    <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
+                 replace="\1${jna.version}\2"
+                 flags="g"
+                 file="${pom-platform-jpms}"/>
 
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
@@ -1553,10 +1570,10 @@ cd ..
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
-      <arg value="-DpomFile=${pom}"/>
+      <arg value="-DpomFile=${pom-jpms}"/>
       <arg value="-Dfile=${dist-jar-jpms}"/>
-      <arg value="-Dclassifier=jpms"/>
-      <arg value="-Dpackaging=jar"/>
+      <arg value="-Dsources=${maven-sources-jar}"/>
+      <arg value="-Djavadoc=${maven-javadoc-jar}"/>
     </artifact:mvn>
 
     <artifact:mvn failonerror="true">
@@ -1569,10 +1586,10 @@ cd ..
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
-      <arg value="-DpomFile=${pom-platform}"/>
+      <arg value="-DpomFile=${pom-platform-jpms}"/>
       <arg value="-Dfile=${platform-jpms-jar}"/>
-      <arg value="-Dclassifier=jpms"/>
-      <arg value="-Dpackaging=jar"/>
+      <arg value="-Dsources=${platform-sources-jar}"/>
+      <arg value="-Djavadoc=${platform-javadoc-jar}"/>
     </artifact:mvn>
   </target>
 
@@ -1584,9 +1601,9 @@ cd ..
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
-      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-jar-jpms},${dist-aar}"/>
-      <arg value="-Dtypes=jar,jar,jar,aar"/>
-      <arg value="-Dclassifiers=sources,javadoc,jpms,"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-aar}"/>
+      <arg value="-Dtypes=jar,jar,aar"/>
+      <arg value="-Dclassifiers=sources,javadoc,"/>
     </artifact:mvn>
 
     <artifact:mvn failonerror="true">
@@ -1595,9 +1612,31 @@ cd ..
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
-      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar},${platform-jpms-jar}"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
       <arg value="-Dtypes=jar,jar,jar"/>
-      <arg value="-Dclassifiers=sources,javadoc,jpms"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom-jpms}"/>
+      <arg value="-Dfile=${dist-jar-jpms}"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom-platform-jpms}"/>
+      <arg value="-Dfile=${platform-jpms-jar}"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
     </artifact:mvn>
   </target>
 
@@ -1628,6 +1667,32 @@ cd ..
       <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar},${platform-jpms-jar}"/>
       <arg value="-Dclassifiers=sources,javadoc,jpms"/>
       <arg value="-Dtypes=jar,jar,jar"/>
+      <arg value="-Dgpg.useagent=true"/>
+    </artifact:mvn>
+
+    <!-- sign and deploy the jna,  artifact -->
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=${pom-jpms}"/>
+      <arg value="-Dfile=${dist-jar-jpms}"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+      <arg value="-Dgpg.useagent=true"/>
+    </artifact:mvn>
+
+    <!-- sign and deploy the platform artifact -->
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=${pom-platform-jpms}"/>
+      <arg value="-Dfile=${platform-jpms-jar}"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
   </target>

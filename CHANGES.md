@@ -10,7 +10,15 @@ Features
 
 Bug Fixes
 ---------
+* [#1317](https://github.com/java-native-access/jna/pull/1317): Change the maven coordinates of the JPMS artifacts from classifier `jpms` to custom artifact ids `jna-jpms` and `jna-platform-jpms` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
+Important Changes
+-----------------
+* The maven coordinates of the experimental JPMS (java module system) artifacts
+  were moved from using the classifier `jpms` to custom artifact ids `jna-jpms`
+  and `jna-platform-jpms`, without an classifier. The reason for this is, that
+  the platform artifacts depend on the jna artifacts and need to pull in the
+  right variant. This is not possible if the classifier is used.
 
 Release 5.7.0
 =============
