@@ -8,6 +8,7 @@ Next Release (5.8.0)
 Features
 --------
 * [#1313](https://github.com/java-native-access/jna/issues/1313): Normalize `RESOURCE_PREFIX` for darwin to `darwin-$arch` and split jnidispatch library per architecture - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1318](https://github.com/java-native-access/jna/pull/1318): Add support for linux-risc64 - [@thentschel](https://github.com/thentschel).
 
 Bug Fixes
 ---------
