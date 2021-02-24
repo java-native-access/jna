@@ -78,8 +78,8 @@ JNA Platform
 
 [![Maven Central](https://img.shields.io/maven-central/v/net.java.dev.jna/jna-platform.svg?label=Maven%20Central)](https://search.maven.org/artifact/net.java.dev.jna/jna-platform/5.7.0/jar)&nbsp;[jna-platform-5.7.0.jar](https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.7.0/jna-platform-5.7.0.jar)&nbsp;[jna-platform-5.7.0-jpms.jar](https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.7.0/jna-platform-5.7.0-jpms.jar)
 
-This artifact holds cross-platform mappings and mappings for a number of commonly used platform 
-functions, including a large number of Win32 mappings as well as a set of utility classes 
+This artifact holds cross-platform mappings and mappings for a number of commonly used platform
+functions, including a large number of Win32 mappings as well as a set of utility classes
 that simplify native access. The code is tested and the utility interfaces ensure that
 native memory management is taken care of correctly.
 
@@ -174,7 +174,7 @@ If you are interested in paid support, feel free to say so on the [jna-users mai
 License
 =======
 
-This library is licensed under the LGPL, version 2.1 or later, and (from version 4.0 onward) the Apache Software License, version 2.0. Commercial license arrangements are negotiable.
+This library is licensed under the LGPL, version 2.1 or later, or (from version 4.0 onward) the Apache License, version 2.0. Commercial support may be available, please e-mail twall[at]users[dot]sf[dot]net. See [LICENSE](LICENSE) for more information.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
 
