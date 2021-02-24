@@ -612,6 +612,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=aarch64;processor=ppc
       <zipfileset src="${lib.native}/linux-s390x.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-s390x"/>
+      <zipfileset src="${lib.native}/linux-riscv64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-riscv64"/>
       <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
@@ -814,6 +817,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=aarch64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-sparcv9.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-mips64el.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-s390x.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-riscv64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
@@ -927,6 +931,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=aarch64;processor=ppc
     </condition>
     <condition property="ARCH" value="ppc64">
       <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
+    </condition>
+    <condition property="ARCH" value="riscv64">
+      <matches string="${os.prefix}" pattern="-riscv64$"/>
     </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
