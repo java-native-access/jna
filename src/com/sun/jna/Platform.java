@@ -313,7 +313,7 @@ public final class Platform {
                 osPrefix = "w32ce-" + arch;
                 break;
             case Platform.MAC:
-                osPrefix = "darwin";
+                osPrefix = "darwin-" + arch;
                 break;
             case Platform.LINUX:
                 osPrefix = "linux-" + arch;

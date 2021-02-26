@@ -54,4 +54,6 @@ public interface Paths {
         : System.getProperty("jna.nativedir",
                              BUILDDIR + "/native-" + Platform.RESOURCE_PREFIX + "/");
     String TESTJAR = BUILDDIR + "/jna-test.jar";
+    String TESTJAR2 = BUILDDIR + "/jna-test2.jar";
+    String TESTJAR3 = BUILDDIR + "/jna-test3.jar";
 }
