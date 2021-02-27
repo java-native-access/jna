@@ -6,7 +6,7 @@ Android Development Environment
 * Build using: `ant -Dos.prefix=android-arm dist`.
 * Tests must be run on the target platform, not the build platform.
 * Add `dist/jna.jar` and/or `dist/platform.jar` to your application, as needed.
-* If you're using android-maven-plugin, `jna.jar` can be used as-is (native libraries will be automatically copied into your project).
+* If you're using android-maven-plugin, `jna.jar` can be used as-is (native libraries will be automatically copied into your project if it directly expresses the jna dependency, and also uses android-maven-plugin).
 * If you're using Google's Eclipse plugin then you must manually remove libjnidispatch.so from jna.jar/lib/armeabi and add it into your project's libs/armeabi directory.
 * See http://code.google.com/p/android/issues/detail?id=17861 and http://developer.android.com/guide/practices/jni.html for more information.
 * The NDK can be downloaded from https://developer.android.com/ndk/index.html
