@@ -268,20 +268,29 @@ public abstract class Advapi32Util {
         char[] domainName = new char[cchDomainName.getValue()];
         char[] name = new char[cchName.getValue()];
 
+        int rc = WinError.ERROR_SUCCESS;
         if (!Advapi32.INSTANCE.LookupAccountSid(systemName, sid, name, cchName,
                 domainName, cchDomainName, peUse)) {
-            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            rc = Kernel32.INSTANCE.GetLastError();
+            if (rc != WinError.ERROR_NONE_MAPPED) {
+                throw new Win32Exception(rc);
+            }
         }
 
         Account account = new Account();
-        account.accountType = peUse.getPointer().getInt(0);
-        account.name = Native.toString(name);
-
-        if (cchDomainName.getValue() > 0) {
-            account.domain = Native.toString(domainName);
-            account.fqn = account.domain + "\\" + account.name;
+        if (rc == WinError.ERROR_NONE_MAPPED) {
+            account.accountType = SID_NAME_USE.SidTypeUnknown;
+            account.name = "NONE_MAPPED";
         } else {
+            account.accountType = peUse.getPointer().getInt(0);
+            account.name = Native.toString(name);
+        }
+
+        account.domain = Native.toString(domainName);
+        if (account.domain.isEmpty()) {
             account.fqn = account.name;
+        } else {
+            account.fqn = account.domain + "\\" + account.name;
         }
 
         account.sid = sid.getBytes();
