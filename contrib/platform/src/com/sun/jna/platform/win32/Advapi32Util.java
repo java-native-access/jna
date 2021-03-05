@@ -63,7 +63,6 @@ import java.util.TreeMap;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
@@ -87,7 +86,6 @@ import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
-import com.sun.jna.platform.win32.WinNT.TOKEN_PRIMARY_GROUP;
 import com.sun.jna.platform.win32.WinNT.TOKEN_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
@@ -261,21 +259,11 @@ public abstract class Advapi32Util {
      * @return Account.
      */
     public static Account getAccountBySid(String systemName, PSID sid) {
-        IntByReference cchName = new IntByReference();
-        IntByReference cchDomainName = new IntByReference();
+        // Max username length (UNLEN) is 256, add space for null
+        IntByReference cchName = new IntByReference(257);
+        // Max fully qualified domain name is 255, add space for null
+        IntByReference cchDomainName = new IntByReference(256);
         PointerByReference peUse = new PointerByReference();
-
-        if (Advapi32.INSTANCE.LookupAccountSid(systemName, sid, null, cchName, null,
-                cchDomainName, peUse)) {
-            throw new RuntimeException(
-                    "LookupAccountSidW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
-        }
-
-        int rc = Kernel32.INSTANCE.GetLastError();
-        if (cchName.getValue() == 0
-                || rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-            throw new Win32Exception(rc);
-        }
 
         char[] domainName = new char[cchDomainName.getValue()];
         char[] name = new char[cchName.getValue()];
