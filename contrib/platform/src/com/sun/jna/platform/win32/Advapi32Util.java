@@ -545,7 +545,15 @@ public abstract class Advapi32Util {
                 tokenInformationLength.getValue(), tokenInformationLength)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return getAccountBySid(user.User.Sid);
+        try {
+            return getAccountBySid(user.User.Sid);
+        } finally {
+            // Ensure, that the memory object is retained until the account
+            // extraction is done.
+            // From Java 9 onwards Reference#reachabilityFence would be
+            // preferred
+            user.getPointer().getByte(0);
+        }
     }
 
     /**
