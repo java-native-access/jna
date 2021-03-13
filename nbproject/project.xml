@@ -56,6 +56,58 @@ auxiliary.show.customizer.message=<message>
                     <target>clean</target>
                     <target>jar</target>
                 </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-src</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>src</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="debug.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-selected-file-in-src</target>
+                    <context>
+                        <property>debug.class</property>
+                        <folder>src</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="debug.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-selected-file-in-test</target>
+                    <context>
+                        <property>debug.class</property>
+                        <folder>test</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-test</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>test</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
             <view>
                 <items>
@@ -94,7 +146,7 @@ auxiliary.show.customizer.message=<message>
             <compilation-unit>
                 <package-root>test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">lib/hamcrest-core-1.3.jar:lib/junit.jar:lib/test/dom4j-1.6.1.jar:lib/test/guava-11.0.2.jar:lib/test/javassist-3.12.1.GA.jar:lib/test/reflections-0.9.11.jar:lib/test/slf4j-api-1.6.1.jar:src</classpath>
+                <classpath mode="compile">lib/hamcrest-core-1.3.jar:lib/junit.jar:lib/test/dom4j-1.6.1.jar:lib/test/guava-27.1-jre.jar:lib/test/javassist-3.12.1.GA.jar:lib/test/reflections-0.9.11.jar:lib/test/slf4j-api-1.6.1.jar:src</classpath>
                 <source-level>1.8</source-level>
             </compilation-unit>
             <compilation-unit>
