@@ -400,7 +400,7 @@ public class Memory extends Pointer {
      */
     @Override
     public void read(long bOff, char[] buf, int index, int length) {
-        boundsCheck(bOff, length * 2L);
+        boundsCheck(bOff, length * Native.WCHAR_SIZE);
         super.read(bOff, buf, index, length);
     }
 
@@ -460,6 +460,20 @@ public class Memory extends Pointer {
         super.read(bOff, buf, index, length);
     }
 
+    /**
+     * Indirect the native pointer to <code>malloc</code> space, a la
+     * <code>Pointer.read</code>.  But this method performs a bounds checks to
+     * ensure that the indirection does not cause memory outside the
+     * <code>malloc</code>ed space to be accessed.
+     *
+     * @see Pointer#read(long,Pointer[],int,int)
+     */
+    @Override
+    public void read(long bOff, Pointer[] buf, int index, int length) {
+        boundsCheck(bOff, length * Native.POINTER_SIZE);
+        super.read(bOff, buf, index, length);
+    }
+
     //////////////////////////////////////////////////////////////////////////
     // Raw write methods
     //////////////////////////////////////////////////////////////////////////
@@ -502,7 +516,7 @@ public class Memory extends Pointer {
      */
     @Override
     public void write(long bOff, char[] buf, int index, int length) {
-        boundsCheck(bOff, length * 2L);
+        boundsCheck(bOff, length * Native.WCHAR_SIZE);
         super.write(bOff, buf, index, length);
     }
 
@@ -562,6 +576,20 @@ public class Memory extends Pointer {
         super.write(bOff, buf, index, length);
     }
 
+    /**
+     * Indirect the native pointer to <code>malloc</code> space, a la
+     * <code>Pointer.write</code>.  But this method performs a bounds
+     * checks to ensure that the indirection does not cause memory outside the
+     * <code>malloc</code>ed space to be accessed.
+     *
+     * @see Pointer#write(long,Pointer[],int,int)
+     */
+    @Override
+    public void write(long bOff, Pointer[] buf, int index, int length) {
+        boundsCheck(bOff, length * Native.POINTER_SIZE);
+        super.write(bOff, buf, index, length);
+    }
+
     //////////////////////////////////////////////////////////////////////////
     // Java type read methods
     //////////////////////////////////////////////////////////////////////////
@@ -590,7 +618,7 @@ public class Memory extends Pointer {
      */
     @Override
     public char getChar(long offset) {
-        boundsCheck(offset, 1);
+        boundsCheck(offset, Native.WCHAR_SIZE);
         return super.getChar(offset);
     }
 
@@ -675,7 +703,7 @@ public class Memory extends Pointer {
     @Override
     public Pointer getPointer(long offset) {
         boundsCheck(offset, Native.POINTER_SIZE);
-        return super.getPointer(offset);
+        return shareReferenceIfInBounds(super.getPointer(offset));
     }
 
     /**
@@ -861,5 +889,27 @@ public class Memory extends Pointer {
     /** Dumps the contents of this memory object. */
     public String dump() {
         return dump(0, (int)size());
+    }
+
+    /**
+     * Check whether the supplied Pointer object points into the memory region
+     * backed by this memory object. The intention is to prevent premature GC
+     * of the Memory object.
+     *
+     * @param target Pointer to check
+     * @return {@code target} if target does not point into the region covered
+     * by this memory object, a newly {@code SharedMemory} object, if the pointer
+     * points to memory backed by this Memory object.
+     */
+    private Pointer shareReferenceIfInBounds(Pointer target) {
+        if(target == null) {
+            return null;
+        }
+        long offset = target.peer - this.peer;
+        if (offset >= 0 && offset < this.size) {
+            return this.share(offset);
+        } else {
+            return target;
+        }
     }
 }

@@ -14,6 +14,7 @@ Bug Fixes
 ---------
 * [#1317](https://github.com/java-native-access/jna/pull/1317): Change the maven coordinates of the JPMS artifacts from classifier `jpms` to custom artifact ids `jna-jpms` and `jna-platform-jpms` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1322](https://github.com/java-native-access/jna/pull/1322): Handle 0-length domain names in `c.s.j.p.win32.Advapi32Util#getAccountBySid` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1326](https://github.com/java-native-access/jna/pull/1326): Ensure pointers indirected from Memory and pointing into Memory retain originating object - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Important Changes
 -----------------

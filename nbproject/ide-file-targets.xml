@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="JNA-IDE">
+    <target name="run-selected-file-in-src">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+
+        <subant antfile="build.xml" buildpath="${basedir}" target="compile-tests"/>
+
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes"/>
+                <pathelement path="build/test-classes"/>
+            </classpath>
+        </java>
+    </target>
+    <target name="debug-selected-file-in-src">
+        <fail unless="debug.class">Must set property 'debug.class'</fail>
+
+        <subant antfile="build.xml" buildpath="${basedir}" target="compile-tests"/>
+
+        <path id="cp">
+            <pathelement path="build/classes"/>
+            <pathelement path="build/test-classes"/>
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="JNA" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <java classname="${debug.class}" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-agentlib:jdwp=transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+
+    <target name="run-selected-file-in-test">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+
+        <subant antfile="build.xml" buildpath="${basedir}" target="compile-tests"/>
+
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="lib/hamcrest-core-1.3.jar:lib/junit.jar:lib/test/dom4j-1.6.1.jar:lib/test/guava-27.1-jre.jar:lib/test/javassist-3.12.1.GA.jar:lib/test/reflections-0.9.11.jar:lib/test/slf4j-api-1.6.1.jar"/>
+                <pathelement path="build/jna.jar"/>
+                <pathelement path="build/test-classes"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="debug-selected-file-in-test">
+        <fail unless="debug.class">Must set property 'debug.class'</fail>
+
+        <subant antfile="build.xml" buildpath="${basedir}" target="compile-tests"/>
+
+        <path id="cp">
+            <pathelement path="lib/hamcrest-core-1.3.jar:lib/junit.jar:lib/test/dom4j-1.6.1.jar:lib/test/guava-27.1-jre.jar:lib/test/javassist-3.12.1.GA.jar:lib/test/reflections-0.9.11.jar:lib/test/slf4j-api-1.6.1.jar"/>
+            <pathelement path="build/jna.jar"/>
+            <pathelement path="build/test-classes"/>
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="JNA" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <java classname="${debug.class}" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-agentlib:jdwp=transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+</project>
