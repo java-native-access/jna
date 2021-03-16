@@ -32,7 +32,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
-import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
@@ -3018,9 +3017,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             switch (relationship) {
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                    // Placeholder values. Pending documentation updates
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorDie:
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorModule:
                     result = new PROCESSOR_RELATIONSHIP(memory);
                     break;
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                    // Placeholder value. NUMA_NODE_RELATIONSHIP structure must be updated to permit
+                    // variable sized array
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNodeEx:
                     result = new NUMA_NODE_RELATIONSHIP(memory);
                     break;
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
@@ -3358,6 +3363,30 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * <p>Not supported until Windows Server 2008 R2.</p>
          */
         int RelationGroup = 4;
+
+        /**
+         * <p>
+         * Upcoming value of this enum added for forward compatibility. Documentation
+         * will be added when available.
+         * </p>
+         */
+        int RelationProcessorDie = 5;
+
+        /**
+         * <p>
+         * Upcoming value of this enum added for forward compatibility. Documentation
+         * will be added when available.
+         * </p>
+         */
+        int RelationNumaNodeEx = 6;
+
+        /**
+         * <p>
+         * Upcoming value of this enum added for forward compatibility. Documentation
+         * will be added when available.
+         * </p>
+         */
+        int RelationProcessorModule = 7;
 
         /**
          * <p>On input, retrieves information about all possible relation types. This value is not used on output.</p>
