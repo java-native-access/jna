@@ -3017,15 +3017,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             switch (relationship) {
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
-                    // Placeholder values. Pending documentation updates
-                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorDie:
-                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorModule:
                     result = new PROCESSOR_RELATIONSHIP(memory);
                     break;
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
-                    // Placeholder value. NUMA_NODE_RELATIONSHIP structure must be updated to permit
-                    // variable sized array
-                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNodeEx:
                     result = new NUMA_NODE_RELATIONSHIP(memory);
                     break;
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
@@ -3035,7 +3029,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                     result = new GROUP_RELATIONSHIP(memory);
                     break;
                 default:
-                    throw new IllegalStateException("Unmapped relationship: " + relationship);
+                    result = new UNKNOWN_RELATIONSHIP(memory);
             }
             result.read();
             return result;
@@ -3255,6 +3249,24 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             readField("activeGroupCount");
             groupInfo = new PROCESSOR_GROUP_INFO[activeGroupCount];
             super.read();
+        }
+    }
+
+    /**
+     * Represents information associated with a
+     * {@link LOGICAL_PROCESSOR_RELATIONSHIP} enum value which has not yet been
+     * mapped. Only the fields from {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX}
+     * are populated.
+     */
+    @FieldOrder({})
+    public static class UNKNOWN_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        public UNKNOWN_RELATIONSHIP() {
+            super();
+        }
+
+        public UNKNOWN_RELATIONSHIP(Pointer memory) {
+            super(memory);
         }
     }
 
