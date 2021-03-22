@@ -2,13 +2,13 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Next Release (5.8.0)
-====================
+Release 5.8.0
+=============
 
 Features
 --------
 * [#1313](https://github.com/java-native-access/jna/issues/1313): Normalize `RESOURCE_PREFIX` for darwin to `darwin-$arch` and split jnidispatch library per architecture - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#1318](https://github.com/java-native-access/jna/pull/1318): Add support for linux-risc64 - [@thentschel](https://github.com/thentschel).
+* [#1318](https://github.com/java-native-access/jna/pull/1318): Add support for linux-riscv64 - [@thentschel](https://github.com/thentschel).
 * [#1327](https://github.com/java-native-access/jna/pull/1327): Add partial support for future values of `c.s.j.p.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP` enum present in Windows Insider builds - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
