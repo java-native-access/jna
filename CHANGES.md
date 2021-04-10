@@ -7,6 +7,9 @@ Next Release (5.9.0)
 
 Features
 --------
+* [#1336](https://github.com/java-native-access/jna/pull/1336): Add `HKEY_CURRENT_USER_LOCAL_SETTINGS` to `c.s.j.p.win32.WinReg` - [@Dani-Hub](https://github.com/Dani-Hub).
+* [#1337](https://github.com/java-native-access/jna/pull/1337): Add `REG_NOTIFY_THREAD_AGNOSTIC` to `c.s.j.p.win32.WinNet` and update `REG_LEGAL_CHANGE_FILTER` - [@Dani-Hub](https://github.com/Dani-Hub).
+* [#1338](https://github.com/java-native-access/jna/pull/1338): Add `RegNotifyChangeKeyValue` to `c.s.j.p.win32.Advapi32` - [@Dani-Hub](https://github.com/Dani-Hub).
 
 Bug Fixes
 ---------

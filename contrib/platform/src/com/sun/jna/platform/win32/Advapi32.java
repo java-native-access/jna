@@ -1362,6 +1362,149 @@ public interface Advapi32 extends StdCallLibrary {
                     IntByReference pcbData);
 
     /**
+     * Notifies the caller about changes to the attributes or contents of a
+     * specified registry key.
+     *
+     * @param hKey           A handle to an open registry key. This handle is
+     *                       returned by the {@code RegCreateKeyEx} or
+     *                       {@code RegOpenKeyEx} function. It can also be one of
+     *                       the following <a href=
+     *                       "https://docs.microsoft.com/en-us/windows/desktop/SysInfo/predefined-keys">predefined
+     *                       keys</a>. The key must have been opened with the
+     *                       {@code KEY_NOTIFY} access right. For more information,
+     *                       see <a href=
+     *                       "https://docs.microsoft.com/en-us/windows/desktop/SysInfo/registry-key-security-and-access-rights">Registry
+     *                       Key Security and Access Rights</a>.
+     * @param bWatchSubtree  If this parameter is {@code TRUE}, the function reports
+     *                       changes in the specified key and its subkeys. If the
+     *                       parameter is {@code FALSE}, the function reports
+     *                       changes only in the specified key.
+     * @param dwNotifyFilter A value that indicates the changes that should be
+     *                       reported. This parameter can be one or more of the
+     *                       following values.
+     *                       <table>
+     *                       <col width="35%"/> <col width="65%"/> <thead>
+     *                       <tr>
+     *                       <th>Value</th>
+     *                       <th>Meaning</th>
+     *                       </tr>
+     *                       <thead> <tbody>
+     *                       <tr>
+     *                       <td><tt><b>REG_NOTIFY_CHANGE_NAME</b></tt><br/>
+     *                       <tt>0x00000001L</tt></td>
+     *                       <td>Notify the caller if a subkey is added or deleted.
+     *                       </td>
+     *                       </tr>
+     *                       <tr>
+     *                       <td><tt><b>REG_NOTIFY_CHANGE_ATTRIBUTES</b></tt><br/>
+     *                       <tt>0x00000002L</tt></td>
+     *                       <td>Notify the caller of changes to the attributes of
+     *                       the key, such as the security descriptor
+     *                       information.</td>
+     *                       </tr>
+     *                       <tr>
+     *                       <td><tt><b>REG_NOTIFY_CHANGE_LAST_SET</b></tt><br/>
+     *                       <tt>0x00000004L</tt></td>
+     *                       <td>Notify the caller of changes to a value of the key.
+     *                       This can include adding or deleting a value, or
+     *                       changing an existing value.</td>
+     *                       </tr>
+     *                       <tr>
+     *                       <td><tt><b>REG_NOTIFY_CHANGE_SECURITY</b></tt><br/>
+     *                       <tt>0x00000008L</tt></td>
+     *                       <td>Notify the caller of changes to the security
+     *                       descriptor of the key.</td>
+     *                       </tr>
+     *                       <tr>
+     *                       <td><tt><b>REG_NOTIFY_THREAD_AGNOSTIC</b></tt><br/>
+     *                       <tt>0x10000000L</tt></td>
+     *                       <td>Indicates that the lifetime of the registration
+     *                       must not be tied to the lifetime of the thread issuing
+     *                       the RegNotifyChangeKeyValue call.<br/>
+     *                       <b>Note:</b> This flag value is only supported in
+     *                       Windows 8 and later.</td>
+     *                       </tr>
+     *                       </tbody>
+     *                       </table>
+     * @param hEvent         A handle to an event. If the {@code fAsynchronous}
+     *                       parameter is {@code TRUE}, the function returns
+     *                       immediately and changes are reported by signaling this
+     *                       event. If {@code fAsynchronous} is {@code FALSE},
+     *                       {@code hEvent} is ignored.
+     * @param fAsynchronous  If this parameter is {@code TRUE}, the function returns
+     *                       immediately and reports changes by signaling the
+     *                       specified event. If this parameter is {@code FALSE},
+     *                       the function does not return until a change has
+     *                       occurred. If {@code hEvent} does not specify a valid
+     *                       event, the {@code fAsynchronous} parameter cannot be
+     *                       {@code TRUE}.
+     * @return If the function succeeds, the return value is {@code ERROR_SUCCESS}.
+     *         If the function fails, the return value is a nonzero error code
+     *         defined in Winerror.h. You can use the {@code FormatMessage} function
+     *         with the {@code FORMAT_MESSAGE_FROM_SYSTEM} flag to get a generic
+     *         description of the error.
+     *         <p>
+     *         <b>Remarks:</b> This function detects a single change. After the
+     *         caller receives a notification event, it should call the function
+     *         again to receive the next notification.
+     *         <p>
+     *         This function cannot be used to detect changes to the registry that
+     *         result from using the RegRestoreKey function.
+     *         <p>
+     *         If the specified key is closed, the event is signaled. This means
+     *         that an application should not depend on the key being open after
+     *         returning from a wait operation on the event.
+     *         <p>
+     *         The {@code REG_NOTIFY_THREAD_AGNOSTIC} flag introduced in Windows 8
+     *         enables the use of {@code RegNotifyChangeKeyValue} for ThreadPool
+     *         threads.
+     *         <p>
+     *         If the thread that called {@code RegNotifyChangeKeyValue} exits, the
+     *         event is signaled. To continue to monitor additional changes in the
+     *         value of the key, call {@code RegNotifyChangeKeyValue} again from
+     *         another thread.
+     *         <p>
+     *         With the exception of {@code RegNotifyChangeKeyValue} calls with
+     *         {@code REG_NOTIFY_THREAD_AGNOSTIC} set, this function must be called
+     *         on persistent threads. If the calling thread is from a thread pool
+     *         and it is not persistent, the event is signaled every time the thread
+     *         terminates, not just when there is a registry change. To ensure
+     *         accurate results, run the thread pool work in a persistent thread by
+     *         using the {@code SetThreadpoolCallbackPersistent} function, or create
+     *         your own thread using the CreateThread function. (For the original
+     *         thread pool API, specify {@code WT_EXECUTEINPERSISTENTTHREAD} using
+     *         the QueueUserWorkItem function.)
+     *         <p>
+     *         This function should not be called multiple times with the same value
+     *         for the hKey but different values for the {@code bWatchSubtree} and
+     *         {@code dwNotifyFilter} parameters. The function will succeed but the
+     *         changes will be ignored. To change the watch parameters, you must
+     *         first close the key handle by calling {@code RegCloseKey}, reopen the
+     *         key handle by calling {@code RegOpenKeyEx}, and then call
+     *         {@code RegNotifyChangeKeyValue} with the new parameters.
+     *         <p>
+     *         Each time a process calls {@code RegNotifyChangeKeyValue} with the
+     *         same set of parameters, it establishes another wait operation,
+     *         creating a resource leak. Therefore, check that you are not calling
+     *         {@code RegNotifyChangeKeyValue} with the same parameters until the
+     *         previous wait operation has completed.
+     *         <p>
+     *         To monitor registry operations in more detail, see <a href=
+     *         "https://docs.microsoft.com/en-us/windows/desktop/ETW/registry">Registry</a>.
+     *         <p>
+     *         Windows XP/2000: When {@code RegNotifyChangeKeyValue} is called for a
+     *         particular key handle, change notifications occur for as long as the
+     *         key handle is valid. This causes a second call to
+     *         {@code RegNotifyChangeKeyValue} to return immediately, if any changes
+     *         occur in the interim between the first and second calls. If the
+     *         function is being used asynchronously, the passed event handle will
+     *         be signaled immediately if any changes occur in the interim.
+     *
+     */
+    int RegNotifyChangeKeyValue(HKEY hKey, boolean bWatchSubtree, int dwNotifyFilter, HANDLE hEvent,
+                                boolean fAsynchronous);
+
+    /**
      * Retrieves a registered handle to the specified event log.
      *
      * @param lpUNCServerName

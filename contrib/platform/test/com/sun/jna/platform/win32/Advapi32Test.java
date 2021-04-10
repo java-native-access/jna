@@ -700,6 +700,23 @@ public class Advapi32Test extends TestCase {
         assertTrue(lpcSubKeys.getValue() > 0);
     }
 
+    public void testRegNotifyChangeKeyValue() {
+        final HKEYByReference phKey = new HKEYByReference();
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(WinReg.HKEY_CURRENT_USER,
+                "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 0, WinNT.KEY_NOTIFY, phKey));
+        final HANDLE event = Kernel32.INSTANCE.CreateEvent(null, true /* manual reset */, false /* initial state */,
+                null);
+        assertNotNull(event);
+        final int filter = WinNT.REG_NOTIFY_CHANGE_LAST_SET | WinNT.REG_NOTIFY_CHANGE_NAME;
+        assertEquals(W32Errors.ERROR_SUCCESS,
+                Advapi32.INSTANCE.RegNotifyChangeKeyValue(phKey.getValue(), true, filter, event, true));
+        final int res = Kernel32.INSTANCE.WaitForSingleObject(event, 1000);
+        // Two possible outcomes: Either we notice a timeout or we notice a change:
+        assertTrue(res == WinError.WAIT_TIMEOUT || res == WinBase.WAIT_OBJECT_0);
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
+        assertTrue(Kernel32.INSTANCE.CloseHandle(event));
+    }
+
     public void testIsWellKnownSid() {
         String sidString = EVERYONE;
         PSIDByReference sid = new PSIDByReference();
