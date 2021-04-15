@@ -961,6 +961,19 @@ public abstract class Advapi32Util {
                 && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
             throw new Win32Exception(rc);
         }
+        return regMultiSzBufferToStringArray(data);
+    }
+
+    /**
+     * Convert the null-delimited buffer of strings returned from registry values of
+     * type {@link WinNT.REG_MULTI_SZ} to an array of strings.
+     *
+     * @param data
+     *            A buffer containing strings delimited by a null character, ending
+     *            with two null characters.
+     * @return An array of strings corresponding to the strings in the buffer.
+     */
+    static String[] regMultiSzBufferToStringArray(Memory data) {
         ArrayList<String> result = new ArrayList<String>();
         int offset = 0;
         while (offset < data.size()) {
