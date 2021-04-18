@@ -7,6 +7,7 @@ Next Release (5.9.0)
 
 Features
 --------
+* [#1336](https://github.com/java-native-access/jna/pull/1336): Add `HKEY_CURRENT_USER_LOCAL_SETTINGS` to `c.s.j.p.win32.WinReg` - [@Dani-Hub](https://github.com/Dani-Hub).
 
 Bug Fixes
 ---------
