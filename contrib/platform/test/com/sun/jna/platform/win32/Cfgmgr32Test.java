@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
+/* Copyright (c) 2018, 2021 Daniel Widdis, All Rights Reserved
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
@@ -23,10 +23,19 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.Cfgmgr32.CM_DRP_CONFIGFLAGS;
+import static com.sun.jna.platform.win32.Cfgmgr32.CM_DRP_DEVICEDESC;
+import static com.sun.jna.platform.win32.Cfgmgr32.CM_DRP_DEVICE_POWER_DATA;
+import static com.sun.jna.platform.win32.Cfgmgr32.CM_DRP_HARDWAREID;
+import static com.sun.jna.platform.win32.Cfgmgr32.CM_LOCATE_DEVNODE_NORMAL;
+import static com.sun.jna.platform.win32.Cfgmgr32.CR_SUCCESS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 import org.junit.Test;
 
@@ -34,10 +43,10 @@ import com.sun.jna.ptr.IntByReference;
 
 /**
  * Tests methods in Cfgmgr32
- *
- * @author widdis[at]gmail[dot]com
  */
 public class Cfgmgr32Test {
+    private static final Cfgmgr32 CFG = Cfgmgr32.INSTANCE;
+
     /**
      * Tests CM_Locate_DevNode, CM_Get_Parent, CM_Get_Child, CM_Get_Sibling
      */
@@ -45,19 +54,18 @@ public class Cfgmgr32Test {
     public void testDevNode() {
         // Fetch the root node
         IntByReference outputNode = new IntByReference();
-        assertEquals(Cfgmgr32.CR_SUCCESS,
-                Cfgmgr32.INSTANCE.CM_Locate_DevNode(outputNode, null, Cfgmgr32.CM_LOCATE_DEVNODE_NORMAL));
+        assertEquals(CR_SUCCESS, CFG.CM_Locate_DevNode(outputNode, null, CM_LOCATE_DEVNODE_NORMAL));
         // Get first child
         int rootNode = outputNode.getValue();
         int inputNode = rootNode;
-        assertEquals(Cfgmgr32.CR_SUCCESS, Cfgmgr32.INSTANCE.CM_Get_Child(outputNode, inputNode, 0));
+        assertEquals(CR_SUCCESS, CFG.CM_Get_Child(outputNode, inputNode, 0));
         // Iterate this child and its siblings
         do {
             inputNode = outputNode.getValue();
             // Get parent, confirm it matches root
-            assertEquals(Cfgmgr32.CR_SUCCESS, Cfgmgr32.INSTANCE.CM_Get_Parent(outputNode, inputNode, 0));
+            assertEquals(CR_SUCCESS, CFG.CM_Get_Parent(outputNode, inputNode, 0));
             assertEquals(rootNode, outputNode.getValue());
-        } while (Cfgmgr32.CR_SUCCESS == Cfgmgr32.INSTANCE.CM_Get_Sibling(outputNode, inputNode, 0));
+        } while (CR_SUCCESS == CFG.CM_Get_Sibling(outputNode, inputNode, 0));
     }
 
     /**
@@ -66,16 +74,15 @@ public class Cfgmgr32Test {
      * @throws UnsupportedEncodingException
      */
     @Test
-    public void testDeviceID() {
+    public void testDeviceId() {
         // Fetch the root node
         IntByReference outputNode = new IntByReference();
-        assertEquals(Cfgmgr32.CR_SUCCESS,
-                Cfgmgr32.INSTANCE.CM_Locate_DevNode(outputNode, null, Cfgmgr32.CM_LOCATE_DEVNODE_NORMAL));
+        assertEquals(CR_SUCCESS, CFG.CM_Locate_DevNode(outputNode, null, CM_LOCATE_DEVNODE_NORMAL));
         int rootNode = outputNode.getValue();
 
         // Get Device ID character count
         IntByReference pulLen = new IntByReference();
-        Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, rootNode, 0);
+        CFG.CM_Get_Device_ID_Size(pulLen, rootNode, 0);
         assertTrue(pulLen.getValue() > 0);
 
         // Get Device ID from util
@@ -83,8 +90,82 @@ public class Cfgmgr32Test {
         assertEquals(pulLen.getValue(), deviceId.length());
 
         // Look up node from device ID
-        assertEquals(Cfgmgr32.CR_SUCCESS,
-                Cfgmgr32.INSTANCE.CM_Locate_DevNode(outputNode, deviceId, Cfgmgr32.CM_LOCATE_DEVNODE_NORMAL));
+        assertEquals(CR_SUCCESS, CFG.CM_Locate_DevNode(outputNode, deviceId, CM_LOCATE_DEVNODE_NORMAL));
         assertEquals(rootNode, outputNode.getValue());
+    }
+
+    /**
+     * Tests CM_Get_DevNode_Registry_Property util
+     */
+    @Test
+    public void testDeviceProperties() {
+        // Test an invalid node
+        Object props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(-1, CM_DRP_DEVICEDESC);
+        assertNull(props);
+
+        // Not all devices have all properties and will fail with CR_NO_SUCH_VALUE.
+        // So do BFS of device tree and run tests on all devices until we've tested each
+        boolean descTested = false;
+        boolean hwidTested = false;
+        boolean flagsTested = false;
+        boolean powerTested = false;
+
+        // Fetch the root node
+        IntByReference outputNode = new IntByReference();
+        assertEquals(CR_SUCCESS, CFG.CM_Locate_DevNode(outputNode, null, CM_LOCATE_DEVNODE_NORMAL));
+        int node = outputNode.getValue();
+
+        // Navigate the device tree using BFS
+        Queue<Integer> deviceQueue = new ArrayDeque<Integer>();
+        IntByReference child = new IntByReference();
+        IntByReference sibling = new IntByReference();
+        // Initialize queue with root node
+        deviceQueue.add(node);
+        while (!deviceQueue.isEmpty()) {
+            // Process the next device in the queue
+            node = deviceQueue.poll();
+
+            // Run tests
+            props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(node, CM_DRP_DEVICEDESC);
+            if (props != null) {
+                assertTrue(props instanceof String);
+                descTested = true;
+            }
+            props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(node, CM_DRP_HARDWAREID);
+            if (props != null) {
+                assertTrue(props instanceof String[]);
+                hwidTested = true;
+            }
+            props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(node, CM_DRP_CONFIGFLAGS);
+            if (props != null) {
+                assertTrue(props instanceof Integer);
+                flagsTested = true;
+            }
+            props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(node, CM_DRP_DEVICE_POWER_DATA);
+            if (props != null) {
+                assertTrue(props instanceof byte[]);
+                powerTested = true;
+            }
+            // Test an invalid type
+            assertNull(Cfgmgr32Util.CM_Get_DevNode_Registry_Property(node, 0));
+
+            // If we've done all tests we can exit the loop
+            if (descTested && hwidTested && flagsTested && powerTested) {
+                break;
+            }
+
+            // If not done, add any children to the queue
+            if (CR_SUCCESS == CFG.CM_Get_Child(child, node, 0)) {
+                deviceQueue.add(child.getValue());
+                while (CR_SUCCESS == CFG.CM_Get_Sibling(sibling, child.getValue(), 0)) {
+                    deviceQueue.add(sibling.getValue());
+                    child.setValue(sibling.getValue());
+                }
+            }
+        }
+        assertTrue(descTested);
+        assertTrue(hwidTested);
+        assertTrue(flagsTested);
+        assertTrue(powerTested);
     }
 }
