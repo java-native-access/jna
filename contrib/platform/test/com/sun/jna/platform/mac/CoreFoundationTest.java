@@ -63,9 +63,9 @@ public class CoreFoundationTest {
 
     @Test
     public void testCFStringRef() throws UnsupportedEncodingException {
-        // Create a unicode string of a single 3-byte character
-        byte[] alaf = { (byte) 0xe0, (byte) 0xa0, (byte) 0x80 };
-        String utf8Str = new String(alaf, StandardCharsets.UTF_8);
+        // Create a unicode string of a single 4-byte character
+        byte[] smileEmoji = { (byte) 0xF0, (byte) 0x9F, (byte) 0x98, (byte) 0x83 };
+        String utf8Str = new String(smileEmoji, StandardCharsets.UTF_8);
         CFStringRef cfStr = CFStringRef.createCFString(utf8Str);
         assertEquals(utf8Str.length(), CF.CFStringGetLength(cfStr).intValue());
         assertEquals(utf8Str, cfStr.stringValue());
