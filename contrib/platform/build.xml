@@ -206,9 +206,9 @@ com.sun.jna.platform.wince;version=${osgi.version}
             <exports package="com.sun.jna.platform.win32.COM.util.annotation" />
             <exports package="com.sun.jna.platform.wince" />
             <requires module="java.logging" />
-            <requires module="java.desktop" />
-            <requires module="java.datatransfer" />
-            <requires module="com.sun.jna" />
+            <requires module="java.desktop" transitive="true" />
+            <requires module="java.datatransfer" transitive="true" />
+            <requires module="com.sun.jna" transitive="true" />
         </ModuleGenerator>
         <move file="dist/jna-platform.jar" tofile="${build.dir}/jna-platform-base.jar" />
         <jar jarfile="dist/jna-platform.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build.dir}/manifest/automatic.mf">
