@@ -244,33 +244,24 @@ a combination of TypeMapper and FunctionMapper (see
 Does JNA publish a module descriptor (module-info.java) to support the Java Module System (JPMS)?
 -------------------------------------------------------------------------------------------------------------------------------------------
 
-Since version 5.7.0, JNA publishes an additional JAR with a `module-info` class alongside
-the main project JAR, using the `jpms` classifier, e.g. `jna-5.7.0-jpms.jar`. For a
-Maven build, use the following dependency statement:
+Since version 5.8.0, JNA publishes an additional JAR with a `module-info` class alongside
+the main project JAR, using an artifact with `-jpms` appended, e.g., `jna-jpms-5.8.0.jar`
+and `jna-platform-jpms-5.8.0.jar`.  For a Maven build, use the following dependency statement:
 ```
 <dependency>
   <groupId>net.java.dev.jna</groupId>
-  <artifactId>jna</artifactId>
-  <version>5.7.0</version>
-  <classifier>jpms</classifier>
+  <artifactId>jna-jpms</artifactId>
+  <version>5.8.0</version>
 </dependency>
 ```
 and include `requires com.sun.jna;` in your module descriptor in your `module-info.java` file.
 
-If you use the `jna-platform` artifact or any other artifact which depends transitively on `jna`, it
-requires special handling to exclude the non-modular JAR:
+If you use the `jna-platform` user-contributed mappings:
 ```
 <dependency>
   <groupId>net.java.dev.jna</groupId>
-  <artifactId>jna-platform</artifactId>
-  <version>5.7.0</version>
-  <classifier>jpms</classifier>
-  <exclusions>
-    <exclusion>
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
-    </exclusion>
-  </exclusions>
+  <artifactId>jna-platform-jpms</artifactId>
+  <version>5.8.0</version>
 </dependency>
 ```
 and include `requires com.sun.jna.platform;` in your module descriptor.
@@ -282,7 +273,7 @@ for inheritance make use of reflection to access constructors and/or fields of t
 Reflection is disabled by the module system's strong encapsulation.  It may be necessary to
 make packages which include subclasses of JNA's classes (such as `Structure` and
 `PointerType` among others) accessible via reflection to the `com.sun.jna` module
-using either an `open`, `opens`, or `opens ... to` directive, or an `exports` 
+using either an `open` module, `opens`, or `opens ... to` directive, or an `exports` 
 or `exports ... to` directive, depending on the particular application and level of 
 access required. If migrating an existing project, `opens` replicates the full
 non-modular (classpath) reflective access.
