@@ -487,20 +487,21 @@ public interface CoreFoundation extends Library {
          *         failed.
          */
         public String stringValue() {
-            // Get number of characters
-            long length = INSTANCE.CFStringGetLength(this).longValue();
-            if (length == 0) {
+            // Get number of characters (UTF-16 code pairs)
+            // Code points > 0xffff will have 2 characters per Unicode character
+            CFIndex length = INSTANCE.CFStringGetLength(this);
+            if (length.longValue() == 0) {
                 return "";
             }
             // Calculate maximum possible size in UTF8 bytes
-            // the CFStringGetMaximumSizeForEncoding function incorrectly returns 3 bytes
-            // per character so we'll use 4 bytes plus a null byte
-            if (length > (Long.MAX_VALUE - 1) / 4) {
+            // This will be 3 x length
+            CFIndex maxSize = INSTANCE.CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+            if (maxSize.intValue() == kCFNotFound) {
                 throw new StringIndexOutOfBoundsException("CFString maximum number of bytes exceeds LONG_MAX.");
             }
-            long bufSize = 4 * length + 1;
-            CFIndex maxSize = new CFIndex(bufSize);
-            Memory buf = new Memory(bufSize);
+            // Increment size by 1 for a null byte
+            maxSize.setValue(maxSize.longValue() + 1);
+            Memory buf = new Memory(maxSize.longValue());
             if (0 != INSTANCE.CFStringGetCString(this, buf, maxSize, kCFStringEncodingUTF8)) {
                 return buf.getString(0, "UTF8");
             }
