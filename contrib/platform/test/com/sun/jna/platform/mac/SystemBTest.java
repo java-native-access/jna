@@ -54,7 +54,7 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 import junit.framework.TestCase;
-
+import static com.sun.jna.platform.unix.LibCAPI.size_t;
 /**
  * Exercise the {@link SystemB} class.
  */
@@ -64,33 +64,39 @@ public class SystemBTest extends TestCase {
         final String mibName = "hw.logicalcpu";
         final int nCpu = Runtime.getRuntime().availableProcessors();
 
-        IntByReference size = new IntByReference(SystemB.INT_SIZE);
-        Pointer p = new Memory(size.getValue());
-        int ret = SystemB.INSTANCE.sysctlbyname(mibName, p, size, null, 0);
-        assertEquals(ret, 0);
+        // This sysctl returns a 32-bit integer cpu count
+        size_t size = new size_t(Integer.BYTES);
+        Pointer p = new Memory(size.longValue());
+        size_t.ByReference plen = new size_t.ByReference(size);
+        assertEquals(0, SystemB.INSTANCE.sysctlbyname(mibName, p, plen, null, size_t.ZERO));
         // These values should be equal unless affinity is set, limiting nCpu
         assertTrue(p.getInt(0) >= nCpu);
 
-        size = new IntByReference();
-        ret = SystemB.INSTANCE.sysctlnametomib(mibName, null, size);
-        assertEquals(ret, 0);
-        // Size should be 2
-        assertEquals(size.getValue(), 2);
+        // Get the same value by converting the string to the MIB array
+        // Get the size of the MIB array
+        size = new size_t(Integer.BYTES);
+        size_t.ByReference sizep = new size_t.ByReference(size);
+        assertEquals(0, SystemB.INSTANCE.sysctlnametomib(mibName, null, sizep));
+        // Array size should be 2
+        int sizepval = sizep.getValue().intValue();
+        assertEquals(2, sizepval);
 
-        Pointer mibp = new Memory(size.getValue() * SystemB.INT_SIZE);
-        ret = SystemB.INSTANCE.sysctlnametomib(mibName, mibp, size);
-        assertEquals(ret, 0);
-        // Size should be 2
-        assertEquals(size.getValue(), 2);
+        // Allocate the correct size and fill the MIB array
+        Pointer mibp = new Memory(sizepval * SystemB.INT_SIZE);
+        assertEquals(0, SystemB.INSTANCE.sysctlnametomib(mibName, mibp, sizep));
+        // Array size should still be 2
+        sizepval = sizep.getValue().intValue();
+        assertEquals(2, sizepval);
 
-        int[] mib = mibp.getIntArray(0, size.getValue());
+        int[] mib = mibp.getIntArray(0, sizepval);
         // mib should be { 6, 103(?) }
         assertEquals(mib.length, 2);
         assertEquals(mib[0], 6);
 
-        size = new IntByReference(SystemB.INT_SIZE);
-        p = new Memory(size.getValue());
-        ret = SystemB.INSTANCE.sysctl(mib, mib.length, p, size, null, 0);
+        size = new size_t(Integer.BYTES);
+        p = new Memory(size.longValue());
+        plen = new size_t.ByReference(size);
+        assertEquals(0, SystemB.INSTANCE.sysctl(mib, mib.length, p, plen, null, size_t.ZERO));
         assertTrue(p.getInt(0) >= nCpu);
     }
 
@@ -257,16 +263,16 @@ public class SystemBTest extends TestCase {
     public void testXswUsage() {
         XswUsage xswUsage = new XswUsage();
         assertEquals(0, SystemB.INSTANCE.sysctlbyname("vm.swapusage", xswUsage.getPointer(),
-                new IntByReference(xswUsage.size()), null, 0));
+                new size_t.ByReference(xswUsage.size()), null, size_t.ZERO));
         xswUsage.read();
         assertTrue(xswUsage.xsu_used <= xswUsage.xsu_total);
     }
 
     public void testProcessStructures() {
         // Calc max # of processes
-        IntByReference size = new IntByReference(4);
+        size_t.ByReference size = new size_t.ByReference(4);
         Memory mem = new Memory(4);
-        assertEquals(0, SystemB.INSTANCE.sysctlbyname("kern.maxproc", mem, size, null, 0));
+        assertEquals(0, SystemB.INSTANCE.sysctlbyname("kern.maxproc", mem, size, null, size_t.ZERO));
         int maxProc = mem.getInt(0);
 
         // Get list of pids
@@ -330,15 +336,15 @@ public class SystemBTest extends TestCase {
         int NET_RT_IFLIST2 = 6;
         int[] mib = { CTL_NET, PF_ROUTE, 0, 0, NET_RT_IFLIST2, 0 };
 
-        IntByReference len = new IntByReference();
-        assertEquals(0, SystemB.INSTANCE.sysctl(mib, 6, null, len, null, 0));
+        size_t.ByReference len = new size_t.ByReference();
+        assertEquals(0, SystemB.INSTANCE.sysctl(mib, 6, null, len, null, size_t.ZERO));
         // Add enough room for max size of IFmsgHdr to avoid JNA bounds check
         // problems with worst case structure size
-        Memory buf = new Memory(len.getValue() + 112);
-        assertEquals(0, SystemB.INSTANCE.sysctl(mib, 6, buf, len, null, 0));
+        Memory buf = new Memory(len.getValue().longValue() + 112);
+        assertEquals(0, SystemB.INSTANCE.sysctl(mib, 6, buf, len, null, size_t.ZERO));
 
         // Iterate offset from buf's pointer up to limit of buf
-        int lim = len.getValue();
+        int lim = len.getValue().intValue();
         int next = 0;
         while (next < lim) {
             // Get pointer to current native part of buf

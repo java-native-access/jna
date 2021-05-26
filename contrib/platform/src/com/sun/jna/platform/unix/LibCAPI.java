@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Goldstein Lyor, All Rights Reserved
+/* Copyright (c) 2015 Goldstein Lyor, 2021 Daniel Widdis, All Rights Reserved
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
@@ -42,6 +42,33 @@ public interface LibCAPI extends Reboot, Resource {
         public static final size_t ZERO = new size_t();
 
         private static final long serialVersionUID = 1L;
+
+        public static class ByReference extends com.sun.jna.ptr.ByReference {
+            public ByReference() {
+                this(0);
+            }
+
+            public ByReference(long value) {
+                this(new size_t(value));
+            }
+
+            public ByReference(size_t value) {
+                super(Native.SIZE_T_SIZE);
+                setValue(value);
+            }
+
+            public void setValue(size_t value) {
+                if (Native.SIZE_T_SIZE > 4) {
+                    getPointer().setLong(0, value.longValue());
+                } else {
+                    getPointer().setInt(0, value.intValue());
+                }
+            }
+
+            public size_t getValue() {
+                return new size_t(Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0));
+            }
+        }
 
         public size_t() {
             this(0);
