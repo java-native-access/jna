@@ -57,6 +57,10 @@ public interface LibCAPI extends Reboot, Resource {
                 setValue(value);
             }
 
+            public void setValue(long value) {
+                setValue(new size_t(value));
+            }
+
             public void setValue(size_t value) {
                 if (Native.SIZE_T_SIZE > 4) {
                     getPointer().setLong(0, value.longValue());
@@ -65,8 +69,12 @@ public interface LibCAPI extends Reboot, Resource {
                 }
             }
 
+            public long longValue() {
+                return Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0);
+            }
+
             public size_t getValue() {
-                return new size_t(Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0));
+                return new size_t(longValue());
             }
         }
 

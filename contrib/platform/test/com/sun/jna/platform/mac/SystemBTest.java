@@ -65,37 +65,34 @@ public class SystemBTest extends TestCase {
         final int nCpu = Runtime.getRuntime().availableProcessors();
 
         // This sysctl returns a 32-bit integer cpu count
-        size_t size = new size_t(Integer.BYTES);
-        Pointer p = new Memory(size.longValue());
-        size_t.ByReference plen = new size_t.ByReference(size);
+        Memory p = new Memory(SystemB.INT_SIZE);
+        size_t.ByReference plen = new size_t.ByReference(p.size());
         assertEquals(0, SystemB.INSTANCE.sysctlbyname(mibName, p, plen, null, size_t.ZERO));
         // These values should be equal unless affinity is set, limiting nCpu
         assertTrue(p.getInt(0) >= nCpu);
 
         // Get the same value by converting the string to the MIB array
         // Get the size of the MIB array
-        size = new size_t(Integer.BYTES);
-        size_t.ByReference sizep = new size_t.ByReference(size);
+        size_t.ByReference sizep = new size_t.ByReference();
         assertEquals(0, SystemB.INSTANCE.sysctlnametomib(mibName, null, sizep));
         // Array size should be 2
-        int sizepval = sizep.getValue().intValue();
-        assertEquals(2, sizepval);
+        long sizepval = sizep.longValue();
+        assertEquals(2L, sizepval);
 
         // Allocate the correct size and fill the MIB array
         Pointer mibp = new Memory(sizepval * SystemB.INT_SIZE);
         assertEquals(0, SystemB.INSTANCE.sysctlnametomib(mibName, mibp, sizep));
         // Array size should still be 2
-        sizepval = sizep.getValue().intValue();
-        assertEquals(2, sizepval);
+        sizepval = sizep.longValue();
+        assertEquals(2L, sizepval);
 
-        int[] mib = mibp.getIntArray(0, sizepval);
+        int[] mib = mibp.getIntArray(0, (int) sizepval);
         // mib should be { 6, 103(?) }
         assertEquals(mib.length, 2);
         assertEquals(mib[0], 6);
 
-        size = new size_t(Integer.BYTES);
-        p = new Memory(size.longValue());
-        plen = new size_t.ByReference(size);
+        p = new Memory(SystemB.INT_SIZE);
+        plen = new size_t.ByReference(p.size());
         assertEquals(0, SystemB.INSTANCE.sysctl(mib, mib.length, p, plen, null, size_t.ZERO));
         assertTrue(p.getInt(0) >= nCpu);
     }
@@ -270,8 +267,8 @@ public class SystemBTest extends TestCase {
 
     public void testProcessStructures() {
         // Calc max # of processes
-        size_t.ByReference size = new size_t.ByReference(4);
-        Memory mem = new Memory(4);
+        Memory mem = new Memory(SystemB.INT_SIZE);
+        size_t.ByReference size = new size_t.ByReference(mem.size());
         assertEquals(0, SystemB.INSTANCE.sysctlbyname("kern.maxproc", mem, size, null, size_t.ZERO));
         int maxProc = mem.getInt(0);
 
@@ -338,13 +335,14 @@ public class SystemBTest extends TestCase {
 
         size_t.ByReference len = new size_t.ByReference();
         assertEquals(0, SystemB.INSTANCE.sysctl(mib, 6, null, len, null, size_t.ZERO));
-        // Add enough room for max size of IFmsgHdr to avoid JNA bounds check
-        // problems with worst case structure size
-        Memory buf = new Memory(len.getValue().longValue() + 112);
+        // Add enough room in buffer for later iteration so that max size of IFmsgHdr
+        // or IFMsgHdr2 does not cause bounds check issues with worst case size.
+        Memory buf = new Memory(len.longValue() + 112);
+        // We still pass the original buffer size to native.
         assertEquals(0, SystemB.INSTANCE.sysctl(mib, 6, buf, len, null, size_t.ZERO));
 
         // Iterate offset from buf's pointer up to limit of buf
-        int lim = len.getValue().intValue();
+        long lim = len.longValue();
         int next = 0;
         while (next < lim) {
             // Get pointer to current native part of buf
