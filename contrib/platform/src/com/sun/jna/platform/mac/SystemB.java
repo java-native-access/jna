@@ -623,10 +623,10 @@ public interface SystemB extends LibCAPI, Library {
      * The sysctl() function retrieves system information and allows processes with
      * appropriate privileges to set system information. The information available
      * from sysctl() consists of integers, strings, and tables.
-     *
+     * <p>
      * The state is described using a "Management Information Base" (MIB) style
      * name, listed in name, which is a namelen length array of integers.
-     *
+     * <p>
      * The information is copied into the buffer specified by oldp. The size of the
      * buffer is given by the location specified by oldlenp before the call, and
      * that location gives the amount of data copied after a successful call and
@@ -635,32 +635,41 @@ public interface SystemB extends LibCAPI, Library {
      * as much data as fits in the buffer provided and returns with the error code
      * ENOMEM. If the old value is not desired, oldp and oldlenp should be set to
      * NULL.
-     *
+     * <p>
      * The size of the available data can be determined by calling sysctl() with the
      * NULL argument for oldp. The size of the available data will be returned in
      * the location pointed to by oldlenp. For some operations, the amount of space
      * may change often. For these operations, the system attempts to round up so
      * that the returned size is large enough for a call to return the data shortly
      * thereafter.
-     *
+     * <p>
      * To set a new value, newp is set to point to a buffer of length newlen from
      * which the requested value is to be taken. If a new value is not to be set,
      * newp should be set to NULL and newlen set to 0.
      *
      * @param name
-     *            MIB array of integers
+     *            a Management Information Base (MIB) array of integers
      * @param namelen
-     *            length of the MIB array
+     *            the length of the array in {@code name}
      * @param oldp
-     *            Information retrieved
+     *            A buffer to hold the information retrieved
      * @param oldlenp
-     *            Size of information retrieved
+     *            Size of the buffer, a pointer to a {@link size_t} value
      * @param newp
-     *            Information to be written
+     *            To set a new value, a buffer of information to be written. May be
+     *            null if no value is to be set.
      * @param newlen
-     *            Size of information to be written
+     *            Size of the information to be written. May be 0 if no value is to
+     *            be set.
      * @return 0 on success; sets errno on failure
      */
+    int sysctl(int[] name, int namelen, Pointer oldp, size_t.ByReference oldlenp, Pointer newp, size_t newlen);
+
+    /**
+     * @deprecated Use
+     *             {@link #sysctl(int[], int, Pointer, Pointer, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t)}
+     */
+    @Deprecated
     int sysctl(int[] name, int namelen, Pointer oldp, IntByReference oldlenp, Pointer newp, int newlen);
 
     /**
@@ -671,15 +680,24 @@ public interface SystemB extends LibCAPI, Library {
      * @param name
      *            ASCII representation of the MIB name
      * @param oldp
-     *            Information retrieved
+     *            A buffer to hold the information retrieved
      * @param oldlenp
-     *            Size of information retrieved
+     *            Size of the buffer, a pointer to a {@link size_t} value
      * @param newp
-     *            Information to be written
+     *            To set a new value, a buffer of information to be written. May be
+     *            null if no value is to be set.
      * @param newlen
-     *            Size of information to be written
+     *            Size of the information to be written. May be 0 if no value is to
+     *            be set.
      * @return 0 on success; sets errno on failure
      */
+    int sysctlbyname(String name, Pointer oldp, size_t.ByReference oldlenp, Pointer newp, size_t newlen);
+
+    /**
+     * @deprecated Use
+     *             {@link #sysctlbyname(String, Pointer, Pointer, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t)}
+     */
+    @Deprecated
     int sysctlbyname(String name, Pointer oldp, IntByReference oldlenp, Pointer newp, int newlen);
 
     /**
@@ -705,12 +723,18 @@ public interface SystemB extends LibCAPI, Library {
      *            ASCII representation of the name
      * @param mibp
      *            Integer array containing the corresponding name vector.
-     * @param size
+     * @param sizep
      *            On input, number of elements in the returned array; on output, the
      *            number of entries copied.
      * @return 0 on success; sets errno on failure
      */
-    int sysctlnametomib(String name, Pointer mibp, IntByReference size);
+    int sysctlnametomib(String name, Pointer mibp, size_t.ByReference sizep);
+
+    /**
+     * @deprecated Use {@link #sysctlnametomib(String, Pointer, Pointer)}
+     */
+    @Deprecated
+    int sysctlnametomib(String name, Pointer mibp, IntByReference sizep);
 
     /**
      * The host_processor_info function returns information about processors.

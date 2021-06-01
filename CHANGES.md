@@ -15,6 +15,7 @@ Features
 Bug Fixes
 ---------
 * [#1343](https://github.com/java-native-access/jna/issues/1343): `c.s.j.p.mac.CoreFoundation.CFStringRef#stringValue` buffer needs space for a null byte - [@dbwiddis](https://github.com/dbwiddis).
+* [#1351](https://github.com/java-native-access/jna/issues/1351): Define `c.s.j.p.unix.size_t.ByReference` and fix macOS sysctl `size_t *` parameters - [@dbwiddis](https://github.com/dbwiddis).
 
 Release 5.8.0
 =============

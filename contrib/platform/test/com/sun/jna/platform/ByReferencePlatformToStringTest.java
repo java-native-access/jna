@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.unix.LibCAPI.size_t;
 import com.sun.jna.platform.unix.X11.AtomByReference;
 import com.sun.jna.platform.unix.X11.WindowByReference;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
@@ -136,6 +137,9 @@ public class ByReferencePlatformToStringTest {
 
         SCODEByReference scodebr = new SCODEByReference(new SCODE(42));
         parseAndTest(scodebr.toString(), "SCODE", "42");
+
+        size_t.ByReference sizetbr = new size_t.ByReference(42);
+        parseAndTest(sizetbr.toString(), "size_t", "42");
 
         UINTByReference uibr = new UINTByReference(new UINT(42));
         parseAndTest(uibr.toString(), "UINT", "42");
