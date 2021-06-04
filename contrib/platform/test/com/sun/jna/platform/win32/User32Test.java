@@ -63,6 +63,8 @@ import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 
+import javax.swing.JFrame;
+
 /**
  * @author dblock[at]dblock[dot]org
  */
@@ -437,6 +439,25 @@ public class User32Test extends AbstractWin32TestSupport {
     public void testGetActiveWindow() {
         HWND result = User32.INSTANCE.GetActiveWindow();
         assertNull("GetActiveWindow result should be null (there is no active window)", result);
+    }
+
+    @Test
+    public void testBringWindowToTop() {
+        boolean result = User32.INSTANCE.BringWindowToTop(null);
+        assertFalse("BringWindowToTop(null) result should be false", result);
+
+        final JFrame w = new JFrame("Frame to bring to top");
+        try {
+            w.setVisible(true);
+
+            HWND hwnd = new HWND();
+            hwnd.setPointer(Native.getComponentPointer(w));
+
+            result = User32.INSTANCE.BringWindowToTop(hwnd);
+            assertTrue("Couldn't bring frame to top", result);
+        } finally {
+            w.dispose();
+        }
     }
 
     @Test
