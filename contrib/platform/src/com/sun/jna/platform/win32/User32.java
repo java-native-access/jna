@@ -359,6 +359,18 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      */
     boolean EnumThreadWindows(int dwThreadId, WNDENUMPROC lpEnumFunc, Pointer data);
 
+
+    /**
+     * Brings the specified window to the top of the Z order. If the window is a top-level window, it is activated. If
+     * the window is a child window, the top-level parent window associated with the child window is activated.
+     *
+     * @param hWnd
+     *            A handle to the window to bring to the top of the Z order.
+     * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     *         To get extended error information, call GetLastError.
+     */
+    boolean BringWindowToTop(HWND hWnd);
+
     /**
      * The FlashWindowEx function flashes the specified window. It does not
      * change the active state of the window.
