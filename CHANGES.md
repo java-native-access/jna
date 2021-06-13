@@ -12,6 +12,7 @@ Features
 * [#1338](https://github.com/java-native-access/jna/pull/1338): Add `RegNotifyChangeKeyValue` to `c.s.j.p.win32.Advapi32` - [@Dani-Hub](https://github.com/Dani-Hub).
 * [#1340](https://github.com/java-native-access/jna/issues/1340): Added `CM_Get_DevNode_Registry_Property` to `c.s.j.p.win32.Cfgmgr32` and corresponding util in `c.s.j.p.win32.Cfgmgr32Util` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1352](https://github.com/java-native-access/jna/pull/1352): Add `BringWindowToTop` to `c.s.j.p.win32.User32` - [@kahgoh](https://github.com/kahgoh).
+* [#1354](https://github.com/java-native-access/jna/pull/1352): Add `GetParent` to `c.s.j.p.win32.User32` - [@kahgoh](https://github.com/kahgoh).
 
 Bug Fixes
 ---------
