@@ -64,6 +64,7 @@ import com.sun.jna.platform.win32.WinUser.MONITORINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 
 import javax.swing.JFrame;
+import javax.swing.JWindow;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -375,6 +376,35 @@ public class User32Test extends AbstractWin32TestSupport {
 
         HWND result = User32.INSTANCE.GetAncestor(desktopWindow, WinUser.GA_PARENT);
         assertNull("GetAncestor result should be null", result);
+    }
+
+    @Test
+    public void testGetParent() {
+        HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
+        assertNotNull("Failed to get desktop window HWND", desktopWindow);
+
+        HWND result = User32.INSTANCE.GetParent(desktopWindow);
+        assertNull("GetParent result should be null", result);
+
+        final JFrame parent = new JFrame("Parent");
+        final JWindow child = new JWindow(parent);
+
+        try {
+            parent.setVisible(true);
+            child.setVisible(true);
+
+            HWND parentHwnd = new HWND();
+            parentHwnd.setPointer(Native.getComponentPointer(parent));
+
+            HWND childHwnd = new HWND();
+            childHwnd.setPointer(Native.getComponentPointer(child));
+
+            result = User32.INSTANCE.GetParent(childHwnd);
+            assertEquals("GetParent of child should be parent", parentHwnd, result);
+        } finally {
+            child.dispose();
+            parent.dispose();
+        }
     }
 
     @Test
