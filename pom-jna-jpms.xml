@@ -14,16 +14,26 @@
   <url>https://github.com/java-native-access/jna</url>
 
   <licenses>
-      <license>
-          <name>LGPL, version 2.1</name>
-          <url>http://www.gnu.org/licenses/licenses.html</url>
-          <distribution>repo</distribution>
-      </license>
-      <license>
-          <name>Apache License v2.0</name>
-          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-          <distribution>repo</distribution>
-      </license>
+    <license>
+      <name>LGPL-2.1-or-later</name>
+      <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1</url>
+      <distribution>repo</distribution>
+      <comments>
+        Java Native Access (JNA) is licensed under the LGPL, version 2.1 or
+        later, or the Apache License, version 2.0. You can freely decide which
+        license you want to apply to the project.
+      </comments>
+    </license>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>
+        Java Native Access (JNA) is licensed under the LGPL, version 2.1 or
+        later, or the Apache License, version 2.0. You can freely decide which
+        license you want to apply to the project.
+      </comments>
+    </license>
   </licenses>
 
   <scm>
