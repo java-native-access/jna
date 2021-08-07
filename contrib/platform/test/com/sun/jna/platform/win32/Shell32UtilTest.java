@@ -23,6 +23,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import junit.framework.TestCase;
 
 /**
@@ -84,5 +86,11 @@ public class Shell32UtilTest extends TestCase {
         // This is unstable:
         // assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_UserProgramFiles));
         // assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_UserProgramFilesCommon));
+    }
+
+    public void testCommandLineToArgv() {
+        String cl = "\"foo bar\" baz";
+        String[] argv = { "foo bar", "baz" };
+        assertArrayEquals(argv, Shell32Util.CommandLineToArgv(cl));
     }
 }

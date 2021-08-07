@@ -23,11 +23,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.ShellAPI.APPBARDATA;
@@ -36,10 +39,10 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.UINT_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 import junit.framework.TestCase;
-
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -260,4 +263,16 @@ public class Shell32Test extends TestCase {
         Ole32.INSTANCE.CoTaskMemFree(ppszAppID.getValue());
     }
 
+    public void testCommandLineToArgvW() {
+        WString cl = new WString("\"foo bar\" baz");
+        String[] argv = { "foo bar", "baz" };
+        IntByReference nargs = new IntByReference();
+        Pointer strArr = Shell32.INSTANCE.CommandLineToArgvW(cl, nargs);
+        assertNotNull(strArr);
+        try {
+            assertArrayEquals(argv, strArr.getWideStringArray(0, nargs.getValue()));
+        } finally {
+            Kernel32.INSTANCE.LocalFree(strArr);
+        }
+    }
 }

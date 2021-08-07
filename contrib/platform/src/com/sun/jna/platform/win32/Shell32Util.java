@@ -24,11 +24,14 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -111,5 +114,29 @@ public abstract class Shell32Util {
         if (!Shell32.INSTANCE.SHGetSpecialFolderPath(null, pszPath, csidl, create))
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         return Native.toString(pszPath);
+    }
+
+    /**
+     * Parses a command line string and returns an array of Strings of the command
+     * line arguments.
+     *
+     * @param cmdLine
+     *            A string that contains the full command line. If this parameter is
+     *            an empty string the function returns the path to the current
+     *            executable file.
+     * @return An array of strings, similar to {@code argv}.
+     */
+    public static final String[] CommandLineToArgv(String cmdLine) {
+        WString cl = new WString(cmdLine);
+        IntByReference nargs = new IntByReference();
+        Pointer strArr = Shell32.INSTANCE.CommandLineToArgvW(cl, nargs);
+        if (strArr != null) {
+            try {
+                return strArr.getWideStringArray(0, nargs.getValue());
+            } finally {
+                Kernel32.INSTANCE.LocalFree(strArr);
+            }
+        }
+        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     }
 }
