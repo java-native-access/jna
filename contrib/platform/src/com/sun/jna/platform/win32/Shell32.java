@@ -24,8 +24,10 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -33,6 +35,7 @@ import com.sun.jna.platform.win32.WinDef.INT_PTR;
 import com.sun.jna.platform.win32.WinDef.UINT_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -409,5 +412,28 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      */
     HRESULT SetCurrentProcessExplicitAppUserModelID(WString appID);
 
+    /**
+     * Parses a Unicode command line string and returns an array of pointers to the
+     * command line arguments, along with a count of such arguments, in a way that
+     * is similar to the standard C run-time {@code argv} and {@code argc} values.
+     *
+     * @param lpCmdLine
+     *            A Unicode string that contains the full command line. If this
+     *            parameter is an empty string the function returns the path to the
+     *            current executable file.
+     * @param pNumArgs
+     *            Pointer to an {@code int} that receives the number of array
+     *            elements returned, similar to {@code argc}.
+     * @return A pointer to an array of {@link LPWSTR} values, similar to
+     *         {@code argv}. If the function fails, the return value is
+     *         {@code null}. To get extended error information, call
+     *         {@link Kernel32#GetLastError}. <br>
+     *         CommandLineToArgvW allocates a block of contiguous memory for
+     *         pointers to the argument strings, and for the argument strings
+     *         themselves; the calling application must free the memory used by the
+     *         argument list when it is no longer needed. To free the memory, use a
+     *         single call to the {@link Kernel32#LocalFree} function.
+     */
+    Pointer CommandLineToArgvW(WString lpCmdLine, IntByReference pNumArgs);
 }
 
