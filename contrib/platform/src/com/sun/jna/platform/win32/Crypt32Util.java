@@ -23,6 +23,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -80,17 +82,44 @@ public abstract class Crypt32Util {
         DATA_BLOB pDataIn = new DATA_BLOB(data);
         DATA_BLOB pDataProtected = new DATA_BLOB();
         DATA_BLOB pEntropy = (entropy == null) ? null : new DATA_BLOB(entropy);
+        Win32Exception err = null;
+        byte[] protectedData = null;
         try {
             if (! Crypt32.INSTANCE.CryptProtectData(pDataIn, description,
                     pEntropy, null, prompt, flags, pDataProtected)) {
-                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                err = new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            } else {
+                protectedData = pDataProtected.getData();
             }
-            return pDataProtected.getData();
         } finally {
+            if (pDataIn.pbData != null) {
+                pDataIn.pbData.clear(pDataIn.cbData);
+            }
+            if (pEntropy != null && pEntropy.pbData != null) {
+                pEntropy.pbData.clear(pEntropy.cbData);
+            }
             if (pDataProtected.pbData != null) {
-                Kernel32Util.freeLocalMemory(pDataProtected.pbData);
+                pDataProtected.pbData.clear(pDataProtected.cbData);
+                try {
+                    Kernel32Util.freeLocalMemory(pDataProtected.pbData);
+                } catch(Win32Exception e) {
+                    if (err == null) {
+                        err = e;
+                    } else {
+                        err.addSuppressedReflected(e);
+                    }
+                }
             }
         }
+
+        if (err != null) {
+            if (protectedData != null) {
+                Arrays.fill(protectedData, (byte) 0);
+            }
+            throw err;
+        }
+
+        return protectedData;
     }
 
     /**
@@ -135,32 +164,26 @@ public abstract class Crypt32Util {
         DATA_BLOB pDataIn = new DATA_BLOB(data);
         DATA_BLOB pDataUnprotected = new DATA_BLOB();
         DATA_BLOB pEntropy = (entropy == null) ? null : new DATA_BLOB(entropy);
-        PointerByReference pDescription = new PointerByReference();
         Win32Exception err = null;
         byte[] unProtectedData = null;
         try {
-            if (! Crypt32.INSTANCE.CryptUnprotectData(pDataIn, pDescription,
+            if (! Crypt32.INSTANCE.CryptUnprotectData(pDataIn, null,
                     pEntropy, null, prompt, flags, pDataUnprotected)) {
                 err = new Win32Exception(Kernel32.INSTANCE.GetLastError());
             } else {
                 unProtectedData = pDataUnprotected.getData();
             }
         } finally {
+            if (pDataIn.pbData != null) {
+                pDataIn.pbData.clear(pDataIn.cbData);
+            }
+            if (pEntropy != null && pEntropy.pbData != null) {
+                pEntropy.pbData.clear(pEntropy.cbData);
+            }
             if (pDataUnprotected.pbData != null) {
+                pDataUnprotected.pbData.clear(pDataUnprotected.cbData);
                 try {
                     Kernel32Util.freeLocalMemory(pDataUnprotected.pbData);
-                } catch(Win32Exception e) {
-                    if (err == null) {
-                        err = e;
-                    } else {
-                        err.addSuppressedReflected(e);
-                    }
-                }
-            }
-
-            if (pDescription.getValue() != null) {
-                try {
-                    Kernel32Util.freeLocalMemory(pDescription.getValue());
                 } catch(Win32Exception e) {
                     if (err == null) {
                         err = e;
@@ -172,6 +195,9 @@ public abstract class Crypt32Util {
         }
 
         if (err != null) {
+            if (unProtectedData != null) {
+                Arrays.fill(unProtectedData, (byte) 0);
+            }
             throw err;
         }
 
