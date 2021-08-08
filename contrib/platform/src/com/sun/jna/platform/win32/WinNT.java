@@ -23,6 +23,11 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
@@ -3018,9 +3023,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             switch (relationship) {
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorDie:
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorModule:
                     result = new PROCESSOR_RELATIONSHIP(memory);
                     break;
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNodeEx:
                     result = new NUMA_NODE_RELATIONSHIP(memory);
                     break;
                 case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
@@ -3118,7 +3126,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         @Override
         public void read() {
             readField("groupCount");
-            groupMask = new GROUP_AFFINITY[groupCount];
+            // Resize if needed
+            if (groupCount != groupMask.length) {
+                groupMask = new GROUP_AFFINITY[groupCount];
+            }
             super.read();
         }
     }
@@ -3126,32 +3137,79 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * Represents information about a NUMA node in a processor group.
      */
-    @FieldOrder({ "nodeNumber", "reserved", "groupMask" })
+    @FieldOrder({ "nodeNumber", "reserved", "groupCount", "groupMasks" })
     public static class NUMA_NODE_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
 
         /**
-         * Identifies the NUMA node. Valid values are {@code 0} to the highest
-         * NUMA node number inclusive. A non-NUMA multiprocessor system will
-         * report that all processors belong to one NUMA node.
+         * Identifies the NUMA node. Valid values are {@code 0} to the highest NUMA node
+         * number inclusive. A non-NUMA multiprocessor system will report that all
+         * processors belong to one NUMA node.
          */
         public int nodeNumber;
 
         /**
          * This member is reserved.
          */
-        public byte[] reserved = new byte[20];
+        public byte[] reserved = new byte[18];
+
+        /**
+         * The number of groups included in the GroupMasks array. This field was
+         * introduced in TBD Release Iron. On earlier versions, this value is always 0.
+         */
+        public short groupCount;
 
         /**
          * A {@link GROUP_AFFINITY} structure that specifies a group number and
-         * processor affinity within the group.
+         * processor affinity within the group. This member is only relevant if
+         * {@code groupCount} is 0.
          */
         public GROUP_AFFINITY groupMask;
+
+        /**
+         * An array of {@link GROUP_AFFINITY} structures that specifies a group number
+         * and processor affinity within the group. This member is only relevant if
+         * {@code groupCount} is 1 or greater.
+         */
+        public GROUP_AFFINITY[] groupMasks = new GROUP_AFFINITY[1];
 
         public NUMA_NODE_RELATIONSHIP() {
         }
 
         public NUMA_NODE_RELATIONSHIP(Pointer memory) {
             super(memory);
+        }
+
+        @Override
+        public void read() {
+            readField("groupCount");
+            // In older version of structure this is part of reserved array and has 0 value.
+            // Force a minimum array size of 1.
+            int actualGroupCount = Math.max(1, groupCount);
+            // Resize if needed
+            if (actualGroupCount != groupMasks.length) {
+                groupMasks = new GROUP_AFFINITY[actualGroupCount];
+            }
+            super.read();
+            // Copy first value from array to older version of structure for compatibility
+            groupMask = groupMasks[0];
+        }
+
+        /*
+         * The groupMask field is provided as a public instance variable for
+         * compatibility. getFieldList is overridden to remove it before comparing
+         * against the structure field order.
+         */
+        @Override
+        protected List<Field> getFieldList() {
+            List<Field> fields = new ArrayList<Field>(super.getFieldList());
+            Iterator<Field> fieldIterator = fields.iterator();
+            while (fieldIterator.hasNext()) {
+                Field field = fieldIterator.next();
+                if ("groupMask".equals(field.getName())) {
+                    fieldIterator.remove();
+                }
+            }
+            return fields;
         }
     }
 
@@ -3248,7 +3306,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         @Override
         public void read() {
             readField("activeGroupCount");
-            groupInfo = new PROCESSOR_GROUP_INFO[activeGroupCount];
+            // Resize if needed
+            if (activeGroupCount != groupInfo.length) {
+                groupInfo = new PROCESSOR_GROUP_INFO[activeGroupCount];
+            }
             super.read();
         }
     }
@@ -3387,8 +3448,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * <p>
-         * Upcoming value of this enum added for forward compatibility. Documentation
-         * will be added when available.
+         * Introduced in TBD - Release Iron. Requests that the full affinity be
+         * returned. Unlike the other relation types, RelationNumaNodeEx is not used on
+         * input. It is simply a request for RelationNumaNode with full group
+         * information.
          * </p>
          */
         int RelationNumaNodeEx = 6;
