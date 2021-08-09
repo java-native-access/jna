@@ -24,7 +24,6 @@
 package com.sun.jna;
 
 import junit.framework.TestCase;
-import org.junit.Assume;
 
 public class VMCrashProtectionTest extends TestCase {
 
@@ -52,12 +51,14 @@ public class VMCrashProtectionTest extends TestCase {
         else
             m.setLong(0, 1);
         Pointer p = m.getPointer(0);
+        Throwable actual = null;
         try {
             p.setInt(0, 0);
-            fail("Exception should be thrown");
         }
         catch(Throwable e) {
+            actual = e;
         }
+        assertNotNull("Exception should be thrown", actual);
     }
 
     public static void main(String[] args) {
