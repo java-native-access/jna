@@ -51,7 +51,7 @@ public interface Udev extends Library {
          *
          * @return this object, unmodified.
          */
-        UdevContext ref() {
+        public UdevContext ref() {
             return INSTANCE.udev_ref(this);
         }
 
