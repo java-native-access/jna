@@ -14,6 +14,7 @@ Features
 * [#1352](https://github.com/java-native-access/jna/pull/1352): Add `BringWindowToTop` to `c.s.j.p.win32.User32` - [@kahgoh](https://github.com/kahgoh).
 * [#1354](https://github.com/java-native-access/jna/pull/1352): Add `GetParent` to `c.s.j.p.win32.User32` - [@kahgoh](https://github.com/kahgoh).
 * [#1360](https://github.com/java-native-access/jna/issues/1360): Add `CommandLineToArgvW` to `c.s.j.p.win32.Shell32` and corresponding util in `c.s.j.p.win32.Shell32Util` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1363](https://github.com/java-native-access/jna/issues/1363): Update `NUMA_NODE_RELATIONSHIP` in `c.s.j.p.win32.WinNT` to new version of the structure and improve support for future values of `c.s.j.p.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
