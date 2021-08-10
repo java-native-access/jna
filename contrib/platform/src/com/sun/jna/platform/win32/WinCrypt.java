@@ -72,10 +72,19 @@ public interface WinCrypt {
         }
 
         public DATA_BLOB(byte [] data) {
-            pbData = new Memory(data.length);
-            pbData.write(0, data, 0, data.length);
-            cbData = data.length;
-            allocateMemory();
+            super();
+            if (data.length > 0) {
+                pbData = new Memory(data.length);
+                pbData.write(0, data, 0, data.length);
+                cbData = data.length;
+            } else {
+                // We allocate 1 byte memory region because `malloc` may return `NULL` if requested size is 0.
+                // However, `CryptProtectData` and `CryptUnprotectData` consider `NULL` as invalid data.
+                // The fact that we allocate 1 byte does not affect the final result because
+                // we pass the correct size explicitly on `cbData` field.
+                pbData = new Memory(1);
+                cbData = 0;
+            }
         }
 
         public DATA_BLOB(String s) {

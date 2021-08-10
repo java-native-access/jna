@@ -36,6 +36,13 @@ public class Crypt32UtilTest extends TestCase {
         junit.textui.TestRunner.run(Crypt32UtilTest.class);
     }
 
+    public void testCryptProtectUnprotectZeroLengthData() {
+        byte[] data = new byte[0];
+        byte[] protectedData = Crypt32Util.cryptProtectData(data);
+        byte[] unprotectedData = Crypt32Util.cryptUnprotectData(protectedData);
+        assertEquals(0, unprotectedData.length);
+    }
+
     public void testCryptProtectUnprotectData() {
         byte[] data = new byte[2];
         data[0] = 42;
