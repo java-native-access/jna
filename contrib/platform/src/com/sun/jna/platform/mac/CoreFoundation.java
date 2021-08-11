@@ -303,7 +303,7 @@ public interface CoreFoundation extends Library {
      * <p>
      * CFArray is “toll-free bridged” with its Cocoa Foundation counterpart,
      * {@code NSArray}. Therefore, in a method where you see an {@code NSArray *}
-     * parameter, you can pass in a {@link #CFArrayRef}.
+     * parameter, you can pass in a {@code CFArrayRef} .
      */
     class CFArrayRef extends CFTypeRef {
         public CFArrayRef() {

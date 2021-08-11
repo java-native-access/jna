@@ -111,22 +111,22 @@ public abstract class Cfgmgr32Util {
      * @return An {@link Object} containing the specified registry property for the
      *         device.
      *         <p>
-     *         If the property is of type {@link WinNT.REG_SZ}, a
+     *         If the property is of type {@link WinNT#REG_SZ}, a
      *         {@link java.lang.String} is returned.
      *         <p>
-     *         If the property is of type {@link WinNT.REG_MULTI_SZ}, an array of
+     *         If the property is of type {@link WinNT#REG_MULTI_SZ}, an array of
      *         {@link java.lang.String} is returned.
      *         <p>
-     *         If the property is of type {@link WinNT.REG_DWORD}, an
+     *         If the property is of type {@link WinNT#REG_DWORD}, an
      *         {@link java.lang.Integer} is returned.
      *         <p>
-     *         If the property is of type {@link WinNT.REG_BINARY}, an array of
+     *         If the property is of type {@link WinNT#REG_BINARY}, an array of
      *         {@link java.lang.Byte} is returned.
      *         <p>
      *         If no value exists for this property (error
-     *         {@link Cfgmgr32.CR_NO_SUCH_VALUE}), returns {@code null}.
+     *         {@link Cfgmgr32#CR_NO_SUCH_VALUE}), returns {@code null}.
      * @throws Cfgmgr32Exception
-     *             on any errors other than {@link Cfgmgr32.CR_NO_SUCH_VALUE}
+     *             on any errors other than {@link Cfgmgr32#CR_NO_SUCH_VALUE}
      */
     public static Object CM_Get_DevNode_Registry_Property(int devInst, int ulProperty) throws Cfgmgr32Exception {
 

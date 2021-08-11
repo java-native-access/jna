@@ -71,11 +71,11 @@ public abstract class PsapiUtil {
      * @throws Win32Exception in case an error occurs
      * @see <a href="http://msdn.microsoft.com/en-us/library/ms683217(VS.85).aspx">MSDN</a>
      */
-    public static String GetProcessImageFileName(HANDLE process) {
+    public static String GetProcessImageFileName(HANDLE hProcess) {
         int size = 2048;
         while (true) {
             final char[] filePath = new char[size];
-            int length = Psapi.INSTANCE.GetProcessImageFileName(process,
+            int length = Psapi.INSTANCE.GetProcessImageFileName(hProcess,
                 filePath, filePath.length);
             if(length == 0) {
                 if(Native.getLastError() != WinError.ERROR_INSUFFICIENT_BUFFER) {
