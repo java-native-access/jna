@@ -1609,7 +1609,7 @@ cd ..
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
       <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
-      <arg value="-Dtypes=jar,jar,jar"/>
+      <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
     </artifact:mvn>
 
