@@ -2787,7 +2787,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /**
      * @deprecated Use
-     *             {@link #CreateRemoteThread(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, com.sun.jna.Pointer, com.sun.jna.Pointer, int, com.sun.jna.platform.win32.WinDef.DWORDByReference)
+     *             {@link #CreateRemoteThread(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, com.sun.jna.Pointer, com.sun.jna.Pointer, int, com.sun.jna.platform.win32.WinDef.DWORDByReference)}
      */
     @Deprecated
     HANDLE CreateRemoteThread(HANDLE hProcess, WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, FOREIGN_THREAD_START_ROUTINE lpStartAddress, Pointer lpParameter, DWORD dwCreationFlags, Pointer lpThreadId);

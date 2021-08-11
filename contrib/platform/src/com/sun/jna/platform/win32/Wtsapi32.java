@@ -149,7 +149,7 @@ public interface Wtsapi32 extends StdCallLibrary {
 
     /**
      * Contains values that indicate the type of session information to retrieve in
-     * a call to the {@link #WTSQuerySessionInformation()} function.
+     * a call to the {@link #WTSQuerySessionInformation(com.sun.jna.platform.win32.WinNT.HANDLE, int, int, com.sun.jna.ptr.PointerByReference, com.sun.jna.ptr.IntByReference)} function.
      */
     public interface WTS_INFO_CLASS {
         int WTSInitialProgram = 0;

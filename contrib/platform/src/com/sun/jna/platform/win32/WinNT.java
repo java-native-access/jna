@@ -2994,7 +2994,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * Create a new instance of the appropriate subclass of
          * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} from the provided
          * {@link Pointer} to native memory. Use this method rather than
-         * {@link #SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer)} to properly
+         * {@code SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer)} to properly
          * cast the Pointer to the appropriate subclass and populate variable
          * length arrays.
          *

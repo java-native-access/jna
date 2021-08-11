@@ -654,7 +654,7 @@ public interface SystemB extends LibCAPI, Library {
      * @param oldp
      *            A buffer to hold the information retrieved
      * @param oldlenp
-     *            Size of the buffer, a pointer to a {@link size_t} value
+     *            Size of the buffer, a pointer to a {@link com.sun.jna.platform.unix.LibCAPI.size_t} value
      * @param newp
      *            To set a new value, a buffer of information to be written. May be
      *            null if no value is to be set.
@@ -667,7 +667,7 @@ public interface SystemB extends LibCAPI, Library {
 
     /**
      * @deprecated Use
-     *             {@link #sysctl(int[], int, Pointer, Pointer, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t)}
+     *             {@link #sysctl(int[], int, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t.ByReference, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t)}
      */
     @Deprecated
     int sysctl(int[] name, int namelen, Pointer oldp, IntByReference oldlenp, Pointer newp, int newlen);
@@ -682,7 +682,7 @@ public interface SystemB extends LibCAPI, Library {
      * @param oldp
      *            A buffer to hold the information retrieved
      * @param oldlenp
-     *            Size of the buffer, a pointer to a {@link size_t} value
+     *            Size of the buffer, a pointer to a {@link com.sun.jna.platform.unix.LibCAPI.size_t} value
      * @param newp
      *            To set a new value, a buffer of information to be written. May be
      *            null if no value is to be set.
@@ -695,7 +695,7 @@ public interface SystemB extends LibCAPI, Library {
 
     /**
      * @deprecated Use
-     *             {@link #sysctlbyname(String, Pointer, Pointer, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t)}
+     *             {@link #sysctlbyname(String, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t.ByReference, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t)}
      */
     @Deprecated
     int sysctlbyname(String name, Pointer oldp, IntByReference oldlenp, Pointer newp, int newlen);
@@ -731,7 +731,7 @@ public interface SystemB extends LibCAPI, Library {
     int sysctlnametomib(String name, Pointer mibp, size_t.ByReference sizep);
 
     /**
-     * @deprecated Use {@link #sysctlnametomib(String, Pointer, Pointer)}
+     * @deprecated Use {@link #sysctlnametomib(String, Pointer, com.sun.jna.platform.unix.LibCAPI.size_t.ByReference)}
      */
     @Deprecated
     int sysctlnametomib(String name, Pointer mibp, IntByReference sizep);

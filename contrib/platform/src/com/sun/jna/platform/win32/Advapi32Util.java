@@ -966,7 +966,7 @@ public abstract class Advapi32Util {
 
     /**
      * Convert the null-delimited buffer of strings returned from registry values of
-     * type {@link WinNT.REG_MULTI_SZ} to an array of strings.
+     * type {@link WinNT#REG_MULTI_SZ} to an array of strings.
      *
      * @param data
      *            A buffer containing strings delimited by a null character, ending

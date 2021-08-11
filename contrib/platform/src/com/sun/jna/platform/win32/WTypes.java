@@ -108,7 +108,7 @@ public interface WTypes {
          * Instantiate a BSTR from a pointer. The user is responsible for allocating and
          * releasing memory for the {@link BSTR}, most commonly using
          * {@link OleAuto#SysAllocString(String)} and
-         * {@link OleAuto#SysFreeString(BSTR)}
+         * {@link OleAuto#SysFreeString(com.sun.jna.platform.win32.WTypes.BSTR)}
          *
          * @param pointer
          *            A pointer to the string
@@ -119,7 +119,7 @@ public interface WTypes {
 
         /**
          * @deprecated Use {@link OleAuto#SysAllocString(String)} and
-         *             {@link OleAuto#SysFreeString(BSTR)}
+         *             {@link OleAuto#SysFreeString(com.sun.jna.platform.win32.WTypes.BSTR)}
          */
         @Deprecated
         public BSTR(String value) {
