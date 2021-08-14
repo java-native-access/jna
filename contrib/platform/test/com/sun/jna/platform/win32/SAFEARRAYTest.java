@@ -96,6 +96,7 @@ public class SAFEARRAYTest {
     public void testCreateVarArray() {
         SAFEARRAY varArray = SAFEARRAY.createSafeArray(1);
         Assert.assertTrue(varArray != null);
+        varArray.destroy();
     }
 
     @Test
@@ -133,6 +134,7 @@ public class SAFEARRAYTest {
                 OleAuto.INSTANCE.VariantClear(element);
             }
         }
+        varArray.destroy();
     }
 
     @Ignore("Only for live testing")
@@ -266,7 +268,7 @@ public class SAFEARRAYTest {
         Assert.assertEquals(6, sa.getUBound(1));
 
         // requery the moved array and compare with basic array
-        Object[][] relocated = (Object[][]) OaIdlUtil.toPrimitiveArray(sa, false);
+        Object[][] relocated = (Object[][]) OaIdlUtil.toPrimitiveArray(sa, true);
         Assert.assertArrayEquals( basic, relocated);
     }
 
@@ -665,10 +667,13 @@ public class SAFEARRAYTest {
         SAFEARRAY arr = SAFEARRAY.createSafeArray(1);
         arr.putElement(new VARIANT("System.ItemUrl"), 0);
         boolean exceptionCaught = false;
+        VARIANT itemName = new VARIANT("System.ItemName");
         try {
-            arr.putElement(new VARIANT("System.ItemName"), 1);
+            arr.putElement(itemName, 1);
         } catch (COMException ex) {
             exceptionCaught = true;
+        } finally {
+            OleAuto.INSTANCE.VariantClear(itemName);
         }
         assertTrue("Array is initialized to a size of one - it can't hold a second item.", exceptionCaught);
         arr.redim(2, 0);

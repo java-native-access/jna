@@ -273,10 +273,12 @@ public class ComEventCallbacks_Test {
             return new HRESULT(WinError.E_NOINTERFACE);
         }
 
+        @Override
         public int AddRef() {
             return 0;
         }
 
+        @Override
         public int Release() {
             return 0;
         }
@@ -341,6 +343,7 @@ public class ComEventCallbacks_Test {
             }
             Thread.sleep(1000);
         }
+        OleAuto.INSTANCE.VariantClear(arguments[0]);
 
         // At this point the call to Navigate before should be complete
         Assert.assertTrue(listener.navigateComplete2Called);
@@ -364,6 +367,7 @@ public class ComEventCallbacks_Test {
             }
             Thread.sleep(1000);
         }
+        OleAuto.INSTANCE.VariantClear(arguments[0]);
 
         // Naviation will be blocked - so NavigateComplete can't be called
         Assert.assertFalse("NavigateComplete Handler was called although it should be blocked", listener.navigateComplete2Called);
