@@ -397,6 +397,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     /**
      * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
+    @Deprecated
     protected void invokeNoReply(String methodName,
             COMLateBindingObject comObject, VARIANT arg) {
         this.oleMethod(OleAuto.DISPATCH_METHOD, null, comObject.getIDispatch(),
@@ -558,6 +559,13 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
+     * <p>
+     * <i>Implementation note:</i> the string is wrapped as a BSTR value, that is
+     * allocated using {@link com.sun.jna.platform.win32.OleAuto#SysAllocString} and
+     * will no longer be accessible to the user to free using
+     * {@link com.sun.jna.platform.win32.OleAuto#SysFreeString}. Consider using
+     * {@link #setProperty(String, VARIANT)} to allow later clearing of the VARIANT.
+     * </p>
      *
      * @param propertyName
      *            the property name

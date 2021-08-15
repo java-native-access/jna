@@ -31,6 +31,7 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
@@ -84,18 +85,17 @@ public class ConvertTest {
 
     @Test
     public void testConvertString() {
-        // This test leaks the allocated BSTR -- this is tollerated here, as memory usage is minimal
         String testString = "Hallo";
-        BSTR testValue = new BSTR(testString);
+        BSTR testValue = OleAuto.INSTANCE.SysAllocString(testString);
         VARIANT resultVariant = Convert.toVariant(testValue);
         assertEquals(testString, resultVariant.stringValue());
         assertEquals(testString, Convert.toJavaObject(resultVariant, Object.class, fact, false, false));
-        assertEquals(testString, Convert.toJavaObject(resultVariant, String.class, fact, false, false));
+        assertEquals(testString, Convert.toJavaObject(resultVariant, String.class, fact, false, true));
 
         resultVariant = Convert.toVariant(testString);
         assertEquals(testString, resultVariant.stringValue());
         assertEquals(testString, Convert.toJavaObject(resultVariant, Object.class, fact, false, false));
-        assertEquals(testString, Convert.toJavaObject(resultVariant, String.class, fact, false, false));
+        assertEquals(testString, Convert.toJavaObject(resultVariant, String.class, fact, false, true));
     }
 
     @Test
