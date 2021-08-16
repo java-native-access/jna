@@ -1,7 +1,7 @@
 ![Java Native Access - JNA](https://github.com/java-native-access/jna/raw/master/www/images/jnalogo.jpg "Java Native Access - JNA")
 
 [![Github Actions Build Status](https://github.com/java-native-access/jna/workflows/Java%20CI/badge.svg)](https://github.com/java-native-access/jna/actions?query=workflow%3A%22Java+CI%22)
-[![Travis Build Status](https://travis-ci.org/java-native-access/jna.svg?branch=master)](https://travis-ci.org/java-native-access/jna)
+[![Travis Build Status](https://api.travis-ci.com/java-native-access/jna.svg?branch=master)](https://travis-ci.com/github/java-native-access/jna)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/j6vmpjrw5iktb8iu/branch/master?svg=true)](https://ci.appveyor.com/project/dblock/jna-gsxuq/branch/master)
 
 Java Native Access (JNA)
