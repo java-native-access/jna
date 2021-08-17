@@ -559,13 +559,6 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * <p>
-     * <i>Implementation note:</i> the string is wrapped as a BSTR value, that is
-     * allocated using {@link com.sun.jna.platform.win32.OleAuto#SysAllocString} and
-     * will no longer be accessible to the user to free using
-     * {@link com.sun.jna.platform.win32.OleAuto#SysFreeString}. Consider using
-     * {@link #setProperty(String, VARIANT)} to allow later clearing of the VARIANT.
-     * </p>
      *
      * @param propertyName
      *            the property name
@@ -573,7 +566,12 @@ public class COMLateBindingObject extends COMBindingBaseObject {
      *            the value
      */
     protected void setProperty(String propertyName, String value) {
-        this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, propertyName, new VARIANT(value));
+        VARIANT wrappedValue = new VARIANT(value);
+        try {
+            this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, propertyName, wrappedValue);
+        } finally {
+            OleAuto.INSTANCE.VariantClear(wrappedValue);
+        }
     }
 
     /**
