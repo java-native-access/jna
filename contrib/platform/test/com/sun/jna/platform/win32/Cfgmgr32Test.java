@@ -30,7 +30,6 @@ import static com.sun.jna.platform.win32.Cfgmgr32.CM_DRP_HARDWAREID;
 import static com.sun.jna.platform.win32.Cfgmgr32.CM_LOCATE_DEVNODE_NORMAL;
 import static com.sun.jna.platform.win32.Cfgmgr32.CR_SUCCESS;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
@@ -40,6 +39,9 @@ import java.util.Queue;
 import org.junit.Test;
 
 import com.sun.jna.ptr.IntByReference;
+
+import static com.sun.jna.platform.win32.Cfgmgr32.CR_INVALID_DEVNODE;
+import static com.sun.jna.platform.win32.Cfgmgr32.CR_INVALID_PROPERTY;
 
 /**
  * Tests methods in Cfgmgr32
@@ -99,9 +101,15 @@ public class Cfgmgr32Test {
      */
     @Test
     public void testDeviceProperties() {
+        Object props;
+
         // Test an invalid node
-        Object props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(-1, CM_DRP_DEVICEDESC);
-        assertNull(props);
+        try {
+            props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(-1, CM_DRP_DEVICEDESC);
+            assertTrue("Should not be reached - method is expected to raise a Cfgmgr32Exception", false);
+        } catch (Cfgmgr32Util.Cfgmgr32Exception ex) {
+            assertEquals(CR_INVALID_DEVNODE, ex.getErrorCode());
+        }
 
         // Not all devices have all properties and will fail with CR_NO_SUCH_VALUE.
         // So do BFS of device tree and run tests on all devices until we've tested each
@@ -147,7 +155,12 @@ public class Cfgmgr32Test {
                 powerTested = true;
             }
             // Test an invalid type
-            assertNull(Cfgmgr32Util.CM_Get_DevNode_Registry_Property(node, 0));
+            try {
+                props = Cfgmgr32Util.CM_Get_DevNode_Registry_Property(node, 0);
+                assertTrue("Should not be reached - method is expected to raise a Cfgmgr32Exception", false);
+            } catch (Cfgmgr32Util.Cfgmgr32Exception ex) {
+                assertEquals(CR_INVALID_PROPERTY, ex.getErrorCode());
+            }
 
             // If we've done all tests we can exit the loop
             if (descTested && hwidTested && flagsTested && powerTested) {
