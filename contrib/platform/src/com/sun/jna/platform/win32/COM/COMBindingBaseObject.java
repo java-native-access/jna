@@ -37,11 +37,9 @@ import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.LCID;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -187,8 +185,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
         COMUtils.checkRC(hr);
 
-        return this
-                .oleMethod(nType, pvResult, iDispatch, pdispID.getValue(), pArgs);
+        return this.oleMethod(nType, pvResult, pdispID.getValue(), pArgs);
     }
 
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,

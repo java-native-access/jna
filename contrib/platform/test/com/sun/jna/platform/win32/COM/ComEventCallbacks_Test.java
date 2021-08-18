@@ -55,8 +55,6 @@ import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Assert;
 
 public class ComEventCallbacks_Test {
