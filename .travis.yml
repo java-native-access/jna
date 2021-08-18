@@ -28,3 +28,7 @@ jobs:
   include:
     - name: "Linux JDK11 ARM"
       arch: arm64
+
+cache:
+  directories:
+  - $HOME/.m2
