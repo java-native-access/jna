@@ -82,6 +82,7 @@ public interface Advapi32 extends StdCallLibrary {
     int RRF_RT_REG_NONE = 0x00000001;
     int RRF_RT_REG_QWORD = 0x00000040;
     int RRF_RT_REG_SZ = 0x00000002;
+    int REG_PROCESS_APPKEY = 0x00000001;
 
     /**
      * LOGON_WITH_PROFILE: 0x00000001<br>
@@ -853,6 +854,28 @@ public interface Advapi32 extends StdCallLibrary {
      */
     int RegOpenKeyEx(HKEY hKey, String lpSubKey, int ulOptions,
                      int samDesired, HKEYByReference phkResult);
+
+    /**
+     * The RegLoadAppKey function loads the specified registry hive
+     * as an application hive.
+     *
+     * @param lpFile
+     *            The name of the hive file.
+     *            If the file does not exist, an empty hive file is created
+     *            with the specified name.
+     * @param phkResult
+     *            Pointer to the handle for the root key of the loaded hive.
+     * @param samDesired
+     *            Access mask that specifies the desired access rights to the
+     * @param dwOptions
+     *            If this parameter is REG_PROCESS_APPKEY,
+     *            the hive cannot be loaded again while it is loaded by the caller.
+     *            This prevents access to this registry hive by another caller.
+     * @param Reserved
+     *            Reserved; must be zero.
+     */
+    int RegLoadAppKey(String lpFile, HKEYByReference phkResult,
+                       int samDesired, int dwOptions, int Reserved);
 
     /**
      * Establishes a connection to a predefined registry key on another
