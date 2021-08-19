@@ -43,6 +43,11 @@ public abstract class Cfgmgr32Util {
         public int getErrorCode() {
             return errorCode;
         }
+
+        @Override
+        public String toString() {
+            return super.toString() + String.format(" [errorCode: 0x%08x]", errorCode);
+        }
     }
 
     /**
