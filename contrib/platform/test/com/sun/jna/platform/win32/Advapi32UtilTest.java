@@ -29,6 +29,7 @@ import static com.sun.jna.platform.win32.WinBase.FILE_IS_ENCRYPTED;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -603,6 +604,17 @@ public class Advapi32UtilTest extends TestCase {
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+    }
+
+    public void testRegistryLoadAppKey() throws Exception {
+        File tempDir = Files.createTempDirectory("testRegistryLoadAppKey").toFile();
+        File registryFile = new File(tempDir, "privateregistry.bin");
+        HKEYByReference phkKey = Advapi32Util.registryLoadAppKey(registryFile.getAbsolutePath(), WinNT.KEY_ALL_ACCESS, 0);
+        Advapi32Util.registryCreateKey(phkKey.getValue(), "Test");
+        Advapi32Util.registryDeleteKey(phkKey.getValue(), "Test");
+        Advapi32Util.registryCloseKey(phkKey.getValue());
+        registryFile.delete();
+        tempDir.delete();
     }
 
     public void testRegistryGetValues() {

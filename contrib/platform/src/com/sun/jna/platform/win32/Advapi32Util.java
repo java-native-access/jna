@@ -2077,6 +2077,28 @@ public abstract class Advapi32Util {
     }
 
     /**
+     * Loads the specified registry hive as an application hive.
+     *
+     * @param fileName
+     *            Path to the file
+     * @param samDesired
+     *            Access mask that specifies the desired access rights to the
+     * @param dwOptions
+     *            If this parameter is REG_PROCESS_APPKEY,
+     *            the hive cannot be loaded again while it is loaded by the caller.
+     *            This prevents access to this registry hive by another caller.
+     */
+    public static HKEYByReference registryLoadAppKey(String fileName, int samDesired, int dwOptions) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegLoadAppKey(fileName, phkKey, samDesired, dwOptions, 0);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+
+        return phkKey;
+    }
+
+    /**
      * Close the registry key
      *
      * @param hKey

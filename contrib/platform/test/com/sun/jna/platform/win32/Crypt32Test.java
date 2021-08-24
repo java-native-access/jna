@@ -673,8 +673,14 @@ public class Crypt32Test extends TestCase {
             crlBuilder.addExtension(Extension.cRLNumber, false, new CRLNumber(new BigInteger("2")));
             X509CRLHolder holder = crlBuilder.build(caSigner);
 
-            try (OutputStream fos = Files.newOutputStream(tempFile)) {
+            OutputStream fos = null;
+            try {
+                fos = Files.newOutputStream(tempFile);
                 fos.write(holder.getEncoded());
+            } finally {
+                if (fos != null) {
+                    fos.close();
+                }
             }
 
             return tempFile;
