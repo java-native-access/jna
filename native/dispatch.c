@@ -3466,6 +3466,11 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   }
 
   closure = ffi_closure_alloc(sizeof(ffi_closure), &code);
+  if (closure == NULL) {
+    throwByName(env, EUnsupportedOperation, "Failed to allocate closure");
+    status = FFI_BAD_ABI;
+    goto cleanup;
+  }
   status = ffi_prep_closure_loc(closure, closure_cif, dispatch_direct, data, code);
   if (status != FFI_OK) {
     throwByName(env, EError, "Native method linkage failed");
@@ -3514,16 +3519,31 @@ Java_com_sun_jna_Native_ffi_1prep_1closure(JNIEnv *env, jclass UNUSED(cls), jlon
   ffi_status s;
 
   if ((*env)->GetJavaVM(env, &cb->vm) != JNI_OK) {
+    free(cb);
     throwByName(env, EUnsatisfiedLink, "Can't get Java VM");
     return 0;
   }
 
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
+  if (cb->object == NULL) {
+    // either obj was null or an OutOfMemoryError has been thrown
+    free(cb);
+    return 0;
+  }
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), L2A(&cb->x_closure));
+  if (cb->closure == NULL) {
+    (*env)->DeleteWeakGlobalRef(env, cb->object);
+    free(cb);
+    throwByName(env, EUnsupportedOperation, "Failed to allocate closure");
+    return 0;
+  }
 
   s = ffi_prep_closure_loc(cb->closure, L2A(cif), &closure_handler,
                            cb, cb->x_closure);
   if (ffi_error(env, "ffi_prep_cif", s)) {
+    ffi_closure_free(cb->closure);
+    (*env)->DeleteWeakGlobalRef(env, cb->object);
+    free(cb);
     return 0;
   }
   return A2L(cb);

@@ -11,6 +11,7 @@ Features
 
 Bug Fixes
 ---------
+* [#1378](https://github.com/java-native-access/jna/pull/1378): Handle failure in `ffi_closure_alloc` - [@davecturner](https://github.com/davecturner).
 
 
 Release 5.9.0
