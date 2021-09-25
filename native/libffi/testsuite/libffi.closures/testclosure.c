@@ -14,7 +14,7 @@ typedef struct cls_struct_combined {
   float d;
 } cls_struct_combined;
 
-void cls_struct_combined_fn(struct cls_struct_combined arg)
+static void cls_struct_combined_fn(struct cls_struct_combined arg)
 {
   printf("%g %g %g %g\n",
 	 arg.a, arg.b,

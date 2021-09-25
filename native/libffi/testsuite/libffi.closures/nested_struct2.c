@@ -19,7 +19,7 @@ typedef struct B {
   unsigned char y;
 } B;
 
-B B_fn(struct A b0, struct B b1)
+static B B_fn(struct A b0, struct B b1)
 {
   struct B result;
 

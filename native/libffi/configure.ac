@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.68)
 
-AC_INIT([libffi], [3.3], [http://github.com/libffi/libffi/issues])
+AC_INIT([libffi], [3.4.2], [http://github.com/libffi/libffi/issues])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -41,6 +41,8 @@ AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 
+AC_CHECK_TOOL(READELF, readelf)
+
 # Test for 64-bit build.
 AC_CHECK_SIZEOF([size_t])
 
@@ -59,6 +61,7 @@ fi
 cat > local.exp <<EOF
 set CC_FOR_TARGET "$CC"
 set CXX_FOR_TARGET "$CXX"
+set compiler_vendor "$ax_cv_c_compiler_vendor"
 EOF
 
 AM_MAINTAINER_MODE
@@ -67,7 +70,7 @@ AC_CHECK_HEADERS(sys/memfd.h)
 AC_CHECK_FUNCS([memfd_create])
 
 AC_CHECK_HEADERS(sys/mman.h)
-AC_CHECK_FUNCS([mmap mkostemp])
+AC_CHECK_FUNCS([mmap mkostemp mkstemp])
 AC_FUNC_MMAP_BLACKLIST
 
 dnl The -no-testsuite modules omit the test subdir.
@@ -270,7 +273,7 @@ if test "x$GCC" = "xyes"; then
   	libffi_cv_ro_eh_frame=yes
   	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
   	if $CC $CFLAGS -c -fpic -fexceptions $libffi_cv_no_lto -o conftest.o conftest.c > /dev/null 2>&1; then
-	    if readelf -WS conftest.o | grep -q -n 'eh_frame .* WA'; then
+	    if $READELF -WS conftest.o | grep -q -n 'eh_frame .* WA'; then
 	        libffi_cv_ro_eh_frame=no
 	    fi
   	fi
@@ -362,6 +365,20 @@ AC_ARG_ENABLE(raw-api,
   if test "$enable_raw_api" = "no"; then
     AC_DEFINE(FFI_NO_RAW_API, 1, [Define this if you do not want support for the raw API.])
   fi)
+
+AC_ARG_ENABLE(exec-static-tramp,
+[  --disable-exec-static-tramp  disable use of static exec trampolines (enabled by default)])
+
+if test "$enable_exec_static_tramp" != no; then
+case "$target" in
+     *-cygwin*)
+     ;;
+     *arm*-*-linux-* | aarch64*-*-linux-* | i*86-*-linux-* | x86_64-*-linux-*)
+       AC_DEFINE(FFI_EXEC_STATIC_TRAMP, 1,
+                 [Define this if you want statically defined trampolines])
+     ;;
+esac
+fi
 
 AC_ARG_ENABLE(purify-safety,
 [  --enable-purify-safety  purify-safe mode],

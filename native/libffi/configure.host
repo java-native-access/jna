@@ -32,7 +32,9 @@ case "${host}" in
 
   arm*-*-cygwin* | arm*-*-mingw* | arm*-*-win* )
 	TARGET=ARM_WIN32; TARGETDIR=arm
-	MSVC=1
+	if test "${ax_cv_c_compiler_vendor}" = "microsoft"; then
+	  MSVC=1
+	fi
 	;;
 
   arm*-*-*)
@@ -264,7 +266,11 @@ esac
 # ... but some of the cases above share configury.
 case "${TARGET}" in
   ARM_WIN32)
-	SOURCES="ffi.c sysv_msvc_arm32.S"
+	if test "$MSVC" = 1; then
+		SOURCES="ffi.c sysv_msvc_arm32.S"
+	else
+		SOURCES="ffi.c sysv.S"
+	fi
 	;;
   ARM_WIN64)
 	if test "$MSVC" = 1; then

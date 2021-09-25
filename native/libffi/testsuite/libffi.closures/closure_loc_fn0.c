@@ -83,7 +83,10 @@ int main (void)
   CHECK(ffi_prep_closure_loc(pcl, &cif, closure_loc_test_fn0,
 			 (void *) 3 /* userdata */, codeloc) == FFI_OK);
   
+#ifndef FFI_EXEC_STATIC_TRAMP
+  /* With static trampolines, the codeloc does not point to closure */
   CHECK(memcmp(pcl, codeloc, sizeof(*pcl)) == 0);
+#endif
 
   res = (*((closure_loc_test_type0)codeloc))
     (1LL, 2, 3LL, 4, 127, 429LL, 7, 8, 9.5, 10, 11, 12, 13,

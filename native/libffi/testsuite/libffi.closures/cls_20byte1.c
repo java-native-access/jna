@@ -16,7 +16,7 @@ typedef struct cls_struct_20byte {
   double c;
 } cls_struct_20byte;
 
-cls_struct_20byte cls_struct_20byte_fn(struct cls_struct_20byte a1,
+static cls_struct_20byte cls_struct_20byte_fn(struct cls_struct_20byte a1,
 			    struct cls_struct_20byte a2)
 {
   struct cls_struct_20byte result;

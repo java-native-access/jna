@@ -55,7 +55,7 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 17
+#serial 18
 
 AC_DEFUN([AX_CC_MAXOPT],
 [
@@ -68,19 +68,18 @@ AC_ARG_ENABLE(portable-binary, [AS_HELP_STRING([--enable-portable-binary], [disa
 
 # Try to determine "good" native compiler flags if none specified via CFLAGS
 if test "$ac_test_CFLAGS" != "set"; then
-  CFLAGS=""
   case $ax_cv_c_compiler_vendor in
-    dec) CFLAGS="-newc -w0 -O5 -ansi_alias -ansi_args -fp_reorder -tune host"
+    dec) CFLAGS="$CFLAGS -newc -w0 -O5 -ansi_alias -ansi_args -fp_reorder -tune host"
 	 if test "x$acx_maxopt_portable" = xno; then
            CFLAGS="$CFLAGS -arch host"
          fi;;
 
-    sun) CFLAGS="-native -fast -xO5 -dalign"
+    sun) CFLAGS="$CFLAGS -native -fast -xO5 -dalign"
 	 if test "x$acx_maxopt_portable" = xyes; then
 	   CFLAGS="$CFLAGS -xarch=generic"
          fi;;
 
-    hp)  CFLAGS="+Oall +Optrs_ansi +DSnative"
+    hp)  CFLAGS="$CFLAGS +Oall +Optrs_ansi +DSnative"
 	 if test "x$acx_maxopt_portable" = xyes; then
 	   CFLAGS="$CFLAGS +DAportable"
 	 fi;;
@@ -91,8 +90,8 @@ if test "$ac_test_CFLAGS" != "set"; then
            xlc_opt="-qtune=auto"
 	 fi
          AX_CHECK_COMPILE_FLAG($xlc_opt,
-		CFLAGS="-O3 -qansialias -w $xlc_opt",
-               [CFLAGS="-O3 -qansialias -w"
+		CFLAGS="$CFLAGS -O3 -qansialias -w $xlc_opt",
+               [CFLAGS="$CFLAGS -O3 -qansialias -w"
                 echo "******************************************************"
                 echo "*  You seem to have the IBM  C compiler.  It is      *"
                 echo "*  recommended for best performance that you use:    *"
@@ -105,7 +104,7 @@ if test "$ac_test_CFLAGS" != "set"; then
                 echo "******************************************************"])
          ;;
 
-    intel) CFLAGS="-O3 -ansi_alias"
+    intel) CFLAGS="$CFLAGS -O3 -ansi_alias"
 	if test "x$acx_maxopt_portable" = xno; then
 	  icc_archflag=unknown
 	  icc_flags=""
@@ -146,7 +145,7 @@ if test "$ac_test_CFLAGS" != "set"; then
 
     gnu)
      # default optimization flags for gcc on all systems
-     CFLAGS="-O3 -fomit-frame-pointer"
+     CFLAGS="$CFLAGS -O3 -fomit-frame-pointer"
 
      # -malign-double for x86 systems
      # libffi local change -- don't align double, as it changes the ABI
@@ -164,7 +163,7 @@ if test "$ac_test_CFLAGS" != "set"; then
 
     microsoft)
      # default optimization flags for MSVC opt builds
-     CFLAGS="-O2"
+     CFLAGS="$CFLAGS -O2"
      ;;
   esac
 
@@ -176,7 +175,7 @@ if test "$ac_test_CFLAGS" != "set"; then
 	echo "* (otherwise, a default of CFLAGS=-O3 will be used)    *"
 	echo "********************************************************"
 	echo ""
-        CFLAGS="-O3"
+        CFLAGS="$CFLAGS -O3"
   fi
 
   AX_CHECK_COMPILE_FLAG($CFLAGS, [], [
@@ -187,7 +186,6 @@ if test "$ac_test_CFLAGS" != "set"; then
         echo "* Use ./configure CFLAGS=... to specify your own flags *"
         echo "********************************************************"
         echo ""
-        CFLAGS=""
   ])
 
 fi

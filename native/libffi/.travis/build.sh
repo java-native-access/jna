@@ -55,7 +55,7 @@ function build_foreign_linux()
 
 function build_cross_linux()
 {
-    ${DOCKER} run --rm -t -i -v $(pwd):/opt ${SET_QEMU_CPU} -e HOST="${HOST}" -e CC="${HOST}-gcc-8 ${GCC_OPTIONS}" -e CXX="${HOST}-g++-8 ${GCC_OPTIONS}" -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" moxielogic/cross-ci-build-container:latest bash -c /opt/.travis/build-in-container.sh
+    ${DOCKER} run --rm -t -i -v $(pwd):/opt ${SET_QEMU_CPU} -e HOST="${HOST}" -e CC="${HOST}-gcc-8 ${GCC_OPTIONS}" -e CXX="${HOST}-g++-8 ${GCC_OPTIONS}" -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" quay.io/moxielogic/cross-ci-build-container:latest bash -c /opt/.travis/build-in-container.sh
 
     ./rlgl l --key=${RLGL_KEY} https://rl.gl
     ID=$(./rlgl start)
@@ -65,7 +65,7 @@ function build_cross_linux()
 
 function build_cross()
 {
-    ${DOCKER} pull quay.io/moxielogic/libffi-ci-${HOST} 
+    ${DOCKER} pull quay.io/moxielogic/libffi-ci-${HOST}
     ${DOCKER} run --rm -t -i -v $(pwd):/opt -e HOST="${HOST}" -e CC="${HOST}-gcc ${GCC_OPTIONS}" -e CXX="${HOST}-g++ ${GCC_OPTIONS}" -e TRAVIS_BUILD_DIR=/opt -e DEJAGNU="${DEJAGNU}" -e RUNTESTFLAGS="${RUNTESTFLAGS}" -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" quay.io/moxielogic/libffi-ci-${HOST} bash -c /opt/.travis/build-cross-in-container.sh
 
     ./rlgl l --key=${RLGL_KEY} https://rl.gl
@@ -106,7 +106,7 @@ case "$HOST" in
 	;;
     arm32v7-linux-gnu)
 	./autogen.sh
-        build_foreign_linux arm moxielogic/arm32v7-ci-build-container:latest 
+        build_foreign_linux arm quay.io/moxielogic/arm32v7-ci-build-container:latest
 	;;
     mips64el-linux-gnu | sparc64-linux-gnu)
         build_cfarm

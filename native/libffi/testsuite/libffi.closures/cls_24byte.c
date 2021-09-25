@@ -31,7 +31,7 @@ cls_struct_24byte cls_struct_24byte_fn(struct cls_struct_24byte b0,
 	 b0.a, b0.b, b0.c, b0.d,
 	 b1.a, b1.b, b1.c, b1.d,
 	 b2.a, b2.b, b2.c, b2.d,
-	 b3.a, b3.b, b3.c, b2.d,
+	 b3.a, b3.b, b3.c, b3.d,
 	 result.a, result.b, result.c, result.d);
 
   return result;
@@ -94,7 +94,7 @@ int main (void)
   args_dbl[4] = NULL;
 
   ffi_call(&cif, FFI_FN(cls_struct_24byte_fn), &res_dbl, args_dbl);
-  /* { dg-output "9 2 6 5 1 2 3 7 4 5 7 9 8 6 1 9: 22 15 17 25" } */
+  /* { dg-output "9 2 6 5 1 2 3 7 4 5 7 9 8 6 1 4: 22 15 17 25" } */
   printf("res: %g %g %d %g\n", res_dbl.a, res_dbl.b, res_dbl.c, res_dbl.d);
   /* { dg-output "\nres: 22 15 17 25" } */
 
@@ -105,7 +105,7 @@ int main (void)
 				   cls_struct_24byte,
 				   cls_struct_24byte))
 	     (code))(e_dbl, f_dbl, g_dbl, h_dbl);
-  /* { dg-output "\n9 2 6 5 1 2 3 7 4 5 7 9 8 6 1 9: 22 15 17 25" } */
+  /* { dg-output "\n9 2 6 5 1 2 3 7 4 5 7 9 8 6 1 4: 22 15 17 25" } */
   printf("res: %g %g %d %g\n", res_dbl.a, res_dbl.b, res_dbl.c, res_dbl.d);
   /* { dg-output "\nres: 22 15 17 25" } */
 

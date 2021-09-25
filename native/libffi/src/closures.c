@@ -34,6 +34,7 @@
 #include <fficonfig.h>
 #include <ffi.h>
 #include <ffi_common.h>
+#include <tramp.h>
 
 #ifdef __NetBSD__
 #include <sys/param.h>
@@ -112,6 +113,12 @@ ffi_closure_free (void *ptr)
   munmap(dataseg, rounded_size);
   munmap(codeseg, rounded_size);
 }
+
+int
+ffi_tramp_is_present (__attribute__((unused)) void *ptr)
+{
+  return 0;
+}
 #else /* !NetBSD with PROT_MPROTECT */
 
 #if !FFI_MMAP_EXEC_WRIT && !FFI_EXEC_TRAMPOLINE_TABLE
@@ -166,7 +173,6 @@ struct ffi_trampoline_table
 {
   /* contiguous writable and executable pages */
   vm_address_t config_page;
-  vm_address_t trampoline_page;
 
   /* free list tracking */
   uint16_t free_count;
@@ -210,7 +216,13 @@ ffi_trampoline_table_alloc (void)
 
   /* Remap the trampoline table on top of the placeholder page */
   trampoline_page = config_page + PAGE_MAX_SIZE;
+
+#ifdef HAVE_PTRAUTH
+  trampoline_page_template = (vm_address_t)(uintptr_t)ptrauth_auth_data((void *)&ffi_closure_trampoline_table_page, ptrauth_key_function_pointer, 0);
+#else
   trampoline_page_template = (vm_address_t)&ffi_closure_trampoline_table_page;
+#endif
+
 #ifdef __arm__
   /* ffi_closure_trampoline_table_page can be thumb-biased on some ARM archs */
   trampoline_page_template &= ~1UL;
@@ -218,7 +230,7 @@ ffi_trampoline_table_alloc (void)
   kt = vm_remap (mach_task_self (), &trampoline_page, PAGE_MAX_SIZE, 0x0,
 		 VM_FLAGS_OVERWRITE, mach_task_self (), trampoline_page_template,
 		 FALSE, &cur_prot, &max_prot, VM_INHERIT_SHARE);
-  if (kt != KERN_SUCCESS)
+  if (kt != KERN_SUCCESS || !(cur_prot & VM_PROT_EXECUTE))
     {
       vm_deallocate (mach_task_self (), config_page, PAGE_MAX_SIZE * 2);
       return NULL;
@@ -228,7 +240,6 @@ ffi_trampoline_table_alloc (void)
   table = calloc (1, sizeof (ffi_trampoline_table));
   table->free_count = FFI_TRAMPOLINE_COUNT;
   table->config_page = config_page;
-  table->trampoline_page = trampoline_page;
 
   /* Create and initialize the free list */
   table->free_list_pool =
@@ -238,7 +249,10 @@ ffi_trampoline_table_alloc (void)
     {
       ffi_trampoline_table_entry *entry = &table->free_list_pool[i];
       entry->trampoline =
-	(void *) (table->trampoline_page + (i * FFI_TRAMPOLINE_SIZE));
+	(void *) (trampoline_page + (i * FFI_TRAMPOLINE_SIZE));
+#ifdef HAVE_PTRAUTH
+      entry->trampoline = ptrauth_sign_unauthenticated(entry->trampoline, ptrauth_key_function_pointer, 0);
+#endif
 
       if (i < table->free_count - 1)
 	entry->next = &table->free_list_pool[i + 1];
@@ -307,9 +321,6 @@ ffi_closure_alloc (size_t size, void **code)
 
   /* Initialize the return values */
   *code = entry->trampoline;
-#ifdef HAVE_PTRAUTH
-  *code = ptrauth_sign_unauthenticated (*code, ptrauth_key_asia, 0);
-#endif
   closure->trampoline_table = table;
   closure->trampoline_table_entry = entry;
 
@@ -688,6 +699,7 @@ static struct
 #ifdef HAVE_MEMFD_CREATE
   { open_temp_exec_file_memfd, "libffi", 0 },
 #endif
+  { open_temp_exec_file_env, "LIBFFI_TMPDIR", 0 },
   { open_temp_exec_file_env, "TMPDIR", 0 },
   { open_temp_exec_file_dir, "/tmp", 0 },
   { open_temp_exec_file_dir, "/var/tmp", 0 },
@@ -860,6 +872,12 @@ dlmmap (void *start, size_t length, int prot,
 	  && flags == (MAP_PRIVATE | MAP_ANONYMOUS)
 	  && fd == -1 && offset == 0);
 
+  if (execfd == -1 && ffi_tramp_is_supported ())
+    {
+      ptr = mmap (start, length, prot & ~PROT_EXEC, flags, fd, offset);
+      return ptr;
+    }
+
   if (execfd == -1 && is_emutramp_enabled ())
     {
       ptr = mmap (start, length, prot & ~PROT_EXEC, flags, fd, offset);
@@ -939,7 +957,7 @@ segment_holding_code (mstate m, char* addr)
 void *
 ffi_closure_alloc (size_t size, void **code)
 {
-  void *ptr;
+  void *ptr, *ftramp;
 
   if (!code)
     return NULL;
@@ -951,6 +969,17 @@ ffi_closure_alloc (size_t size, void **code)
       msegmentptr seg = segment_holding (gm, ptr);
 
       *code = add_segment_exec_offset (ptr, seg);
+      if (!ffi_tramp_is_supported ())
+        return ptr;
+
+      ftramp = ffi_tramp_alloc (0);
+      if (ftramp == NULL)
+      {
+        dlfree (FFI_RESTORE_PTR (ptr));
+        return NULL;
+      }
+      *code = ffi_tramp_get_addr (ftramp);
+      ((ffi_closure *) ptr)->ftramp = ftramp;
     }
 
   return ptr;
@@ -965,7 +994,11 @@ ffi_data_to_code_pointer (void *data)
      burden of managing this memory themselves, in which case this
      we'll just return data. */
   if (seg)
-    return add_segment_exec_offset (data, seg);
+    {
+      if (!ffi_tramp_is_supported ())
+        return add_segment_exec_offset (data, seg);
+      return ffi_tramp_get_addr (((ffi_closure *) data)->ftramp);
+    }
   else
     return data;
 }
@@ -983,8 +1016,17 @@ ffi_closure_free (void *ptr)
   if (seg)
     ptr = sub_segment_exec_offset (ptr, seg);
 #endif
+  if (ffi_tramp_is_supported ())
+    ffi_tramp_free (((ffi_closure *) ptr)->ftramp);
 
   dlfree (FFI_RESTORE_PTR (ptr));
+}
+
+int
+ffi_tramp_is_present (void *ptr)
+{
+  msegmentptr seg = segment_holding (gm, ptr);
+  return seg != NULL && ffi_tramp_is_supported();
 }
 
 # else /* ! FFI_MMAP_EXEC_WRIT */
@@ -1013,6 +1055,12 @@ void *
 ffi_data_to_code_pointer (void *data)
 {
   return data;
+}
+
+int
+ffi_tramp_is_present (__attribute__((unused)) void *ptr)
+{
+  return 0;
 }
 
 # endif /* ! FFI_MMAP_EXEC_WRIT */

@@ -7,7 +7,7 @@
 /* { dg-do run } */
 #include "ffitest.h"
 
-unsigned char test_func_fn(unsigned char a1, unsigned char a2,
+static unsigned char test_func_fn(unsigned char a1, unsigned char a2,
 			   unsigned char a3, unsigned char a4)
 {
   unsigned char result;

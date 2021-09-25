@@ -16,7 +16,7 @@ typedef struct cls_struct_6byte {
   unsigned char d;
 } cls_struct_6byte;
 
-cls_struct_6byte cls_struct_6byte_fn(struct cls_struct_6byte a1,
+static cls_struct_6byte cls_struct_6byte_fn(struct cls_struct_6byte a1,
 			    struct cls_struct_6byte a2)
 {
   struct cls_struct_6byte result;

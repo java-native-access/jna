@@ -7,7 +7,7 @@
 /* { dg-do run } */
 #include "ffitest.h"
 
-signed short test_func_fn(signed char a1, signed short a2,
+static signed short test_func_fn(signed char a1, signed short a2,
 			  signed char a3, signed short a4)
 {
   signed short result;
