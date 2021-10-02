@@ -422,12 +422,17 @@ ffi_error(JNIEnv* env, const char* op, ffi_status status) {
   char msg[MSG_SIZE];
   switch(status) {
   case FFI_BAD_ABI:
-    snprintf(msg, sizeof(msg), "%s: Invalid calling convention", op);
+    snprintf(msg, sizeof(msg), "%s: Invalid calling convention (FFI_BAD_ABI)", op);
     throwByName(env, EIllegalArgument, msg);
     return JNI_TRUE;
   case FFI_BAD_TYPEDEF:
     snprintf(msg, sizeof(msg),
-             "%s: Invalid structure definition (native typedef error)", op);
+             "%s: Invalid structure definition (native typedef error, FFI_BAD_TYPEDEF)", op);
+    throwByName(env, EIllegalArgument, msg);
+    return JNI_TRUE;
+  case FFI_BAD_ARGTYPE:
+    snprintf(msg, sizeof(msg),
+             "%s: Invalid argument type (FFI_BAD_ARGTYPE)", op);
     throwByName(env, EIllegalArgument, msg);
     return JNI_TRUE;
   default:
