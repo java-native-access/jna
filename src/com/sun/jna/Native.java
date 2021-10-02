@@ -1643,6 +1643,8 @@ public final class Native implements Version {
     private static final int CVT_TYPE_MAPPER_WSTRING = 25;
     private static final int CVT_OBJECT = 26;
     private static final int CVT_JNIENV = 27;
+    private static final int CVT_SHORT = 28;
+    private static final int CVT_BYTE = 29;
 
     private static int getConversion(Class<?> type, TypeMapper mapper, boolean allowObjects) {
         if (type == Void.class) type = void.class;

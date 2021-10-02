@@ -201,6 +201,16 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       cb->conversion_flags[i] = CVT_FLOAT;
       cvt = 1;
     }
+    else if (cb->arg_types[i]->type == FFI_TYPE_UINT16 || cb->arg_types[i]->type == FFI_TYPE_SINT16) {
+      cb->java_arg_types[i+3] = &ffi_type_sint;
+      cb->conversion_flags[i] = CVT_SHORT;
+      cvt = 1;
+    }
+    else if (cb->arg_types[i]->type == FFI_TYPE_UINT8 || cb->arg_types[i]->type == FFI_TYPE_SINT8) {
+      cb->java_arg_types[i+3] = &ffi_type_sint;
+      cb->conversion_flags[i] = CVT_BYTE;
+      cvt = 1;
+    }
     else if (cb->java_arg_types[i+3]->type == FFI_TYPE_STRUCT) {
       // All callback structure arguments are passed as a jobject
       cb->java_arg_types[i+3] = &ffi_type_pointer;
@@ -428,6 +438,14 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
         case CVT_FLOAT:
 	  args[i+3] = alloca(sizeof(double));
 	  *((double *)args[i+3]) = *(float*)cbargs[i];
+          break;
+        case CVT_SHORT:
+	  args[i+3] = alloca(sizeof(int));
+	  *((int *)args[i+3]) = *(short*)cbargs[i];
+          break;
+        case CVT_BYTE:
+	  args[i+3] = alloca(sizeof(int));
+          *((int *)args[i+3]) = *(char*)cbargs[i];
           break;
         case CVT_DEFAULT:
           break;
