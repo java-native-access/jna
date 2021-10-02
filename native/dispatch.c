@@ -498,19 +498,39 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     }
     else if ((*env)->IsInstanceOf(env, arg, classByte)) {
       c_args[i].b = (*env)->GetByteField(env, arg, FID_Byte_value);
-      arg_types[i] = &ffi_type_sint8;
-      arg_values[i] = &c_args[i].b;
+      // Promote char to int if we prepare a varargs call
+      if(fixed_args && i >= fixed_args && sizeof(char) < sizeof(int)) {
+        arg_types[i] = &ffi_type_uint32;
+        arg_values[i] = alloca(sizeof(int));
+        *(int*)arg_values[i] = (int) c_args[i].b;
+      } else {
+        arg_types[i] = &ffi_type_sint8;
+        arg_values[i] = &c_args[i].b;
+      }
     }
     else if ((*env)->IsInstanceOf(env, arg, classShort)) {
       c_args[i].s = (*env)->GetShortField(env, arg, FID_Short_value);
-      arg_types[i] = &ffi_type_sint16;
-      arg_values[i] = &c_args[i].s;
+      // Promote short to int if we prepare a varargs call
+      if(fixed_args && i >= fixed_args && sizeof(short) < sizeof(int)) {
+        arg_types[i] = &ffi_type_uint32;
+        arg_values[i] = alloca(sizeof(int));
+        *(int*)arg_values[i] = (int) c_args[i].s;
+      } else {
+        arg_types[i] = &ffi_type_sint16;
+        arg_values[i] = &c_args[i].s;
+      }
     }
     else if ((*env)->IsInstanceOf(env, arg, classCharacter)) {
       if (sizeof(wchar_t) == 2) {
         c_args[i].c = (*env)->GetCharField(env, arg, FID_Character_value);
-        arg_types[i] = &ffi_type_uint16;
-        arg_values[i] = &c_args[i].c;
+        if(fixed_args && i >= fixed_args && sizeof(short) < sizeof(int)) {
+          arg_types[i] = &ffi_type_uint32;
+          arg_values[i] = alloca(sizeof(int));
+          *(int*)arg_values[i] = (int) c_args[i].c;    
+        } else {
+          arg_types[i] = &ffi_type_uint16;
+          arg_values[i] = &c_args[i].c;
+        }
       }
       else if (sizeof(wchar_t) == 4) {
         c_args[i].i = (*env)->GetCharField(env, arg, FID_Character_value);
