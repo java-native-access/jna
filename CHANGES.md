@@ -8,6 +8,7 @@ Next Release (5.10.0)
 Features
 --------
 * [#1377](https://github.com/java-native-access/jna/pull/1377): Add `RegLoadAppKey` to `c.s.j.p.win32.Advapi32` and `registryLoadAppKey` to `c.s.j.p.win32.Advapi32Util` - [@mfilippov](https://github.com/mfilippov).
+* [#1093](https://github.com/java-native-access/jna/issues/1093): Add `OpenFileMapping` to `c.s.j.p.win32.Kernel32` - [@lmitusinski](https://github.com/lmitusinski).
 
 Bug Fixes
 ---------

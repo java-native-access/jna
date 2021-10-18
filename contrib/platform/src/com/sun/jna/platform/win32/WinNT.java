@@ -787,6 +787,13 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SECTION_MAP_READ = 0x0004;
     int SECTION_MAP_EXECUTE = 0x0008;
     int SECTION_EXTEND_SIZE = 0x0010;
+    int SECTION_ALL_ACCESS = WinNT.STANDARD_RIGHTS_REQUIRED
+            | WinNT.SECTION_QUERY
+            | WinNT.SECTION_MAP_WRITE
+            | WinNT.SECTION_MAP_READ
+            | WinNT.SECTION_MAP_EXECUTE
+            | WinNT.SECTION_EXTEND_SIZE;
+    int SECTION_MAP_EXECUTE_EXPLICIT = 0x0020;
 
     int FILE_SHARE_READ = 0x00000001;
     int FILE_SHARE_WRITE = 0x00000002;

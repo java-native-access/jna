@@ -1108,6 +1108,25 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
             int dwMaximumSizeHigh, int dwMaximumSizeLow, String lpName);
 
     /**
+     * Opens a named file mapping object.
+     *
+     * @param dwDesiredAccess
+     *            The access to the file mapping object. This access is checked
+     *            against any security descriptor on the target file mapping object.
+     *            For a list of values, see File Mapping Security and Access Rights.
+     * @param bInheritHandle
+     *            If this parameter is true, a process created by the CreateProcess
+     *            function can inherit the handle; otherwise,
+     *            the handle cannot be inherited.
+     * @param lpName
+     *            The name of the file mapping object to be opened.
+     * @return If the function succeeds, the return value is an open handle to
+     *         the specified file mapping object. If the function fails, the
+     *         return value is NULL. To get extended error information, call GetLastError.
+     */
+    HANDLE OpenFileMapping(int dwDesiredAccess, boolean bInheritHandle, String lpName);
+
+    /**
      * Maps a view of a file mapping into the address space of a calling
      * process.
      *

@@ -35,9 +35,11 @@ import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_REPARSE_POINT;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -91,6 +93,7 @@ import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
+
 
 import junit.framework.TestCase;
 import org.junit.Assume;
@@ -1962,4 +1965,127 @@ public class Kernel32Test extends TestCase {
             Kernel32.INSTANCE.UnregisterApplicationRestart();
         }
     }
+
+    public void testCreateFileMapping() throws IOException {
+        // Test creating an unnamed file mapping. The test creates a file, that
+        // containes "Hello World" followed by a NULL byte. The file is mapped
+        // into memory and read with the normal pointer getString funtion to
+        // read it as a NULL terminated string.
+
+        String testString = "Hello World";
+        File testFile = File.createTempFile("jna-test", ".txt");
+
+        try {
+            OutputStream os = new FileOutputStream(testFile);
+            try {
+                os.write(testString.getBytes("UTF-8"));
+                os.write(0);
+            } finally {
+                os.close();
+            }
+
+            SYSTEM_INFO lpSystemInfo = new SYSTEM_INFO();
+            Kernel32.INSTANCE.GetSystemInfo(lpSystemInfo);
+
+            HANDLE fileHandle = Kernel32.INSTANCE.CreateFile(
+                    testFile.getAbsolutePath(),
+                    WinNT.GENERIC_READ | WinNT.GENERIC_WRITE,
+                    0,
+                    null,
+                    WinNT.OPEN_EXISTING,
+                    WinNT.FILE_ATTRIBUTE_NORMAL,
+                    null);
+
+            assertNotNull(fileHandle);
+
+            HANDLE fileMappingHandle = Kernel32.INSTANCE.CreateFileMapping(
+                    fileHandle,
+                    null,
+                    WinNT.PAGE_READWRITE,
+                    0,
+                    lpSystemInfo.dwAllocationGranularity.intValue(),
+                    null);
+
+            assertNotNull(fileMappingHandle);
+
+            Pointer mappingAddress = Kernel32.INSTANCE.MapViewOfFile(
+                    fileMappingHandle,
+                    WinNT.FILE_MAP_ALL_ACCESS,
+                    0,
+                    0,
+                    lpSystemInfo.dwAllocationGranularity.intValue());
+
+            assertNotNull(mappingAddress);
+
+            assertEquals(testString, mappingAddress.getString(0, "UTF-8"));
+
+            assertTrue(Kernel32.INSTANCE.UnmapViewOfFile(mappingAddress));
+
+            assertTrue(Kernel32.INSTANCE.CloseHandle(fileMappingHandle));
+
+            assertTrue(Kernel32.INSTANCE.CloseHandle(fileHandle));
+        } finally {
+            testFile.delete();
+        }
+    }
+
+    public void testOpenFileMapping() throws IOException {
+        // Test creating an named file mapping. The test creates a file mapping
+        // backed by the paging paging file. A second Mapping is opened from
+        // that. The first mapping is used to write a test string and the
+        // second is used to read it.
+
+        int mappingSize = 256;
+        String nameOfMapping = "JNATestMapping";
+        String testString = "Hello World";
+
+        HANDLE fileMappingHandle1 = Kernel32.INSTANCE.CreateFileMapping(
+                WinNT.INVALID_HANDLE_VALUE,
+                null,
+                WinNT.PAGE_READWRITE,
+                0,
+                mappingSize,
+                nameOfMapping);
+
+        assertNotNull("Error: " + Kernel32.INSTANCE.GetLastError(), fileMappingHandle1);
+
+        HANDLE fileMappingHandle2 = Kernel32.INSTANCE.OpenFileMapping(
+                WinNT.FILE_MAP_ALL_ACCESS,
+                false,
+                nameOfMapping);
+
+        assertNotNull(fileMappingHandle1);
+
+        Pointer mappingAddress1 = Kernel32.INSTANCE.MapViewOfFile(
+                fileMappingHandle1,
+                WinNT.FILE_MAP_ALL_ACCESS,
+                0,
+                0,
+                mappingSize);
+
+        assertNotNull(mappingAddress1);
+
+        Pointer mappingAddress2 = Kernel32.INSTANCE.MapViewOfFile(
+                fileMappingHandle2,
+                WinNT.FILE_MAP_ALL_ACCESS,
+                0,
+                0,
+                mappingSize);
+
+        assertNotNull(mappingAddress2);
+
+        mappingAddress1.setString(0, testString, "UTF-8");
+
+        assertEquals(testString, mappingAddress2.getString(0, "UTF-8"));
+
+        assertTrue(Kernel32.INSTANCE.UnmapViewOfFile(mappingAddress1));
+
+        assertTrue(Kernel32.INSTANCE.UnmapViewOfFile(mappingAddress2));
+
+        assertTrue(Kernel32.INSTANCE.CloseHandle(fileMappingHandle1));
+
+        assertTrue(Kernel32.INSTANCE.CloseHandle(fileMappingHandle2));
+
+    }
+
 }

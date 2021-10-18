@@ -218,6 +218,12 @@ public interface WinBase extends WinDef, BaseTSD {
     int FileIdExtdDirectoryInfo         = 19; // 0x13
     int FileIdExtdDirectoryRestartInfo  = 20; // 0x14
 
+    int FILE_MAP_COPY = WinNT.SECTION_QUERY;
+    int FILE_MAP_WRITE = WinNT.SECTION_MAP_WRITE;
+    int FILE_MAP_READ = WinNT.SECTION_MAP_READ;
+    int FILE_MAP_ALL_ACCESS = WinNT.SECTION_ALL_ACCESS;
+    int FILE_MAP_EXECUTE = WinNT.SECTION_MAP_EXECUTE_EXPLICIT;
+
     /**
      * Contains the basic information for a file. Used for file handles.
      */
