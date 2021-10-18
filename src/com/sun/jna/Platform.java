@@ -248,6 +248,9 @@ public final class Platform {
         else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
             arch = "x86-64";
         }
+        else if ("zarch_64".equals(arch)) {
+            arch = "s390x";
+        }
         // Work around OpenJDK mis-reporting os.arch
         // https://bugs.openjdk.java.net/browse/JDK-8073139
         if ("ppc64".equals(arch) && "little".equals(System.getProperty("sun.cpu.endian"))) {

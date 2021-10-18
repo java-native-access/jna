@@ -9,6 +9,7 @@ Features
 --------
 * [#1377](https://github.com/java-native-access/jna/pull/1377): Add `RegLoadAppKey` to `c.s.j.p.win32.Advapi32` and `registryLoadAppKey` to `c.s.j.p.win32.Advapi32Util` - [@mfilippov](https://github.com/mfilippov).
 * [#1093](https://github.com/java-native-access/jna/issues/1093): Add `OpenFileMapping` to `c.s.j.p.win32.Kernel32` - [@lmitusinski](https://github.com/lmitusinski).
+* [#1388](https://github.com/java-native-access/jna/issues/1388): Map the arch `zarch_64` as reported by SAPJVM8 to `s390x` - [@MBaesken](https://github.com/MBaesken).
 
 Bug Fixes
 ---------
