@@ -890,7 +890,8 @@ addVarArgs(const char *fmt, ...) {
     case 'l':
       sum += (int) va_arg(ap, int64_t);
       break;
-    case 'c':
+    case 's': // short (promoted to 'int' when passed through '...') 
+    case 'c': // byte/char (promoted to 'int' when passed through '...')
       sum += (int) va_arg(ap, int);
       break;
     case 'f': // float (promoted to ‘double’ when passed through ‘...’)

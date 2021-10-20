@@ -573,6 +573,94 @@ L(UW31):
 	# cfi_endproc
 ENDF(C(ffi_closure_STDCALL))
 
+#if defined(FFI_EXEC_STATIC_TRAMP)
+	.balign	16
+	.globl	C(ffi_closure_i386_alt)
+	FFI_HIDDEN(C(ffi_closure_i386_alt))
+C(ffi_closure_i386_alt):
+	/* See the comments above trampoline_code_table. */
+	_CET_ENDBR
+	movl	4(%esp), %eax			/* Load closure in eax */
+	add	$8, %esp			/* Restore the stack */
+	jmp	C(ffi_closure_i386)
+ENDF(C(ffi_closure_i386_alt))
+
+	.balign	16
+	.globl	C(ffi_closure_REGISTER_alt)
+	FFI_HIDDEN(C(ffi_closure_REGISTER_alt))
+C(ffi_closure_REGISTER_alt):
+	/* See the comments above trampoline_code_table. */
+	_CET_ENDBR
+	movl	(%esp), %eax			/* Restore eax */
+	add	$4, %esp			/* Leave closure on stack */
+	jmp	C(ffi_closure_REGISTER)
+ENDF(C(ffi_closure_REGISTER_alt))
+
+	.balign	16
+	.globl	C(ffi_closure_STDCALL_alt)
+	FFI_HIDDEN(C(ffi_closure_STDCALL_alt))
+C(ffi_closure_STDCALL_alt):
+	/* See the comments above trampoline_code_table. */
+	_CET_ENDBR
+	movl	4(%esp), %eax			/* Load closure in eax */
+	add	$8, %esp			/* Restore the stack */
+	jmp	C(ffi_closure_STDCALL)
+ENDF(C(ffi_closure_STDCALL_alt))
+
+/*
+ * Below is the definition of the trampoline code table. Each element in
+ * the code table is a trampoline.
+ *
+ * Because we jump to the trampoline, we place a _CET_ENDBR at the
+ * beginning of the trampoline to mark it as a valid branch target. This is
+ * part of the the Intel CET (Control Flow Enforcement Technology).
+ */
+/*
+ * The trampoline uses register eax.  It saves the original value of eax on
+ * the stack.
+ *
+ * The trampoline has two parameters - target code to jump to and data for
+ * the target code. The trampoline extracts the parameters from its parameter
+ * block (see tramp_table_map()). The trampoline saves the data address on
+ * the stack. Finally, it jumps to the target code.
+ *
+ * The target code can choose to:
+ *
+ * - restore the value of eax
+ * - load the data address in a register
+ * - restore the stack pointer to what it was when the trampoline was invoked.
+ */
+#ifdef ENDBR_PRESENT
+#define X86_DATA_OFFSET		4081
+#define X86_CODE_OFFSET		4070
+#else
+#define X86_DATA_OFFSET		4085
+#define X86_CODE_OFFSET		4074
+#endif
+
+	.align	X86_TRAMP_MAP_SIZE
+	.globl	C(trampoline_code_table)
+	FFI_HIDDEN(C(trampoline_code_table))
+C(trampoline_code_table):
+	.rept	X86_TRAMP_MAP_SIZE / X86_TRAMP_SIZE
+	_CET_ENDBR
+	sub	$8, %esp
+	movl	%eax, (%esp)			/* Save %eax on stack */
+	call	1f				/* Get next PC into %eax */
+	movl	X86_DATA_OFFSET(%eax), %eax	/* Copy data into %eax */
+	movl	%eax, 4(%esp)			/* Save data on stack */
+	call	1f				/* Get next PC into %eax */
+	movl	X86_CODE_OFFSET(%eax), %eax	/* Copy code into %eax */
+	jmp	*%eax				/* Jump to code */
+1:
+	mov	(%esp), %eax
+	ret
+	.align	4
+	.endr
+ENDF(C(trampoline_code_table))
+	.align	X86_TRAMP_MAP_SIZE
+#endif /* FFI_EXEC_STATIC_TRAMP */
+
 #if !FFI_NO_RAW_API
 
 #define raw_closure_S_FS	(16+16+12)
@@ -1131,6 +1219,7 @@ L(EFDE9):
 #endif /* __APPLE__ */
 
 #endif /* ifndef _MSC_VER */
+
 #endif /* ifdef __i386__ */
 
 #if defined __ELF__ && defined __linux__

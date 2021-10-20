@@ -34,6 +34,7 @@
 #include <ffi_common.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <tramp.h>
 #include "internal.h"
 
 /* Force FFI_TYPE_LONGDOUBLE to be different than FFI_TYPE_DOUBLE;
@@ -258,6 +259,13 @@ static const struct abi_params abi_params[FFI_LAST_ABI] = {
 
 extern void FFI_DECLARE_FASTCALL ffi_call_i386(struct call_frame *, char *) FFI_HIDDEN;
 
+/* We perform some black magic here to use some of the parent's stack frame in
+ * ffi_call_i386() that breaks with the MSVC compiler with the /RTCs or /GZ
+ * flags.  Disable the 'Stack frame run time error checking' for this function
+ * so we don't hit weird exceptions in debug builds. */
+#if defined(_MSC_VER)
+#pragma runtime_checks("s", off)
+#endif
 static void
 ffi_call_int (ffi_cif *cif, void (*fn)(void), void *rvalue,
 	      void **avalue, void *closure)
@@ -393,6 +401,9 @@ ffi_call_int (ffi_cif *cif, void (*fn)(void), void *rvalue,
 
   ffi_call_i386 (frame, stack);
 }
+#if defined(_MSC_VER)
+#pragma runtime_checks("s", restore)
+#endif
 
 void
 ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
@@ -414,6 +425,11 @@ ffi_call_go (ffi_cif *cif, void (*fn)(void), void *rvalue,
 void FFI_HIDDEN ffi_closure_i386(void);
 void FFI_HIDDEN ffi_closure_STDCALL(void);
 void FFI_HIDDEN ffi_closure_REGISTER(void);
+#if defined(FFI_EXEC_STATIC_TRAMP)
+void FFI_HIDDEN ffi_closure_i386_alt(void);
+void FFI_HIDDEN ffi_closure_STDCALL_alt(void);
+void FFI_HIDDEN ffi_closure_REGISTER_alt(void);
+#endif
 
 struct closure_frame
 {
@@ -525,10 +541,17 @@ ffi_closure_inner (struct closure_frame *frame, char *stack)
 
   frame->fun (cif, rvalue, avalue, frame->user_data);
 
-  if (cabi == FFI_STDCALL)
-    return flags + (cif->bytes << X86_RET_POP_SHIFT);
-  else
-    return flags;
+  switch (cabi)
+    {
+    case FFI_STDCALL:
+      return flags | (cif->bytes << X86_RET_POP_SHIFT);
+    case FFI_THISCALL:
+    case FFI_FASTCALL:
+      return flags | ((cif->bytes - (narg_reg * FFI_SIZEOF_ARG))
+          << X86_RET_POP_SHIFT);
+    default:
+      return flags;
+    }
 }
 
 ffi_status
@@ -545,12 +568,12 @@ ffi_prep_closure_loc (ffi_closure* closure,
   switch (cif->abi)
     {
     case FFI_SYSV:
-    case FFI_THISCALL:
-    case FFI_FASTCALL:
     case FFI_MS_CDECL:
       dest = ffi_closure_i386;
       break;
     case FFI_STDCALL:
+    case FFI_THISCALL:
+    case FFI_FASTCALL:
     case FFI_PASCAL:
       dest = ffi_closure_STDCALL;
       break;
@@ -562,6 +585,22 @@ ffi_prep_closure_loc (ffi_closure* closure,
       return FFI_BAD_ABI;
     }
 
+#if defined(FFI_EXEC_STATIC_TRAMP)
+  if (ffi_tramp_is_present(closure))
+    {
+      /* Initialize the static trampoline's parameters. */
+      if (dest == ffi_closure_i386)
+        dest = ffi_closure_i386_alt;
+      else if (dest == ffi_closure_STDCALL)
+        dest = ffi_closure_STDCALL_alt;
+      else
+        dest = ffi_closure_REGISTER_alt;
+      ffi_tramp_set_parms (closure->ftramp, dest, closure);
+      goto out;
+    }
+#endif
+
+  /* Initialize the dynamic trampoline. */
   /* endbr32.  */
   *(UINT32 *) tramp = 0xfb1e0ff3;
 
@@ -573,6 +612,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
   tramp[9] = 0xe9;
   *(unsigned *)(tramp + 10) = (unsigned)dest - ((unsigned)codeloc + 14);
 
+out:
   closure->cif = cif;
   closure->fun = fun;
   closure->user_data = user_data;
@@ -770,4 +810,17 @@ ffi_raw_call(ffi_cif *cif, void (*fn)(void), void *rvalue, ffi_raw *avalue)
   ffi_call_i386 (frame, stack);
 }
 #endif /* !FFI_NO_RAW_API */
+
+#if defined(FFI_EXEC_STATIC_TRAMP)
+void *
+ffi_tramp_arch (size_t *tramp_size, size_t *map_size)
+{
+  extern void *trampoline_code_table;
+
+  *map_size = X86_TRAMP_MAP_SIZE;
+  *tramp_size = X86_TRAMP_SIZE;
+  return &trampoline_code_table;
+}
+#endif
+
 #endif /* __i386__ */

@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   prep_cif.c - Copyright (c) 2011, 2012  Anthony Green
+   prep_cif.c - Copyright (c) 2011, 2012, 2021  Anthony Green
                 Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -231,7 +231,26 @@ ffi_status ffi_prep_cif_var(ffi_cif *cif,
                             ffi_type *rtype,
                             ffi_type **atypes)
 {
-  return ffi_prep_cif_core(cif, abi, 1, nfixedargs, ntotalargs, rtype, atypes);
+  ffi_status rc;
+  size_t int_size = ffi_type_sint.size;
+  int i;
+
+  rc = ffi_prep_cif_core(cif, abi, 1, nfixedargs, ntotalargs, rtype, atypes);
+
+  if (rc != FFI_OK)
+    return rc;
+
+  for (i = 1; i < ntotalargs; i++)
+    {
+      ffi_type *arg_type = atypes[i];
+      if (arg_type == &ffi_type_float
+          || ((arg_type->type != FFI_TYPE_STRUCT
+               && arg_type->type != FFI_TYPE_COMPLEX)
+              && arg_type->size < int_size))
+        return FFI_BAD_ARGTYPE;
+    }
+
+  return FFI_OK;
 }
 
 #if FFI_CLOSURES

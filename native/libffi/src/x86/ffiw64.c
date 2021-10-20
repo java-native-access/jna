@@ -30,6 +30,7 @@
 #include <ffi_common.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <tramp.h>
 
 #ifdef X86_WIN64
 #define EFI64(name) name
@@ -107,6 +108,13 @@ EFI64(ffi_prep_cif_machdep)(ffi_cif *cif)
   return FFI_OK;
 }
 
+/* We perform some black magic here to use some of the parent's stack frame in
+ * ffi_call_win64() that breaks with the MSVC compiler with the /RTCs or /GZ
+ * flags.  Disable the 'Stack frame run time error checking' for this function
+ * so we don't hit weird exceptions in debug builds. */
+#if defined(_MSC_VER)
+#pragma runtime_checks("s", off)
+#endif
 static void
 ffi_call_int (ffi_cif *cif, void (*fn)(void), void *rvalue,
 	      void **avalue, void *closure)
@@ -171,6 +179,9 @@ ffi_call_int (ffi_cif *cif, void (*fn)(void), void *rvalue,
 
   ffi_call_win64 (stack, frame, closure);
 }
+#if defined(_MSC_VER)
+#pragma runtime_checks("s", restore)
+#endif
 
 void
 EFI64(ffi_call)(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
@@ -187,6 +198,9 @@ EFI64(ffi_call_go)(ffi_cif *cif, void (*fn)(void), void *rvalue,
 
 
 extern void ffi_closure_win64(void) FFI_HIDDEN;
+#if defined(FFI_EXEC_STATIC_TRAMP)
+extern void ffi_closure_win64_alt(void) FFI_HIDDEN;
+#endif
 
 #ifdef FFI_GO_CLOSURES
 extern void ffi_go_closure_win64(void) FFI_HIDDEN;
@@ -220,9 +234,20 @@ EFI64(ffi_prep_closure_loc)(ffi_closure* closure,
       return FFI_BAD_ABI;
     }
 
+#if defined(FFI_EXEC_STATIC_TRAMP)
+  if (ffi_tramp_is_present(closure))
+    {
+      /* Initialize the static trampoline's parameters. */
+      ffi_tramp_set_parms (closure->ftramp, ffi_closure_win64_alt, closure);
+      goto out;
+    }
+#endif
+
+  /* Initialize the dynamic trampoline. */
   memcpy (tramp, trampoline, sizeof(trampoline));
   *(UINT64 *)(tramp + sizeof (trampoline)) = (uintptr_t)ffi_closure_win64;
 
+out:
   closure->cif = cif;
   closure->fun = fun;
   closure->user_data = user_data;

@@ -292,9 +292,6 @@ proc libffi-init { args } {
     verbose "libffi $blddirffi"
 
     # Which compiler are we building with?
-    set tmp [grep "$blddirffi/config.log" "^ax_cv_c_compiler_vendor.*$"]
-    regexp -- {^[^=]*=(.*)$} $tmp nil compiler_vendor
-
     if { [string match $compiler_vendor "gnu"] } {
         set gccdir [lookfor_file $tool_root_dir gcc/libgcc.a]
         if {$gccdir != ""} {

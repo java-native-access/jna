@@ -18,7 +18,7 @@ typedef struct cls_struct_7byte {
   unsigned char g;
 } cls_struct_7byte;
 
-cls_struct_7byte cls_struct_7byte_fn(struct cls_struct_7byte a1,
+static cls_struct_7byte cls_struct_7byte_fn(struct cls_struct_7byte a1,
 			    struct cls_struct_7byte a2)
 {
   struct cls_struct_7byte result;

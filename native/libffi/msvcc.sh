@@ -52,7 +52,7 @@ ml="ml"
 safeseh="-safeseh"
 output=
 libpaths=
-libversion=7
+libversion=8
 verbose=
 
 while [ $# -gt 0 ]

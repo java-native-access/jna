@@ -38,7 +38,8 @@ toolexeclib_LTLIBRARIES = libffi.la
 noinst_LTLIBRARIES = libffi_convenience.la
 
 libffi_la_SOURCES = src/prep_cif.c src/types.c \
-		src/raw_api.c src/java_raw_api.c src/closures.c
+		src/raw_api.c src/java_raw_api.c src/closures.c \
+		src/tramp.c
 
 if FFI_DEBUG
 libffi_la_SOURCES += src/debug.c

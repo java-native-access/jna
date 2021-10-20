@@ -15,7 +15,7 @@ typedef struct cls_struct_9byte {
   double b;
 } cls_struct_9byte;
 
-cls_struct_9byte cls_struct_9byte_fn(struct cls_struct_9byte b1,
+static cls_struct_9byte cls_struct_9byte_fn(struct cls_struct_9byte b1,
 			    struct cls_struct_9byte b2)
 {
   struct cls_struct_9byte result;

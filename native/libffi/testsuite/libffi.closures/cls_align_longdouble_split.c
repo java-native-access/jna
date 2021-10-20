@@ -19,7 +19,7 @@ typedef struct cls_struct_align {
   long double g;
 } cls_struct_align;
 
-cls_struct_align cls_struct_align_fn(
+static cls_struct_align cls_struct_align_fn(
 	cls_struct_align	a1,
 	cls_struct_align	a2)
 {

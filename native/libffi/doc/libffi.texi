@@ -18,7 +18,7 @@
 This manual is for libffi, a portable foreign function interface
 library.
 
-Copyright @copyright{} 2008--2019 Anthony Green and Red Hat, Inc.
+Copyright @copyright{} 2008--2019, 2021 Anthony Green and Red Hat, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -65,6 +65,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 @menu
 * Introduction::                What is libffi?
 * Using libffi::                How to use libffi.
+* Memory Usage::                Where memory for closures comes from.
 * Missing Features::            Things libffi can't do.
 * Index::                       Index.
 @end menu
@@ -176,6 +177,11 @@ variadic arguments.  It must be greater than zero.
 @var{ntotalargs} the total number of arguments, including variadic
 and fixed arguments.  @var{argtypes} must have this many elements.
 
+@code{ffi_prep_cif_var} will return @code{FFI_BAD_ARGTYPE} if any of
+the variable argument types are @code{ffi_type_float} (promote to
+@code{ffi_type_double} first), or any integer type small than an int
+(promote to an int-sized type first).
+
 Note that, different cif's must be prepped for calls to the same
 function when different numbers of arguments are passed.
 
@@ -249,26 +255,26 @@ int main()
   void *values[1];
   char *s;
   ffi_arg rc;
-  
-  /* Initialize the argument info vectors */    
+
+  /* Initialize the argument info vectors */
   args[0] = &ffi_type_pointer;
   values[0] = &s;
-  
+
   /* Initialize the cif */
-  if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, 
+  if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
 		       &ffi_type_sint, args) == FFI_OK)
     @{
       s = "Hello World!";
       ffi_call(&cif, puts, &rc, values);
       /* rc now holds the result of the call to puts */
-      
-      /* values holds a pointer to the function's arg, so to 
-         call puts() again all we need to do is change the 
+
+      /* values holds a pointer to the function's arg, so to
+         call puts() again all we need to do is change the
          value of s */
       s = "This is cool!";
       ffi_call(&cif, puts, &rc, values);
     @}
-  
+
   return 0;
 @}
 @end example
@@ -624,7 +630,7 @@ Here is the corresponding code to describe this struct to
       tm_type.size = tm_type.alignment = 0;
       tm_type.type = FFI_TYPE_STRUCT;
       tm_type.elements = &tm_type_elements;
-    
+
       for (i = 0; i < 9; i++)
           tm_type_elements[i] = &ffi_type_sint;
 
@@ -887,7 +893,7 @@ writable and executable addresses.
 @node Closure Example
 @section Closure Example
 
-A trivial example that creates a new @code{puts} by binding 
+A trivial example that creates a new @code{puts} by binding
 @code{fputs} with @code{stdout}.
 
 @example
@@ -965,6 +971,55 @@ Currently the only affected platform is PowerPC and the only affected
 type is @code{long double}.
 @end itemize
 
+@node Memory Usage
+@chapter Memory Usage
+
+Note that memory allocated by @code{ffi_closure_alloc} and freed by
+@code{ffi_closure_free} does not come from the same general pool of
+memory that @code{malloc} and @code{free} use.  To accomodate security
+settings, @samp{libffi} may aquire memory, for example, by mapping
+temporary files into multiple places in the address space (once to
+write out the closure, a second to execute it).  The search follows
+this list, using the first that works:
+
+@itemize @bullet
+
+@item
+A anonymous mapping (i.e. not file-backed)
+
+@item
+@code{memfd_create()}, if the kernel supports it.
+
+@item
+A file created in the directory referenced by the environment variable
+@code{LIBFFI_TMPDIR}.
+
+@item
+Likewise for the environment variable @code{TMPDIR}.
+
+@item
+A file created in @code{/tmp}.
+
+@item
+A file created in @code{/var/tmp}.
+
+@item
+A file created in @code{/dev/shm}.
+
+@item
+A file created in the user's home directory (@code{$HOME}).
+
+@item
+A file created in any directory listed in @code{/etc/mtab}.
+
+@item
+A file created in any directory listed in @code{/proc/mounts}.
+
+@end itemize
+
+If security settings prohibit using any of these for closures,
+@code{ffi_closure_alloc} will fail.
+
 @node Missing Features
 @chapter Missing Features
 
@@ -985,9 +1040,6 @@ The ``raw'' API is undocumented.
 @item
 The Go API is undocumented.
 @end itemize
-
-Note that variadic support is very new and tested on a relatively
-small number of platforms.
 
 @node Index
 @unnumbered Index

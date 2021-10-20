@@ -15,7 +15,13 @@
 
 #define MAX_ARGS 256
 
-#define CHECK(x) (void)(!(x) ? (abort(), 1) : 0)
+#define CHECK(x) \
+   do { \
+      if(!(x)){ \
+         printf("Check failed:\n%s\n", #x); \
+         abort(); \
+      } \
+   } while(0)
 
 /* Define macros so that compilers other than gcc can run the tests.  */
 #undef __UNUSED__

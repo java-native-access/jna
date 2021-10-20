@@ -582,7 +582,7 @@ cls_epilogue:
 	.end	ffi_closure_N32
 
 #ifdef __GNUC__
-        .section        .eh_frame,"aw",@progbits
+        .section        .eh_frame,EH_FRAME_FLAGS,@progbits
 .Lframe1:
         .4byte  .LECIE1-.LSCIE1		# length
 .LSCIE1:

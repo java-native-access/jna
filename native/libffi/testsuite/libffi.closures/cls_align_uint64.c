@@ -15,7 +15,7 @@ typedef struct cls_struct_align {
   unsigned char c;
 } cls_struct_align;
 
-cls_struct_align cls_struct_align_fn(struct cls_struct_align a1,
+static cls_struct_align cls_struct_align_fn(struct cls_struct_align a1,
 			    struct cls_struct_align a2)
 {
   struct cls_struct_align result;

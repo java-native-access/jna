@@ -58,31 +58,37 @@ public class VarArgsTest extends TestCase {
         int arg1 = 1;
         int arg2 = 2;
         assertEquals("32-bit integer varargs not added correctly", arg1 + arg2,
-                     lib.addVarArgs("dd", Integer.valueOf(arg1), Integer.valueOf(arg2)));
+                     lib.addVarArgs("dd", arg1, arg2));
+    }
+    public void testByteVarArgs() {
+        byte arg1 = 1;
+        byte arg2 = 2;
+        assertEquals("8-bit byte varargs not added correctly", arg1 + arg2,
+                     lib.addVarArgs("cc", arg1, arg2));
     }
     public void testShortVarArgs() {
         short arg1 = 1;
         short arg2 = 2;
         assertEquals("16-bit integer varargs not added correctly", arg1 + arg2,
-                     lib.addVarArgs("dd", Short.valueOf(arg1), Short.valueOf(arg2)));
+                     lib.addVarArgs("ss", arg1, arg2));
     }
     public void testLongVarArgs() {
-        short arg1 = 1;
-        short arg2 = 2;
+        long arg1 = 1;
+        long arg2 = 2;
         assertEquals("64-bit integer varargs not added correctly", arg1 + arg2,
-                     lib.addVarArgs("ll", Long.valueOf(arg1), Long.valueOf(arg2)));
+                     lib.addVarArgs("ll", arg1, arg2));
     }
     public void testFloatVarArgs() {
         float arg1 = 1;
         float arg2 = 2;
         assertEquals("float varargs not added correctly", (int)arg1 + (int)arg2,
-                     lib.addVarArgs("ff", Float.valueOf(arg1), Float.valueOf(arg2)));
+                     lib.addVarArgs("ff", arg1, arg2));
     }
     public void testDoubleVarArgs() {
         double arg1 = 1;
         double arg2 = 2;
         assertEquals("double varargs not added correctly", (int)arg1 + (int)arg2,
-                     lib.addVarArgs("gg", Double.valueOf(arg1), Double.valueOf(arg2)));
+                     lib.addVarArgs("gg", arg1, arg2));
     }
     public void testStringVarArgs() {
         Object[] args = new Object[] { "Test" };

@@ -75,7 +75,7 @@ before_install:
   - if test x"$MEVAL" != x; then eval ${MEVAL}; fi
 
 install:
-  - travis_wait 30 ./.travis/install.sh
+  - travis_wait 60 ./.travis/install.sh
 
 script:
   - if ! test x"$MEVAL" = x; then eval ${MEVAL}; fi

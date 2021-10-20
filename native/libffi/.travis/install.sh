@@ -2,7 +2,8 @@
 set -x
 
 if [[ $TRAVIS_OS_NAME != 'linux' ]]; then
-    brew update > brew-update.log 2>&1
+    brew update --verbose
+    # brew update > brew-update.log 2>&1
     # fix an issue with libtool on travis by reinstalling it
     brew uninstall libtool;
     brew install libtool dejagnu;
@@ -26,7 +27,7 @@ else
 	    wget -qO - https://rl.gl/cli/rlgl-linux-s390x.tgz | \
 		tar --strip-components=2 -xvzf - ./rlgl/rlgl;
 	    ;;
-	*) 
+	*)
 	    wget -qO - https://rl.gl/cli/rlgl-linux-amd64.tgz | \
 		tar --strip-components=2 -xvzf - ./rlgl/rlgl;
 	    ;;
@@ -36,7 +37,7 @@ else
     sudo apt-get update
     case $HOST in
 	mips64el-linux-gnu | sparc64-linux-gnu)
-        ;;	  
+        ;;
 	alpha-linux-gnu | arm32v7-linux-gnu | m68k-linux-gnu | sh4-linux-gnu)
 	    sudo apt-get install qemu-user-static
 	    ;;

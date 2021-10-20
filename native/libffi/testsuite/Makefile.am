@@ -13,7 +13,7 @@ libffi.call/return_fl1.c libffi.call/call.exp libffi.call/pyobjc-tc.c \
 libffi.call/float_va.c libffi.call/struct8.c libffi.call/pr1172638.c \
 libffi.call/return_sc.c libffi.call/va_struct1.c \
 libffi.call/align_stdcall.c libffi.call/struct9.c libffi.call/va_1.c \
-libffi.call/va_struct2.c libffi.call/return_fl2.c \
+libffi.call/va_2.c libffi.call/va_struct2.c libffi.call/return_fl2.c \
 libffi.call/align_mixed.c libffi.call/ffitest.h libffi.call/struct4.c \
 libffi.call/return_ldl.c libffi.call/float3.c libffi.call/return_sl.c \
 libffi.call/return_dbl1.c libffi.call/err_bad_typedef.c \
@@ -81,9 +81,8 @@ libffi.closures/cls_ulonglong.c libffi.closures/cls_struct_va1.c \
 libffi.closures/cls_9byte2.c libffi.closures/closure_fn5.c \
 libffi.closures/cls_5byte.c libffi.closures/cls_3float.c \
 libffi.closures/closure.exp libffi.closures/cls_schar.c \
-libffi.closures/closure_fn4.c libffi.closures/cls_uchar_va.c \
+libffi.closures/closure_fn4.c \
 libffi.closures/closure_fn0.c libffi.closures/huge_struct.c \
-libffi.closures/cls_ushort_va.c \
 libffi.closures/cls_64byte.c libffi.closures/cls_longdouble.c \
 libffi.closures/cls_ulong_va.c libffi.closures/cls_6_1_byte.c \
 libffi.closures/cls_align_uint16.c libffi.closures/closure_fn2.c \
@@ -102,6 +101,8 @@ libffi.closures/closure_fn3.c libffi.closures/cls_align_sint64.c \
 libffi.closures/nested_struct1.c libffi.closures/unwindtest.cc \
 libffi.closures/nested_struct5.c libffi.closures/cls_multi_ushort.c \
 libffi.closures/nested_struct11.c \
+libffi.closures/nested_struct12.c \
+libffi.closures/nested_struct13.c \
 libffi.closures/cls_multi_sshortchar.c \
 libffi.closures/cls_align_longdouble.c \
 libffi.closures/cls_dbls_struct.c \
@@ -119,4 +120,7 @@ libffi.closures/cls_double_va.c libffi.closures/cls_3byte2.c \
 libffi.closures/cls_double.c libffi.closures/cls_7byte.c \
 libffi.closures/closure_fn6.c libffi.closures/closure_fn1.c \
 libffi.closures/cls_20byte.c libffi.closures/cls_18byte.c \
-libffi.closures/err_bad_abi.c
+libffi.closures/err_bad_abi.c \
+libffi.closures/single_entry_structs1.c \
+libffi.closures/single_entry_structs2.c \
+libffi.closures/single_entry_structs3.c
