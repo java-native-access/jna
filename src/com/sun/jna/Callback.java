@@ -49,7 +49,7 @@ public interface Callback {
          */
         void uncaughtException(Callback c, Throwable e);
     }
-    /** You must this method name if your callback interface has multiple
+    /** You must use this method name if your callback interface has multiple
         public methods.  Typically a callback will have only one such
         method, in which case any method name may be used, with the exception
         of those in {@link #FORBIDDEN_NAMES}.
