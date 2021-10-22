@@ -46,6 +46,7 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [jAlbum](https://jalbum.net): Desktop based web gallery software for any web site.
 - [jacknji11](https://github.com/joelhockey/jacknji11): Provides a Java PKCS#11 interface.
 - [JNAJack](https://github.com/jaudiolibs/jnajack): Java bindings for [JACK Audio Connection Kit](https://jackaudio.org/).
+- [Elasticsearch](https://www.elastic.co/elasticsearch/): Large-scale distributed search and analytics engine.
 
 *Interesting Investigations/Experiments*
 
