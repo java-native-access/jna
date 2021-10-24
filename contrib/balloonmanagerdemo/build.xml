@@ -2,14 +2,15 @@
 <project name="jnacontrib.balloonmanagerdemo" default="jar" basedir=".">
     <description>Builds, tests, and runs the project jnacontrib.balloonmanagerdemo.</description>
     <!-- Locations -->
-    <property name="src"                location="."/>
-    <property name="build"              location="build"/>
-    <property name="jna-dist"           location="../../dist"/>
-
-    <property name="classes"       location="${build}/classes"/>
-    <property name="jar"           location="${build}/demo-balloonmanager.jar"/>
+    <property name="src"                    location="."/>
+    <property name="build"                  location="build"/>
+    <property name="jna-dist"               location="../../dist"/>
+    <property name="classes"                location="${build}/classes"/>
+    <property name="jar"                    location="${build}/demo-balloonmanager.jar"/>
     <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
-    <property name="main-class"			value="com.sun.jna.contrib.demo.BalloonManagerDemo" />
+    <property name="main-class"             value="com.sun.jna.contrib.demo.BalloonManagerDemo" />
+    <property name="javac.target"           value="1.6" />
+    <property name="javac.source"           value="1.6" />
 
     <path id="classpath">
         <fileset file="${file.reference.jna.jar}"/>
@@ -37,7 +38,8 @@
     <target name="compile">
         <mkdir dir="${classes}"/>
         <!-- Compile the project. -->
-        <javac srcdir="${src}" destdir="${classes}" target="1.6" source="1.6"
+        <javac srcdir="${src}" destdir="${classes}"
+               target="${javac.target}" source="${javac.source}"
                encoding="UTF-8" debug="on" includeantruntime="false">
             <classpath>
                 <path refid="classpath"/>

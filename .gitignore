@@ -32,3 +32,4 @@ pom-jna-platform.xml.asc
 /contrib/platform/nbproject/private/
 /nbproject/private/
 /native/.ccls-cache/
+/contrib/ntservice/nbproject/private/
