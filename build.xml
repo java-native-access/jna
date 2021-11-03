@@ -768,6 +768,8 @@ osname=macosx;processor=aarch64
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" refid="test.libs"/>
+      <property name="javac.source" value="${compatibility}" />
+      <property name="javac.target" value="${compatibility}" />
       <fileset dir="${contrib}" includes="*/build.xml" excludes="platform/build.xml"/>
     </subant>
   </target>

@@ -113,8 +113,34 @@ public final class Native implements Version {
 
     private static final Logger LOG = Logger.getLogger(Native.class.getName());
 
-    public static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
-    public static final String DEFAULT_ENCODING = Native.DEFAULT_CHARSET.name();
+    public static final Charset DEFAULT_CHARSET;
+    public static final String DEFAULT_ENCODING;
+    static {
+        // JNA used the defaultCharset to determine which encoding to use when
+        // converting strings to native char*. The defaultCharset is set from
+        // the system property file.encoding. Up to JDK 17 its value defaulted
+        // to the system default encoding. From JDK 18 onwards its default value
+        // changed to UTF-8.
+        // JDK 18+ exposes the native encoding as the new system property
+        // native.encoding, prior versions don't have that property and will
+        // report NULL for it.
+        // The algorithm is simple: If native.encoding is set, it will be used
+        // else the original implementation of Charset#defaultCharset is used
+        String nativeEncoding = System.getProperty("native.encoding");
+        Charset nativeCharset = null;
+        if (nativeEncoding != null) {
+            try {
+                nativeCharset = Charset.forName(nativeEncoding);
+            } catch (Exception ex) {
+                LOG.log(Level.WARNING, "Failed to get charset for native.encoding value : '" + nativeEncoding + "'", ex);
+            }
+        }
+        if (nativeCharset == null) {
+            nativeCharset = Charset.defaultCharset();
+        }
+        DEFAULT_CHARSET = nativeCharset;
+        DEFAULT_ENCODING = nativeCharset.name();
+    }
     public static final boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
     public static final boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
     private final static Level DEBUG_JNA_LOAD_LEVEL = DEBUG_JNA_LOAD ? Level.INFO : Level.FINE;

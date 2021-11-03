@@ -11,6 +11,7 @@ Features
 * [#1093](https://github.com/java-native-access/jna/issues/1093): Add `OpenFileMapping` to `c.s.j.p.win32.Kernel32` - [@lmitusinski](https://github.com/lmitusinski).
 * [#1388](https://github.com/java-native-access/jna/issues/1388): Map the arch `zarch_64` as reported by SAPJVM8 to `s390x` - [@MBaesken](https://github.com/MBaesken).
 * [#1381](https://github.com/java-native-access/jna/issues/1381): Update embedded libffi to 3.4.2 - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1393](https://github.com/java-native-access/jna/issues/1393): Update native encoding detection for JEP400 / JDK 18 (`file.encoding` now defaults to `UTF-8`) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
