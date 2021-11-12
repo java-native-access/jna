@@ -26,6 +26,7 @@ package com.sun.jna.platform.win32;
 import static com.sun.jna.platform.win32.WinNT.DACL_SECURITY_INFORMATION;
 import static com.sun.jna.platform.win32.WinNT.GROUP_SECURITY_INFORMATION;
 import static com.sun.jna.platform.win32.WinNT.OWNER_SECURITY_INFORMATION;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -89,7 +90,7 @@ public class NtDllTest extends TestCase {
                         WinNT.OPEN_EXISTING,
                         WinNT.FILE_ATTRIBUTE_NORMAL,
                         null);
-            assertFalse("Failed to create file handle: " + filePath, WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+            assertNotEquals("Failed to create file handle: " + filePath, WinBase.INVALID_HANDLE_VALUE, hFile);
 
             int Length = 64 * 1024;
             Memory SecurityDescriptor = new Memory(Length);
@@ -110,7 +111,7 @@ public class NtDllTest extends TestCase {
                             infoType,
                             SecurityDescriptor));
         } finally {
-            if (hFile != WinBase.INVALID_HANDLE_VALUE)
+            if (!WinBase.INVALID_HANDLE_VALUE.equals(hFile))
                 Kernel32.INSTANCE.CloseHandle(hFile);
             file.delete();
         }

@@ -692,7 +692,7 @@ public abstract class Advapi32Util {
                     throw new Win32Exception(rc);
             }
         } finally {
-            if (phkKey.getValue() != WinBase.INVALID_HANDLE_VALUE) {
+            if (!WinBase.INVALID_HANDLE_VALUE.equals(phkKey.getValue())) {
                 rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
                 if (rc != W32Errors.ERROR_SUCCESS) {
                     throw new Win32Exception(rc);
@@ -3303,7 +3303,7 @@ public abstract class Advapi32Util {
             }
             finally {
                 // Always close the thread token
-                if ((phThreadToken.getValue() != WinBase.INVALID_HANDLE_VALUE)
+                if ((!WinBase.INVALID_HANDLE_VALUE.equals(phThreadToken.getValue()))
                         && (phThreadToken.getValue() != null)) {
                     Kernel32.INSTANCE.CloseHandle(phThreadToken.getValue());
                     phThreadToken.setValue(null);
@@ -3339,7 +3339,7 @@ public abstract class Advapi32Util {
             }
             finally {
                 // Close the thread token
-                if ((phThreadToken.getValue() != WinBase.INVALID_HANDLE_VALUE)
+                if ((!WinBase.INVALID_HANDLE_VALUE.equals(phThreadToken.getValue()))
                         && (phThreadToken.getValue() != null)) {
                     Kernel32.INSTANCE.CloseHandle(phThreadToken.getValue());
                     phThreadToken.setValue(null);
@@ -3349,7 +3349,7 @@ public abstract class Advapi32Util {
 
         /**
          * Get a handle to the thread token. May duplicate the process token
-         * and set as the thread token if ther thread has no token.
+         * and set as the thread token if the thread has no token.
          * @return HANDLE to the thread token
          * @throws Win32Exception
          */
@@ -3394,7 +3394,7 @@ public abstract class Advapi32Util {
             }
             catch (Win32Exception ex) {
                 // Close the thread token
-                if ((phThreadToken.getValue() != WinBase.INVALID_HANDLE_VALUE)
+                if ((!WinBase.INVALID_HANDLE_VALUE.equals(phThreadToken.getValue()))
                         && (phThreadToken.getValue() != null)) {
                     Kernel32.INSTANCE.CloseHandle(phThreadToken.getValue());
                     phThreadToken.setValue(null);
@@ -3404,7 +3404,7 @@ public abstract class Advapi32Util {
             finally
             {
                 // Always close the process token
-                if ((phProcessToken.getValue() != WinBase.INVALID_HANDLE_VALUE)
+                if ((!WinBase.INVALID_HANDLE_VALUE.equals(phProcessToken.getValue()))
                         && (phProcessToken.getValue() != null)) {
                     Kernel32.INSTANCE.CloseHandle(phProcessToken.getValue());
                     phProcessToken.setValue(null);
