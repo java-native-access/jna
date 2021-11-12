@@ -45,6 +45,7 @@ import static com.sun.jna.platform.win32.WinNT.SE_SECURITY_NAME;
 import static com.sun.jna.platform.win32.WinNT.TOKEN_ADJUST_PRIVILEGES;
 import static com.sun.jna.platform.win32.WinNT.TOKEN_DUPLICATE;
 import static com.sun.jna.platform.win32.WinNT.TOKEN_IMPERSONATE;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -504,7 +505,7 @@ public class Advapi32Test extends TestCase {
         HKEYByReference phKey = new HKEYByReference();
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
                 WinReg.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft", 0, WinNT.KEY_READ, phKey));
-        assertTrue(WinBase.INVALID_HANDLE_VALUE != phKey.getValue());
+        assertNotEquals(WinBase.INVALID_HANDLE_VALUE, phKey.getValue());
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
     }
 
@@ -524,7 +525,7 @@ public class Advapi32Test extends TestCase {
         }
 
         assertEquals(W32Errors.ERROR_SUCCESS, connectResult);
-        assertTrue(WinBase.INVALID_HANDLE_VALUE != phkResult.getValue());
+        assertNotEquals(WinBase.INVALID_HANDLE_VALUE, phkResult.getValue());
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phkResult.getValue()));
     }
 
@@ -941,7 +942,7 @@ public class Advapi32Test extends TestCase {
     public void testOpenEventLog() {
         HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
         assertNotNull(h);
-        assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+        assertNotEquals(h, WinBase.INVALID_HANDLE_VALUE);
         assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
     }
 
@@ -981,7 +982,7 @@ public class Advapi32Test extends TestCase {
         IntByReference after = new IntByReference();
         assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, after));
         assertTrue(before.getValue() < after.getValue());
-        assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+        assertNotEquals(h, WinBase.INVALID_HANDLE_VALUE);
         assertTrue(Advapi32.INSTANCE.DeregisterEventSource(h));
         Advapi32Util.registryDeleteKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);
 
@@ -1003,7 +1004,7 @@ public class Advapi32Test extends TestCase {
 
     public void testGetNumberOfEventLogRecords() {
         HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
-        assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+        assertNotEquals(h, WinBase.INVALID_HANDLE_VALUE);
         IntByReference n = new IntByReference();
         assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, n));
         assertTrue(n.getValue() >= 0);
@@ -1013,7 +1014,7 @@ public class Advapi32Test extends TestCase {
     /*
     public void testClearEventLog() {
         HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
-        assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+        assertNotEquals(h, WinBase.INVALID_HANDLE_VALUE);
         IntByReference before = new IntByReference();
         assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, before));
         assertTrue(before.getValue() >= 0);
@@ -1337,7 +1338,7 @@ public class Advapi32Test extends TestCase {
                 WinNT.OPEN_EXISTING,
                 WinNT.FILE_ATTRIBUTE_NORMAL,
                 null);
-        assertFalse("Failed to create file handle: " + filePath, WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+        assertNotEquals("Failed to create file handle: " + filePath, WinBase.INVALID_HANDLE_VALUE, hFile);
 
         try {
             try {
@@ -1460,7 +1461,7 @@ public class Advapi32Test extends TestCase {
                                     ppDacl.getValue(),
                                     ppSacl.getValue()));
                 } finally {
-                    if (hFile != WinBase.INVALID_HANDLE_VALUE)
+                    if (!WinBase.INVALID_HANDLE_VALUE.equals(hFile))
                         Kernel32.INSTANCE.CloseHandle(hFile);
                     file.delete();
                 }

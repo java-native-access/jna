@@ -32,6 +32,8 @@ import static com.sun.jna.platform.win32.SetupApi.GUID_DEVINTERFACE_COMPORT;
 import static com.sun.jna.platform.win32.WinBase.INVALID_HANDLE_VALUE;
 import static com.sun.jna.platform.win32.WinError.ERROR_NO_MORE_ITEMS;
 import static com.sun.jna.platform.win32.WinNT.KEY_QUERY_VALUE;
+import static org.junit.Assert.assertNotEquals;
+
 import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
@@ -65,7 +67,7 @@ public class SetupApiTest extends TestCase {
         // hDevInfoSet repesents a list of installed devices for all device
         // setup classes or all device interface classes
         HANDLE hDevInfoSet = SetupApi.INSTANCE.SetupDiGetClassDevs(null, null, null, DIGCF_ALLCLASSES);
-        assertTrue(hDevInfoSet != INVALID_HANDLE_VALUE);
+        assertNotEquals(INVALID_HANDLE_VALUE, hDevInfoSet);
 
         SP_DEVINFO_DATA devInfo = new SP_DEVINFO_DATA();
         // there must be least one device (drive,processor,pci,usb,...) on the
@@ -73,7 +75,7 @@ public class SetupApiTest extends TestCase {
         assertTrue(SetupApi.INSTANCE.SetupDiEnumDeviceInfo(hDevInfoSet, FIRST_MEMBER, devInfo));
 
         HKEY hDeviceKey = SetupApi.INSTANCE.SetupDiOpenDevRegKey(hDevInfoSet, devInfo, DICS_FLAG_GLOBAL, 0, DIREG_DEV, KEY_QUERY_VALUE);
-        assertTrue(hDeviceKey != INVALID_HANDLE_VALUE);
+        assertNotEquals(INVALID_HANDLE_VALUE, hDeviceKey);
 
         Advapi32.INSTANCE.RegCloseKey(hDeviceKey);
     }
