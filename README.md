@@ -47,6 +47,7 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [jacknji11](https://github.com/joelhockey/jacknji11): Provides a Java PKCS#11 interface.
 - [JNAJack](https://github.com/jaudiolibs/jnajack): Java bindings for [JACK Audio Connection Kit](https://jackaudio.org/).
 - [Elasticsearch](https://www.elastic.co/elasticsearch/): Large-scale distributed search and analytics engine.
+- [Aki](https://github.com/letmeNo1/Aki): Automated Testing on desktop
 
 *Interesting Investigations/Experiments*
 
