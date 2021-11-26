@@ -7,6 +7,7 @@ Next Release (5.11.0)
 
 Features
 --------
+* [#1398](https://github.com/java-native-access/jna/pull/1398): Increase `c.s.j.p.win32.Sspi#MAX_TOKEN_SIZE` on Windows 8/Server 2012 and later - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
