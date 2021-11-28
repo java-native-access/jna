@@ -37,9 +37,19 @@ import com.sun.jna.win32.W32APITypeMapper;
 public interface Sspi {
 
     /**
-     * Maximum size in bytes of a security token.
+     * Maximum size in bytes of a security token. {@code MAX_TOKEN_SIZE} has the
+     * following default value, depending on the version of Windows that builds the
+     * token:
+     * <p>
+     * Windows Server 2008 R2 and earlier versions, and Windows 7 and earlier
+     * versions: 12,000 bytes. Windows Server 2012 and later versions, and Windows 8
+     * and later versions: 48,000 bytes
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/en-us/troubleshoot/windows-server/windows-security/kerberos-authentication-problems-if-user-belongs-to-groups">Problems
+     *      with Kerberos authentication when a user belongs to many groups</a>
      */
-    int MAX_TOKEN_SIZE = 12288;
+    int MAX_TOKEN_SIZE = VersionHelpers.IsWindows8OrGreater() ? 48000 : 12000;
 
     // Flags for the fCredentialUse parameter of AcquireCredentialsHandle
 
