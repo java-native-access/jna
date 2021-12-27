@@ -29,11 +29,9 @@ import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
-import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -140,7 +138,7 @@ public interface Oleacc extends StdCallLibrary
      *                   however, if you request more children than exist, this value will be less than that of cChildren.
      * @return the HRESULT. If successful, returns S_OK. If not successful, returns one of the error values, or another standard COM error code.
      */
-    HRESULT AccessibleChildren(Pointer paccContainer, long iChildStart, long cChildren, VARIANT[] rgvarChildren, LongByReference pcObtained);
+    HRESULT AccessibleChildren(Pointer paccContainer, int iChildStart, int cChildren, VARIANT[] rgvarChildren, IntByReference pcObtained);
 
     /**
      * Retrieves the address of the specified interface for the object associated with the specified window.
@@ -156,7 +154,7 @@ public interface Oleacc extends StdCallLibrary
      * @param ppvObject [out] Address of a pointer variable that receives the address of the specified interface.
      * @return the HRESULT. If successful, returns S_OK. If not successful, returns one of the error values, or another standard COM error code.
      */
-    HRESULT AccessibleObjectFromWindow(HWND hwnd, DWORD dwId, REFIID riid, PointerByReference ppvObject);
+    HRESULT AccessibleObjectFromWindow(HWND hwnd, int dwId, REFIID riid, PointerByReference ppvObject);
 
     /**
      * Retrieves the window handle that corresponds to a particular instance of an IAccessible interface.
@@ -185,7 +183,7 @@ public interface Oleacc extends StdCallLibrary
      *         If the string resource does not exist, or if the lpszRole parameter is not a valid pointer, the return value is zero (0).
      *         To get extended error information, call GetLastError.
      */
-    UINT GetRoleTextA(DWORD lRole, LPSTR lpszRole, UINT cchRoleMax);
+    int GetRoleTextA(int lRole, LPSTR lpszRole, int cchRoleMax);
 
     /**
      * Retrieves the localized string that describes the object's role for the specified role value.
@@ -201,5 +199,5 @@ public interface Oleacc extends StdCallLibrary
      *         If the string resource does not exist, or if the lpszRole parameter is not a valid pointer, the return value is zero (0).
      *         To get extended error information, call GetLastError.
      */
-    UINT GetRoleTextW(DWORD lRole, LPWSTR lpszRole, UINT cchRoleMax);
+    int GetRoleTextW(int lRole, LPWSTR lpszRole, int cchRoleMax);
 }

@@ -30,11 +30,10 @@ import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -83,7 +82,7 @@ public class IAccessibleTest
         HWND hwnd = getCalculatorHwnd();
         REFIID riid = new REFIID(IAccessible.IID_IACCESSIBLE);
         PointerByReference pointer = new PointerByReference();
-        HRESULT hresult = Oleacc.INSTANCE.AccessibleObjectFromWindow(hwnd, new DWORD(0L), riid, pointer);
+        HRESULT hresult = Oleacc.INSTANCE.AccessibleObjectFromWindow(hwnd, 0, riid, pointer);
         assertEquals(S_OK, hresult);
         return new Accessible(pointer.getPointer().getPointer(0L));
     }
@@ -130,10 +129,10 @@ public class IAccessibleTest
     public void test_get_accChildCount() {
         Accessible accessible = getCalculatorAccessible();
 
-        LongByReference longByReference = new LongByReference();
-        HRESULT hresult = accessible.get_accChildCount(longByReference);
+        IntByReference intByReference = new IntByReference();
+        HRESULT hresult = accessible.get_accChildCount(intByReference);
         assertEquals(S_OK, hresult);
-        assertEquals(7L, longByReference.getValue());
+        assertEquals(7L, intByReference.getValue());
     }
 
     @Test

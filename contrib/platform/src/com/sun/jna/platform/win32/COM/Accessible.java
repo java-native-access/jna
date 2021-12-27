@@ -28,6 +28,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
 /**
@@ -64,7 +65,7 @@ public class Accessible extends Dispatch implements IAccessible
                 new Object[] { this.getPointer(), varChild, pvarRole }, HRESULT.class);
     }
 
-    public HRESULT get_accChildCount(LongByReference pcountChildren)
+    public HRESULT get_accChildCount(IntByReference pcountChildren)
     {
         return (HRESULT) this._invokeNativeObject(8,
                 new Object[] { this.getPointer(), pcountChildren }, HRESULT.class);

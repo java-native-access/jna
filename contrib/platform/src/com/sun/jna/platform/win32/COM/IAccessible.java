@@ -27,7 +27,7 @@ import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.IntByReference;
 
 /**
  * IAccessible Interface
@@ -95,7 +95,7 @@ public interface IAccessible extends IDispatch
      *                       this value is zero.
      * @return the HRESULT. If successful, returns S_OK. If not successful, returns one of the error values, or another standard COM error code.
      */
-    HRESULT get_accChildCount(LongByReference pcountChildren);
+    HRESULT get_accChildCount(IntByReference pcountChildren);
 
     /**
      * The IAccessible::get_accDefaultAction method retrieves a string that indicates the object's default action. Not all objects have a default action.

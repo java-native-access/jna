@@ -27,13 +27,11 @@ import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.COM.Accessible;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.IAccessible;
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
 import com.sun.jna.platform.win32.WTypes.LPWSTR;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import org.junit.AfterClass;
@@ -77,7 +75,7 @@ public class OleaccTest
         HWND hwnd = getCalculatorHwnd();
         REFIID riid = new REFIID(IAccessible.IID_IACCESSIBLE);
         PointerByReference pointer = new PointerByReference();
-        HRESULT hresult = Oleacc.INSTANCE.AccessibleObjectFromWindow(hwnd, new DWORD(0L), riid, pointer);
+        HRESULT hresult = Oleacc.INSTANCE.AccessibleObjectFromWindow(hwnd, 0, riid, pointer);
         assertEquals(S_OK, hresult);
         return new Accessible(pointer.getPointer().getPointer(0L));
     }
@@ -88,16 +86,16 @@ public class OleaccTest
         Accessible accessible = getCalculatorAccessible();
 
         // Call AccessibleChildren
-        LongByReference cChildren = new LongByReference();
+        IntByReference cChildren = new IntByReference();
         HRESULT hresult1 = accessible.get_accChildCount(cChildren);
         assertEquals(S_OK, hresult1);
 
         Variant.VARIANT[] rgvarChildren = new Variant.VARIANT[(int) cChildren.getValue()];
-        LongByReference pcObtained = new LongByReference();
+        IntByReference pcObtained = new IntByReference();
 
         HRESULT hresult2 = Oleacc.INSTANCE.AccessibleChildren(
                 accessible.getPointer(),
-                0L,
+                0,
                 cChildren.getValue(),
                 rgvarChildren,
                 pcObtained
@@ -115,7 +113,7 @@ public class OleaccTest
         HWND hwnd = getCalculatorHwnd();
         REFIID riid = new REFIID(IAccessible.IID_IACCESSIBLE);
         PointerByReference pointer = new PointerByReference();
-        HRESULT hresult = Oleacc.INSTANCE.AccessibleObjectFromWindow(hwnd, new DWORD(0L), riid, pointer);
+        HRESULT hresult = Oleacc.INSTANCE.AccessibleObjectFromWindow(hwnd, 0, riid, pointer);
         assertEquals(S_OK, hresult);
     }
 
@@ -134,21 +132,21 @@ public class OleaccTest
 
     @Test
     public void testGetRoleTextA() {
-        UINT result = Oleacc.INSTANCE.GetRoleTextA(new DWORD(Oleacc.ROLE_SYSTEM_TITLEBAR), null, new UINT(0L));
-        assertEquals(9, result.intValue());
-        LPSTR lptstr = new LPSTR(new Memory(result.intValue() + 1)); // plus 1 for null terminator
-        UINT result2 = Oleacc.INSTANCE.GetRoleTextA(new DWORD(Oleacc.ROLE_SYSTEM_TITLEBAR), lptstr, new UINT(result.intValue() + 1));
-        assertEquals(result.intValue(), result2.intValue());
+        int result = Oleacc.INSTANCE.GetRoleTextA(Oleacc.ROLE_SYSTEM_TITLEBAR, null, 0);
+        assertEquals(9, result);
+        LPSTR lptstr = new LPSTR(new Memory(result + 1)); // plus 1 for null terminator
+        int result2 = Oleacc.INSTANCE.GetRoleTextA(Oleacc.ROLE_SYSTEM_TITLEBAR, lptstr, result + 1);
+        assertEquals(result, result2);
         assertEquals("title bar", lptstr.toString());
     }
 
     @Test
     public void testGetRoleTextW() {
-        UINT result = Oleacc.INSTANCE.GetRoleTextW(new DWORD(Oleacc.ROLE_SYSTEM_TITLEBAR), null, new UINT(0L));
-        assertEquals(9, result.intValue());
-        LPWSTR lpwstr = new LPWSTR(new Memory(result.intValue() + 1)); // plus 1 for null terminator
-        UINT result2 = Oleacc.INSTANCE.GetRoleTextW(new DWORD(Oleacc.ROLE_SYSTEM_TITLEBAR), lpwstr, new UINT(result.intValue() + 1));
-        assertEquals(result.intValue(), result2.intValue());
+        int result = Oleacc.INSTANCE.GetRoleTextW(Oleacc.ROLE_SYSTEM_TITLEBAR, null, 0);
+        assertEquals(9, result);
+        LPWSTR lpwstr = new LPWSTR(new Memory(result + 1)); // plus 1 for null terminator
+        int result2 = Oleacc.INSTANCE.GetRoleTextW(Oleacc.ROLE_SYSTEM_TITLEBAR, lpwstr, result + 1);
+        assertEquals(result, result2);
         assertEquals("title bar", lpwstr.toString());
     }
 }
