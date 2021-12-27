@@ -101,7 +101,7 @@ public class OleaccTest
                 pcObtained
         );
         assertEquals(S_OK, hresult2);
-        assertEquals(7L, pcObtained.getValue());
+        assertEquals(7, pcObtained.getValue());
 
         for (int i = 0; i < pcObtained.getValue(); ++i) {
             assertEquals(Variant.VT_DISPATCH, rgvarChildren[i].getVarType().intValue());

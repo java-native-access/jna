@@ -132,7 +132,7 @@ public class IAccessibleTest
         IntByReference intByReference = new IntByReference();
         HRESULT hresult = accessible.get_accChildCount(intByReference);
         assertEquals(S_OK, hresult);
-        assertEquals(7L, intByReference.getValue());
+        assertEquals(7, intByReference.getValue());
     }
 
     @Test
