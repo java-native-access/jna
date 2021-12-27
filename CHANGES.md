@@ -8,7 +8,7 @@ Next Release (5.11.0)
 Features
 --------
 * [#1398](https://github.com/java-native-access/jna/pull/1398): Increase `c.s.j.p.win32.Sspi#MAX_TOKEN_SIZE` on Windows 8/Server 2012 and later - [@dbwiddis](https://github.com/dbwiddis).
-* [#1401](https://github.com/java-native-access/jna/pull/1401): Added initial support for `oleacc.dll` and `IAccessible` interface - [@mobeigi](https://github.com/mobeigi).
+* [#1401](https://github.com/java-native-access/jna/pull/1401): Added initial support for `c.s.j.p.win32.Oleacc` and `c.s.j.p.win32.COM.IAccessible` interfaces - [@mobeigi](https://github.com/mobeigi).
 
 Bug Fixes
 ---------
