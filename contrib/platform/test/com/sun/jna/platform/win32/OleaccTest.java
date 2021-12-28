@@ -24,8 +24,10 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.COM.Accessible;
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.IAccessible;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -44,25 +46,27 @@ import static org.junit.Assert.assertNotNull;
 
 public class OleaccTest
 {
+    private static boolean initialized = false;
+
     @BeforeClass
     public static void setUp() throws Exception {
         Runtime.getRuntime().exec("calc");
         Thread.sleep(1000);
 
         // Initialize COM for this thread...
-        WinNT.HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
-
-        if (W32Errors.FAILED(hr)) {
-            tearDown();
-            throw new COMException("CoInitialize() failed");
-        }
+        COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+        initialized = true;
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
         Runtime.getRuntime().exec("taskkill.exe /f /im calculator.exe");
         Thread.sleep(1000);
-        Ole32.INSTANCE.CoUninitialize();
+
+        if (initialized) {
+            Ole32.INSTANCE.CoUninitialize();
+            initialized = false;
+        }
     }
 
     private static HWND getCalculatorHwnd() {
