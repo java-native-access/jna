@@ -24,12 +24,10 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
 
 /**
  * Implementation for {@link IAccessible } interface
@@ -38,12 +36,6 @@ import com.sun.jna.ptr.LongByReference;
  */
 public class Accessible extends Dispatch implements IAccessible
 {
-    public static class ByReference extends Accessible implements
-            Structure.ByReference {
-    }
-
-    public Accessible() {
-    }
 
     public Accessible(Pointer pvInstance) { super(pvInstance); }
 
