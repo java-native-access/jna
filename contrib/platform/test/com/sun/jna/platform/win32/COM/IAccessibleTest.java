@@ -43,6 +43,7 @@ import org.junit.Test;
 import static com.sun.jna.platform.win32.Oleacc.ROLE_SYSTEM_WINDOW;
 import static com.sun.jna.platform.win32.WinError.S_FALSE;
 import static com.sun.jna.platform.win32.WinError.S_OK;
+import static com.sun.jna.platform.win32.WinUser.CHILDID_SELF;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -91,7 +92,7 @@ public class IAccessibleTest
         Accessible accessible = getCalculatorAccessible();
 
         Variant.VARIANT varChild = new Variant.VARIANT.ByValue();
-        varChild.setValue(Variant.VT_I4, new LONG(0L));
+        varChild.setValue(Variant.VT_I4, new LONG(CHILDID_SELF));
         BSTRByReference bstr = new BSTRByReference();
 
         HRESULT hresult = accessible.get_accName(varChild, bstr);
@@ -107,7 +108,7 @@ public class IAccessibleTest
         Accessible accessible = getCalculatorAccessible();
 
         Variant.VARIANT varChild = new Variant.VARIANT.ByValue();
-        varChild.setValue(Variant.VT_I4, new LONG(0L));
+        varChild.setValue(Variant.VT_I4, new LONG(CHILDID_SELF));
         BSTRByReference bstr = new BSTRByReference();
 
         HRESULT hresult = accessible.get_accValue(varChild, bstr);
@@ -122,7 +123,7 @@ public class IAccessibleTest
         Accessible accessible = getCalculatorAccessible();
 
         Variant.VARIANT varChild = new Variant.VARIANT.ByValue();
-        varChild.setValue(Variant.VT_I4, new LONG(0L));
+        varChild.setValue(Variant.VT_I4, new LONG(CHILDID_SELF));
         Variant.VARIANT.ByReference variantByReference = new Variant.VARIANT.ByReference();
 
         HRESULT hresult = accessible.get_accRole(varChild, variantByReference);
@@ -148,7 +149,7 @@ public class IAccessibleTest
         Accessible accessible = getCalculatorAccessible();
 
         Variant.VARIANT varChild = new Variant.VARIANT.ByValue();
-        varChild.setValue(Variant.VT_I4, new LONG(0L));
+        varChild.setValue(Variant.VT_I4, new LONG(CHILDID_SELF));
         BSTRByReference bstr = new BSTRByReference();
 
         HRESULT hresult = accessible.get_accDefaultAction(varChild, bstr);
@@ -163,7 +164,7 @@ public class IAccessibleTest
         Accessible accessible = getCalculatorAccessible();
 
         Variant.VARIANT varChild = new Variant.VARIANT.ByValue();
-        varChild.setValue(Variant.VT_I4, new LONG(0L));
+        varChild.setValue(Variant.VT_I4, new LONG(CHILDID_SELF));
 
         HRESULT hresult = accessible.accDoDefaultAction(varChild);
         assertEquals(S_FALSE, hresult); // No default action to do for root object
