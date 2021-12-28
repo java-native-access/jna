@@ -25,10 +25,10 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Oleacc;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -97,6 +97,9 @@ public class IAccessibleTest
         HRESULT hresult = accessible.get_accName(varChild, bstr);
         assertEquals(S_OK, hresult);
         assertEquals("Calculator", bstr.getValue().getValue());
+
+        OleAuto.INSTANCE.VariantClear(varChild);
+        OleAuto.INSTANCE.SysFreeString(bstr.getValue());
     }
 
     @Test
@@ -109,6 +112,9 @@ public class IAccessibleTest
 
         HRESULT hresult = accessible.get_accValue(varChild, bstr);
         assertEquals(S_FALSE, hresult); // This object does not have a value
+
+        OleAuto.INSTANCE.VariantClear(varChild);
+        OleAuto.INSTANCE.SysFreeString(bstr.getValue());
     }
 
     @Test
@@ -122,6 +128,9 @@ public class IAccessibleTest
         HRESULT hresult = accessible.get_accRole(varChild, variantByReference);
         assertEquals(S_OK, hresult);
         assertEquals(ROLE_SYSTEM_WINDOW, variantByReference.intValue());
+
+        OleAuto.INSTANCE.VariantClear(varChild);
+        OleAuto.INSTANCE.VariantClear(variantByReference);
     }
 
     @Test
@@ -144,6 +153,9 @@ public class IAccessibleTest
 
         HRESULT hresult = accessible.get_accDefaultAction(varChild, bstr);
         assertEquals(S_FALSE, hresult); // No default action for root object
+
+        OleAuto.INSTANCE.VariantClear(varChild);
+        OleAuto.INSTANCE.SysFreeString(bstr.getValue());
     }
 
     @Test
@@ -155,5 +167,7 @@ public class IAccessibleTest
 
         HRESULT hresult = accessible.accDoDefaultAction(varChild);
         assertEquals(S_FALSE, hresult); // No default action to do for root object
+
+        OleAuto.INSTANCE.VariantClear(varChild);
     }
 }

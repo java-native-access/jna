@@ -26,7 +26,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.COM.Accessible;
-import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.IAccessible;
 import com.sun.jna.ptr.IntByReference;
@@ -109,6 +108,7 @@ public class OleaccTest
 
         for (int i = 0; i < pcObtained.getValue(); ++i) {
             assertEquals(Variant.VT_DISPATCH, rgvarChildren[i].getVarType().intValue());
+            OleAuto.INSTANCE.VariantClear(rgvarChildren[i]);
         }
     }
 
