@@ -27,8 +27,6 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.WTypes.LPWSTR;
-import com.sun.jna.platform.win32.WTypes.LPSTR;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
@@ -173,21 +171,6 @@ public interface Oleacc extends StdCallLibrary
      * Retrieves the localized string that describes the object's role for the specified role value.
      *
      * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/oleacc/nf-oleacc-getroletexta">GetRoleTextA function (oleacc.h)</a>
-     *
-     * @param lRole [in] One of the object role constants.
-     * @param lpszRole [out] Address of a buffer that receives the role text string. If this parameter is NULL, the function returns the role string's length, not including the null character.
-     * @param cchRoleMax [in] The size of the buffer that is pointed to by the lpszRole parameter. For ANSI strings, this value is measured in bytes; for Unicode strings, it is measured in characters.
-     * @return If successful, and if lpszRole is non-NULL, the return value is the number of bytes (ANSI strings)
-     *         or characters (Unicode strings) copied into the buffer, not including the terminating null character.
-     *         If lpszRole is NULL, the return value represents the string's length, not including the null character.
-     *         If the string resource does not exist, or if the lpszRole parameter is not a valid pointer, the return value is zero (0).
-     *         To get extended error information, call GetLastError.
-     */
-    int GetRoleTextA(int lRole, LPSTR lpszRole, int cchRoleMax);
-
-    /**
-     * Retrieves the localized string that describes the object's role for the specified role value.
-     *
      * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/oleacc/nf-oleacc-getroletextw">GetRoleTextW function (oleacc.h)</a>
      *
      * @param lRole [in] One of the object role constants.
@@ -199,5 +182,5 @@ public interface Oleacc extends StdCallLibrary
      *         If the string resource does not exist, or if the lpszRole parameter is not a valid pointer, the return value is zero (0).
      *         To get extended error information, call GetLastError.
      */
-    int GetRoleTextW(int lRole, LPWSTR lpszRole, int cchRoleMax);
+    int GetRoleText(int lRole, Pointer lpszRole, int cchRoleMax);
 }

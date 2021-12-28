@@ -24,14 +24,13 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.COM.Accessible;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.IAccessible;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.platform.win32.WTypes.LPSTR;
-import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -135,22 +134,20 @@ public class OleaccTest
     }
 
     @Test
-    public void testGetRoleTextA() {
-        int result = Oleacc.INSTANCE.GetRoleTextA(Oleacc.ROLE_SYSTEM_TITLEBAR, null, 0);
-        assertEquals(9, result);
-        LPSTR lptstr = new LPSTR(new Memory(result + 1)); // plus 1 for null terminator
-        int result2 = Oleacc.INSTANCE.GetRoleTextA(Oleacc.ROLE_SYSTEM_TITLEBAR, lptstr, result + 1);
-        assertEquals(result, result2);
-        assertEquals("title bar", lptstr.toString());
-    }
+    public void testGetRoleText() {
+        int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
 
-    @Test
-    public void testGetRoleTextW() {
-        int result = Oleacc.INSTANCE.GetRoleTextW(Oleacc.ROLE_SYSTEM_TITLEBAR, null, 0);
+        int result = Oleacc.INSTANCE.GetRoleText(Oleacc.ROLE_SYSTEM_TITLEBAR, null, 0);
         assertEquals(9, result);
-        LPWSTR lpwstr = new LPWSTR(new Memory(result + 1)); // plus 1 for null terminator
-        int result2 = Oleacc.INSTANCE.GetRoleTextW(Oleacc.ROLE_SYSTEM_TITLEBAR, lpwstr, result + 1);
+        Memory memory = new Memory((long) (result + 1) * charToBytes); // plus 1 for null terminator
+
+        int result2 = Oleacc.INSTANCE.GetRoleText(Oleacc.ROLE_SYSTEM_TITLEBAR, memory, result + 1);
         assertEquals(result, result2);
-        assertEquals("title bar", lpwstr.toString());
+
+        if (Boolean.getBoolean("w32.ascii")) {
+            assertEquals("title bar", memory.getString(0));
+        } else {
+            assertEquals("title bar", memory.getWideString(0));
+        }
     }
 }
