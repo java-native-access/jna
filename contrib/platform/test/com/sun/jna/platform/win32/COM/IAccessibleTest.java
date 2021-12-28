@@ -47,9 +47,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class IAccessibleTest
 {
-    static {
-        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
-    }
 
     @BeforeClass
     public static void setUp() throws Exception {

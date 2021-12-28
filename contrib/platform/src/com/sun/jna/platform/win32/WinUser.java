@@ -2088,4 +2088,10 @@ public interface WinUser extends WinDef {
      * Bitmask for the RESERVED2 key modifier.
      */
     int MODIFIER_RESERVED2_MASK = 32;
+
+    /**
+     * Indicate that information is needed about the object itself.
+     */
+    int CHILDID_SELF = 0;
+
 }

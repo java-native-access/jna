@@ -51,7 +51,7 @@ public interface IAccessible extends IDispatch
      * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/oleacc/nf-oleacc-iaccessible-get_accname">IAccessible::get_accName method (oleacc.h)</a>
      *
      * @param varChild [in] Specifies whether the retrieved name belongs to the object or one of the object's child elements.
-     *                 This parameter is either CHILDID_SELF (to obtain information about the object) or a child ID
+     *                 This parameter is either {@link com.sun.jna.platform.win32.WinUser#CHILDID_SELF} (to obtain information about the object) or a child ID
      *                 (to obtain information about the object's child element).
      * @param pszName [out] Address of a BSTR that receives a string that contains the specified object's name.
      * @return the HRESULT. If successful, returns S_OK. If not successful, returns one of the error values, or another standard COM error code.
@@ -64,7 +64,7 @@ public interface IAccessible extends IDispatch
      * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/oleacc/nf-oleacc-iaccessible-get_accvalue">IAccessible::get_accValue method (oleacc.h)</a>
      *
      * @param varChild [in] Specifies whether the retrieved name belongs to the object or one of the object's child elements.
-     *                 This parameter is either CHILDID_SELF (to obtain information about the object) or a child ID
+     *                 This parameter is either {@link com.sun.jna.platform.win32.WinUser#CHILDID_SELF} (to obtain information about the object) or a child ID
      *                 (to obtain information about the object's child element).
      * @param pszValue [out] Address of the BSTR that receives a localized string that contains the object's current value.
      * @return the HRESULT. If successful, returns S_OK. If not successful, returns one of the error values, or another standard COM error code.
@@ -77,7 +77,7 @@ public interface IAccessible extends IDispatch
      * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/oleacc/nf-oleacc-iaccessible-get_accrole">IAccessible::get_accRole method (oleacc.h)</a>
      *
      * @param varChild [in] Specifies whether the retrieved name belongs to the object or one of the object's child elements.
-     *                 This parameter is either CHILDID_SELF (to obtain information about the object) or a child ID
+     *                 This parameter is either {@link com.sun.jna.platform.win32.WinUser#CHILDID_SELF} (to obtain information about the object) or a child ID
      *                 (to obtain information about the object's child element).
      * @param pvarRole [out] Address of a VARIANT that receives an object role constant.
      *                 The vt member must be VT_I4. The lVal member receives an object role constant.
@@ -103,7 +103,7 @@ public interface IAccessible extends IDispatch
      * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/oleacc/nf-oleacc-iaccessible-get_accdefaultaction">IAccessible::get_accDefaultAction method (oleacc.h)</a>
      *
      * @param varChild [in] Specifies whether the retrieved name belongs to the object or one of the object's child elements.
-     *                 This parameter is either CHILDID_SELF (to obtain information about the object) or a child ID
+     *                 This parameter is either {@link com.sun.jna.platform.win32.WinUser#CHILDID_SELF} (to obtain information about the object) or a child ID
      *                 (to obtain information about the object's child element).
      * @param pszDefaultAction [out] Address of a BSTR that receives a localized string that describes the default
      *                         action for the specified object; if this object has no default action, the value is NULL.
@@ -117,7 +117,7 @@ public interface IAccessible extends IDispatch
      * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/oleacc/nf-oleacc-iaccessible-accdodefaultaction">IAccessible::accDoDefaultAction method (oleacc.h)</a>
      *
      * @param varChild [in] Specifies whether the retrieved name belongs to the object or one of the object's child elements.
-     *                 This parameter is either CHILDID_SELF (to obtain information about the object) or a child ID
+     *                 This parameter is either {@link com.sun.jna.platform.win32.WinUser#CHILDID_SELF} (to obtain information about the object) or a child ID
      *                 (to obtain information about the object's child element).
      * @return the HRESULT. If successful, returns S_OK. If not successful, returns one of the error values, or another standard COM error code.
      */
