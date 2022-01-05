@@ -1082,7 +1082,7 @@ ${make}\
  CHECKSUM=${jni.md5}
 cd ..
 cd build
-zip ../${os.prefix}.jar libjnidispatch.so jnidispatch.dll
+zip ../${os.prefix}.jar libjnidispatch.so jnidispatch.dll libjnidispatch.a
 cd ..
     </echo>
     <jar jarfile="${build}/${os.prefix}.jar" createUnicodeExtraFields="never" encoding="UTF-8">

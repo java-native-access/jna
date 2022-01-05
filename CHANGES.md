@@ -8,6 +8,7 @@ Next Release (5.11.0)
 Features
 --------
 * [#1398](https://github.com/java-native-access/jna/pull/1398): Increase `c.s.j.p.win32.Sspi#MAX_TOKEN_SIZE` on Windows 8/Server 2012 and later - [@dbwiddis](https://github.com/dbwiddis).
+* [#1398](https://github.com/java-native-access/jna/pull/1403): Rebuild AIX binaries with libffi 3.4.2 (other architectures were part of 5.10) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
