@@ -984,6 +984,9 @@ public class NativeLibrary {
         else if (Platform.ARCH.equals("mips64el")) {
             libc = "-gnuabi64";
         }
+        else if (Platform.ARCH.equals("loongarch64")) {
+            libc = "-gnuabi64";   // TODO: not sure
+        }
 
         return cpu + kernel + libc;
     }

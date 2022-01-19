@@ -111,6 +111,18 @@ endif
 STRIP=strip -x
 # end defaults
 
+
+OS_PLATFORM = $(shell uname -m)
+ifeq ($(OS_PLATFORM), mips64)
+    LDFLAGS += -Wl,-z,noexecstack
+endif
+
+OS_PLATFORM = $(shell uname -m)
+ifeq ($(OS_PLATFORM), loongarch64)
+    LDFLAGS += -Wl,-z,noexecstack
+endif
+
+
 # Android build (cross-compile) requires the android NDK.
 # Ensure the following tools are in your path and adjust NDK_PLATFORM as needed
 ifeq ($(OS),android)
