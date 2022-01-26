@@ -719,6 +719,9 @@ public abstract class Kernel32Util implements WinDef {
         return procInfoList.toArray(new SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX[0]);
     }
 
+    // Prevents useless heap pollution
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
     /**
      * Retrieves all the keys and values for the specified section of an initialization file.
      *
@@ -739,7 +742,12 @@ public abstract class Kernel32Util implements WinDef {
     public static final String[] getPrivateProfileSection(final String appName, final String fileName) {
         final char buffer[] = new char[32768]; // Maximum section size according to MSDN (http://msdn.microsoft.com/en-us/library/windows/desktop/ms724348(v=vs.85).aspx)
         if (Kernel32.INSTANCE.GetPrivateProfileSection(appName, buffer, new DWORD(buffer.length), fileName).intValue() == 0) {
-            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            final int lastError = Kernel32.INSTANCE.GetLastError();
+            if (lastError == Kernel32.ERROR_SUCCESS) {
+                return EMPTY_STRING_ARRAY;
+            } else {
+                throw new Win32Exception(lastError);
+            }
         }
         return new String(buffer).split("\0");
     }
