@@ -13,7 +13,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1411](https://github.com/java-native-access/jna/pull/1411): Do not throw `Win32Exception` on success for empty section in `Kernel32Util#getPrivateProfileSection` - [@mkarg](https://github.com/mkarg).
 
 Release 5.10.0
 ==============
