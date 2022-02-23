@@ -244,9 +244,18 @@ public class Kernel32UtilTest extends TestCase {
         final File tmp = File.createTempFile("testGetPrivateProfileSection", ".ini");
         tmp.deleteOnExit();
 
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        final PrintWriter writer0 = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
         try {
-            writer.println("[X]");
+            writer0.println("[X]");
+        } finally {
+            writer0.close();
+        }
+
+        final String[] lines0 = Kernel32Util.getPrivateProfileSection("X", tmp.getCanonicalPath());
+        assertEquals(lines0.length, 0);
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp, true)));
+        try {
             writer.println("A=1");
             writer.println("foo=bar");
         } finally {
