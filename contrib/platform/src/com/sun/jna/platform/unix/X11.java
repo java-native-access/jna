@@ -606,7 +606,7 @@ public interface X11 extends Library {
     int XK_a = 0x61;
     int XK_z = 0x7a;
     int XK_Shift_L = 0xffe1;
-    int XK_Shift_R = 0xffe1;
+    int XK_Shift_R = 0xffe2;
     int XK_Control_L = 0xffe3;
     int XK_Control_R = 0xffe4;
     int XK_CapsLock = 0xffe5;

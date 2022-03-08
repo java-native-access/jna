@@ -13,6 +13,7 @@ Features
 Bug Fixes
 ---------
 * [#1411](https://github.com/java-native-access/jna/pull/1411): Do not throw `Win32Exception` on success for empty section in `Kernel32Util#getPrivateProfileSection` - [@mkarg](https://github.com/mkarg).
+* [#1414](https://github.com/java-native-access/jna/pull/1414): Fix definition of `c.s.j.p.unix.X11.XK_Shift_R` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.10.0
 ==============
