@@ -402,6 +402,16 @@ public interface CoreFoundation extends Library {
         }
 
         /**
+         * Convenience method for {@link CoreFoundation#CFDictionaryGetCount(CFDictionaryRef)}
+         * on this object.
+         *
+         * @return The number of key-value pairs in theDict.
+         */
+        public long getCount() {
+            return INSTANCE.CFDictionaryGetCount(this).longValue();
+        }
+
+        /**
          * Convenience method for
          * {@link CoreFoundation#CFDictionaryGetValueIfPresent} on this object.
          *
@@ -775,6 +785,15 @@ public interface CoreFoundation extends Library {
      * @return A number representing the reference count of {code cf}.
      */
     CFIndex CFGetRetainCount(CFTypeRef cf);
+
+    /**
+     * Returns the number of key-value pairs in a dictionary.
+     *
+     * @param theDict
+     *            The dictionary to examine.
+     * @return The number of key-value pairs in theDict.
+     */
+    CFIndex CFDictionaryGetCount(CoreFoundation.CFDictionaryRef theDict);
 
     /**
      * Returns the value associated with a given key.
