@@ -423,10 +423,22 @@ public class Crypt32Test extends TestCase {
         assertTrue("The status would be true since a valid certificate chain was not passed in.", status);
     }
 
-    public void testCertEnumCertificatesInStore() {
-        String SYSTEM_STORE_NAME = "ROOT";
-        WinCrypt.HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenSystemStore(null, SYSTEM_STORE_NAME);
+    public void testCertOpenSystemStore() {
+        WinCrypt.HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenSystemStore(null, "ROOT");
+        enumerateRootCertificates(hCertStore);
+    }
 
+    public void testCertOpenStore() {
+        WinCrypt.HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenStore(
+                new WTypes.LPSTR(new Pointer(Crypt32.CERT_STORE_PROV_SYSTEM_REGISTRY_W)),
+                0,
+                new WinCrypt.HCRYPTPROV_LEGACY(0),
+                Crypt32.CERT_SYSTEM_STORE_LOCAL_MACHINE | Crypt32.CERT_STORE_OPEN_EXISTING_FLAG | Crypt32.CERT_STORE_READONLY_FLAG,
+                new WTypes.LPWSTR("ROOT").getPointer());
+        enumerateRootCertificates(hCertStore);
+    }
+
+    private void enumerateRootCertificates(HCERTSTORE hCertStore) {
         int readCertificates = 0;
         int readExtensions = 0;
 
