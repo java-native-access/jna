@@ -209,6 +209,7 @@ public class CoreFoundationTest {
         CFStringRef oneStr = CFStringRef.createCFString("one");
 
         // Key does not exist, returns null
+        assertEquals(0L, dict.getCount());
         assertFalse(dict.getValueIfPresent(oneStr, null));
         Pointer cfNull = dict.getValue(oneStr);
         assertNull(cfNull);
@@ -223,6 +224,7 @@ public class CoreFoundationTest {
         IntByReference one = new IntByReference(1);
         CFNumberRef cfOne = CF.CFNumberCreate(null, CFNumberType.kCFNumberIntType.typeIndex(), one);
         dict.setValue(oneStr, cfOne);
+        assertEquals(1L, dict.getCount());
 
         assertTrue(dict.getValueIfPresent(oneStr, null));
         Pointer result = dict.getValue(oneStr);
@@ -240,6 +242,7 @@ public class CoreFoundationTest {
         result = dict.getValue(onePtr);
         CFStringRef strRef = new CFStringRef(result);
         assertEquals("one", strRef.stringValue());
+        assertEquals(2L, dict.getCount());
 
         oneStr.release();
         cfOne.release();
