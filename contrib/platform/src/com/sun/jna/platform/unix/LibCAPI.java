@@ -36,6 +36,76 @@ import com.sun.jna.Pointer;
  */
 public interface LibCAPI extends Reboot, Resource {
 
+    /**
+     * This is an unsigned integer type used to represent the sizes of objects.
+     */
+    class size_t extends IntegerType {
+        public static final size_t ZERO = new size_t();
+
+        private static final long serialVersionUID = 1L;
+
+        public size_t() {
+            this(0);
+        }
+
+        public size_t(long value) {
+            super(Native.SIZE_T_SIZE, value, true);
+        }
+
+        public static class ByReference extends com.sun.jna.ptr.ByReference {
+            public ByReference() {
+                this(0);
+            }
+
+            public ByReference(long value) {
+                this(new size_t(value));
+            }
+
+            public ByReference(size_t value) {
+                super(Native.SIZE_T_SIZE);
+                setValue(value);
+            }
+
+            public long longValue() {
+                return Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0);
+            }
+
+            public size_t getValue() {
+                return new size_t(longValue());
+            }
+
+            public void setValue(long value) {
+                setValue(new size_t(value));
+            }
+
+            public void setValue(size_t value) {
+                if (Native.SIZE_T_SIZE > 4) {
+                    getPointer().setLong(0, value.longValue());
+                } else {
+                    getPointer().setInt(0, value.intValue());
+                }
+            }
+        }
+    }
+
+    /**
+     * This is a signed integer type used for a count of bytes or an error
+     * indication.
+     */
+    class ssize_t extends IntegerType {
+        public static final ssize_t ZERO = new ssize_t();
+
+        private static final long serialVersionUID = 1L;
+
+        public ssize_t() {
+            this(0);
+        }
+
+        public ssize_t(long value) {
+            super(Native.SIZE_T_SIZE, value, false);
+        }
+    }
+
     // see man(2) get/set hostname
     int HOST_NAME_MAX = 255; // not including the '\0'
 
@@ -175,53 +245,50 @@ public interface LibCAPI extends Reboot, Resource {
     int munmap(Pointer addr, size_t length);
 
     /**
-     * The easy way to run another program is to use this function,
-     * since it does all the work of running a subprogram, but doesn't give you much control over the details:
-     * you have to wait until the subprogram terminates before you can do anything else. <br>
-     * <br>
+     * Runs the provided command via "sh" and waits for its termination
+     * (ignoring SIGINT and SIGQUIT, and blocking SIGCHLD).
+     * <p>
      * This function is a cancellation point in multi-threaded programs. This is a problem if the thread allocates some resources (like memory, file descriptors, semaphores or whatever) at the time system is called.
-     * If the thread gets canceled these resources stay allocated until the program ends. To avoid this calls to system should be protected using cancellation handlers. <br>
-     * <br>
+     * If the thread gets canceled these resources stay allocated until the program ends. To avoid this calls to system should be protected using cancellation handlers.
+     * <p>
      * Portability Note: Some C implementations may not have any notion of a command processor that can execute other programs.
-     * You can determine whether a command processor exists by executing system (NULL); if the return value is nonzero, a command processor is available. <br>
-     * <br>
+     * You can determine whether a command processor exists by executing system (NULL); if the return value is nonzero, a command processor is available.
+     * <p>
      * The popen and pclose functions (see Pipe to a Subprocess) are closely related to the system function.
-     * They allow the parent process to communicate with the standard input and output channels of the command being executed. <br>
-     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Running-a-Command">here</a>.
+     * They allow the parent process to communicate with the standard input and output channels of the command being executed.
      *
      * @param command if null a return value of zero indicates that no command processor is available, otherwise
      *                executes command as a shell command. In the GNU C Library, it always uses the default shell sh to run the command.
      *                In particular, it searches the directories in PATH to find programs to execute.
      * @return -1 if it wasn't possible to create the shell process, and otherwise is the status of the shell process.
+     * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=system">system(1)</a>
      */
     int system(String command);
 
     /**
-     * Returns the process ID of the current process.
+     * @return  the process ID of the current process.
      */
     int getpid();
 
     /**
-     * Returns the process ID of the parent of the current process.
+     * @return  the process ID of the parent of the current process.
      */
     int getppid();
 
     /**
-     * Creates a new (child) process. <br>
+     * Creates a new (child) process.
      * The current address space is copied over to the new process,
-     * which means that both see {@link #fork()} return, but with different values.<br>
-     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Creating-a-Process">here</a>
-     * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Process-Creation-Concepts">here</a>.
+     * which means that both see {@link #fork()} return, but with different values.
      *
      * @return the child process id on success, otherwise -1. For the child process this returns 0 on success, otherwise 112 (EAGAIN) or 132 (ENOMEM).
+     * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=fork">fork()</a>
      */
     int fork();
 
     /**
-     * Executes the file named by filename as a new process image. <br>
-     * Use this function after {@link #fork()}. <br>
-     * The environment for the new process image is taken from the environment variable of the current process image. <br>
-     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Executing-a-File">here</a>.
+     * Executes the file named by filename as a new process image.
+     * Use this function after {@link #fork()}.
+     * The environment for the new process image is taken from the environment variable of the current process image.
      *
      * @param filename the name of the file to execute.
      * @param argv     array that is used to provide a value for the argv argument to the main function of the program to be executed.
@@ -230,66 +297,60 @@ public interface LibCAPI extends Reboot, Resource {
      * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
      * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
      * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
+     * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=execv">execv(2)</a>
      */
     int execv(String filename, String[] argv);
 
     /**
      * Similar to {@link #execv(String, String[])}, but permits you to specify the environment for the new program explicitly as the env argument.
-     * This should be an array of strings in the same format as for the "environ" variable. <br>
-     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Executing-a-File">here</a>
-     * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Access">here</a>.
+     * This should be an array of strings in the same format as for the "environ" variable.
      *
      * @param filename the name of the file to execute.
      * @param argv     array that is used to provide a value for the argv argument to the main function of the program to be executed.
      *                 The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
-     *                 Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Program-Arguments">here</a>.
-     * @param env      the enviornment variables. Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Variables">here</a>.
+     * @param env      the enviornment variables.
      * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
      * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
      * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
+     * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=execve">execve(3)</a>
      */
     int execve(String filename, String[] argv, String[] env);
 
     /**
      * Similar to {@link #execv(String, String[])}, but instead of identifying the program executable by its pathname,
-     * the file descriptor fd is used.  <br>
+     * the file descriptor fd is used.
+     * <p>
      * On Linux, fexecve can fail with an error of ENOSYS if /proc has not been mounted and
-     * the kernel lacks support for the underlying execveat system call. <br>
-     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Executing-a-File">here</a>
-     * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Access">here</a>.
+     * the kernel lacks support for the underlying execveat system call.
      *
      * @param fd   file descriptor. Must have been opened with the O_RDONLY flag or (on Linux) the O_PATH flag.
      * @param argv array that is used to provide a value for the argv argument to the main function of the program to be executed.
      *             The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
-     *             Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Program-Arguments">here</a>.
-     * @param env  the enviornment variables. Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Variables">here</a>.
+     * @param env  the enviornment variables.
      * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
      * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
      * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
+     * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=fexecve">fexecve(3)</a>
      */
     int fexecve(int fd, String[] argv, String[] env);
 
     /**
      * The waitpid function is used to request status information from a child process.
-     * Normally, the calling process is suspended until the child process makes status information available by terminating. <br>
-     * <br>
+     * Normally, the calling process is suspended until the child process makes status information available by terminating.
+     * <p>
      * If status information for a child process is available immediately, this function returns immediately without waiting.
      * If more than one eligible child process has status information available, one of them is chosen randomly, and its status is returned immediately.
-     * To get the status from the other eligible child processes, you need to call waitpid again. <br>
-     * <br>
+     * To get the status from the other eligible child processes, you need to call waitpid again.
+     * <p>
      * This function is a cancellation point in multi-threaded programs.
      * This is a problem if the thread allocates some resources (like memory, file descriptors, semaphores or whatever) at the time waitpid is called.
      * If the thread gets canceled these resources stay allocated until the program ends.
-     * To avoid this calls to waitpid should be protected using cancellation handlers. <br>
-     * <br>
-     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Process-Completion">here</a>.
-     *
+     * To avoid this calls to waitpid should be protected using cancellation handlers.
      * @param pid       the process ID of the child process to request information from.
      *                  Can also be -1 or WAIT_ANY, which requests status information for any child process.
      *                  Can also be 0 or WAIT_MYPGRP, which requests information for any child process in the same process group as the calling process,
      *                  and any other negative value - pgid requests information for any child process whose process group ID is pgid.
      * @param statusPtr the status information from the child process is stored in this object, unless it's a null pointer.
-     *                  Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Process-Completion-Status">here</a>.
      * @param options   a bit mask. Its value should be the bitwise OR (that is, the ‘|’ operator) of zero or more of the WNOHANG and WUNTRACED flags.
      *                  You can use the WNOHANG flag to indicate that the parent process shouldn't wait; and the WUNTRACED flag to request status information
      *                  from stopped processes as well as processes that have terminated.
@@ -298,85 +359,17 @@ public interface LibCAPI extends Reboot, Resource {
      * However, if the WNOHANG option was specified, waitpid will return zero instead of blocking.
      * If a specific PID to wait for was given, it will ignore all other children (if any). Therefore, if there are children waiting
      * to be noticed but the child whose PID was specified is not one of them, waitpid will block or return zero as described above.
-     * -1
+     * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=waitpid">waitpid(3)</a>
      */
     int waitpid(int pid, Object statusPtr, int options);
 
     /**
      * Simplified version of {@link #waitpid(int, Object, int)}, and is used to wait until any one child process terminates.
-     * Exactly the same as: waitpid(-1, status, 0); <br>
+     * Exactly the same as: waitpid(-1, status, 0);
      *
      * @param statusPtr the status information from the child process is stored in this object, unless it's a null pointer.
+     * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=waitpid">wait(1)</a>
      */
     int wait(Object statusPtr);
 
-    /**
-     * This is an unsigned integer type used to represent the sizes of objects.
-     */
-    class size_t extends IntegerType {
-        public static final size_t ZERO = new size_t();
-
-        private static final long serialVersionUID = 1L;
-
-        public size_t() {
-            this(0);
-        }
-
-        public size_t(long value) {
-            super(Native.SIZE_T_SIZE, value, true);
-        }
-
-        public static class ByReference extends com.sun.jna.ptr.ByReference {
-            public ByReference() {
-                this(0);
-            }
-
-            public ByReference(long value) {
-                this(new size_t(value));
-            }
-
-            public ByReference(size_t value) {
-                super(Native.SIZE_T_SIZE);
-                setValue(value);
-            }
-
-            public long longValue() {
-                return Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0);
-            }
-
-            public size_t getValue() {
-                return new size_t(longValue());
-            }
-
-            public void setValue(long value) {
-                setValue(new size_t(value));
-            }
-
-            public void setValue(size_t value) {
-                if (Native.SIZE_T_SIZE > 4) {
-                    getPointer().setLong(0, value.longValue());
-                } else {
-                    getPointer().setInt(0, value.intValue());
-                }
-            }
-        }
-    }
-
-    /**
-     * This is a signed integer type used for a count of bytes or an error
-     * indication.
-     */
-    class ssize_t extends IntegerType {
-        public static final ssize_t ZERO = new ssize_t();
-
-        private static final long serialVersionUID = 1L;
-
-        public ssize_t() {
-            this(0);
-        }
-
-        public ssize_t(long value) {
-            super(Native.SIZE_T_SIZE, value, false);
-        }
-    }
 }
