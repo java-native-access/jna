@@ -167,4 +167,10 @@ public interface LibC extends LibCAPI, Library {
      *         is set appropriately.
      */
     int statvfs(String path, Statvfs buf);
+
+    /**
+     * Returns the thread ID of the current thread. The returned value is obtained from the Linux kernel and is not subject to caching. See the discussion of thread IDs above, especially regarding reuse of the IDs of threads which have exited.
+     * This function is specific to Linux.
+     */
+    int gettid();
 }

@@ -260,10 +260,22 @@ public interface LibCAPI extends Reboot, Resource {
     int system(String command);
 
     /**
+     * Returns the process ID of the current process.
+     */
+    int getpid();
+
+    /**
+     * Returns the process ID of the parent of the current process.
+     */
+    int getppid();
+
+    /**
      * Creates a new (child) process. <br>
+     * The current address space is copied over to the new process,
+     * which means that both see {@link #fork()} return, but with different values.<br>
      * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Creating-a-Process">here</a>
      * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Process-Creation-Concepts">here</a>.
-     * @return the child process id on success, otherwise -1. The child process also returns 0 on success, otherwise 112 (EAGAIN) or 132 (ENOMEM).
+     * @return the child process id on success, otherwise -1. For the child process this returns 0 on success, otherwise 112 (EAGAIN) or 132 (ENOMEM).
      */
     int fork();
 
