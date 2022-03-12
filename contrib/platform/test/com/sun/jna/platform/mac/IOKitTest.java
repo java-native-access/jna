@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -166,8 +167,7 @@ public class IOKitTest {
 
             // Get device name
             String controllerName = controllerDevice.getName();
-            // Root controllers always begin with "AppleUSB"
-            assertEquals("AppleUSB", controllerName.substring(0, 8));
+            assertNotNull(controllerName);
 
             // Get the first child, to test vs. iterator
             boolean testFirstChild = true;
@@ -177,7 +177,6 @@ public class IOKitTest {
             IOIterator childIter = controllerDevice.getChildIterator(IO_SERVICE);
             IORegistryEntry childDevice = childIter.next();
             while (childDevice != null) {
-                assertTrue(childDevice.conformsTo("IOUSBDevice"));
                 long childId = childDevice.getRegistryEntryID();
                 assertTrue(childId > 19);
                 assertFalse(uniqueEntryIdSet.contains(childId));
