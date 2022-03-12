@@ -251,7 +251,7 @@ public interface LibCAPI extends Reboot, Resource {
      * <br>
      * The popen and pclose functions (see Pipe to a Subprocess) are closely related to the system function.
      * They allow the parent process to communicate with the standard input and output channels of the command being executed. <br>
-     * More details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Running-a-Command">here</a>.
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Running-a-Command">here</a>.
      * @param command if null a return value of zero indicates that no command processor is available, otherwise
      *                executes command as a shell command. In the GNU C Library, it always uses the default shell sh to run the command.
      *                In particular, it searches the directories in PATH to find programs to execute.
@@ -261,12 +261,58 @@ public interface LibCAPI extends Reboot, Resource {
 
     /**
      * Creates a new (child) process. <br>
-     * More details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Creating-a-Process">here</a>
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Creating-a-Process">here</a>
      * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Process-Creation-Concepts">here</a>.
      * @return the child process id on success, otherwise -1. The child process also returns 0 on success, otherwise 112 (EAGAIN) or 132 (ENOMEM).
      */
     int fork();
 
+    /**
+     * Executes the file named by filename as a new process image. <br>
+     * Use this function after {@link #fork()}. <br>
+     * The environment for the new process image is taken from the environment variable of the current process image. <br>
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Executing-a-File">here</a>.
+     * @param filename the name of the file to execute.
+     * @param argv array that is used to provide a value for the argv argument to the main function of the program to be executed.
+     * The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Program-Arguments">here</a>.
+     * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
+     * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
+     * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
+     */
+    int execv(String filename, String[] argv);
 
+    /**
+     * Similar to {@link #execv(String, String[])}, but permits you to specify the environment for the new program explicitly as the env argument.
+     * This should be an array of strings in the same format as for the "environ" variable. <br>
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Executing-a-File">here</a>
+     * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Access">here</a>.
+     * @param filename the name of the file to execute.
+     * @param argv array that is used to provide a value for the argv argument to the main function of the program to be executed.
+     * The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Program-Arguments">here</a>.
+     * @param env the enviornment variables. Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Variables">here</a>.
+     * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
+     * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
+     * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
+     */
+    int execve(String filename, String[] argv, String[] env);
 
+    /**
+     * Similar to {@link #execv(String, String[])}, but instead of identifying the program executable by its pathname,
+     * the file descriptor fd is used.  <br>
+     * On Linux, fexecve can fail with an error of ENOSYS if /proc has not been mounted and
+     * the kernel lacks support for the underlying execveat system call. <br>
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Executing-a-File">here</a>
+     * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Access">here</a>.
+     * @param fd file descriptor. Must have been opened with the O_RDONLY flag or (on Linux) the O_PATH flag.
+     * @param argv array that is used to provide a value for the argv argument to the main function of the program to be executed.
+     * The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
+     * Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Program-Arguments">here</a>.
+     * @param env the enviornment variables. Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Environment-Variables">here</a>.
+     * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
+     * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
+     * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
+     */
+    int fexecve(int fd, String[] argv, String[] env);
 }
