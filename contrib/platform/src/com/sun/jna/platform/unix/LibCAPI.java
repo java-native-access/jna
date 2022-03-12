@@ -237,4 +237,36 @@ public interface LibCAPI extends Reboot, Resource {
      *         {@code EINVAL}).
      */
     int munmap(Pointer addr, size_t length);
+
+    /**
+     * The easy way to run another program is to use this function,
+     * since it does all the work of running a subprogram, but doesn't give you much control over the details:
+     * you have to wait until the subprogram terminates before you can do anything else. <br>
+     * <br>
+     * This function is a cancellation point in multi-threaded programs. This is a problem if the thread allocates some resources (like memory, file descriptors, semaphores or whatever) at the time system is called.
+     * If the thread gets canceled these resources stay allocated until the program ends. To avoid this calls to system should be protected using cancellation handlers. <br>
+     * <br>
+     * Portability Note: Some C implementations may not have any notion of a command processor that can execute other programs.
+     * You can determine whether a command processor exists by executing system (NULL); if the return value is nonzero, a command processor is available. <br>
+     * <br>
+     * The popen and pclose functions (see Pipe to a Subprocess) are closely related to the system function.
+     * They allow the parent process to communicate with the standard input and output channels of the command being executed. <br>
+     * More details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Running-a-Command">here</a>.
+     * @param command if null a return value of zero indicates that no command processor is available, otherwise
+     *                executes command as a shell command. In the GNU C Library, it always uses the default shell sh to run the command.
+     *                In particular, it searches the directories in PATH to find programs to execute.
+     * @return -1 if it wasn't possible to create the shell process, and otherwise is the status of the shell process
+     */
+    int system(String command);
+
+    /**
+     * Creates a new (child) process. <br>
+     * More details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Creating-a-Process">here</a>
+     * and <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Process-Creation-Concepts">here</a>.
+     * @return the child process id on success, otherwise -1. The child process also returns 0 on success, otherwise 112 (EAGAIN) or 132 (ENOMEM).
+     */
+    int fork();
+
+
+
 }
