@@ -57,6 +57,7 @@ public class IOKitTest {
     private static final SystemB SYS = SystemB.INSTANCE;
 
     private static final String IO_SERVICE = "IOService";
+    private static final String IOUSB = "IOUSB";
 
     @Test
     public void testMatching() {
@@ -145,10 +146,18 @@ public class IOKitTest {
         Set<Long> uniqueEntryIdSet = new HashSet<Long>();
         // Iterate over USB Controllers. All devices are children of one of
         // these controllers in the "IOService" plane
-        IOIterator iter = IOKitUtil.getMatchingServices("IOUSBController");
+        // On M1 the IOUSBController service doesn't exist so we navigate from root of
+        // IOUSB plane to find the Root Hubs which have a 1:1 correspondence with
+        // controllers
+        IORegistryEntry root = IOKitUtil.getRoot();
+        IOIterator iter = root.getChildIterator(IOUSB);
         assertNotNull(iter);
-        IORegistryEntry controllerDevice = iter.next();
-        while (controllerDevice != null) {
+        IORegistryEntry rootHubDevice = iter.next();
+        while (rootHubDevice != null) {
+            // The parent of this device in IOService plane is the controller
+            IORegistryEntry controllerDevice = rootHubDevice.getParentEntry(IO_SERVICE);
+            assertEquals(0, rootHubDevice.release());
+
             long id = controllerDevice.getRegistryEntryID();
             // EntryIDs 0 thru 19 are reserved, all are unique
             assertTrue(id > 19);
@@ -163,8 +172,6 @@ public class IOKitTest {
             // Get the first child, to test vs. iterator
             boolean testFirstChild = true;
             IORegistryEntry firstChild = controllerDevice.getChildEntry(IO_SERVICE);
-            // If this returns non-null, we have at least one child entry to
-            // test. If not, the iterator will never check whether to test
 
             // Now iterate the children of this device in the "IOService" plane.
             IOIterator childIter = controllerDevice.getChildIterator(IO_SERVICE);
@@ -196,9 +203,10 @@ public class IOKitTest {
 
             // Release this controller and iterate to the next one
             assertEquals(0, controllerDevice.release());
-            controllerDevice = iter.next();
+            rootHubDevice = iter.next();
         }
         assertEquals(0, iter.release());
+        assertEquals(0, root.release());
         assertEquals(0, SYS.mach_port_deallocate(SYS.mach_task_self(), masterPort));
     }
 
