@@ -26,12 +26,12 @@ package com.sun.jna.platform.unix;
 import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.linux.ErrNo;
 
 /**
  * Note: we are using this &quot;intermediate&quot; API in order to allow
  * Linux-like O/S-es to implement the same API, but maybe using a different
  * library name
- *
  * @author Lyor Goldstein
  */
 public interface LibCAPI extends Reboot, Resource {
@@ -43,14 +43,6 @@ public interface LibCAPI extends Reboot, Resource {
         public static final size_t ZERO = new size_t();
 
         private static final long serialVersionUID = 1L;
-
-        public size_t() {
-            this(0);
-        }
-
-        public size_t(long value) {
-            super(Native.SIZE_T_SIZE, value, true);
-        }
 
         public static class ByReference extends com.sun.jna.ptr.ByReference {
             public ByReference() {
@@ -66,14 +58,6 @@ public interface LibCAPI extends Reboot, Resource {
                 setValue(value);
             }
 
-            public long longValue() {
-                return Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0);
-            }
-
-            public size_t getValue() {
-                return new size_t(longValue());
-            }
-
             public void setValue(long value) {
                 setValue(new size_t(value));
             }
@@ -85,6 +69,22 @@ public interface LibCAPI extends Reboot, Resource {
                     getPointer().setInt(0, value.intValue());
                 }
             }
+
+            public long longValue() {
+                return Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0);
+            }
+
+            public size_t getValue() {
+                return new size_t(longValue());
+            }
+        }
+
+        public size_t() {
+            this(0);
+        }
+
+        public size_t(long value) {
+            super(Native.SIZE_T_SIZE, value, true);
         }
     }
 
@@ -106,33 +106,25 @@ public interface LibCAPI extends Reboot, Resource {
         }
     }
 
-    // see man(2) get/set hostname
-    int HOST_NAME_MAX = 255; // not including the '\0'
-
     // see man(2) get/set uid/gid
     int getuid();
-
     int geteuid();
-
     int getgid();
-
     int getegid();
 
     int setuid(int uid);
-
     int seteuid(int uid);
-
     int setgid(int gid);
-
     int setegid(int gid);
 
-    int gethostname(byte[] name, int len);
+    // see man(2) get/set hostname
+    int HOST_NAME_MAX = 255; // not including the '\0'
 
+    int gethostname(byte[] name, int len);
     int sethostname(String name, int len);
 
     // see man(2) get/set domainname
     int getdomainname(byte[] name, int len);
-
     int setdomainname(String name, int len);
 
     /**
@@ -145,14 +137,13 @@ public interface LibCAPI extends Reboot, Resource {
 
     /**
      * Update or add a variable in the environment of the calling process.
-     *
-     * @param name      Environment variable name
-     * @param value     Required value
+     * @param name Environment variable name
+     * @param value Required value
      * @param overwrite If the environment variable already exists and the
-     *                  value of {@code overwrite} is non-zero, the function shall return
-     *                  success and the environment shall be updated. If the environment
-     *                  variable already exists and the value of {@code overwrite} is zero, the
-     *                  function shall return success and the environment shall remain unchanged.
+     * value of {@code overwrite} is non-zero, the function shall return
+     * success and the environment shall be updated. If the environment
+     * variable already exists and the value of {@code overwrite} is zero, the
+     * function shall return success and the environment shall remain unchanged.
      * @return Upon successful completion, zero shall be returned. Otherwise,
      * -1 shall be returned, {@code errno} set to indicate the error, and the
      * environment shall be unchanged
@@ -162,8 +153,8 @@ public interface LibCAPI extends Reboot, Resource {
 
     /**
      * @param name Environment variable name - If the named variable does not
-     *             exist in the current environment, the environment shall be unchanged
-     *             and the function is considered to have completed successfully.
+     * exist in the current environment, the environment shall be unchanged
+     * and the function is considered to have completed successfully.
      * @return Upon successful completion, zero shall be returned. Otherwise,
      * -1 shall be returned, {@code errno} set to indicate the error, and the
      * environment shall be unchanged
@@ -177,9 +168,8 @@ public interface LibCAPI extends Reboot, Resource {
      * retrieved and assigned to successive elements of loadavg[].  The system
      * imposes a maximum of 3 samples, representing averages over the last 1, 5,
      * and 15 minutes, respectively.
-     *
      * @param loadavg An array of doubles which will be filled with the results
-     * @param nelem   Number of samples to return
+     * @param nelem Number of samples to return
      * @return If the load average was unobtainable, -1 is returned; otherwise,
      * the number of samples actually retrieved is returned.
      * @see <A HREF="https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
@@ -196,7 +186,6 @@ public interface LibCAPI extends Reboot, Resource {
      * file description, the resources associated with the open file description are
      * freed; if the file descriptor was the last reference to a file which has been
      * removed using {@code unlink}, the file is deleted.
-     *
      * @param fd a file descriptor
      * @return returns zero on success. On error, -1 is returned, and {@code errno}
      * is set appropriately.
@@ -212,12 +201,11 @@ public interface LibCAPI extends Reboot, Resource {
      * changes are written back before {@link #munmap(Pointer, size_t)} is called.
      * To be more precise, the part of the file that corresponds to the memory area
      * starting at {@code addr} and having length {@code length} is updated.
-     *
-     * @param addr   The start of the memory area to sync to the filesystem.
+     * @param addr The start of the memory area to sync to the filesystem.
      * @param length The length of the memory area to sync to the filesystem.
-     * @param flags  The flags argument should specify exactly one of {@code MS_ASYNC}
-     *               and {@code MS_SYNC}, and may additionally include the
-     *               {@code MS_INVALIDATE} bit.
+     * @param flags The flags argument should specify exactly one of {@code MS_ASYNC}
+     * and {@code MS_SYNC}, and may additionally include the
+     * {@code MS_INVALIDATE} bit.
      * @return On success, zero is returned. On error, -1 is returned, and
      * {@code errno} is set appropriately.
      */
@@ -231,13 +219,12 @@ public interface LibCAPI extends Reboot, Resource {
      * region.
      * <p>
      * It is not an error if the indicated range does not contain any mapped pages.
-     *
-     * @param addr   The base address from which to delete mappings. The address addr
-     *               must be a multiple of the page size (but length need not be).
+     * @param addr The base address from which to delete mappings. The address addr
+     * must be a multiple of the page size (but length need not be).
      * @param length The length from the base address to delete mappings. All pages
-     *               containing a part of the indicated range are unmapped, and
-     *               subsequent references to these pages will generate
-     *               {@code SIGSEGV}.
+     * containing a part of the indicated range are unmapped, and
+     * subsequent references to these pages will generate
+     * {@code SIGSEGV}.
      * @return On success, returns 0. On failure, it returns -1, and {@code errno}
      * is set to indicate the cause of the error (probably to
      * {@code EINVAL}).
@@ -256,22 +243,21 @@ public interface LibCAPI extends Reboot, Resource {
      * <p>
      * The popen and pclose functions (see Pipe to a Subprocess) are closely related to the system function.
      * They allow the parent process to communicate with the standard input and output channels of the command being executed.
-     *
      * @param command if null a return value of zero indicates that no command processor is available, otherwise
-     *                executes command as a shell command. In the GNU C Library, it always uses the default shell sh to run the command.
-     *                In particular, it searches the directories in PATH to find programs to execute.
+     * executes command as a shell command. In the GNU C Library, it always uses the default shell sh to run the command.
+     * In particular, it searches the directories in PATH to find programs to execute.
      * @return -1 if it wasn't possible to create the shell process, and otherwise is the status of the shell process.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=system">system(1)</a>
      */
     int system(String command);
 
     /**
-     * @return  the process ID of the current process.
+     * @return the process ID of the current process.
      */
     int getpid();
 
     /**
-     * @return  the process ID of the parent of the current process.
+     * @return the process ID of the parent of the current process.
      */
     int getppid();
 
@@ -280,7 +266,9 @@ public interface LibCAPI extends Reboot, Resource {
      * The current address space is copied over to the new process,
      * which means that both see {@link #fork()} return, but with different values.
      *
-     * @return the child process id on success, otherwise -1. For the child process this returns 0 on success, otherwise 112 (EAGAIN) or 132 (ENOMEM).
+     * @return On success, the PID of the child process is returned in the parent, and 0 is returned in the child.
+     * On failure, -1 is returned in the parent, no child process is created, and errno ({@link ErrNo#EAGAIN}, {@link ErrNo#ENOMEM})
+     * is set to indicate the error.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=fork">fork()</a>
      */
     int fork();
@@ -295,7 +283,8 @@ public interface LibCAPI extends Reboot, Resource {
      *                 The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
      *                 Details <a href="https://www.gnu.org/software/libc/manual/html_mono/libc.html#Program-Arguments">here</a>.
      * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
-     * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
+     * A value of -1 is returned in the event of a failure or errno ({@link ErrNo#E2BIG}, {@link ErrNo#ENOEXEC}, {@link ErrNo#ENOMEM}),
+     * in addition to the usual file name errors.
      * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=execv">execv(2)</a>
      */
@@ -310,7 +299,8 @@ public interface LibCAPI extends Reboot, Resource {
      *                 The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
      * @param env      the enviornment variables.
      * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
-     * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
+     * A value of -1 is returned in the event of a failure or errno ({@link ErrNo#E2BIG}, {@link ErrNo#ENOEXEC}, {@link ErrNo#ENOMEM}),
+     * in addition to the usual file name errors.
      * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=execve">execve(3)</a>
      */
@@ -328,11 +318,15 @@ public interface LibCAPI extends Reboot, Resource {
      *             The last element of this array must be a null pointer. By convention, the first element of this array is the file name of the program sans directory names.
      * @param env  the enviornment variables.
      * @return normally doesn't return, since execution of a new program causes the currently executing program to go away completely.
-     * A value of -1 is returned in the event of a failure or 145 (E2BIG), 130 (ENOEXEC) or 132 (ENOMEM), in addition to the usual file name errors.
+     * A value of -1 is returned in the event of a failure or errno ({@link ErrNo#E2BIG}, {@link ErrNo#ENOEXEC}, {@link ErrNo#ENOMEM}),
+     *      * in addition to the usual file name errors.
      * If execution of the new file succeeds, it updates the access time field of the file as if the file had been read.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=fexecve">fexecve(3)</a>
      */
     int fexecve(int fd, String[] argv, String[] env);
+
+    int WAIT_ANY = -1;
+    int WAIT_MYPGRP = 0;
 
     /**
      * The waitpid function is used to request status information from a child process.
@@ -347,14 +341,15 @@ public interface LibCAPI extends Reboot, Resource {
      * If the thread gets canceled these resources stay allocated until the program ends.
      * To avoid this calls to waitpid should be protected using cancellation handlers.
      * @param pid       the process ID of the child process to request information from.
-     *                  Can also be -1 or WAIT_ANY, which requests status information for any child process.
-     *                  Can also be 0 or WAIT_MYPGRP, which requests information for any child process in the same process group as the calling process,
+     *                  Can also be {@link #WAIT_ANY}, which requests status information for any child process.
+     *                  Can also be {@link #WAIT_MYPGRP}, which requests information for any child process in the same process group as the calling process,
      *                  and any other negative value - pgid requests information for any child process whose process group ID is pgid.
      * @param statusPtr the status information from the child process is stored in this object, unless it's a null pointer.
      * @param options   a bit mask. Its value should be the bitwise OR (that is, the ‘|’ operator) of zero or more of the WNOHANG and WUNTRACED flags.
      *                  You can use the WNOHANG flag to indicate that the parent process shouldn't wait; and the WUNTRACED flag to request status information
      *                  from stopped processes as well as processes that have terminated.
-     * @return the process ID of the child process whose status is reported otherwise -1 if it failed (or 120 EINTR, 115 ECHILD, 121 EINVAL).
+     * @return the process ID of the child process whose status is reported otherwise -1 if it failed
+     * or errno ({@link ErrNo#EINTR}, {@link ErrNo#ECHILD}, {@link ErrNo#EINVAL}).
      * If there are child processes but none of them is waiting to be noticed, waitpid will block until one is.
      * However, if the WNOHANG option was specified, waitpid will return zero instead of blocking.
      * If a specific PID to wait for was given, it will ignore all other children (if any). Therefore, if there are children waiting
@@ -364,10 +359,13 @@ public interface LibCAPI extends Reboot, Resource {
     int waitpid(int pid, Object statusPtr, int options);
 
     /**
-     * Simplified version of {@link #waitpid(int, Object, int)}, and is used to wait until any one child process terminates.
-     * Exactly the same as: waitpid(-1, status, 0);
+     * Simplified version of {@link #waitpid(int, Object, int)}. Exactly the same as: waitpid(-1, status, 0);
+     * Suspends execution of its calling thread until status information is available
+     * for a child process or a signal is received.
      *
      * @param statusPtr the status information from the child process is stored in this object, unless it's a null pointer.
+     * @return the PID of the process that reported a status change. The provided status object is also populated with
+     * the received status information.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=waitpid">wait(1)</a>
      */
     int wait(Object statusPtr);

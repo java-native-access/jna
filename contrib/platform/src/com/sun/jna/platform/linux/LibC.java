@@ -169,10 +169,12 @@ public interface LibC extends LibCAPI, Library {
     int statvfs(String path, Statvfs buf);
 
     /**
-     * @return the thread ID of the current thread.
-     *         The returned value is obtained from the Linux kernel and is not subject to caching.
-     *         See the discussion of thread IDs above, especially regarding reuse of the IDs of threads which have exited. This function is specific to Linux.
-     * @throws UnsatisfiedLinkError make sure to check for this exception, since this is a glibc-specific function, and was only added to musl recently (2020).
+     * Returns the caller's thread ID (TID). In a single-threaded process,
+     * the thread ID is equal to the process ID (PID, as returned by {@link #getpid()}).
+     * In a multithreaded process, all threads have the same PID, but each one has a unique TID.
+     * @return the thread ID of the calling thread.
+     * @throws UnsatisfiedLinkError if this function is not present in the libc used by this operating system.
+     * @see <a href="https://man7.org/linux/man-pages/man2/gettid.2.html">gettid()</a>
      */
     int gettid();
 }
