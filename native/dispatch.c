@@ -3143,10 +3143,14 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
     if (jprop != NULL) {
 
       char* prop = newCString(env, jprop);
-      char* saveptr;
+      char* saveptr = NULL;
 
       for(char* propToBeTokeninzed = prop; ; propToBeTokeninzed = NULL) {
           char* pathElement = strtok_r(propToBeTokeninzed, ":", &saveptr);
+
+          if(pathElement == NULL) {
+            break;
+          }
 
           size_t len = strlen(pathElement) + strlen(jawtLibraryName) + 2;
           char* path = (char*) alloca(len);
@@ -3154,8 +3158,8 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
           sprintf(path, "%s/%s", pathElement, jawtLibraryName);
 
           jawt_handle = LOAD_LIBRARY(path, DEFAULT_LOAD_OPTS);
-          if(jawt_handle != NULL || pathElement == NULL) {
-              break;
+          if(jawt_handle != NULL) {
+            break;
           }
       }
 
