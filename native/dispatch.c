@@ -3063,23 +3063,23 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
 }
 
 #ifndef NO_JAWT
-#if !defined(__APPLE__)
-#define JAWT_HEADLESS_HACK
-#ifdef _WIN32
-#define JAWT_NAME "jawt.dll"
-#if defined(_WIN64)
-#define METHOD_NAME "JAWT_GetAWT"
-#else
-#define METHOD_NAME "_JAWT_GetAWT@8"
-#endif
-#else
-#define JAWT_NAME "libjawt.so"
-#define METHOD_NAME "JAWT_GetAWT"
-#endif
-static void* jawt_handle = NULL;
-static jboolean (JNICALL *pJAWT_GetAWT)(JNIEnv*,JAWT*);
-#define JAWT_GetAWT (*pJAWT_GetAWT)
-#endif
+    #if !defined(__APPLE__)
+        #define JAWT_HEADLESS_HACK
+        #ifdef _WIN32
+            #if defined(_WIN64)
+                #define METHOD_NAME "JAWT_GetAWT"
+            #else
+                #define METHOD_NAME "_JAWT_GetAWT@8"
+            #endif
+        #else
+            #define METHOD_NAME "JAWT_GetAWT"
+        #endif
+
+        static void* jawt_handle = NULL;
+        static jboolean (JNICALL *pJAWT_GetAWT)(JNIEnv*,JAWT*);
+
+        #define JAWT_GetAWT (*pJAWT_GetAWT)
+    #endif
 #endif /* NO_JAWT */
 
 JNIEXPORT jlong JNICALL
@@ -3116,17 +3116,60 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
       path = (wchar_t*)alloca(len * sizeof(wchar_t));
 
       swprintf(path, len, L"%s%s", prop, suffix);
-      
+
       free((void *)prop);
     }
-#undef JAWT_NAME
-#define JAWT_NAME path
-#endif
-    if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME, DEFAULT_LOAD_OPTS)) == NULL) {
+    if ((jawt_handle = LOAD_LIBRARY(path, DEFAULT_LOAD_OPTS)) == NULL) {
       char msg[MSG_SIZE];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
       return -1;
     }
+#else
+    const char* jawtLibraryName = "libjawt.so";
+
+    // Try to load the libjawt.so library first from the the directories listed
+    // in the sun.boot.library.path system property. At least Ubuntu builds the
+    // JDK with RUNPATH set instead of RPATH. The two differ in their effect on
+    // loading transitive dependencies.
+    //
+    // RPATHs effect also covers libraries loaded as transitive dependencies,
+    // while RUNPATH does not. In the case of JNA libjawt is loaded by
+    // libdispatch (the native JNA part), which makes it a transtive load.
+    //
+    // The solution is to load the library with the full path based on the
+    // sun.boot.library.path system property, which points to the native library
+    // dirs.
+    jstring jprop = get_system_property(env, "sun.boot.library.path");
+    if (jprop != NULL) {
+
+      char* prop = newCString(env, jprop);
+      char* saveptr;
+
+      for(char* propToBeTokeninzed = prop; ; propToBeTokeninzed = NULL) {
+          char* pathElement = strtok_r(propToBeTokeninzed, ":", &saveptr);
+
+          size_t len = strlen(pathElement) + strlen(jawtLibraryName) + 2;
+          char* path = (char*) alloca(len);
+
+          sprintf(path, "%s/%s", pathElement, jawtLibraryName);
+
+          jawt_handle = LOAD_LIBRARY(path, DEFAULT_LOAD_OPTS);
+          if(jawt_handle != NULL || pathElement == NULL) {
+              break;
+          }
+      }
+
+      free((void *)prop);
+    }
+
+    if (jawt_handle == NULL) {
+      if ((jawt_handle = LOAD_LIBRARY(jawtLibraryName, DEFAULT_LOAD_OPTS)) == NULL) {
+        char msg[MSG_SIZE];
+        throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
+        return -1;
+      }
+    }
+#endif
     if ((pJAWT_GetAWT = (void*)FIND_ENTRY(jawt_handle, METHOD_NAME)) == NULL) {
       char msg[MSG_SIZE], buf[MSG_SIZE - 31 /* literal characters */ - sizeof(METHOD_NAME)];
       snprintf(msg, sizeof(msg), "Error looking up JAWT method %s: %s",
