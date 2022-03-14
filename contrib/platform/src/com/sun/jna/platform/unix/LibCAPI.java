@@ -176,24 +176,6 @@ public interface LibCAPI extends Reboot, Resource {
     int getloadavg(double[] loadavg, int nelem);
 
     /**
-     * Closes a file descriptor, so that it no longer refers to any file and may be
-     * reused. Any record locks held on the file it was associated with, and owned
-     * by the process, are removed (regardless of the file descriptor that was used
-     * to obtain the lock).
-     * <p>
-     * If {@code fd} is the last file descriptor referring to the underlying open
-     * file description, the resources associated with the open file description are
-     * freed; if the file descriptor was the last reference to a file which has been
-     * removed using {@code unlink}, the file is deleted.
-     * @param fd a file descriptor
-     * @return returns zero on success. On error, -1 is returned, and {@code errno}
-     * is set appropriately.
-     * <p>
-     * {@code close()} should not be retried after an error.
-     */
-    int close(int fd);
-
-    /**
      * Flushes changes made to the in-core copy of a file that was mapped into
      * memory using {@link LibCUtil#mmap(Pointer, long, int, int, int, long)} back
      * to the filesystem. Without use of this call, there is no guarantee that
@@ -404,6 +386,50 @@ public interface LibCAPI extends Reboot, Resource {
      * {@link ErrNo#EMFILE}, {@link ErrNo#ENFILE}, {@link ErrNo#ENOENT}, {@link ErrNo#ENOSPC},
      * {@link ErrNo#ENXIO}, {@link ErrNo#EROFS}.
      */
-    int open (String filename, int[] flags);
+    int open(String filename, int[] flags); // TODO what is mean with: "int flags[, mode_t mode]" https://www.gnu.org/software/libc/manual/html_mono/libc.html#Opening-and-Closing-Files
+
+    /**
+     * This function is obsolete and replaced by {@link #open(String, int[])}. <br>
+     * {@code creat(filename, mode)} is equivalent to: <br>
+     * {@code open(filename, O_WRONLY | O_CREAT | O_TRUNC, mode)}.
+     * <p>
+     * If on a 32 bit machine the sources are translated with _FILE_OFFSET_BITS == 64,
+     * returns a file descriptor opened in the large file mode which enables the file handling functions
+     * to use files up to 2^63 in size and offset from -2^63 to 2^63.
+     * This happens transparently for the user since all of the low-level file handling functions are equally replaced.
+     * @param filename
+     * @param mode
+     * @return
+     */
+    int creat(String filename, mode_t mode); // TODO how to handle mode_t type in Java?
+
+    /**
+     * Closes the file descriptor so that it no longer refers to any file and may be reused.
+     * Closing a file has the following consequences: <br>
+     * - The file descriptor is deallocated. <br>
+     * - Any record locks held on the file it was associated with, and owned
+     *   by the process, are removed (regardless of the file descriptor that was used to obtain the lock). <br>
+     * - When all file descriptors associated with a pipe or FIFO have been closed, any unread data is discarded. <br>
+     * - If {@code fd} is the last file descriptor referring to the underlying open
+     *   file description, the resources associated with the open file description are freed. <br>
+     * - If the file descriptor was the last reference to a file which has been
+     *   removed using {@code unlink}, the file is deleted. <br>
+     * <p>
+     * This function is a cancellation point in multi-threaded programs.
+     * This is a problem if the thread allocates some resources (like memory, file descriptors, semaphores or whatever) at the time close
+     * is called. If the thread gets canceled these resources stay allocated until the program ends.
+     * To avoid this, calls to close should be protected using cancellation handlers.
+     * <p>
+     * Please note that there is no separate close64 function.
+     * This is not necessary since this function does not determine nor depend on the mode of the file.
+     * The kernel which performs the close operation knows which mode the descriptor is used for and can handle this situation.
+     * <p>
+     * To close a stream, call TODO: fclose (see Closing Streams) instead of trying to close its underlying file descriptor with close.
+     * This flushes any buffered output and updates the stream object to indicate that it is closed.
+     * @param fd the file descriptor.
+     * @return 0 on success or -1 on failure ({@code close()} should not be retried after an error). The following errno error conditions are defined for this function:
+     * {@link ErrNo#EBADF}, {@link ErrNo#EINTR}, {@link ErrNo#ENOSPC}, {@link ErrNo#EIO}, {@link ErrNo#EDQUOT}.
+     */
+    int close(int fd);
 
 }
