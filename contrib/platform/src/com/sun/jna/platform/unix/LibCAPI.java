@@ -230,6 +230,10 @@ public interface LibCAPI extends Reboot, Resource {
      */
     int munmap(Pointer addr, size_t length);
 
+
+    // Processes:
+
+
     /**
      * Runs the provided command via "sh" and waits for its termination
      * (ignoring SIGINT and SIGQUIT, and blocking SIGCHLD).
@@ -368,5 +372,38 @@ public interface LibCAPI extends Reboot, Resource {
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=waitpid">wait(1)</a>
      */
     int wait(int status);
+
+
+    // Low-Level I/O:
+
+
+    /**
+     * Creates and returns a new file descriptor for the file named by filename.
+     * Initially, the file position indicator for the file is at the beginning of the file.
+     * The argument mode is used only when a file is created, but it doesn't hurt to supply the argument in any case.
+     * <p>
+     * If on a 32 bit machine the sources are translated with _FILE_OFFSET_BITS == 64, returns
+     * a file descriptor opened in the large file mode which enables the file handling functions
+     * to use files up to 2^63 bytes in size and offset from -2^63 to 2^63.
+     * This happens transparently for the user since all the low-level file handling functions are equally replaced.
+     * <p>
+     * TODO cancellation handlers?
+     * This function is a cancellation point in multi-threaded programs.
+     * This is a problem if the thread allocates some resources (like memory, file descriptors, semaphores or whatever) at the time open is called.
+     * If the thread gets canceled these resources stay allocated until the program ends.
+     * To avoid this calls to open should be protected using cancellation handlers.
+     * <p>
+     * The open function is the underlying primitive for the TODO: fopen and freopen functions , that create streams.
+     * @param filename the name of the file to be opened.
+     * @param flags controls how the file is to be opened.
+     *             This is a bit mask; you create the value by the bitwise OR of the appropriate parameters.
+     * @return a non-negative integer file descriptor.
+     * In the case of an error, a value of -1 is returned instead.
+     * In addition to the usual file name errors, the following errno error conditions are defined for this function:
+     * {@link ErrNo#EACCES}, {@link ErrNo#EEXIST}, {@link ErrNo#EINTR}, {@link ErrNo#EISDIR},
+     * {@link ErrNo#EMFILE}, {@link ErrNo#ENFILE}, {@link ErrNo#ENOENT}, {@link ErrNo#ENOSPC},
+     * {@link ErrNo#ENXIO}, {@link ErrNo#EROFS}.
+     */
+    int open (String filename, int[] flags);
 
 }
