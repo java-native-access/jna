@@ -85,4 +85,34 @@ public class LibCTest extends AbstractUnixTestSupport {
         System.out.println("Domainname: " + domainname);
         assertTrue(domainname.length() > 0);
     }
+
+    @Test
+    public void testSystem(){
+        assertSuccessResult("system", LibC.INSTANCE.system("ls"));
+    }
+
+    @Test
+    public void testGetpid(){
+        assertTrue("getpid", LibC.INSTANCE.getpid() > 0);
+    }
+
+    @Test
+    public void testGetppid(){
+        assertTrue("getppid", LibC.INSTANCE.getppid() > 0);
+    }
+
+    @Test
+    public void testFork(){
+        int status = 0;
+        int pid = LibC.INSTANCE.fork();
+        if (pid == 0) // This is the child process
+            return;
+        else if (pid < 0) // Fork failed
+            status = -1;
+        else { // This is the parent process. Wait for the child to complete.
+            if (LibC.INSTANCE.waitpid(pid, status, 0) != pid)
+                status = -1;
+        }
+        assertTrue("fork", status < 0);
+    }
 }

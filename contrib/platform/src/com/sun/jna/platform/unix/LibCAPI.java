@@ -119,7 +119,6 @@ public interface LibCAPI extends Reboot, Resource {
 
     // see man(2) get/set hostname
     int HOST_NAME_MAX = 255; // not including the '\0'
-
     int gethostname(byte[] name, int len);
     int sethostname(String name, int len);
 
@@ -344,7 +343,7 @@ public interface LibCAPI extends Reboot, Resource {
      *                  Can also be {@link #WAIT_ANY}, which requests status information for any child process.
      *                  Can also be {@link #WAIT_MYPGRP}, which requests information for any child process in the same process group as the calling process,
      *                  and any other negative value - pgid requests information for any child process whose process group ID is pgid.
-     * @param statusPtr the status information from the child process is stored in this object, unless it's a null pointer.
+     * @param status    the status information from the child process is stored in this object, unless it's a null pointer.
      * @param options   a bit mask. Its value should be the bitwise OR (that is, the ‘|’ operator) of zero or more of the WNOHANG and WUNTRACED flags.
      *                  You can use the WNOHANG flag to indicate that the parent process shouldn't wait; and the WUNTRACED flag to request status information
      *                  from stopped processes as well as processes that have terminated.
@@ -356,18 +355,18 @@ public interface LibCAPI extends Reboot, Resource {
      * to be noticed but the child whose PID was specified is not one of them, waitpid will block or return zero as described above.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=waitpid">waitpid(3)</a>
      */
-    int waitpid(int pid, Object statusPtr, int options);
+    int waitpid(int pid, int status, int options);
 
     /**
-     * Simplified version of {@link #waitpid(int, Object, int)}. Exactly the same as: waitpid(-1, status, 0);
+     * Simplified version of {@link #waitpid(int, int, int)}. Exactly the same as: waitpid(-1, status, 0);
      * Suspends execution of its calling thread until status information is available
      * for a child process or a signal is received.
      *
-     * @param statusPtr the status information from the child process is stored in this object, unless it's a null pointer.
+     * @param status the status information from the child process is stored in this object, unless it's a null pointer.
      * @return the PID of the process that reported a status change. The provided status object is also populated with
      * the received status information.
      * @see <a href="https://www.freebsd.org/cgi/man.cgi?query=waitpid">wait(1)</a>
      */
-    int wait(Object statusPtr);
+    int wait(int status);
 
 }
