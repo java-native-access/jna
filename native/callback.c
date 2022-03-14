@@ -288,7 +288,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
     default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
-    status = ffi_prep_cif_var(&cb->java_cif, java_abi, 2, argc+3, java_return_type, cb->java_arg_types);
+    status = ffi_prep_cif_var(&cb->java_cif, java_abi, 3, argc+3, java_return_type, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
       ffi_prep_closure_loc(cb->closure, &cb->cif, dispatch_callback, cb,
                            cb->x_closure);

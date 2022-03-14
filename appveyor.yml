@@ -31,7 +31,7 @@ install:
     # Must prepend cygwin PATH to avoid "cygheap base mismatch" from Git\usr\bin\sed
   - cmd: set PATH=C:\cygwin64;C:\cygwin64\bin;%JAVA_HOME%\bin;%PATH%;
   - cmd: choco install -y -f -i %CHOCO_PACKAGES%
-  - cmd: '%CYGWIN_SETUP% --root C:\cygwin64 --local-package-dir C:\cygwin64\packages --quiet-mode --no-desktop --no-startmenu --packages %CYGWIN_PACKAGES%'
+  - cmd: '%CYGWIN_SETUP% --root C:\cygwin64 --local-package-dir C:\cygwin64\packages --quiet-mode --no-desktop --no-startmenu --upgrade-also --packages %CYGWIN_PACKAGES%'
 
 # Setup msvc environment
 for:
