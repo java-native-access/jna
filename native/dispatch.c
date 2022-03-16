@@ -3144,8 +3144,9 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
 
       char* prop = newCString(env, jprop);
       char* saveptr = NULL;
+      char* propToBeTokeninzed = NULL;
 
-      for(char* propToBeTokeninzed = prop; ; propToBeTokeninzed = NULL) {
+      for(propToBeTokeninzed = prop; ; propToBeTokeninzed = NULL) {
           char* pathElement = strtok_r(propToBeTokeninzed, ":", &saveptr);
 
           if(pathElement == NULL) {
