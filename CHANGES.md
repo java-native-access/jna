@@ -18,6 +18,7 @@ Bug Fixes
 * [#1414](https://github.com/java-native-access/jna/pull/1414): Fix definition of `c.s.j.p.unix.X11.XK_Shift_R` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1323](https://github.com/java-native-access/jna/issues/1323). Fix crashes in direct callbacks on mac OS aarch64 - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1422](https://github.com/java-native-access/jna/pull/1422): Load jawt library relative to `sun.boot.library.path` system on unix OSes - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1427](https://github.com/java-native-access/jna/pull/1427): Rebuild all binaries with fix from #1422 and #1323 - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.10.0
 ==============
