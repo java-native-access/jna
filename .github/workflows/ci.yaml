@@ -1,31 +1,32 @@
 # Full CI matrix on all pushes to master branch, and all PRs
 name: Java CI
 
-on: 
+on:
   workflow_dispatch:
   pull_request:
   push:
     branches:
       - master
-    
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        java: [8, 11, 17, 18-ea]
+        java: [8, 11, 17, 18, 19-ea]
         os: [ubuntu-latest, macos-latest]
       # Run all tests even if one fails
       fail-fast: false
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: ${{ matrix.java }}   
-      - name: Linux requirements  
+          java-version: ${{ matrix.java }}
+          distribution: 'zulu'
+      - name: Linux requirements
         if: contains(matrix.os, 'ubuntu')
         run: sudo apt-get -y install texinfo
       - name: macOS requirements
