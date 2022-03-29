@@ -48,6 +48,8 @@ public interface WinGDI {
             "dmReserved1", "dmReserved2", "dmPanningWidth", "dmPanningHeight" })
 
     public static class DEVMODE extends Structure {
+        public static class ByReference extends DEVMODE implements Structure.ByReference {}
+
         private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
 
         public byte[] dmDeviceName = new byte[Winspool.CCHDEVICENAME * CHAR_WIDTH];

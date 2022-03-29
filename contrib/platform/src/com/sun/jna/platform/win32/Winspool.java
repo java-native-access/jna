@@ -616,7 +616,7 @@ public interface Winspool extends StdCallLibrary {
      */
     @FieldOrder({"pDevMode"})
     public static class PRINTER_INFO_8 extends Structure {
-        public DEVMODE pDevMode;
+        public DEVMODE.ByReference pDevMode;
 
         public PRINTER_INFO_8() {}
 
@@ -630,7 +630,7 @@ public interface Winspool extends StdCallLibrary {
      */
     @FieldOrder({"pDevMode"})
     public static class PRINTER_INFO_9 extends Structure {
-        public DEVMODE pDevMode;
+        public DEVMODE.ByReference pDevMode;
 
         public PRINTER_INFO_9() {}
 
