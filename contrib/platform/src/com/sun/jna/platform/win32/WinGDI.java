@@ -28,8 +28,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinDef.HBITMAP;
-import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.Union;
+
+import static com.sun.jna.platform.win32.WinDef.*;
 
 /**
  * Ported from WinGDI.h.
@@ -95,7 +96,7 @@ public interface WinGDI {
         public short dmYResolution;
         public short dmTTOption;
         public short dmCollate;
-        public byte[] dmFormName = new byte[Winspool2.CCHFORMNAME];
+        public byte[] dmFormName = new byte[Winspool.CCHFORMNAME];
         public WORD dmLogPixels;
         public DWORD dmBitsPerPel;
         public DWORD dmPelsWidth;

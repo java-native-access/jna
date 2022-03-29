@@ -25,13 +25,12 @@ package com.sun.jna.platform.win32;
 
 import static com.sun.jna.platform.win32.WinError.ERROR_INSUFFICIENT_BUFFER;
 import static com.sun.jna.platform.win32.WinError.ERROR_SUCCESS;
+import static com.sun.jna.platform.win32.Winspool.*;
 
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
-import com.sun.jna.platform.win32.Winspool.JOB_INFO_1;
-import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
-import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2;
-import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
+import com.sun.jna.platform.win32.Winspool;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.Structure;
 
 /**
  * Winspool Utility API.
@@ -168,47 +167,78 @@ public abstract class WinspoolUtil {
         }
     }
 
+    public static JOB_INFO_1[] getJobInfo1(HANDLEByReference phPrinter) {
+        IntByReference pcbNeeded = new IntByReference();
+        IntByReference pcReturned = new IntByReference();
+        Winspool.INSTANCE.EnumJobs(phPrinter.getValue(), 0, 255, 1, null, 0,
+                pcbNeeded, pcReturned);
+        if (pcbNeeded.getValue() <= 0) {
+            return new JOB_INFO_1[0];
+        }
+
+        int lastError = ERROR_SUCCESS;
+        JOB_INFO_1 pJobEnum;
+        do {
+            pJobEnum = new JOB_INFO_1(pcbNeeded.getValue());
+            if (!Winspool.INSTANCE.EnumJobs(phPrinter.getValue(), 0, 255, 1,
+                    pJobEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
+                    pcReturned)) {
+                lastError = Kernel32.INSTANCE.GetLastError();
+            }
+        } while (lastError == ERROR_INSUFFICIENT_BUFFER);
+        if (lastError != ERROR_SUCCESS) {
+            throw new Win32Exception(lastError);
+        }
+        if (pcReturned.getValue() <= 0) {
+            return new JOB_INFO_1[0];
+        }
+
+        pJobEnum.read();
+
+        return (JOB_INFO_1[]) pJobEnum.toArray(pcReturned.getValue());
+    }
+
     public static PRINTER_INFO_1[] getAllPrinterInfo1() {
-        return getPrinterInfo1(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo1(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_2[] getAllPrinterInfo2() {
-        return getPrinterInfo2(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo2(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_3[] getAllPrinterInfo3() {
-        return getPrinterInfo3(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo3(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_4[] getAllPrinterInfo4() {
-        return getPrinterInfo4(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo4(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_5[] getAllPrinterInfo5() {
-        return getPrinterInfo5(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo5(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_6[] getAllPrinterInfo6() {
-        return getPrinterInfo6(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo6(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_7[] getAllPrinterInfo7() {
-        return getPrinterInfo7(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo7(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_8[] getAllPrinterInfo8() {
-        return getPrinterInfo8(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo8(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     public static PRINTER_INFO_9[] getAllPrinterInfo9() {
-        return getPrinterInfo9(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+        return getPrinterInfo9(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS);
     }
 
     /**
      * The PRINTER_INFO_1 structure specifies general printer information.
      */
     public static PRINTER_INFO_1[] getPrinterInfo1() {
-        return getPrinterInfo1(Winspool.PRINTER_ENUM_LOCAL);
+        return getPrinterInfo1(PRINTER_ENUM_LOCAL);
     }
 
     /**
@@ -243,7 +273,7 @@ public abstract class WinspoolUtil {
      * The PRINTER_INFO_2 structure specifies general printer information.
      */
     public static PRINTER_INFO_2[] getPrinterInfo2() {
-        return getPrinterInfo2(Winspool.PRINTER_ENUM_LOCAL);
+        return getPrinterInfo2(PRINTER_ENUM_LOCAL);
     }
 
     /**
@@ -264,7 +294,7 @@ public abstract class WinspoolUtil {
      * The PRINTER_INFO_3 structure specifies printer security information.
      */
     public static PRINTER_INFO_3[] getPrinterInfo3() {
-        return getPrinterInfo3(Winspool.PRINTER_ENUM_LOCAL);
+        return getPrinterInfo3(PRINTER_ENUM_LOCAL);
     }
 
     /**
