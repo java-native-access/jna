@@ -48,7 +48,9 @@ public interface WinGDI {
             "dmReserved1", "dmReserved2", "dmPanningWidth", "dmPanningHeight" })
 
     public static class DEVMODE extends Structure {
-        public byte[] dmDeviceName = new byte[Winspool.CCHDEVICENAME];
+        private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
+
+        public byte[] dmDeviceName = new byte[Winspool.CCHDEVICENAME * CHAR_WIDTH];
         public WORD dmSpecVersion;
         public WORD dmDriverVersion;
         public WORD dmSize;
@@ -96,7 +98,7 @@ public interface WinGDI {
         public short dmYResolution;
         public short dmTTOption;
         public short dmCollate;
-        public byte[] dmFormName = new byte[Winspool.CCHFORMNAME];
+        public byte[] dmFormName = new byte[Winspool.CCHFORMNAME * CHAR_WIDTH];
         public WORD dmLogPixels;
         public DWORD dmBitsPerPel;
         public DWORD dmPelsWidth;
