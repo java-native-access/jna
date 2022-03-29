@@ -51,6 +51,7 @@ public interface Winspool extends StdCallLibrary {
     Winspool INSTANCE = Native.load("Winspool.drv", Winspool.class, W32APIOptions.DEFAULT_OPTIONS);
 
     public static final int CCHDEVICENAME = 32;
+    public static final int CCHFORMNAME = 32;
 
     public static final int PRINTER_STATUS_PAUSED = 0x00000001;
     public static final int PRINTER_STATUS_ERROR = 0x00000002;
@@ -509,6 +510,20 @@ public interface Winspool extends StdCallLibrary {
     }
 
     /**
+     * The PRINTER_INFO_3 structure specifies printer security information.
+     */
+    @FieldOrder({"pSecurityDescriptor"})
+    public static class PRINTER_INFO_3 extends Structure {
+        public WinNT.SECURITY_DESCRIPTOR_RELATIVE pSecurityDescriptor;
+
+        public PRINTER_INFO_3() {}
+
+        public PRINTER_INFO_3(int size) {
+            super(new Memory((long)size));
+        }
+    }
+
+    /**
      * The PRINTER_INFO_4 structure specifies general printer information.
      * <p>
      * The structure can be used to retrieve minimal printer information on a
@@ -543,6 +558,81 @@ public interface Winspool extends StdCallLibrary {
 
         public PRINTER_INFO_4(int size) {
             super(new Memory(size));
+        }
+    }
+
+    /**
+     * The PRINTER_INFO_5 structure specifies detailed printer information.
+     */
+    @FieldOrder({"pPrinterName", "pPortName", "Attributes", "DeviceNotSelectedTimeout", "TransmissionRetryTimeout" })
+    public static class PRINTER_INFO_5 extends Structure {
+        public String pPrinterName;
+        public String pPortName;
+        public DWORD Attributes;
+        public DWORD DeviceNotSelectedTimeout;
+        public DWORD TransmissionRetryTimeout;
+
+        public PRINTER_INFO_5() {}
+
+        public PRINTER_INFO_5(int size) {
+            super(new Memory((long)size));
+        }
+    }
+
+    /**
+     * The PRINTER_INFO_6 structure specifies the status value of a printer.
+     */
+    @FieldOrder({"dwStatus"})
+    public static class PRINTER_INFO_6 extends Structure {
+        public DWORD dwStatus;
+
+        public PRINTER_INFO_6() {}
+
+        public PRINTER_INFO_6(int size) {
+            super(new Memory((long)size));
+        }
+    }
+
+    /**
+     * The PRINTER_INFO_7 structure specifies directory services printer information.
+     */
+    @FieldOrder({"pszObjectGUID", "dwAction"})
+    public static class PRINTER_INFO_7 extends Structure {
+        public String pszObjectGUID;
+        public DWORD dwAction;
+
+        public PRINTER_INFO_7() {}
+
+        public PRINTER_INFO_7(int size) {
+            super(new Memory((long)size));
+        }
+    }
+
+    /**
+     * The PRINTER_INFO_8 structure specifies the global default printer settings.
+     */
+    @FieldOrder({"pDevMode"})
+    public static class PRINTER_INFO_8 extends Structure {
+        public DEVMODE pDevMode;
+
+        public PRINTER_INFO_8() {}
+
+        public PRINTER_INFO_8(int size) {
+            super(new Memory((long)size));
+        }
+    }
+
+    /**
+     * The PRINTER_INFO_9 structure specifies the per-user default printer settings.
+     */
+    @FieldOrder({"pDevMode"})
+    public static class PRINTER_INFO_9 extends Structure {
+        public DEVMODE pDevMode;
+
+        public PRINTER_INFO_9() {}
+
+        public PRINTER_INFO_9(int size) {
+            super(new Memory((long)size));
         }
     }
 
