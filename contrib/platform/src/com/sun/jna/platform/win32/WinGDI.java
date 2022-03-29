@@ -121,6 +121,22 @@ public interface WinGDI {
         public DWORD dmReserved2;
         public DWORD dmPanningWidth;
         public DWORD dmPanningHeight;
+
+        /**
+         * Converts dmDeviceName from raw byte[] to String
+         */
+        public String getDmDeviceName() {
+            int offset = fieldOffset("dmDeviceName");
+            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+        }
+
+        /**
+         * Converts dmFormName from raw byte[] to String
+         */
+        public String getDmFormName() {
+            int offset = fieldOffset("dmFormName");
+            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+        }
     }
 
     @FieldOrder({"dwSize", "iType", "nCount", "nRgnSize", "rcBound"})
