@@ -573,7 +573,7 @@ public interface Winspool extends StdCallLibrary {
         /**
          * Specifies information about the returned data.
          */
-        public DWORD Attributes;
+        public int Attributes;
 
         public PRINTER_INFO_4() {
             super();
@@ -611,20 +611,20 @@ public interface Winspool extends StdCallLibrary {
 
         /**
          * The printer attributes. This member can be any reasonable combination
-         * of <code>PRINTER_ATTRIBUTE_*</code> values
+         * of <code>PRINTER_ATTRIBUTE_XXX</code> values
          *
          */
-        public DWORD Attributes;
+        public int Attributes;
 
         /**
          * This value is not used.
          */
-        public DWORD DeviceNotSelectedTimeout;
+        public int DeviceNotSelectedTimeout;
 
         /**
          * This value is not used.
          */
-        public DWORD TransmissionRetryTimeout;
+        public int TransmissionRetryTimeout;
 
         public PRINTER_INFO_5() {}
 
@@ -644,9 +644,9 @@ public interface Winspool extends StdCallLibrary {
     public static class PRINTER_INFO_6 extends Structure {
         /**
          * The printer status. This member can be any reasonable combination
-         * of <code>PRINTER_STATUS_*</code> values.
+         * of <code>PRINTER_STATUS_XXX</code> values.
          */
-        public DWORD dwStatus;
+        public int dwStatus;
 
         public PRINTER_INFO_6() {}
 
@@ -683,10 +683,10 @@ public interface Winspool extends StdCallLibrary {
         /**
          * Indicates the action for the <code>SetPrinter</code> function to perform. For the
          * <code>GetPrinter</code> function, this member indicates whether the specified
-         * printer is published. This member can be a combination of <code>DSPRINT_*</code>
+         * printer is published. This member can be a combination of <code>DSPRINT_XXX</code>
          * values.
          */
-        public DWORD dwAction;
+        public int dwAction;
 
         public PRINTER_INFO_7() {}
 

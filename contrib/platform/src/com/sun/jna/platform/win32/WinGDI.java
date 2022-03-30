@@ -53,11 +53,11 @@ public interface WinGDI {
         private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
 
         public byte[] dmDeviceName = new byte[Winspool.CCHDEVICENAME * CHAR_WIDTH];
-        public WORD dmSpecVersion;
-        public WORD dmDriverVersion;
-        public WORD dmSize;
-        public WORD dmDriverExtra;
-        public DWORD dmFields;
+        public short dmSpecVersion;
+        public short dmDriverVersion;
+        public short dmSize;
+        public short dmDriverExtra;
+        public int dmFields;
         public DUMMYUNIONNAME dmUnion1;
 
         public static class DUMMYUNIONNAME extends Union {
@@ -86,8 +86,8 @@ public interface WinGDI {
             @FieldOrder({ "dmPosition", "dmDisplayOrientation", "dmDisplayFixedOutput" })
             public static class DUMMYSTRUCTNAME2 extends Structure {
                 public POINT dmPosition;
-                public DWORD dmDisplayOrientation;
-                public DWORD dmDisplayFixedOutput;
+                public int dmDisplayOrientation;
+                public int dmDisplayFixedOutput;
 
                 public DUMMYSTRUCTNAME2() {
                     super();
@@ -101,26 +101,26 @@ public interface WinGDI {
         public short dmTTOption;
         public short dmCollate;
         public byte[] dmFormName = new byte[Winspool.CCHFORMNAME * CHAR_WIDTH];
-        public WORD dmLogPixels;
-        public DWORD dmBitsPerPel;
-        public DWORD dmPelsWidth;
-        public DWORD dmPelsHeight;
+        public short dmLogPixels;
+        public int dmBitsPerPel;
+        public int dmPelsWidth;
+        public int dmPelsHeight;
         public DUMMYUNIONNAME2 dummyunionname2;
 
         public static class DUMMYUNIONNAME2 extends Union {
-            public DWORD dmDisplayFlags;
-            public DWORD dmNup;
+            public int dmDisplayFlags;
+            public int dmNup;
         }
 
-        public DWORD dmDisplayFrequency;
-        public DWORD dmICMMethod;
-        public DWORD dmICMIntent;
-        public DWORD dmMediaType;
-        public DWORD dmDitherType;
-        public DWORD dmReserved1;
-        public DWORD dmReserved2;
-        public DWORD dmPanningWidth;
-        public DWORD dmPanningHeight;
+        public int dmDisplayFrequency;
+        public int dmICMMethod;
+        public int dmICMIntent;
+        public int dmMediaType;
+        public int dmDitherType;
+        public int dmReserved1;
+        public int dmReserved2;
+        public int dmPanningWidth;
+        public int dmPanningHeight;
 
         /**
          * Converts dmDeviceName from raw byte[] to String
