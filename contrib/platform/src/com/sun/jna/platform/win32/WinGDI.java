@@ -125,18 +125,81 @@ public interface WinGDI {
         public DUMMYUNIONNAME dmUnion1;
 
         /**
-         * For printers, specifies whether a color printer should print color or monochrome. This member can be one of
+         * For printers: Specifies whether a color printer should print color or monochrome. This member can be one of
          * <code>DMCOLOR_COLOR</code> or <code>DMCOLOR_MONOCHROME</code>.
+         *
+         * For displays: This member is not used for displays.
          */
         public short dmColor;
+
+        /**
+         * For printers: Specifies duplex (double-sided) printing for duplex-capable printers. This member can be
+         * <code>DMCOLOR_COLOR</code> or <code>DMCOLOR_MONOCHROME</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
         public short dmDuplex;
+
+        /**
+         * For printers: Specifies the y resolution of the printer, in DPI. If this member is used, the
+         * <code>dmPrintQuality</code> member specifies the x resolution.
+         *
+         * For displays: This member is not used for displays.
+         */
         public short dmYResolution;
+
+        /**
+         * For printers: Specifies how TrueType fonts should be printed. This member must be one of the
+         * <code>DMTT_XXX</code> constants defined in <code>wingdi.h</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
         public short dmTTOption;
+
+        /**
+         * For printers: Specifies whether multiple copies should be collated. This member can be one of
+         * <code>DMCOLLATE_TRUE</code>, <code>DMCOLLATE_FALSE</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
         public short dmCollate;
+
+        /**
+         * For printers: Specifies the name of the form to use; such as "Letter" or "Legal". This must be a name that
+         * can be obtain by calling the Win32 <code>EnumForms</code> function (described in the Microsoft Window SDK
+         * documentation).
+         *
+         * For displays: This member is not used for displays.
+         */
         public byte[] dmFormName = new byte[Winspool.CCHFORMNAME * CHAR_WIDTH];
+
+        /**
+         * For displays: Specifies the number of logical pixels per inch of a display device and should be equal to the
+         * <code>ulLogPixels</code> member of the <code>GDIINFO</code> structure.
+         *
+         * For printers: This member is not used for printers.
+         */
         public short dmLogPixels;
+
+        /**
+         * For displays: Specifies the color resolution, in bits per pixel, of a display device.
+         *
+         * For printers: This member is not used for printers.
+         */
         public int dmBitsPerPel;
+
+        /**
+         * For displays: Specifies the width, in pixels, of the visible device surface.
+         *
+         * For printers: This member is not used for printers.
+         */
         public int dmPelsWidth;
+
+        /**
+         * For displays: Specifies the height, in pixels, of the visible device surface.
+         *
+         * For printers: This member is not used for printers.
+         */
         public int dmPelsHeight;
         public DUMMYUNIONNAME2 dummyunionname2;
         public POINT dmPosition;
@@ -428,6 +491,17 @@ public interface WinGDI {
 
     int DMCOLOR_MONOCHROME = 1;
     int DMCOLOR_COLOR = 2;
+
+    /* TrueType options */
+    /** print TT fonts as graphics **/
+    int DMTT_BITMAP = 1;
+    /** download TT fonts as soft fonts **/
+    int DMTT_DOWNLOAD = 2;
+    /** substitute device fonts for TT fonts **/
+    int DMTT_SUBDEV = 3;
+    /** download TT fonts as outline soft fonts **/
+    int DMTT_DOWNLOAD_OUTLINE = 4;
+
 
     int DMORIENT_PORTRAIT = 1;
     int DMORIENT_LANDSCAPE = 2;
