@@ -56,6 +56,12 @@ public interface Winspool extends StdCallLibrary {
     public static final int CCHDEVICENAME = 32;
     public static final int CCHFORMNAME = 32;
 
+    public static final int DSPRINT_PUBLISH = 0x00000001;
+    public static final int DSPRINT_UPDATE = 0x00000002;
+    public static final int DSPRINT_UNPUBLISH = 0x00000004;
+    public static final int DSPRINT_REPUBLISH = 0x00000008;
+    public static final int DSPRINT_PENDING = 0x80000000;
+
     public static final int PRINTER_STATUS_PAUSED = 0x00000001;
     public static final int PRINTER_STATUS_ERROR = 0x00000002;
     public static final int PRINTER_STATUS_PENDING_DELETION = 0x00000004;
@@ -285,7 +291,7 @@ public interface Winspool extends StdCallLibrary {
      *         the function fails, the return value is zero.
      *
      * @see <a href=
-     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162692(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/enumprinters">
      *      EnumPrinters function</a>
      */
     boolean EnumPrinters(int Flags, String Name, int Level,
@@ -322,7 +328,7 @@ public interface Winspool extends StdCallLibrary {
      *         the function fails, the return value is zero.
      *
      * @see <a href=
-     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd144911(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/getprinter">
      * GetPrinter function</a>
      */
     boolean GetPrinter(HANDLE hPrinter, int Level, Pointer pPrinter, int cbBuf, IntByReference pcbNeeded);
@@ -331,7 +337,7 @@ public interface Winspool extends StdCallLibrary {
      * The PRINTER_INFO_1 structure specifies general printer information.
      *
      * @see <a href=
-     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162844(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-1">
      * PRINTER_INFO_1 structure</a>
      */
     @FieldOrder({"Flags", "pDescription", "pName", "pComment"})
@@ -372,7 +378,7 @@ public interface Winspool extends StdCallLibrary {
      *
      * @author Ivan Ridao Freitas, Padrus
      * @see <a href=
-     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162845(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-2">
      * PRINTER_INFO_2 structure</a>
      */
     @FieldOrder({"pServerName", "pPrinterName", "pShareName",
@@ -514,9 +520,23 @@ public interface Winspool extends StdCallLibrary {
 
     /**
      * The PRINTER_INFO_3 structure specifies printer security information.
+     * <p>
+     * The structure lets an application get and set a printer's security descriptor.
+     * The caller may do so even if it lacks specific printer permissions, as long
+     * as it has the standard rights described in SetPrinter and GetPrinter. Thus,
+     * an application may temporarily deny all access to a printer, while allowing
+     * the owner of the printer to have access to the printer's discretionary ACL.
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-3">
+     * PRINTER_INFO_3 structure</a>
      */
     @FieldOrder({"pSecurityDescriptor"})
     public static class PRINTER_INFO_3 extends Structure {
+
+        /**
+         * Pointer to a SECURITY_DESCRIPTOR structure that specifies a printer's security information.
+         */
         public WinNT.SECURITY_DESCRIPTOR_RELATIVE pSecurityDescriptor;
 
         public PRINTER_INFO_3() {}
@@ -535,7 +555,7 @@ public interface Winspool extends StdCallLibrary {
      * all remote printer connections that a user has established.
      *
      * @see <a href=
-     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162847(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-4">
      * PRINTER_INFO_4 structure</a>
      */
     @FieldOrder({"pPrinterName", "pServerName", "Attributes"})
@@ -566,13 +586,44 @@ public interface Winspool extends StdCallLibrary {
 
     /**
      * The PRINTER_INFO_5 structure specifies detailed printer information.
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-4">
+     * PRINTER_INFO_5 structure</a>
      */
-    @FieldOrder({"pPrinterName", "pPortName", "Attributes", "DeviceNotSelectedTimeout", "TransmissionRetryTimeout" })
+    @FieldOrder({"pPrinterName", "pPortName", "Attributes", "DeviceNotSelectedTimeout",
+            "TransmissionRetryTimeout"})
     public static class PRINTER_INFO_5 extends Structure {
+
+        /**
+         * Pointer to a null-terminated string that specifies the name of the
+         * printer (local or remote).
+         */
         public String pPrinterName;
+
+        /**
+         * A pointer to a null-terminated string that identifies the port(s)
+         * used to transmit data to the printer. If a printer is connected
+         * to more than one port, the names of each port must be separated
+         * by commas (for example, "LPT1:,LPT2:,LPT3:").
+         */
         public String pPortName;
+
+        /**
+         * The printer attributes. This member can be any reasonable combination
+         * of <code>PRINTER_ATTRIBUTE_*</code> values
+         *
+         */
         public DWORD Attributes;
+
+        /**
+         * This value is not used.
+         */
         public DWORD DeviceNotSelectedTimeout;
+
+        /**
+         * This value is not used.
+         */
         public DWORD TransmissionRetryTimeout;
 
         public PRINTER_INFO_5() {}
@@ -584,9 +635,17 @@ public interface Winspool extends StdCallLibrary {
 
     /**
      * The PRINTER_INFO_6 structure specifies the status value of a printer.
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-4">
+     * PRINTER_INFO_6 structure</a>
      */
     @FieldOrder({"dwStatus"})
     public static class PRINTER_INFO_6 extends Structure {
+        /**
+         * The printer status. This member can be any reasonable combination
+         * of <code>PRINTER_STATUS_*</code> values.
+         */
         public DWORD dwStatus;
 
         public PRINTER_INFO_6() {}
@@ -598,10 +657,35 @@ public interface Winspool extends StdCallLibrary {
 
     /**
      * The PRINTER_INFO_7 structure specifies directory services printer information.
+     * <p>
+     * The structure specifies directory services printer information.  Use this
+     * structure with the <code>SetPrinter</code> function to publish a printer's
+     * data in the directory service (DS), or to update or remove a printer's
+     * published data from the DS. Use this structure with the <code>GetPrinter</code>
+     * function to determine whether a printer is published in the DS.
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-4">
+     * PRINTER_INFO_7 structure</a>
      */
     @FieldOrder({"pszObjectGUID", "dwAction"})
     public static class PRINTER_INFO_7 extends Structure {
+
+        /**
+         * A pointer to a null-terminated string containing the GUID of the directory
+         * service print queue object associated with a published printer. Use the
+         * <code>GetPrinter</code> function to retrieve this GUID.
+         *
+         * Before calling <code>SetPrinter</code>, set <code>pszObjectGUID</code> to NULL.
+         */
         public String pszObjectGUID;
+
+        /**
+         * Indicates the action for the <code>SetPrinter</code> function to perform. For the
+         * <code>GetPrinter</code> function, this member indicates whether the specified
+         * printer is published. This member can be a combination of <code>DSPRINT_*</code>
+         * values.
+         */
         public DWORD dwAction;
 
         public PRINTER_INFO_7() {}
@@ -613,9 +697,22 @@ public interface Winspool extends StdCallLibrary {
 
     /**
      * The PRINTER_INFO_8 structure specifies the global default printer settings.
+     * <p>
+     * The global defaults are set by the administrator of a printer that can be
+     * used by anyone. In contrast, the per-user defaults will affect a particular
+     * user or anyone else who uses the profile. For per-user defaults,
+     * use <code>PRINTER_INFO_9</code>.
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-4">
+     * PRINTER_INFO_8 structure</a>
      */
     @FieldOrder({"pDevMode"})
     public static class PRINTER_INFO_8 extends Structure {
+        /**
+         * A pointer to a <code>DEVMODE</code> structure that defines the global
+         * default printer data such as the paper orientation and the resolution.
+         */
         public DEVMODE.ByReference pDevMode;
 
         public PRINTER_INFO_8() {}
@@ -627,6 +724,14 @@ public interface Winspool extends StdCallLibrary {
 
     /**
      * The PRINTER_INFO_9 structure specifies the per-user default printer settings.
+     * <p>
+     * The per-user defaults will affect only a particular user or anyone who uses the
+     * profile. In contrast, the global defaults are set by the administrator of a printer
+     * that can be used by anyone. For global defaults, use <code>PRINTER_INFO_8</code>.
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/windows/win32/printdocs/printer-info-4">
+     * PRINTER_INFO_9 structure</a>
      */
     @FieldOrder({"pDevMode"})
     public static class PRINTER_INFO_9 extends Structure {
@@ -643,7 +748,8 @@ public interface Winspool extends StdCallLibrary {
      * The PRINTER_DEFAULTS structure specifies the default data type,
      * environment, initialization data, and access rights for a printer.
      *
-     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd162839(v=vs.85).aspx">PRINTER_DEFAULTS structure</a>
+     * @see <a href="https://docs.microsoft.com/windows/win32/printdocs/printer-defaults">
+     *     PRINTER_DEFAULTS structure</a>
      */
     @FieldOrder({"pDatatype", "pDevMode", "DesiredAccess"})
     public class LPPRINTER_DEFAULTS extends Structure {
@@ -690,7 +796,8 @@ public interface Winspool extends StdCallLibrary {
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
      *
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">OpenPrinter function</a>
+     * @see <a href="https://docs.microsoft.com/windows/win32/printdocs/openprinter">
+     *     OpenPrinter function</a>
      */
     boolean OpenPrinter(
             // _In_
@@ -721,7 +828,7 @@ public interface Winspool extends StdCallLibrary {
      *         the function fails, the return value is zero.
      *
      * @see <a href=
-     *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/closeprinter">
      * ClosePrinter function</a>
      */
     boolean ClosePrinter(HANDLE hPrinter);
@@ -731,7 +838,7 @@ public interface Winspool extends StdCallLibrary {
      * notification object that monitors a printer or print server.
      *
      * @see
-     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-options">
+     * <a href="https://docs.microsoft.com/windows/win32/printdocs/printer-notify-options">
      *     PRINTER_NOTIFY_OPTIONS structure
      * </a>
      */
@@ -774,7 +881,7 @@ public interface Winspool extends StdCallLibrary {
      * notification object.
      *
      * @see
-     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-options-type">
+     * <a href="https://docs.microsoft.com/windows/win32/printdocs/printer-notify-options-type">
      *     PRINTER_NOTIFY_OPTIONS_TYPE structure
      * </a>
      */
@@ -837,7 +944,7 @@ public interface Winspool extends StdCallLibrary {
      * object has been satisfied.
      *
      * @see
-     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-info">
+     * <a href="https://docs.microsoft.com/windows/win32/printdocs/printer-notify-info">
      *     PRINTER_NOTIFY_INFO structure
      * </a>
      */
@@ -929,7 +1036,7 @@ public interface Winspool extends StdCallLibrary {
      * information field and provides the current data for that field.
      *
      * @see
-     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/printer-notify-info-data">
+     * <a href="https://docs.microsoft.com/windows/win32/printdocs/printer-notify-info-data">
      *     PRINTER_NOTIFY_INFO_DATA structure
      * </a>
      */
@@ -1077,7 +1184,7 @@ public interface Winspool extends StdCallLibrary {
      *         INVALID_HANDLE_VALUE.
      *
      * @see <a href=
-     *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/findfirstprinterchangenotification">
      * FindFirstPrinterChangeNotification function</a>
      */
     HANDLE FindFirstPrinterChangeNotification(
@@ -1161,7 +1268,7 @@ public interface Winspool extends StdCallLibrary {
      *         the function fails, the return value is zero.
      *
      * @see <a href=
-     *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/findnextprinterchangenotification">
      * FindClosePrinterChangeNotification function</a>
      */
     boolean FindNextPrinterChangeNotification(
@@ -1190,7 +1297,7 @@ public interface Winspool extends StdCallLibrary {
      *         the function fails, the return value is zero.
      *
      * @see <a href=
-     *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/findcloseprinterchangenotification">
      * FindClosePrinterChangeNotification function</a>
      */
     boolean FindClosePrinterChangeNotification(
@@ -1210,7 +1317,7 @@ public interface Winspool extends StdCallLibrary {
      *         the function fails, the return value is zero.
      *
      * @see
-     * <a href="https://docs.microsoft.com/en-us/windows/win32/printdocs/freeprinternotifyinfo">
+     * <a href="https://docs.microsoft.com/windows/win32/printdocs/freeprinternotifyinfo">
      *     FreePrinterNotifyInfo function
      * </a>
      */
@@ -1251,7 +1358,7 @@ public interface Winspool extends StdCallLibrary {
      *         the function fails, the return value is zero.
      *
      * @see <a href=
-     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162625(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/enumjobs">
      * EnumJobs function</a>
      */
     boolean EnumJobs(
@@ -1279,7 +1386,7 @@ public interface Winspool extends StdCallLibrary {
      * the user that owns the print job, and so on.
      *
      * @see <a href=
-     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd145019(v=vs.85).aspx">
+     *      "https://docs.microsoft.com/windows/win32/printdocs/job-info-1">
      * JOB_INFO_1 structure</a>
      */
     @FieldOrder({"JobId", "pPrinterName", "pMachineName", "pUserName",

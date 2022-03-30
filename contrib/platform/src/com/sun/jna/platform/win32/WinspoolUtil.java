@@ -403,21 +403,21 @@ public abstract class WinspoolUtil {
     }
 
     /**
-     * The PRINTER_INFO_9 Structure specifies the per-user default printer settings.\
+     * The PRINTER_INFO_9 Structure specifies the per-user default printer settings.
      */
     public static PRINTER_INFO_9 getPrinterInfo9(String printerName) {
         return (PRINTER_INFO_9)getPrinterInfoByStruct(printerName, 9);
     }
 
     /**
-     * The PRINTER_INFO_9 Structure specifies the per-user default printer settings.\
+     * The PRINTER_INFO_9 Structure specifies the per-user default printer settings.
      */
     public static PRINTER_INFO_9[] getPrinterInfo9(int flags) {
         return (PRINTER_INFO_9[])getPrinterInfoByStruct(flags, 9);
     }
 
     /**
-     * The PRINTER_INFO_9 Structure specifies the per-user default printer settings.\
+     * The PRINTER_INFO_9 Structure specifies the per-user default printer settings.
      */
     public static PRINTER_INFO_9[] getPrinterInfo9() {
         return getPrinterInfo9(PRINTER_ENUM_LOCAL);
