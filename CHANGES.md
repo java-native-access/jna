@@ -7,6 +7,7 @@ Next Release (5.12.0)
 
 Features
 --------
+* [#1429](https://github.com/java-native-access/jna/pull/1429): Add missing `Winspool.PRINTER_INFO_X` structs [@tresf](https://github.com/tresf).
 
 Bug Fixes
 ---------
