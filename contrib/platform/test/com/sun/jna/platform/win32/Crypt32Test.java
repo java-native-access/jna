@@ -428,11 +428,21 @@ public class Crypt32Test extends TestCase {
         enumerateRootCertificates(hCertStore);
     }
 
-    public void testCertOpenStore() {
+    public void testCertOpenStoreWithPointerPara() {
         WinCrypt.HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenStore(
-                new WTypes.LPSTR(new Pointer(Crypt32.CERT_STORE_PROV_SYSTEM_REGISTRY_W)),
+                new Crypt32.CertStoreProviderName(Crypt32.CERT_STORE_PROV_SYSTEM_REGISTRY_W),
                 0,
-                new WinCrypt.HCRYPTPROV_LEGACY(0),
+                null,
+                Crypt32.CERT_SYSTEM_STORE_LOCAL_MACHINE | Crypt32.CERT_STORE_OPEN_EXISTING_FLAG | Crypt32.CERT_STORE_READONLY_FLAG,
+                new WTypes.LPWSTR("ROOT"));
+        enumerateRootCertificates(hCertStore);
+    }
+
+    public void testCertOpenStoreWithStringPara() {
+        WinCrypt.HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenStore(
+                new Crypt32.CertStoreProviderName(Crypt32.CERT_STORE_PROV_SYSTEM_REGISTRY_W),
+                0,
+                null,
                 Crypt32.CERT_SYSTEM_STORE_LOCAL_MACHINE | Crypt32.CERT_STORE_OPEN_EXISTING_FLAG | Crypt32.CERT_STORE_READONLY_FLAG,
                 new WTypes.LPWSTR("ROOT").getPointer());
         enumerateRootCertificates(hCertStore);
