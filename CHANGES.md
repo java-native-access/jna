@@ -20,6 +20,7 @@ Features
 * [#1403](https://github.com/java-native-access/jna/pull/1403): Rebuild AIX binaries with libffi 3.4.2 (other architectures were part of 5.10) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1404](https://github.com/java-native-access/jna/issues/1404): Added Solaris Kstat2 library - [@dbwiddis](https://github.com/dbwiddis).
 * [#1416](https://github.com/java-native-access/jna/pull/1416): Add `CFDictionaryGetCount` to `c.s.j.p.mac.CoreFoundation` - [@shalupov](https://github.com/shalupov)
+* [#1418](https://github.com/java-native-access/jna/pull/1418): Add `CertOpenStore` to `c.s.j.p.win32.Crypt32` - [@shalupov](https://github.com/shalupov)
 
 Bug Fixes
 ---------

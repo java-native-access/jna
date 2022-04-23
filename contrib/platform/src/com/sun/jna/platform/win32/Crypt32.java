@@ -23,8 +23,7 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
+import com.sun.jna.*;
 import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
@@ -158,10 +157,82 @@ public interface Crypt32 extends StdCallLibrary {
     boolean CertAddEncodedCertificateToSystemStore(String szCertStoreName, Pointer pbCertEncoded, int cbCertEncoded);
 
     /**
+     * The {@code CertOpenStore} function opens a certificate store by using a specified store provider type
+     *
+     * @param lpszStoreProvider
+     *          A pointer to a null-terminated ANSI string that contains the store provider type.
+     * @param dwEncodingType
+     *          Specifies the <a href="https://docs.microsoft.com/en-us/windows/desktop/SecGloss/c-gly">certificate encoding type</a>
+     *          and <a href="https://docs.microsoft.com/en-us/windows/desktop/SecGloss/m-gly">message encoding</a> type.
+     *          Encoding is used only when the {@code dwSaveAs} parameter of the
+     *          <a href="https://docs.microsoft.com/en-us/windows/desktop/api/wincrypt/nf-wincrypt-certsavestore">CertSaveStore</a>
+     *          function contains {@code CERT_STORE_SAVE_AS_PKCS7}.
+     *          Otherwise, the {@code dwMsgAndCertEncodingType} parameter is not used.
+     * @param hCryptProv
+     *          This parameter is not used and should be set to NULL.
+     * @param dwFlags
+     *          These values consist of high-word and low-word values combined by using a bitwise-OR operation.
+     *          See {@code CERT_STORE_*_FLAG} and {@code CERT_SYSTEM_STORE_*} constants.
+     * @param pvPara
+     *          Additional information for this function. The contents of
+     *          this parameter depends on the value of the {@code lpszStoreProvider} and other parameters.
+     * @return
+     *          If the function succeeds, the function returns a handle to the certificate store.
+     *          When you have finished using the store, release the handle by calling the
+     *          {@link com.sun.jna.platform.win32.Crypt32#CertCloseStore(WinCrypt.HCERTSTORE, int)} function.
+     *          If the function fails, it returns NULL. For extended error information,
+     *          call {@link Native#getLastError()}.
+     *
+     * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certopenstore">MSDN</a>
+     */
+    WinCrypt.HCERTSTORE CertOpenStore(
+            CertStoreProviderName lpszStoreProvider,
+            int dwEncodingType,
+            WinCrypt.HCRYPTPROV_LEGACY hCryptProv,
+            int dwFlags,
+            Pointer pvPara);
+
+    /**
+     * The {@code CertOpenStore} function opens a certificate store by using a specified store provider type
+     *
+     * @param lpszStoreProvider
+     *          A pointer to a null-terminated ANSI string that contains the store provider type.
+     * @param dwEncodingType
+     *          Specifies the <a href="https://docs.microsoft.com/en-us/windows/desktop/SecGloss/c-gly">certificate encoding type</a>
+     *          and <a href="https://docs.microsoft.com/en-us/windows/desktop/SecGloss/m-gly">message encoding</a> type.
+     *          Encoding is used only when the {@code dwSaveAs} parameter of the
+     *          <a href="https://docs.microsoft.com/en-us/windows/desktop/api/wincrypt/nf-wincrypt-certsavestore">CertSaveStore</a>
+     *          function contains {@code CERT_STORE_SAVE_AS_PKCS7}.
+     *          Otherwise, the {@code dwMsgAndCertEncodingType} parameter is not used.
+     * @param hCryptProv
+     *          This parameter is not used and should be set to NULL.
+     * @param dwFlags
+     *          These values consist of high-word and low-word values combined by using a bitwise-OR operation.
+     *          See {@code CERT_STORE_*_FLAG} and {@code CERT_SYSTEM_STORE_*} constants.
+     * @param pvPara
+     *          Additional information for this function in {@link WTypes.LPWSTR} form. The contents of
+     *          this parameter depends on the value of the {@code lpszStoreProvider} and other parameters.
+     * @return
+     *          If the function succeeds, the function returns a handle to the certificate store.
+     *          When you have finished using the store, release the handle by calling the
+     *          {@link com.sun.jna.platform.win32.Crypt32#CertCloseStore(WinCrypt.HCERTSTORE, int)} function.
+     *          If the function fails, it returns NULL. For extended error information,
+     *          call {@link Native#getLastError()}.
+     *
+     * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certopenstore">MSDN</a>
+     */
+    WinCrypt.HCERTSTORE CertOpenStore(
+            CertStoreProviderName lpszStoreProvider,
+            int dwEncodingType,
+            WinCrypt.HCRYPTPROV_LEGACY hCryptProv,
+            int dwFlags,
+            WTypes.LPWSTR pvPara);
+
+    /**
      * The CertOpenSystemStore function is a simplified function that opens the
      * most common system certificate store. To open certificate stores with
      * more complex requirements, such as file-based or memory-based stores, use
-     * CertOpenStore.
+     * {@link #CertOpenStore(CertStoreProviderName, int, HCRYPTPROV_LEGACY, int, Pointer)}.
      *
      * @param hprov This parameter is not used and should be set to NULL.
      * @param szSubsystemProtocol A string that names a system store. If the
@@ -171,7 +242,9 @@ public interface Crypt32 extends StdCallLibrary {
      * stores. Some example system stores are listed in the following table.
      * @return If the function succeeds, the function returns a handle to the
      * certificate store. If the function fails, it returns NULL. For extended
-     * error information, call GetLastError.
+     * error information, call {@link Native#getLastError()}
+     *
+     * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certopensystemstorew">MSDN</a>
      */
     HCERTSTORE CertOpenSystemStore(Pointer hprov, String szSubsystemProtocol);
 
