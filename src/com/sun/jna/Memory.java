@@ -22,10 +22,15 @@
  */
 package com.sun.jna;
 
-import java.lang.ref.ReferenceQueue;
+import com.sun.jna.internal.Cleaner;
+import java.io.Closeable;
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a
@@ -40,91 +45,15 @@ import java.util.ArrayList;
  *        free(buf);
  * </pre>
  *
- * <p>The {@link #finalize} method will free allocated memory when
- * this object is no longer referenced.
- *
  * @author Sheng Liang, originator
  * @author Todd Fast, suitability modifications
  * @author Timothy Wall
  * @see Pointer
  */
-public class Memory extends Pointer {
-
-    private static ReferenceQueue<Memory> QUEUE = new ReferenceQueue<Memory>();
-    private static LinkedReference HEAD; // the head of the doubly linked list used for instance tracking
-
-    /**
-     * Keep track of all allocated memory so we can dispose of it before
-     * unloading. This is done using a doubly linked list to enable fast
-     * removal of tracked instances.
-     */
-    private static class LinkedReference extends WeakReference<Memory> {
-
-        private LinkedReference next;
-        private LinkedReference prev;
-
-        private LinkedReference(Memory referent) {
-            super(referent, QUEUE);
-        }
-
-        /**
-         * Add the given {@code instance} to the instance tracking.
-         *
-         * @param instance the instance to track
-         */
-        static LinkedReference track(Memory instance) {
-            // use a different lock here to allow the finialzier to unlink elements too
-            synchronized (QUEUE) {
-                LinkedReference stale;
-
-                // handle stale references here to avoid GC overheating when memory is limited
-                while ((stale = (LinkedReference) QUEUE.poll()) != null) {
-                    stale.unlink();
-                }
-            }
-
-            // keep object allocation outside the syncronized block
-            LinkedReference entry = new LinkedReference(instance);
-
-            synchronized (LinkedReference.class) {
-                if (HEAD != null) {
-                    entry.next = HEAD;
-                    HEAD = HEAD.prev = entry;
-                } else {
-                    HEAD = entry;
-                }
-            }
-
-            return entry;
-        }
-
-        /**
-         * Remove the related instance from tracking and update the linked list.
-         */
-        private void unlink() {
-            synchronized (LinkedReference.class) {
-                LinkedReference next;
-
-                if (HEAD != this) {
-                    if (this.prev == null) {
-                        // this entry was detached before, e.g. disposeAll was called and finalizers are running now
-                        return;
-                    }
-
-                    next = this.prev.next = this.next;
-                } else {
-                    next = HEAD = HEAD.next;
-                }
-
-                if (next != null) {
-                    next.prev = this.prev;
-                }
-
-                // set prev to null to detect detached entries
-                this.prev = null;
-            }
-        }
-    }
+public class Memory extends Pointer implements Closeable {
+    /** Keep track of all allocated memory so we can dispose of it before unloading. */
+    private static final Map<Long, Reference<Memory>> allocatedMemory =
+            new ConcurrentHashMap<Long, Reference<Memory>>();
 
     private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
@@ -137,71 +66,17 @@ public class Memory extends Pointer {
 
     /** Dispose of all allocated memory. */
     public static void disposeAll() {
-        synchronized (LinkedReference.class) {
-            LinkedReference entry;
-
-            while ((entry = HEAD) != null) {
-                Memory memory = HEAD.get();
-
-                if (memory != null) {
-                    // dispose does the unlink call internal
-                    memory.dispose();
-                } else {
-                    HEAD.unlink();
-                }
-
-                if (HEAD == entry) {
-                    throw new IllegalStateException("the HEAD did not change");
-                }
-            }
-        }
-
-        synchronized (QUEUE) {
-            LinkedReference stale;
-
-            // try to release as mutch memory as possible
-            while ((stale = (LinkedReference) QUEUE.poll()) != null) {
-                stale.unlink();
+        // use a copy since dispose() modifies the map
+        Collection<Reference<Memory>> refs = new ArrayList<Reference<Memory>>(allocatedMemory.values());
+        for (Reference<Memory> r : refs) {
+            Memory m = r.get();
+            if(m != null) {
+                m.close();
             }
         }
     }
 
-    /**
-     * Unit-testing only, ensure the doubly linked list is in a good shape.
-     *
-     * @return the number of tracked instances
-     */
-    static int integrityCheck() {
-        synchronized (LinkedReference.class) {
-            if (HEAD == null) {
-                return 0;
-            }
-
-            ArrayList<LinkedReference> entries = new ArrayList<LinkedReference>();
-            LinkedReference entry = HEAD;
-
-            while (entry != null) {
-                entries.add(entry);
-                entry = entry.next;
-            }
-
-            int index = entries.size() - 1;
-            entry = entries.get(index);
-
-            while (entry != null) {
-                if (entries.get(index) != entry) {
-                    throw new IllegalStateException(entries.get(index) + " vs. " + entry + " at index " + index);
-                }
-
-                entry = entry.prev;
-                index--;
-            }
-
-            return entries.size();
-        }
-    }
-
-    private final LinkedReference reference; // used to track the instance
+    private Cleaner.Cleanable cleanable;
     protected long size; // Size of the malloc'ed space
 
     /** Provide a view into the original memory.  Keeps an implicit reference
@@ -242,13 +117,12 @@ public class Memory extends Pointer {
         if (peer == 0)
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
 
-        reference = LinkedReference.track(this);
+        allocatedMemory.put(peer, new WeakReference<Memory>(this));
+        cleanable = Cleaner.getCleaner().register(this, new MemoryDisposer(peer));
     }
 
     protected Memory() {
         super();
-
-        reference = null;
     }
 
     /** Provide a view of this memory using the given offset as the base address.  The
@@ -305,27 +179,15 @@ public class Memory extends Pointer {
         throw new IllegalArgumentException("Byte boundary must be a power of two");
     }
 
-    /** Properly dispose of native memory when this object is GC'd. */
-    @Override
-    protected void finalize() {
-        dispose();
+    /** Free the native memory and set peer to zero */
+    public void close() {
+        peer = 0;
+        cleanable.clean();
     }
 
-    /** Free the native memory and set peer to zero */
-    protected synchronized void dispose() {
-        if (peer == 0) {
-            // someone called dispose before, the finalizer will call dispose again
-            return;
-        }
-
-        try {
-            free(peer);
-        } finally {
-            peer = 0;
-            // no null check here, tracking is only null for SharedMemory
-            // SharedMemory is overriding the dispose method
-            reference.unlink();
-        }
+    @Deprecated
+    protected void dispose() {
+        close();
     }
 
     /** Zero the full extent of this memory region. */
@@ -911,5 +773,24 @@ public class Memory extends Pointer {
         } else {
             return target;
         }
+    }
+
+    private static final class MemoryDisposer implements Runnable {
+
+        private long peer;
+
+        public MemoryDisposer(long peer) {
+            this.peer = peer;
+        }
+
+        public synchronized void run() {
+            try {
+                free(peer);
+            } finally {
+                allocatedMemory.remove(peer);
+                peer = 0;
+            }
+        }
+
     }
 }

@@ -34,6 +34,8 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
 import com.sun.jna.Memory;
+import java.lang.ref.Reference;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -42,37 +44,22 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class Crypt32UtilClearSecuritySensitiveDataTest {
     @Rule public ErrorCollector errors = new ErrorCollector();
-    Field fieldMemory_HEAD;
-    Field fieldLinkedReference_next;
-    Field fieldLinkedReference_prev;
+    Field allocatedMemory;
 
     @Before
     public void setUp() throws NoSuchFieldException, ClassNotFoundException {
-        fieldMemory_HEAD = Memory.class.getDeclaredField("HEAD");
-        fieldMemory_HEAD.setAccessible(true);
-        Class<?> classLinkedReference = Class.forName("com.sun.jna.Memory$LinkedReference");
-        fieldLinkedReference_next = classLinkedReference.getDeclaredField("next");
-        fieldLinkedReference_next.setAccessible(true);
-        fieldLinkedReference_prev = classLinkedReference.getDeclaredField("prev");
-        fieldLinkedReference_prev.setAccessible(true);
+        allocatedMemory = Memory.class.getDeclaredField("allocatedMemory");
+        allocatedMemory.setAccessible(true);
     }
 
     boolean stillHover(byte[] sample) throws IllegalAccessException {
-        Object head = fieldMemory_HEAD.get(null);
-        return stillHover(sample, head, fieldLinkedReference_next) || stillHover(sample, head, fieldLinkedReference_prev);
-    }
-
-    boolean stillHover(byte[] sample, Object head, Field fieldNext) throws IllegalAccessException {
-        Object next = head;
-        do {
-            Object curr = next;
-            Memory memory = (Memory) ((WeakReference<?>) curr).get();
+        for(Reference<Memory> memRef: ((Map<Long, Reference<Memory>>) allocatedMemory.get(null)).values()) {
+            Memory memory = memRef.get();
             byte[] array = memory.getByteArray(0, (int) memory.size());
             if (Arrays.equals(array, sample)) {
                 return true;
             }
-            next = fieldNext.get(curr);
-        } while (next != null);
+        }
         return false;
     }
 
