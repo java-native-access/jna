@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Test;
@@ -174,14 +175,18 @@ public class Kernel32NamedPipeTest extends AbstractWin32TestSupport {
                 });
             logger.info("Started client - handle=" + client);
 
+            boolean exceptionReported = false;
             for (Future<?> f : Arrays.asList(client, server)) {
                 try {
                     f.get(30L, TimeUnit.SECONDS);
-                    logger.info("Finished " + f);
+                    logger.log(Level.INFO, "Finished {0}", f);
                 } catch(Exception e) {
-                    logger.warning(e.getClass().getSimpleName() + " while await completion of " + f + ": " + e.getMessage());
+                    exceptionReported = true;
+                    logger.log(Level.WARNING, e.getClass().getSimpleName() + " while await completion of " + f, e);
                 }
             }
+
+            assertFalse(exceptionReported);
         } finally {
             executors.shutdownNow();
         }
