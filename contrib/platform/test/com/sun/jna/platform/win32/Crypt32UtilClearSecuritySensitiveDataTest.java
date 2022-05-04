@@ -55,9 +55,11 @@ public class Crypt32UtilClearSecuritySensitiveDataTest {
     boolean stillHover(byte[] sample) throws IllegalAccessException {
         for(Reference<Memory> memRef: ((Map<Long, Reference<Memory>>) allocatedMemory.get(null)).values()) {
             Memory memory = memRef.get();
-            byte[] array = memory.getByteArray(0, (int) memory.size());
-            if (Arrays.equals(array, sample)) {
-                return true;
+            if (memory != null) {
+                byte[] array = memory.getByteArray(0, (int) memory.size());
+                if (Arrays.equals(array, sample)) {
+                    return true;
+                }
             }
         }
         return false;
