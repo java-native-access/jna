@@ -33,6 +33,7 @@ import java.net.URLClassLoader;
 import java.util.Properties;
 
 import junit.framework.TestCase;
+import org.junit.Assume;
 
 /** Test loading and unloading native support from various locations.  Note
  * that no JNI classes are directly referenced in these tests.
@@ -115,6 +116,11 @@ public class JNALoadTest extends TestCase implements Paths {
     }
 
     public void testLoadAndUnloadFromJar() throws Exception {
+        if (Platform.isIntel() && (! Platform.is64Bit())) {
+            System.out.println("Skip " + getName() + " - it is known to be flaky and produces false positives on x86-32bit");
+            return;
+        }
+
         ClassLoader loader = new TestLoader(true);
         Class<?> cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
@@ -167,6 +173,11 @@ public class JNALoadTest extends TestCase implements Paths {
 
     // GC Fails under OpenJDK(linux/ppc)
     public void testLoadAndUnloadFromResourcePath() throws Exception {
+        if (Platform.isIntel() && (! Platform.is64Bit())) {
+            System.out.println("Skip " + getName() + " - it is known to be flaky and produces false positives on x86-32bit");
+            return;
+        }
+
         ClassLoader loader = new TestLoader(false);
         Class<?> cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
