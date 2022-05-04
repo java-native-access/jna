@@ -325,7 +325,8 @@ public class Secur32Test extends TestCase {
                         pbClientToken,
                         pfClientContextAttr,
                         null);
-                assertTrue(clientRc == W32Errors.SEC_I_CONTINUE_NEEDED || clientRc == W32Errors.SEC_E_OK);
+                assertTrue(String.format("Unexepected result from InitializeSecurityContext: %1$d / 0x%1$x ", clientRc),
+                        clientRc == W32Errors.SEC_I_CONTINUE_NEEDED || clientRc == W32Errors.SEC_E_OK);
             }
             // server ----------- accept security context, produce a server token
             if (serverRc == W32Errors.SEC_I_CONTINUE_NEEDED) {
@@ -338,7 +339,8 @@ public class Secur32Test extends TestCase {
                         pbServerToken,
                         pfServerContextAttr,
                         ptsServerExpiry);
-                assertTrue(serverRc == W32Errors.SEC_I_CONTINUE_NEEDED || serverRc == W32Errors.SEC_E_OK);
+                assertTrue(String.format("Unexepected result from AcceptSecurityContext: %1$d / 0x%1$x ", serverRc),
+                        serverRc == W32Errors.SEC_I_CONTINUE_NEEDED || serverRc == W32Errors.SEC_E_OK);
             }
         } while (serverRc != W32Errors.SEC_E_OK || clientRc != W32Errors.SEC_E_OK);
         // query security context token
