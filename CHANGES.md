@@ -7,6 +7,7 @@ Next Release (5.12.0)
 
 Features
 --------
+* [#1433](https://github.com/java-native-access/jna/pull/1433): Add `CFEqual`, `CFDictionaryRef.ByReference`, `CFStringRef.ByReference` to `c.s.j.p.mac.CoreFoundation` - [@shalupov](https://github.com/shalupov)
 
 Bug Fixes
 ---------

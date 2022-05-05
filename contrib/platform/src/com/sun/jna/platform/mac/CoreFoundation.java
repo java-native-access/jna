@@ -377,6 +377,29 @@ public interface CoreFoundation extends Library {
      * A reference to an immutable {@code CFDictionary} object.
      */
     class CFDictionaryRef extends CFTypeRef {
+
+        /**
+         * Placeholder for a reference to a {@code CFDictionary} object.
+         */
+        public static class ByReference extends PointerByReference {
+            public ByReference() {
+                super();
+            }
+
+            public ByReference(CoreFoundation.CFStringRef value) {
+                super(value.getPointer());
+            }
+
+            public CoreFoundation.CFDictionaryRef getDictionaryRefValue() {
+                Pointer value = super.getValue();
+                if (value == null) {
+                    return null;
+                }
+
+                return new CoreFoundation.CFDictionaryRef(value);
+            }
+        }
+
         public CFDictionaryRef() {
             super();
         }
@@ -460,6 +483,28 @@ public interface CoreFoundation extends Library {
      * the characteristics and behavior of {@code CFString} objects.
      */
     class CFStringRef extends CFTypeRef {
+
+        /**
+         * Placeholder for a reference to a {@code CFString} object.
+         */
+        public static class ByReference extends PointerByReference {
+            public ByReference() {
+            }
+
+            public ByReference(CoreFoundation.CFStringRef value) {
+                super(value.getPointer());
+            }
+
+            public CoreFoundation.CFStringRef getStringRefValue() {
+                Pointer value = super.getValue();
+                if (value == null) {
+                    return null;
+                }
+
+                return new CoreFoundation.CFStringRef(value);
+            }
+        }
+
         public CFStringRef() {
             super();
         }
@@ -973,6 +1018,14 @@ public interface CoreFoundation extends Library {
      *         {@link #kCFNotFound} if the number exceeds {@link Long#MAX_VALUE}.
      */
     CFIndex CFStringGetMaximumSizeForEncoding(CFIndex length, int encoding);
+
+    /**
+     * Determines whether two Core Foundation objects are considered equal.
+     * @param cf1 A CFType object to compare to cf2.
+     * @param cf2 A CFType object to compare to cf1.
+     * @return true if cf1 and cf2 are of the same type and considered equal, otherwise false.
+     */
+    boolean CFEqual(CFTypeRef cf1, CFTypeRef cf2);
 
     /**
      * Gets the default allocator object for the current thread.

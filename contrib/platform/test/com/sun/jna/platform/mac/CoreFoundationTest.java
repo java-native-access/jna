@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import com.sun.jna.platform.mac.CoreFoundation.CFDictionaryRef;
 import org.junit.Test;
 
 import com.sun.jna.Memory;
@@ -247,5 +248,70 @@ public class CoreFoundationTest {
         oneStr.release();
         cfOne.release();
         dict.release();
+    }
+
+    @Test
+    public void testCFStringRefByReference() {
+        CFStringRef key = CFStringRef.createCFString("key");
+        CFStringRef value = CFStringRef.createCFString("value");
+
+        CFMutableDictionaryRef dict = CF.CFDictionaryCreateMutable(null, new CFIndex(2), null, null);
+        dict.setValue(key, value);
+
+        CFStringRef.ByReference byRef = new CFStringRef.ByReference();
+        assertTrue(dict.getValueIfPresent(key, byRef));
+        assertTrue(CF.CFEqual(value, byRef.getStringRefValue()));
+
+        CF.CFRelease(key);
+        CF.CFRelease(value);
+        CF.CFRelease(dict);
+    }
+
+    @Test
+    public void testCFDictionaryRefByReference() {
+        CFStringRef key = CFStringRef.createCFString("key");
+
+        CFMutableDictionaryRef value = CF.CFDictionaryCreateMutable(null, new CFIndex(2), null, null);
+        value.setValue(key, key);
+
+        CFMutableDictionaryRef dict = CF.CFDictionaryCreateMutable(null, new CFIndex(2), null, null);
+        dict.setValue(key, value);
+
+        CFDictionaryRef.ByReference byRef = new CFDictionaryRef.ByReference();
+        assertTrue(dict.getValueIfPresent(key, byRef));
+        assertTrue(CF.CFEqual(value, byRef.getDictionaryRefValue()));
+
+        CF.CFRelease(key);
+        CF.CFRelease(value);
+        CF.CFRelease(dict);
+    }
+
+    @Test
+    public void testCFEqual() {
+        CFStringRef s1 = CFStringRef.createCFString("s1");
+        CFStringRef s1_the_same = CFStringRef.createCFString("s1");
+        CFStringRef s2 = CFStringRef.createCFString("s2");
+
+        assertTrue(CF.CFEqual(s1, s1));
+        assertTrue(CF.CFEqual(s1, s1_the_same));
+
+        assertFalse(CF.CFEqual(s1, s2));
+
+        CFMutableDictionaryRef dict1 = CF.CFDictionaryCreateMutable(null, new CFIndex(2), null, null);
+        dict1.setValue(s1, s1);
+        CFMutableDictionaryRef dict2 = CF.CFDictionaryCreateMutable(null, new CFIndex(2), null, null);
+        dict2.setValue(s1, s1);
+
+        assertNotEquals(dict1.getPointer(), dict2.getPointer());
+        assertTrue(CF.CFEqual(dict1, dict2));
+
+        dict2.setValue(s1, s2);
+        assertFalse(CF.CFEqual(dict1, dict2));
+
+        CF.CFRelease(dict1);
+        CF.CFRelease(dict2);
+        CF.CFRelease(s1);
+        CF.CFRelease(s1_the_same);
+        CF.CFRelease(s2);
     }
 }
