@@ -377,6 +377,41 @@ public interface CoreFoundation extends Library {
      * A reference to an immutable {@code CFDictionary} object.
      */
     class CFDictionaryRef extends CFTypeRef {
+
+        /**
+         * Placeholder for a reference to a {@code CFDictionary} object.
+         */
+        public static class ByReference extends PointerByReference {
+            public ByReference() {
+                this(null);
+            }
+
+            public ByReference(CoreFoundation.CFDictionaryRef value) {
+                super(value != null ? value.getPointer() : null);
+            }
+
+            @Override
+            public void setValue(Pointer value) {
+                if (value != null) {
+                    CFTypeID typeId = INSTANCE.CFGetTypeID(value);
+                    if (!DICTIONARY_TYPE_ID.equals(typeId)) {
+                        throw new ClassCastException("Unable to cast to CFDictionary. Type ID: " + typeId);
+                    }
+                }
+
+                super.setValue(value);
+            }
+
+            public CoreFoundation.CFDictionaryRef getDictionaryRefValue() {
+                Pointer value = super.getValue();
+                if (value == null) {
+                    return null;
+                }
+
+                return new CoreFoundation.CFDictionaryRef(value);
+            }
+        }
+
         public CFDictionaryRef() {
             super();
         }
@@ -460,6 +495,41 @@ public interface CoreFoundation extends Library {
      * the characteristics and behavior of {@code CFString} objects.
      */
     class CFStringRef extends CFTypeRef {
+
+        /**
+         * Placeholder for a reference to a {@code CFString} object.
+         */
+        public static class ByReference extends PointerByReference {
+            public ByReference() {
+                this(null);
+            }
+
+            public ByReference(CoreFoundation.CFStringRef value) {
+                super(value != null ? value.getPointer() : null);
+            }
+
+            @Override
+            public void setValue(Pointer value) {
+                if (value != null) {
+                    CFTypeID typeId = INSTANCE.CFGetTypeID(value);
+                    if (!STRING_TYPE_ID.equals(typeId)) {
+                        throw new ClassCastException("Unable to cast to CFString. Type ID: " + typeId);
+                    }
+                }
+
+                super.setValue(value);
+            }
+
+            public CoreFoundation.CFStringRef getStringRefValue() {
+                Pointer value = super.getValue();
+                if (value == null) {
+                    return null;
+                }
+
+                return new CoreFoundation.CFStringRef(value);
+            }
+        }
+
         public CFStringRef() {
             super();
         }
@@ -975,6 +1045,14 @@ public interface CoreFoundation extends Library {
     CFIndex CFStringGetMaximumSizeForEncoding(CFIndex length, int encoding);
 
     /**
+     * Determines whether two Core Foundation objects are considered equal.
+     * @param cf1 A CFType object to compare to cf2.
+     * @param cf2 A CFType object to compare to cf1.
+     * @return true if cf1 and cf2 are of the same type and considered equal, otherwise false.
+     */
+    boolean CFEqual(CFTypeRef cf1, CFTypeRef cf2);
+
+    /**
      * Gets the default allocator object for the current thread.
      *
      * @return A reference to the default allocator for the current thread. If none
@@ -1012,6 +1090,17 @@ public interface CoreFoundation extends Library {
      *         {@code cf}.
      */
     CFTypeID CFGetTypeID(CFTypeRef theObject);
+
+    /**
+     * Returns the type of a {@code CFType} object presented as a pointer.
+     * Allows to inspect object type without creating a {@link CFTypeRef} wrapper.
+     *
+     * @param theObject
+     *            The pointer to {@code CFData} object to examine.
+     * @return A value of type {@link CFTypeID} that identifies the opaque type of
+     *         {@code cf}.
+     */
+    CFTypeID CFGetTypeID(Pointer theObject);
 
     /**
      * @return The type identifier for the {@code CFArray} opaque type.
