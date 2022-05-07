@@ -271,6 +271,9 @@ public class CoreFoundationTest {
         // test constructor(null)
         assertNull(new CFStringRef.ByReference(null).getValue());
 
+        // test constructor(CFStringRef)
+        assertTrue(CF.CFEqual(new CFStringRef.ByReference(key).getStringRefValue(), key));
+
         // test setValue(null)
         assertNotNull(byRef.getStringRefValue());
         byRef.setValue(null);
@@ -314,6 +317,9 @@ public class CoreFoundationTest {
 
         // test constructor(null)
         assertNull(new CFDictionaryRef.ByReference(null).getValue());
+
+        // test constructor(CFDictionaryRef)
+        assertTrue(CF.CFEqual(new CFDictionaryRef.ByReference(dict).getDictionaryRefValue(), dict));
 
         // test setValue(null)
         assertNotNull(byRef.getDictionaryRefValue());
