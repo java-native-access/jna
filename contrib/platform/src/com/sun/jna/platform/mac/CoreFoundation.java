@@ -383,11 +383,23 @@ public interface CoreFoundation extends Library {
          */
         public static class ByReference extends PointerByReference {
             public ByReference() {
-                super();
+                this(null);
             }
 
-            public ByReference(CoreFoundation.CFStringRef value) {
-                super(value.getPointer());
+            public ByReference(CoreFoundation.CFDictionaryRef value) {
+                super(value != null ? value.getPointer() : null);
+            }
+
+            @Override
+            public void setValue(Pointer value) {
+                if (value != null) {
+                    CFTypeID typeId = INSTANCE.CFGetTypeID(value);
+                    if (!DICTIONARY_TYPE_ID.equals(typeId)) {
+                        throw new ClassCastException("Unable to cast to CFDictionary. Type ID: " + typeId);
+                    }
+                }
+
+                super.setValue(value);
             }
 
             public CoreFoundation.CFDictionaryRef getDictionaryRefValue() {
@@ -489,10 +501,23 @@ public interface CoreFoundation extends Library {
          */
         public static class ByReference extends PointerByReference {
             public ByReference() {
+                this(null);
             }
 
             public ByReference(CoreFoundation.CFStringRef value) {
-                super(value.getPointer());
+                super(value != null ? value.getPointer() : null);
+            }
+
+            @Override
+            public void setValue(Pointer value) {
+                if (value != null) {
+                    CFTypeID typeId = INSTANCE.CFGetTypeID(value);
+                    if (!STRING_TYPE_ID.equals(typeId)) {
+                        throw new ClassCastException("Unable to cast to CFString. Type ID: " + typeId);
+                    }
+                }
+
+                super.setValue(value);
             }
 
             public CoreFoundation.CFStringRef getStringRefValue() {
@@ -1065,6 +1090,17 @@ public interface CoreFoundation extends Library {
      *         {@code cf}.
      */
     CFTypeID CFGetTypeID(CFTypeRef theObject);
+
+    /**
+     * Returns the type of a {@code CFType} object presented as a pointer.
+     * Allows to inspect object type without creating a {@link CFTypeRef} wrapper.
+     *
+     * @param theObject
+     *            The pointer to {@code CFData} object to examine.
+     * @return A value of type {@link CFTypeID} that identifies the opaque type of
+     *         {@code cf}.
+     */
+    CFTypeID CFGetTypeID(Pointer theObject);
 
     /**
      * @return The type identifier for the {@code CFArray} opaque type.
