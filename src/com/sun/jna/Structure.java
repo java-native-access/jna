@@ -1955,7 +1955,7 @@ public abstract class Structure {
             public size_t(long value) { super(Native.SIZE_T_SIZE, value); }
         }
 
-        private static final Map<Class, FFIType> typeInfoMap = new WeakHashMap<Class, FFIType>();
+        private static final Map<Class, Map<Integer,FFIType>> typeInfoMap = new WeakHashMap<Class, Map<Integer,FFIType>>();
         private static final Map<Class, FFIType> unionHelper = new WeakHashMap<Class, FFIType>();
         private static final Map<Pointer, FFIType> ffiTypeInfo = new HashMap<Pointer, FFIType>();
 
@@ -2018,29 +2018,29 @@ public abstract class Structure {
             for(FFIType f: ffiTypeInfo.values()) {
                 f.read();
             }
-            typeInfoMap.put(void.class, ffiTypeInfo.get(FFITypes.ffi_type_void));
-            typeInfoMap.put(Void.class, ffiTypeInfo.get(FFITypes.ffi_type_void));
-            typeInfoMap.put(float.class, ffiTypeInfo.get(FFITypes.ffi_type_float));
-            typeInfoMap.put(Float.class, ffiTypeInfo.get(FFITypes.ffi_type_float));
-            typeInfoMap.put(double.class, ffiTypeInfo.get(FFITypes.ffi_type_double));
-            typeInfoMap.put(Double.class, ffiTypeInfo.get(FFITypes.ffi_type_double));
-            typeInfoMap.put(long.class, ffiTypeInfo.get(FFITypes.ffi_type_sint64));
-            typeInfoMap.put(Long.class, ffiTypeInfo.get(FFITypes.ffi_type_sint64));
-            typeInfoMap.put(int.class, ffiTypeInfo.get(FFITypes.ffi_type_sint32));
-            typeInfoMap.put(Integer.class, ffiTypeInfo.get(FFITypes.ffi_type_sint32));
-            typeInfoMap.put(short.class, ffiTypeInfo.get(FFITypes.ffi_type_sint16));
-            typeInfoMap.put(Short.class, ffiTypeInfo.get(FFITypes.ffi_type_sint16));
+            storeTypeInfo(void.class, ffiTypeInfo.get(FFITypes.ffi_type_void));
+            storeTypeInfo(Void.class, ffiTypeInfo.get(FFITypes.ffi_type_void));
+            storeTypeInfo(float.class, ffiTypeInfo.get(FFITypes.ffi_type_float));
+            storeTypeInfo(Float.class, ffiTypeInfo.get(FFITypes.ffi_type_float));
+            storeTypeInfo(double.class, ffiTypeInfo.get(FFITypes.ffi_type_double));
+            storeTypeInfo(Double.class, ffiTypeInfo.get(FFITypes.ffi_type_double));
+            storeTypeInfo(long.class, ffiTypeInfo.get(FFITypes.ffi_type_sint64));
+            storeTypeInfo(Long.class, ffiTypeInfo.get(FFITypes.ffi_type_sint64));
+            storeTypeInfo(int.class, ffiTypeInfo.get(FFITypes.ffi_type_sint32));
+            storeTypeInfo(Integer.class, ffiTypeInfo.get(FFITypes.ffi_type_sint32));
+            storeTypeInfo(short.class, ffiTypeInfo.get(FFITypes.ffi_type_sint16));
+            storeTypeInfo(Short.class, ffiTypeInfo.get(FFITypes.ffi_type_sint16));
             FFIType ctype = Native.WCHAR_SIZE == 2
                 ? ffiTypeInfo.get(FFITypes.ffi_type_uint16) : ffiTypeInfo.get(FFITypes.ffi_type_uint32);
-            typeInfoMap.put(char.class, ctype);
-            typeInfoMap.put(Character.class, ctype);
-            typeInfoMap.put(byte.class, ffiTypeInfo.get(FFITypes.ffi_type_sint8));
-            typeInfoMap.put(Byte.class, ffiTypeInfo.get(FFITypes.ffi_type_sint8));
-            typeInfoMap.put(Pointer.class, ffiTypeInfo.get(FFITypes.ffi_type_pointer));
-            typeInfoMap.put(String.class, ffiTypeInfo.get(FFITypes.ffi_type_pointer));
-            typeInfoMap.put(WString.class, ffiTypeInfo.get(FFITypes.ffi_type_pointer));
-            typeInfoMap.put(boolean.class, ffiTypeInfo.get(FFITypes.ffi_type_uint32));
-            typeInfoMap.put(Boolean.class, ffiTypeInfo.get(FFITypes.ffi_type_uint32));
+            storeTypeInfo(char.class, ctype);
+            storeTypeInfo(Character.class, ctype);
+            storeTypeInfo(byte.class, ffiTypeInfo.get(FFITypes.ffi_type_sint8));
+            storeTypeInfo(Byte.class, ffiTypeInfo.get(FFITypes.ffi_type_sint8));
+            storeTypeInfo(Pointer.class, ffiTypeInfo.get(FFITypes.ffi_type_pointer));
+            storeTypeInfo(String.class, ffiTypeInfo.get(FFITypes.ffi_type_pointer));
+            storeTypeInfo(WString.class, ffiTypeInfo.get(FFITypes.ffi_type_pointer));
+            storeTypeInfo(boolean.class, ffiTypeInfo.get(FFITypes.ffi_type_uint32));
+            storeTypeInfo(Boolean.class, ffiTypeInfo.get(FFITypes.ffi_type_uint32));
         }
         // From ffi.h
         private static final int FFI_TYPE_STRUCT = 13;
@@ -2139,7 +2139,9 @@ public abstract class Structure {
         /** Obtain a pointer to the native FFI type descriptor for the given object. */
         static FFIType get(Object obj) {
             if (obj == null)
-                return typeInfoMap.get(Pointer.class);
+                synchronized (typeInfoMap) {
+                    return getTypeInfo(Pointer.class, 0);
+                }
             if (obj instanceof Class)
                 return get(null, (Class<?>)obj);
             return get(obj, obj.getClass());
@@ -2154,23 +2156,23 @@ public abstract class Structure {
                 }
             }
             synchronized(typeInfoMap) {
-                FFIType o = typeInfoMap.get(cls);
+                FFIType o = getTypeInfo(cls, cls.isArray() ? Array.getLength(obj) : 0);
                 if (o != null) {
                     return o;
                 }
                 if ((Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(cls))
                     || Callback.class.isAssignableFrom(cls)) {
                     typeInfoMap.put(cls, typeInfoMap.get(Pointer.class));
-                    return typeInfoMap.get(Pointer.class);
+                    return typeInfoMap.get(Pointer.class).get(0);
                 }
                 if (Structure.class.isAssignableFrom(cls)) {
                     if (obj == null) obj = newInstance((Class<? extends Structure>) cls, PLACEHOLDER_MEMORY);
                     if (ByReference.class.isAssignableFrom(cls)) {
                         typeInfoMap.put(cls, typeInfoMap.get(Pointer.class));
-                        return typeInfoMap.get(Pointer.class);
+                        return typeInfoMap.get(Pointer.class).get(0);
                     }
                     FFIType type = new FFIType((Structure)obj);
-                    typeInfoMap.put(cls, type);
+                    storeTypeInfo(cls, type);
                     return type;
                 }
                 if (NativeMapped.class.isAssignableFrom(cls)) {
@@ -2180,10 +2182,34 @@ public abstract class Structure {
                 if (cls.isArray()) {
                     FFIType type = new FFIType(obj, cls);
                     // Store it in the map to prevent premature GC of type info
-                    typeInfoMap.put(cls, type);
+                    storeTypeInfo(cls, Array.getLength(obj), type);
                     return type;
                 }
                 throw new IllegalArgumentException("Unsupported type " + cls);
+            }
+        }
+
+        private static FFIType getTypeInfo(Class clazz, int elementCount) {
+            Map<Integer,FFIType> typeMap = typeInfoMap.get(clazz);
+            if(typeMap != null) {
+                return typeMap.get(elementCount);
+            } else {
+                return null;
+            }
+        }
+
+        private static void storeTypeInfo(Class clazz, FFIType type) {
+            storeTypeInfo(clazz, 0, type);
+        }
+
+        private static void storeTypeInfo(Class clazz, int elementCount, FFIType type) {
+            synchronized (typeInfoMap) {
+                Map<Integer,FFIType> typeMap = typeInfoMap.get(clazz);
+                if(typeMap == null) {
+                    typeMap = new HashMap<Integer,FFIType>();
+                    typeInfoMap.put(clazz, typeMap);
+                }
+                typeMap.put(elementCount, type);
             }
         }
     }

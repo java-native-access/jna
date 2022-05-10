@@ -1058,6 +1058,26 @@ returnClass(JNIEnv *env, jobject arg) {
   return (*env)->GetObjectClass(env, arg);
 }
 
+typedef struct{
+  double t1[3];
+  double t2[4];
+  double t3[5];
+} DemoStructureDifferentArrayLengths;
+
+EXPORT DemoStructureDifferentArrayLengths
+returnLastElementOfComponentsDSDAL(DemoStructureDifferentArrayLengths ts, int debug) {
+  DemoStructureDifferentArrayLengths result;
+  result.t1[2] = ts.t1[2];
+  result.t2[3] = ts.t2[3];
+  result.t3[4] = ts.t3[4];
+  if(debug) {
+    printf("DemoStructureDifferentArrayLengths.t1[2]: %1.3f\n", result.t1[2]);
+    printf("DemoStructureDifferentArrayLengths.t2[3]: %1.3f\n", result.t2[3]);
+    printf("DemoStructureDifferentArrayLengths.t3[4]: %1.3f\n", result.t3[4]);
+  }
+  return result;
+}
+
 #ifdef __cplusplus
 }
 #endif
