@@ -157,7 +157,7 @@ public class XAttrUtilTest extends TestCase {
 
     public void testWriteAlignedCliTool() throws IOException, InterruptedException {
         Process p = Runtime.getRuntime().exec(new String[] {"xattr", "-w", "JNA", "Java Native Access", testPath});
-        assertTrue(p.waitFor(30, TimeUnit.SECONDS));
+        assertTrue("Wait for CLI xattr call timed out", p.waitFor(60, TimeUnit.SECONDS));
         String resultString = XAttrUtil.getXAttr(testPath, "JNA");
         assertEquals("Java Native Access", resultString);
     }
