@@ -25,8 +25,10 @@
 
 package com.sun.jna;
 
+import com.sun.jna.internal.Cleaner;
 import static com.sun.jna.Native.DEBUG_LOAD;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -47,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,11 +84,12 @@ import java.util.logging.Logger;
  * @author Wayne Meissner, split library loading from Function.java
  * @author twall
  */
-public class NativeLibrary {
+public class NativeLibrary implements Closeable {
 
     private static final Logger LOG = Logger.getLogger(NativeLibrary.class.getName());
     private final static Level DEBUG_LOAD_LEVEL = DEBUG_LOAD ? Level.INFO : Level.FINE;
 
+    private Cleaner.Cleanable cleanable;
     private long handle;
     private final String libraryName;
     private final String libraryPath;
@@ -95,7 +99,8 @@ public class NativeLibrary {
     final Map<String, ?> options;
 
     private static final Map<String, Reference<NativeLibrary>> libraries = new HashMap<String, Reference<NativeLibrary>>();
-    private static final Map<String, List<String>> searchPaths = Collections.synchronizedMap(new HashMap<String, List<String>>());
+
+    private static final Map<String, List<String>> searchPaths = new ConcurrentHashMap<String, List<String>>();
     private static final LinkedHashSet<String> librarySearchPath = new LinkedHashSet<String>();
 
     static {
@@ -112,6 +117,7 @@ public class NativeLibrary {
         this.libraryName = getLibraryName(libraryName);
         this.libraryPath = libraryPath;
         this.handle = handle;
+        this.cleanable = Cleaner.getCleaner().register(this, new NativeLibraryDisposer(handle));
         Object option = options.get(Library.OPTION_CALLING_CONVENTION);
         int callingConvention = option instanceof Number ? ((Number)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
@@ -501,15 +507,13 @@ public class NativeLibrary {
      * @param path The path to use when trying to load the library
      */
     public static final void addSearchPath(String libraryName, String path) {
-        synchronized (searchPaths) {
-            List<String> customPaths = searchPaths.get(libraryName);
-            if (customPaths == null) {
-                customPaths = Collections.synchronizedList(new ArrayList<String>());
-                searchPaths.put(libraryName, customPaths);
-            }
-
-            customPaths.add(path);
+        List<String> customPaths = searchPaths.get(libraryName);
+        if (customPaths == null) {
+            customPaths = Collections.synchronizedList(new ArrayList<String>());
+            searchPaths.put(libraryName, customPaths);
         }
+
+        customPaths.add(path);
     }
 
     /**
@@ -650,11 +654,6 @@ public class NativeLibrary {
             return null;
         return new File(libraryPath);
     }
-    /** Close the library when it is no longer referenced. */
-    @Override
-    protected void finalize() {
-        dispose();
-    }
 
     /** Close all open native libraries. */
     static void disposeAll() {
@@ -665,13 +664,13 @@ public class NativeLibrary {
         for (Reference<NativeLibrary> ref : values) {
             NativeLibrary lib = ref.get();
             if (lib != null) {
-                lib.dispose();
+                lib.close();
             }
         }
     }
 
     /** Close the native library we're mapped to. */
-    public void dispose() {
+    public void close() {
         Set<String> keys = new HashSet<String>();
         synchronized(libraries) {
             for (Map.Entry<String, Reference<NativeLibrary>> e : libraries.entrySet()) {
@@ -688,10 +687,15 @@ public class NativeLibrary {
 
         synchronized(this) {
             if (handle != 0) {
-                Native.close(handle);
+                cleanable.clean();
                 handle = 0;
             }
         }
+    }
+
+    @Deprecated
+    public void dispose() {
+        close();
     }
 
     private static List<String> initPaths(String key) {
@@ -1025,5 +1029,25 @@ public class NativeLibrary {
             }
         }
         return ldPaths;
+    }
+
+    private static final class NativeLibraryDisposer implements Runnable {
+
+        private long handle;
+
+        public NativeLibraryDisposer(long handle) {
+            this.handle = handle;
+        }
+
+        public synchronized void run() {
+            if (handle != 0) {
+                try {
+                    Native.close(handle);
+                } finally {
+                    handle = 0;
+                }
+            }
+        }
+
     }
 }

@@ -8,9 +8,17 @@ Next Release (5.12.0)
 Features
 --------
 * [#1433](https://github.com/java-native-access/jna/pull/1433): Add `CFEqual`, `CFDictionaryRef.ByReference`, `CFStringRef.ByReference` to `c.s.j.p.mac.CoreFoundation` - [@shalupov](https://github.com/shalupov)
+* [#978](https://github.com/java-native-access/jna/issues/978): Remove use of finalizers in JNA and improve concurrency for `Memory`, `CallbackReference` and `NativeLibrary` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
+
+Important Changes
+-----------------
+* `Memory#dispose`, `CallbackReference#dispose` and `NativeLibrary#dispose`
+   were called by the `Object#finalize` override. These calls were replaced by
+   the use of a cleaner. It is not guaranteed anymore, that `dispose` is called
+   on subclasses on finalization.
 
 Release 5.11.0
 ==============

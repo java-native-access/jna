@@ -40,20 +40,12 @@ import static org.hamcrest.CoreMatchers.not;
 public class MemoryTest extends TestCase {
 
     public void testAutoFreeMemory() throws Exception {
-        final boolean[] flag = { false };
-        Memory core = new Memory(10) {
-            @Override
-            protected void finalize() {
-                super.finalize();
-                flag[0] = true;
-            }
-        };
+        Memory core = new Memory(10);
         Pointer shared = core.share(0, 5);
         Reference<Memory> ref = new WeakReference<Memory>(core);
 
         core = null;
         System.gc();
-        assertFalse("Memory prematurely GC'd", flag[0]);
         assertNotNull("Base memory GC'd while shared memory extant", ref.get());
         // Avoid having IBM J9 prematurely nullify "shared"
         shared.setInt(0, 0);
@@ -187,24 +179,6 @@ public class MemoryTest extends TestCase {
             "[04050607]" + ls +
             "[08090a0b]" + ls +
             "[0c0d0e]" + ls, m.dump());
-    }
-
-    public void testRemoveAllocatedMemory() {
-        // Make sure there are no remaining allocations
-        Memory.disposeAll();
-        assertEquals(0, Memory.integrityCheck());
-
-        // Test allocation and ensure it is accounted for
-        Memory mem = new Memory(1024);
-        assertEquals(1, Memory.integrityCheck());
-
-        // Test shared memory is not tracked
-        Pointer shared = mem.share(0, 32);
-        assertEquals(1, Memory.integrityCheck());
-
-        // Dispose memory and ensure allocation is removed from allocatedMemory-Map
-        mem.dispose();
-        assertEquals(0, Memory.integrityCheck());
     }
 
     public void testGetSharedMemory() {
