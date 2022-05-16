@@ -36,6 +36,7 @@ public class DirectStructureByValueTest extends StructureByValueTest {
         public native int testStructureByValueArgument32(ByValue32 arg);
         public native long testStructureByValueArgument64(ByValue64 arg);
         public native long testStructureByValueArgument128(ByValue128 arg);
+        public native DemoStructureDifferentArrayLengths.ByValue returnLastElementOfComponentsDSDAL(DemoStructureDifferentArrayLengths.ByValue arg, int debug);
         static {
             Native.register("testlib");
         }

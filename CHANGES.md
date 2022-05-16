@@ -12,6 +12,7 @@ Features
 
 Bug Fixes
 ---------
+* [#1438](https://github.com/java-native-access/jna/pull/1438): Handle arrays in structures with differing size - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Important Changes
 -----------------
