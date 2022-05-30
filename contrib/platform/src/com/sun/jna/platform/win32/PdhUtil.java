@@ -162,7 +162,9 @@ public abstract class PdhUtil {
         List<String> counters = new ArrayList<String>();
         List<String> instances = new ArrayList<String>();
 
-        // Call once to get string lengths
+        // Call once to get counter and instance string lengths
+        // If zero on input and the object exists, the function returns PDH_MORE_DATA
+        // and sets these parameters to the required buffer size.
         DWORDByReference pcchCounterListLength = new DWORDByReference(new DWORD(0));
         DWORDByReference pcchInstanceListLength = new DWORDByReference(new DWORD(0));
         int result = Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, null, pcchCounterListLength, null,
@@ -174,16 +176,35 @@ public abstract class PdhUtil {
         Memory mszCounterList = null;
         Memory mszInstanceList = null;
 
-        if (pcchCounterListLength.getValue().intValue() > 0) {
-            mszCounterList = new Memory(pcchCounterListLength.getValue().intValue() * CHAR_TO_BYTES);
-        }
+        // A race condition may exist for some instance lists such as processes or
+        // threads which may result in PDH_MORE_DATA.
+        do {
+            if (pcchCounterListLength.getValue().intValue() > 0) {
+                mszCounterList = new Memory(pcchCounterListLength.getValue().intValue() * CHAR_TO_BYTES);
+            }
 
-        if (pcchInstanceListLength.getValue().intValue() > 0) {
-            mszInstanceList = new Memory(pcchInstanceListLength.getValue().intValue() * CHAR_TO_BYTES);
-        }
+            if (pcchInstanceListLength.getValue().intValue() > 0) {
+                mszInstanceList = new Memory(pcchInstanceListLength.getValue().intValue() * CHAR_TO_BYTES);
+            }
 
-        result = Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, mszCounterList,
-                pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
+            result = Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, mszCounterList,
+                    pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
+            if (result == Pdh.PDH_MORE_DATA) {
+                // If the specified size on input is greater than zero but less than the
+                // required size, you should not rely on the returned size to reallocate the
+                // buffer.
+                if (mszCounterList != null) {
+                    long tooSmallSize = mszCounterList.size() / CHAR_TO_BYTES;
+                    pcchCounterListLength.setValue(new DWORD(tooSmallSize + 1024));
+                    mszCounterList.close();
+                }
+                if (mszInstanceList != null) {
+                    long tooSmallSize = mszInstanceList.size() / CHAR_TO_BYTES;
+                    pcchInstanceListLength.setValue(new DWORD(tooSmallSize + 1024));
+                    mszInstanceList.close();
+                }
+            }
+        } while (result == Pdh.PDH_MORE_DATA);
 
         if(result != WinError.ERROR_SUCCESS) {
             throw new PdhException(result);
