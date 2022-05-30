@@ -9,6 +9,7 @@ Features
 --------
 * [#1433](https://github.com/java-native-access/jna/pull/1433): Add `CFEqual`, `CFDictionaryRef.ByReference`, `CFStringRef.ByReference` to `c.s.j.p.mac.CoreFoundation` - [@shalupov](https://github.com/shalupov)
 * [#978](https://github.com/java-native-access/jna/issues/978): Remove use of finalizers in JNA and improve concurrency for `Memory`, `CallbackReference` and `NativeLibrary` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1440](https://github.com/java-native-access/jna/pull/1440): Support for LoongArch64 - [@Panxuefeng-loongson](https://github.com/Panxuefeng-loongson).
 
 Bug Fixes
 ---------
