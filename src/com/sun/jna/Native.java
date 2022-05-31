@@ -1139,48 +1139,48 @@ public final class Native implements Version {
         }
         File lib = null;
         if (url == null) {
-        		// System.out.printf("[d]loader=%s, resourcePath=%s\n", loader, resourcePath);
-        		InputStream is = loader.getResourceAsStream(resourcePath); //neoe
-        		if(is==null){
-	        		String prefix="com/sun/jna/" + Platform.RESOURCE_PREFIX + "/";
-	        		if (resourcePath.startsWith(prefix)){
-	        			is =  loader.getResourceAsStream(resourcePath.substring(prefix.length()));
-	        		}
-        		}
-        		if (is!=null){
-		        			FileOutputStream fos = null;
-		            try {
-		                // Suffix is required on windows, or library fails to load
-		                // Let Java pick the suffix, except on windows, to avoid
-		                // problems with Web Start.
-		                File dir = getTempDir();
-		                lib = File.createTempFile(JNA_TMPLIB_PREFIX, Platform.isWindows()?".dll":null, dir);
-		                if (!Boolean.getBoolean("jnidispatch.preserve")) {
-		                    lib.deleteOnExit();
-		                }
-		                LOG.log(DEBUG, "Extracting library to {0}", lib.getAbsolutePath());
-		                fos = new FileOutputStream(lib);
-		                int count;
-		                byte[] buf = new byte[1024];
-		                while ((count = is.read(buf, 0, buf.length)) > 0) {
-		                    fos.write(buf, 0, count);
-		                }
-		                return lib;
-		            }catch(IOException e) {
-		                throw new IOException("Failed to create temporary file for " + name + " library: " + e.getMessage());
-		            }finally {
-		                try { is.close(); } catch(IOException e) { }
-		                if (fos != null) {
-		                    try { fos.close(); } catch(IOException e) { }
-		                }
-		            }
-        		}else{
-	            String path = System.getProperty("java.class.path");
-	            if (loader instanceof URLClassLoader) {
-	                path = Arrays.asList(((URLClassLoader)loader).getURLs()).toString();
-	            }
-	            throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
-	          }
+	    // try using getResourceAsStream() after getResource() failed	
+            InputStream is = loader.getResourceAsStream(resourcePath); 
+            if (is == null) {
+              String prefix = "com/sun/jna/" + Platform.RESOURCE_PREFIX + "/";
+              if (resourcePath.startsWith(prefix)) {
+                is = loader.getResourceAsStream(resourcePath.substring(prefix.length()));
+              }
+            }
+            if (is != null){ 
+                FileOutputStream fos = null;
+                try {
+                    // Suffix is required on windows, or library fails to load
+                    // Let Java pick the suffix, except on windows, to avoid
+                    // problems with Web Start.
+                    File dir = getTempDir();
+                    lib = File.createTempFile(JNA_TMPLIB_PREFIX, Platform.isWindows()?".dll":null, dir);
+                    if (!Boolean.getBoolean("jnidispatch.preserve")) {
+                        lib.deleteOnExit();
+                    }
+                    LOG.log(DEBUG, "Extracting library to {0}", lib.getAbsolutePath());
+                    fos = new FileOutputStream(lib);
+                    int count;
+                    byte[] buf = new byte[1024];
+                    while ((count = is.read(buf, 0, buf.length)) > 0) {
+                        fos.write(buf, 0, count);
+                    }
+                    return lib; // success, we are return
+                }catch(IOException e) {
+                    throw new IOException("Failed to create temporary file for " + name + " library: " + e.getMessage());
+                }finally {
+                    try { is.close(); } catch(IOException e) { }
+                    if (fos != null) {
+                        try { fos.close(); } catch(IOException e) { }
+                    }
+                }
+            } else {
+              String path = System.getProperty("java.class.path");
+              if (loader instanceof URLClassLoader) {
+                  path = Arrays.asList(((URLClassLoader)loader).getURLs()).toString();
+              }
+              throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
+            }
         }
         LOG.log(DEBUG, "Found library resource at {0}", url);
 
