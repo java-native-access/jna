@@ -134,7 +134,7 @@ ffi_tramp_is_present (__attribute__((unused)) void *ptr)
 #  define HAVE_MNTENT 1
 # endif
 # if defined(_WIN32) || defined(__OS2__)
-/* Windows systems may have Data Execution Protection (DEP) enabled, 
+/* Windows systems may have Data Execution Protection (DEP) enabled,
    which requires the use of VirtualMalloc/VirtualFree to alloc/free
    executable memory. */
 #  define FFI_MMAP_EXEC_WRIT 1
@@ -230,10 +230,22 @@ ffi_trampoline_table_alloc (void)
   kt = vm_remap (mach_task_self (), &trampoline_page, PAGE_MAX_SIZE, 0x0,
 		 VM_FLAGS_OVERWRITE, mach_task_self (), trampoline_page_template,
 		 FALSE, &cur_prot, &max_prot, VM_INHERIT_SHARE);
-  if (kt != KERN_SUCCESS || !(cur_prot & VM_PROT_EXECUTE))
+  if (kt != KERN_SUCCESS)
     {
       vm_deallocate (mach_task_self (), config_page, PAGE_MAX_SIZE * 2);
       return NULL;
+    }
+
+  if (!(cur_prot & VM_PROT_EXECUTE))
+    {
+      /* If VM_PROT_EXECUTE isn't set on the remapped trampoline page, set it */
+      kt = vm_protect (mach_task_self (), trampoline_page, PAGE_MAX_SIZE,
+         FALSE, cur_prot | VM_PROT_EXECUTE);
+      if (kt != KERN_SUCCESS)
+        {
+          vm_deallocate (mach_task_self (), config_page, PAGE_MAX_SIZE * 2);
+          return NULL;
+        }
     }
 
   /* We have valid trampoline and config pages */

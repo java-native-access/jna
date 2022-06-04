@@ -35,7 +35,8 @@ function build_linux()
     ./configure ${HOST+--host=$HOST} ${CONFIGURE_OPTIONS} || cat */config.log
     make
     make dist
-    make check RUNTESTFLAGS="-a $RUNTESTFLAGS"
+    DEJAGNU=$(pwd)/.ci/site.exp BOARDSDIR=$(pwd)/.ci runtest --version
+    DEJAGNU=$(pwd)/.ci/site.exp BOARDSDIR=$(pwd)/.ci make check RUNTESTFLAGS="-a $RUNTESTFLAGS"
 
     ./rlgl l --key=${RLGL_KEY} https://rl.gl
     ID=$(./rlgl start)
@@ -45,7 +46,7 @@ function build_linux()
 
 function build_foreign_linux()
 {
-    ${DOCKER} run --rm -t -i -v $(pwd):/opt ${SET_QEMU_CPU} -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" $2 bash -c /opt/.travis/build-in-container.sh
+    ${DOCKER} run --rm -t -v $(pwd):/opt ${SET_QEMU_CPU} -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" $2 bash -c /opt/.ci/build-in-container.sh
 
     ./rlgl l --key=${RLGL_KEY} https://rl.gl
     ID=$(./rlgl start)
@@ -55,7 +56,7 @@ function build_foreign_linux()
 
 function build_cross_linux()
 {
-    ${DOCKER} run --rm -t -i -v $(pwd):/opt ${SET_QEMU_CPU} -e HOST="${HOST}" -e CC="${HOST}-gcc-8 ${GCC_OPTIONS}" -e CXX="${HOST}-g++-8 ${GCC_OPTIONS}" -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" quay.io/moxielogic/cross-ci-build-container:latest bash -c /opt/.travis/build-in-container.sh
+    ${DOCKER} run --rm -t -v $(pwd):/opt ${SET_QEMU_CPU} -e HOST="${HOST}" -e CC="${HOST}-gcc-8 ${GCC_OPTIONS}" -e CXX="${HOST}-g++-8 ${GCC_OPTIONS}" -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" quay.io/moxielogic/cross-ci-build-container:latest bash -c /opt/.ci/build-in-container.sh
 
     ./rlgl l --key=${RLGL_KEY} https://rl.gl
     ID=$(./rlgl start)
@@ -66,7 +67,7 @@ function build_cross_linux()
 function build_cross()
 {
     ${DOCKER} pull quay.io/moxielogic/libffi-ci-${HOST}
-    ${DOCKER} run --rm -t -i -v $(pwd):/opt -e HOST="${HOST}" -e CC="${HOST}-gcc ${GCC_OPTIONS}" -e CXX="${HOST}-g++ ${GCC_OPTIONS}" -e TRAVIS_BUILD_DIR=/opt -e DEJAGNU="${DEJAGNU}" -e RUNTESTFLAGS="${RUNTESTFLAGS}" -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" quay.io/moxielogic/libffi-ci-${HOST} bash -c /opt/.travis/build-cross-in-container.sh
+    ${DOCKER} run --rm -t -v $(pwd):/opt -e HOST="${HOST}" -e CC="${HOST}-gcc ${GCC_OPTIONS}" -e CXX="${HOST}-g++ ${GCC_OPTIONS}" -e RUNNER_WORKSPACE=/opt -e RUNTESTFLAGS="-vv ${RUNTESTFLAGS}" -e LIBFFI_TEST_OPTIMIZATION="${LIBFFI_TEST_OPTIMIZATION}" quay.io/moxielogic/libffi-ci-${HOST} bash -c /opt/.ci/build-cross-in-container.sh
 
     ./rlgl l --key=${RLGL_KEY} https://rl.gl
     ID=$(./rlgl start)

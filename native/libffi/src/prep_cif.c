@@ -1,6 +1,7 @@
 /* -----------------------------------------------------------------------
    prep_cif.c - Copyright (c) 2011, 2012, 2021  Anthony Green
                 Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
+                Copyright (c) 2022 Oracle and/or its affiliates.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -240,7 +241,7 @@ ffi_status ffi_prep_cif_var(ffi_cif *cif,
   if (rc != FFI_OK)
     return rc;
 
-  for (i = 1; i < ntotalargs; i++)
+  for (i = nfixedargs; i < ntotalargs; i++)
     {
       ffi_type *arg_type = atypes[i];
       if (arg_type == &ffi_type_float

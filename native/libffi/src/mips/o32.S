@@ -133,6 +133,7 @@ pass_f_d:
  #	bne	t0, FFI_ARGS_F_D, call_it
 	l.s	$f12, 0*FFI_SIZEOF_ARG($sp)	# load $fp regs from args
 	l.d	$f14, 2*FFI_SIZEOF_ARG($sp)	# passing double and float
+
 #endif
 
 call_it:	
@@ -146,7 +147,8 @@ call_it:
 	REG_L	t1, SIZEOF_FRAME + 4*FFI_SIZEOF_ARG($fp)
 	beqz	t1, noretval
 
-	bne     t2, FFI_TYPE_INT, retlonglong
+	and     t1, t2, ((1<<4)-1)
+	bne     t1, FFI_TYPE_INT, retlonglong
 	jalr	t9
 	REG_L	t0, SIZEOF_FRAME + 4*FFI_SIZEOF_ARG($fp)
 	REG_S	v0, 0(t0)
@@ -154,7 +156,7 @@ call_it:
 
 retlonglong:
 	# Really any 64-bit int, signed or not.
-	bne	t2, FFI_TYPE_UINT64, retfloat
+	bne	t1, FFI_TYPE_UINT64, retfloat
 	jalr	t9
 	REG_L	t0, SIZEOF_FRAME + 4*FFI_SIZEOF_ARG($fp)
 	REG_S	v1, 4(t0)
@@ -162,7 +164,7 @@ retlonglong:
 	b	epilogue
 
 retfloat:
-	bne     t2, FFI_TYPE_FLOAT, retdouble
+	bne     t1, FFI_TYPE_FLOAT, retdouble
 	jalr	t9
 	REG_L	t0, SIZEOF_FRAME + 4*FFI_SIZEOF_ARG($fp)
 #ifndef __mips_soft_float
@@ -173,7 +175,7 @@ retfloat:
 	b	epilogue
 
 retdouble:	
-	bne	t2, FFI_TYPE_DOUBLE, noretval
+	bne	t1, FFI_TYPE_DOUBLE, retcomplex
 	jalr	t9
 	REG_L	t0, SIZEOF_FRAME + 4*FFI_SIZEOF_ARG($fp)
 #ifndef __mips_soft_float
@@ -184,6 +186,48 @@ retdouble:
 #endif
 	b	epilogue
 	
+retcomplex:
+	# mask out the complex elements type.
+	# the struct of flags (bits):
+	# 0-1: arg0
+	# 2-3: arg1
+	# 4-7: return type
+	# 8-11: rtype elements type: for complex
+	# Note here: t2 is flags>>4
+	bne	t1, FFI_TYPE_COMPLEX, noretval
+	jalr	t9
+	REG_L	t0, SIZEOF_FRAME + 4*FFI_SIZEOF_ARG($fp)
+	REG_L	t1, A3_OFF($fp)		# load the flags word
+	SRL	t1, t1, 8
+	li	t3, 3
+	beq	t1, t3, 3f # double
+	li	t3, 2
+	beq	t1, t3, 2f # float
+	# FIXME: long double
+	slti	t3, t1, 5
+	beqz	t3, 5f     # (u)int8/16/32/64
+2:
+#ifndef __mips_soft_float
+	s.s	$f0, 0(t0)
+	s.s	$f2, 4(t0)
+#else
+	# FIXME: do nothing can pass all of the testsuite
+#endif
+	b	epilogue
+3:
+#ifndef __mips_soft_float
+	s.d	$f0, 0(t0)
+	s.d	$f2, 8(t0)
+#else
+	# FIXME: do nothing can pass all of the testsuite
+#endif
+	b	epilogue
+
+5:
+	REG_S	v1, 4(t0)
+	REG_S	v0, 0(t0)
+	b	epilogue
+
 noretval:	
 	jalr	t9
 	
@@ -378,6 +422,19 @@ $do_closure:
 	li	$9, FFI_TYPE_DOUBLE
 	l.d	$f0, V0_OFF2($fp)
 	beq	$8, $9, closure_done
+
+	li      $9, FFI_TYPE_COMPLEX
+	bne     $8, $9, 1f
+
+	li      $9, 8
+	l.s	$f0, V0_OFF2($fp)
+	l.s	$f2, V1_OFF2($fp)
+	beq     $3, $9, closure_done
+
+	li      $9, 16
+	l.d	$f0, V0_OFF2($fp)
+	l.d	$f2, (V0_OFF2+8)($fp)
+	beq     $3, $9, closure_done
 #endif
 1:	
 	REG_L	$3, V1_OFF2($fp)

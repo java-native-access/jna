@@ -11,9 +11,8 @@ class Platform(object):
     pass
 
 
-class simulator_platform(Platform):
+class i386_platform(Platform):
     arch = 'i386'
-    triple = 'i386-apple-darwin11'
 
     prefix = "#ifdef __i386__\n\n"
     suffix = "\n\n#endif"
@@ -21,9 +20,8 @@ class simulator_platform(Platform):
     src_files = ['sysv.S', 'ffi.c', 'internal.h']
 
 
-class simulator64_platform(Platform):
+class x86_64_platform(Platform):
     arch = 'x86_64'
-    triple = 'x86_64-apple-darwin13'
 
     prefix = "#ifdef __x86_64__\n\n"
     suffix = "\n\n#endif"
@@ -31,19 +29,8 @@ class simulator64_platform(Platform):
     src_files = ['unix64.S', 'ffi64.c', 'ffiw64.c', 'win64.S', 'internal64.h', 'asmnames.h']
 
 
-class device_platform(Platform):
-    arch = 'armv7'
-    triple = 'arm-apple-darwin11'
-
-    prefix = "#ifdef __arm__\n\n"
-    suffix = "\n\n#endif"
-    src_dir = 'arm'
-    src_files = ['sysv.S', 'ffi.c', 'internal.h']
-
-
-class device64_platform(Platform):
+class arm64_platform(Platform):
     arch = 'arm64'
-    triple = 'aarch64-apple-darwin13'
 
     prefix = "#ifdef __arm64__\n\n"
     suffix = "\n\n#endif"
@@ -51,78 +38,134 @@ class device64_platform(Platform):
     src_files = ['sysv.S', 'ffi.c', 'internal.h']
 
 
-class ios_simulator_platform(simulator_platform):
-    directory = 'darwin_ios'
-    sdk = 'iphonesimulator'
-    version_min = '-miphoneos-version-min=7.0'
+class armv7_platform(Platform):
+    arch = 'armv7'
 
-
-class ios_simulator64_platform(simulator64_platform):
-    directory = 'darwin_ios'
-    sdk = 'iphonesimulator'
-    version_min = '-miphoneos-version-min=7.0'
-
-
-class ios_device_platform(device_platform):
-    directory = 'darwin_ios'
-    sdk = 'iphoneos'
-    version_min = '-miphoneos-version-min=7.0'
-
-
-class ios_device64_platform(device64_platform):
-    directory = 'darwin_ios'
-    sdk = 'iphoneos'
-    version_min = '-miphoneos-version-min=7.0'
-
-
-class desktop32_platform(Platform):
-    directory = 'darwin_osx'
-    sdk = 'macosx'
-    arch = 'i386'
-    triple = 'i386-apple-darwin10'
-    version_min = '-mmacosx-version-min=10.6'
-    src_dir = 'x86'
+    prefix = "#ifdef __arm__\n\n"
+    suffix = "\n\n#endif"
+    src_dir = 'arm'
     src_files = ['sysv.S', 'ffi.c', 'internal.h']
 
-    prefix = "#ifdef __i386__\n\n"
-    suffix = "\n\n#endif"
+
+class ios_simulator_i386_platform(i386_platform):
+    triple = 'i386-apple-darwin11'
+    target = 'i386-apple-ios-simulator'
+    directory = 'darwin_ios'
+    sdk = 'iphonesimulator'
+    version_min = '-miphoneos-version-min=7.0'
 
 
-class desktop64_platform(Platform):
+class ios_simulator_x86_64_platform(x86_64_platform):
+    triple = 'x86_64-apple-darwin13'
+    target = 'x86_64-apple-ios-simulator'
+    directory = 'darwin_ios'
+    sdk = 'iphonesimulator'
+    version_min = '-miphoneos-version-min=7.0'
+
+
+class ios_simulator_arm64_platform(arm64_platform):
+    triple = 'aarch64-apple-darwin20'
+    target = 'arm64-apple-ios-simulator'
+    directory = 'darwin_ios'
+    sdk = 'iphonesimulator'
+    version_min = '-miphoneos-version-min=7.0'
+
+
+class ios_device_armv7_platform(armv7_platform):
+    triple = 'arm-apple-darwin11'
+    target = 'armv7-apple-ios'
+    directory = 'darwin_ios'
+    sdk = 'iphoneos'
+    version_min = '-miphoneos-version-min=7.0'
+
+
+class ios_device_arm64_platform(arm64_platform):
+    triple = 'aarch64-apple-darwin13'
+    target = 'arm64-apple-ios'
+    directory = 'darwin_ios'
+    sdk = 'iphoneos'
+    version_min = '-miphoneos-version-min=7.0'
+
+
+class desktop_x86_64_platform(x86_64_platform):
+    triple = 'x86_64-apple-darwin10'
+    target = 'x86_64-apple-macos'
     directory = 'darwin_osx'
     sdk = 'macosx'
-    arch = 'x86_64'
-    triple = 'x86_64-apple-darwin10'
     version_min = '-mmacosx-version-min=10.6'
 
-    prefix = "#ifdef __x86_64__\n\n"
-    suffix = "\n\n#endif"
-    src_dir = 'x86'
-    src_files = ['unix64.S', 'ffi64.c', 'ffiw64.c', 'win64.S', 'internal64.h', 'asmnames.h']
+
+class desktop_arm64_platform(arm64_platform):
+    triple = 'aarch64-apple-darwin20'
+    target = 'arm64-apple-macos'
+    directory = 'darwin_osx'
+    sdk = 'macosx'
+    version_min = '-mmacosx-version-min=11.0'
 
 
-class tvos_simulator64_platform(simulator64_platform):
+class tvos_simulator_x86_64_platform(x86_64_platform):
+    triple = 'x86_64-apple-darwin13'
+    target = 'x86_64-apple-tvos-simulator'
     directory = 'darwin_tvos'
     sdk = 'appletvsimulator'
     version_min = '-mtvos-version-min=9.0'
 
 
-class tvos_device64_platform(device64_platform):
+class tvos_simulator_arm64_platform(arm64_platform):
+    triple = 'aarch64-apple-darwin20'
+    target = 'arm64-apple-tvos-simulator'
+    directory = 'darwin_tvos'
+    sdk = 'appletvsimulator'
+    version_min = '-mtvos-version-min=9.0'
+
+
+class tvos_device_arm64_platform(arm64_platform):
+    triple = 'aarch64-apple-darwin13'
+    target = 'arm64-apple-tvos'
     directory = 'darwin_tvos'
     sdk = 'appletvos'
     version_min = '-mtvos-version-min=9.0'
 
 
-class watchos_simulator_platform(simulator_platform):
+class watchos_simulator_i386_platform(i386_platform):
+    triple = 'i386-apple-darwin11'
+    target = 'i386-apple-watchos-simulator'
     directory = 'darwin_watchos'
     sdk = 'watchsimulator'
     version_min = '-mwatchos-version-min=4.0'
 
 
-class watchos_device_platform(device_platform):
+class watchos_simulator_x86_64_platform(x86_64_platform):
+    triple = 'x86_64-apple-darwin13'
+    target = 'x86_64-apple-watchos-simulator'
+    directory = 'darwin_watchos'
+    sdk = 'watchsimulator'
+    version_min = '-mwatchos-version-min=4.0'
+
+
+class watchos_simulator_arm64_platform(arm64_platform):
+    triple = 'aarch64-apple-darwin20'
+    target = 'arm64-apple-watchos-simulator'
+    directory = 'darwin_watchos'
+    sdk = 'watchsimulator'
+    version_min = '-mwatchos-version-min=4.0'
+
+
+class watchos_device_armv7k_platform(armv7_platform):
+    triple = 'arm-apple-darwin11'
+    target = 'armv7k-apple-watchos'
     directory = 'darwin_watchos'
     sdk = 'watchos'
     arch = 'armv7k'
+    version_min = '-mwatchos-version-min=4.0'
+
+
+class watchos_device_arm64_32_platform(arm64_platform):
+    triple = 'aarch64-apple-darwin13'
+    target = 'arm64_32-apple-watchos'
+    directory = 'darwin_watchos'
+    sdk = 'watchos'
+    arch = 'arm64_32'
     version_min = '-mwatchos-version-min=4.0'
 
 
@@ -175,7 +218,7 @@ def copy_src_platform_files(platform):
 
 def build_target(platform, platform_headers):
     def xcrun_cmd(cmd):
-        return 'xcrun -sdk %s %s -arch %s' % (platform.sdk, cmd, platform.arch)
+        return 'xcrun -sdk %s %s -target %s' % (platform.sdk, cmd, platform.target)
 
     tag='%s-%s' % (platform.sdk, platform.arch)
     build_dir = 'build_%s' % tag
@@ -212,34 +255,46 @@ def generate_source_and_headers(
     copy_files('include', 'darwin_common/include', pattern='*.h')
 
     if generate_ios:
-        copy_src_platform_files(ios_simulator_platform)
-        copy_src_platform_files(ios_simulator64_platform)
-        copy_src_platform_files(ios_device_platform)
-        copy_src_platform_files(ios_device64_platform)
+        copy_src_platform_files(ios_simulator_i386_platform)
+        copy_src_platform_files(ios_simulator_x86_64_platform)
+        copy_src_platform_files(ios_simulator_arm64_platform)
+        copy_src_platform_files(ios_device_armv7_platform)
+        copy_src_platform_files(ios_device_arm64_platform)
     if generate_osx:
-        copy_src_platform_files(desktop64_platform)
+        copy_src_platform_files(desktop_x86_64_platform)
+        copy_src_platform_files(desktop_arm64_platform)
     if generate_tvos:
-        copy_src_platform_files(tvos_simulator64_platform)
-        copy_src_platform_files(tvos_device64_platform)
+        copy_src_platform_files(tvos_simulator_x86_64_platform)
+        copy_src_platform_files(tvos_simulator_arm64_platform)
+        copy_src_platform_files(tvos_device_arm64_platform)
     if generate_watchos:
-        copy_src_platform_files(watchos_simulator_platform)
-        copy_src_platform_files(watchos_device_platform)
+        copy_src_platform_files(watchos_simulator_i386_platform)
+        copy_src_platform_files(watchos_simulator_x86_64_platform)
+        copy_src_platform_files(watchos_simulator_arm64_platform)
+        copy_src_platform_files(watchos_device_armv7k_platform)
+        copy_src_platform_files(watchos_device_arm64_32_platform)
 
     platform_headers = collections.defaultdict(set)
 
     if generate_ios:
-        build_target(ios_simulator_platform, platform_headers)
-        build_target(ios_simulator64_platform, platform_headers)
-        build_target(ios_device_platform, platform_headers)
-        build_target(ios_device64_platform, platform_headers)
+        build_target(ios_simulator_i386_platform, platform_headers)
+        build_target(ios_simulator_x86_64_platform, platform_headers)
+        build_target(ios_simulator_arm64_platform, platform_headers)
+        build_target(ios_device_armv7_platform, platform_headers)
+        build_target(ios_device_arm64_platform, platform_headers)
     if generate_osx:
-        build_target(desktop64_platform, platform_headers)
+        build_target(desktop_x86_64_platform, platform_headers)
+        build_target(desktop_arm64_platform, platform_headers)
     if generate_tvos:
-        build_target(tvos_simulator64_platform, platform_headers)
-        build_target(tvos_device64_platform, platform_headers)
+        build_target(tvos_simulator_x86_64_platform, platform_headers)
+        build_target(tvos_simulator_arm64_platform, platform_headers)
+        build_target(tvos_device_arm64_platform, platform_headers)
     if generate_watchos:
-        build_target(watchos_simulator_platform, platform_headers)
-        build_target(watchos_device_platform, platform_headers)
+        build_target(watchos_simulator_i386_platform, platform_headers)
+        build_target(watchos_simulator_x86_64_platform, platform_headers)
+        build_target(watchos_simulator_arm64_platform, platform_headers)
+        build_target(watchos_device_armv7k_platform, platform_headers)
+        build_target(watchos_device_arm64_32_platform, platform_headers)
 
     mkdir_p('darwin_common/include')
     for header_name, tag_tuples in platform_headers.items():

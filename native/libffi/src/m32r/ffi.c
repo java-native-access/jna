@@ -1,8 +1,9 @@
 /* -----------------------------------------------------------------------
    ffi.c - Copyright (c) 2004  Renesas Technology
            Copyright (c) 2008  Red Hat, Inc.
-   
-   M32R Foreign Function Interface 
+           Copyright (c) 2022  Anthony Green
+
+   M32R Foreign Function Interface
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -63,7 +64,7 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
       if (((*p_arg)->alignment - 1) & (unsigned) argp)
 	argp = (char *) FFI_ALIGN (argp, (*p_arg)->alignment);
 
-      if (avn != 0) 
+      if (avn != 0)
 	{
 	  avn--;
 	  z = (*p_arg)->size;
@@ -76,19 +77,19 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
 		case FFI_TYPE_SINT8:
 		  *(signed int *) argp = (signed int)*(SINT8 *)(* p_argv);
 		  break;
-		  
+
 		case FFI_TYPE_UINT8:
 		  *(unsigned int *) argp = (unsigned int)*(UINT8 *)(* p_argv);
 		  break;
-		  
+
 		case FFI_TYPE_SINT16:
 		  *(signed int *) argp = (signed int)*(SINT16 *)(* p_argv);
 		  break;
-		  
+
 		case FFI_TYPE_UINT16:
 		  *(unsigned int *) argp = (unsigned int)*(UINT16 *)(* p_argv);
 		  break;
-		  
+
 		case FFI_TYPE_STRUCT:
 	  	  z = (*p_arg)->size;
 	  	  if ((*p_arg)->alignment != 1)
@@ -131,7 +132,7 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
 	  argp += z;
 	}
     }
-  
+
   return;
 }
 
@@ -178,24 +179,40 @@ extern void ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *,
 void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 {
   extended_cif ecif;
+  ffi_type **arg_types = cif->arg_types;
+  int i, nargs = cif->nargs;
 
   ecif.cif = cif;
   ecif.avalue = avalue;
-  
+
   /* If the return value is a struct and we don't have
      a return value address then we need to make one.  */
-  if ((rvalue == NULL) && 
+  if ((rvalue == NULL) &&
       (cif->rtype->type == FFI_TYPE_STRUCT))
     {
       ecif.rvalue = alloca (cif->rtype->size);
     }
   else
-    ecif.rvalue = rvalue;    
-  
-  switch (cif->abi) 
+    ecif.rvalue = rvalue;
+
+  /* If we have any large structure arguments, make a copy so we are passing
+     by value.  */
+  for (i = 0; i < nargs; i++)
+    {
+      ffi_type *at = arg_types[i];
+      int size = at->size;
+      if (at->type == FFI_TYPE_STRUCT && size > 4)
+        {
+          char *argcopy = alloca (size);
+          memcpy (argcopy, avalue[i], size);
+          avalue[i] = argcopy;
+        }
+    }
+
+  switch (cif->abi)
     {
     case FFI_SYSV:
-      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, 
+      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes,
 		    cif->flags, ecif.rvalue, fn);
       if (cif->rtype->type == FFI_TYPE_STRUCT)
 	{

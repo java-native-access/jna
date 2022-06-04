@@ -1,0 +1,159 @@
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  build-sim:
+    name: Build & test
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+       include:
+         - MEVAL: "export CC=clang && CXX=clang"
+         - HOST: "i386-pc-linux-gnu"
+           MEVAL: 'export CC="gcc -m32" && CXX="g++ -m32"'
+         - CONFIGURE_OPTIONS: "--disable-shared"
+         - CONFIGURE_OPTIONS: "--enable-shared"
+         - HOST: "m68k-linux-gnu"
+           MEVAL: 'export CC="m68k-linux-gnu-gcc-8 -mcpu=547x" && CXX="m68k-linux-gnu-g++-8 -mcpu=547x"'
+           CONFIGURE_OPTIONS: '--disable-shared'
+           QEMU_LD_PREFIX: '/usr/m68k-linux-gnu'
+           QEMU_CPU: 'cfv4e'
+         - HOST: "sh4-linux-gnu"
+           CONFIGURE_OPTIONS: "--disable-shared"
+           QEMU_LD_PREFIX: "/usr/sh4-linux-gnu"
+           QEMU_CPU: 'sh7785'
+         - HOST: "alpha-linux-gnu"
+           CONFIGURE_OPTIONS: "--disable-shared"
+           QEMU_LD_PREFIX: "/usr/alpha-linux-gnu"
+           QEMU_CPU: 'ev4-alpha-cpu'
+         - HOST: "arm32v7-linux-gnu"
+           LIBFFI_TEST_OPTIMIZATION: "-O0"
+           QEMU_CPU: 'any'
+         - HOST: "arm32v7-linux-gnu"
+           LIBFFI_TEST_OPTIMIZATION: "-O2"
+           QEMU_CPU: 'any'
+         - HOST: "arm32v7-linux-gnu"
+           LIBFFI_TEST_OPTIMIZATION: "-O2 -fomit-frame-pointer"
+           QEMU_CPU: 'any'
+         - HOST: "powerpc-eabisim"
+           RUNTESTFLAGS: "--target_board powerpc-eabisim"
+         - HOST: "or1k-elf"
+           RUNTESTFLAGS: "--target_board or1k-sim"
+         - HOST: "m32r-elf"
+           RUNTESTFLAGS: "--target_board m32r-sim"
+         - HOST: "bfin-elf"
+           RUNTESTFLAGS: "--target_board bfin-sim"
+         - MEVAL: "export PATH=/opt/moxielogic/bin:$PATH && CC=moxie-elf-gcc && CXX=moxie-elf-g++"
+           HOST: "moxie-elf"
+           LDFLAGS: "-Tsim.ld"
+           RUNTESTFLAGS: "--target_board moxie-sim"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - env:
+          MEVAL: ${{ matrix.MEVAL }}
+          HOST: ${{ matrix.HOST }}
+          LDFLAGS: ${{ matrix.LDFLAGS }}
+          RUNTESTFLAGS: ${{ matrix.RUNTESTFLAGS }}
+          CONFIGURE_OPTIONS: ${{ matrix.CONFIGURE_OPTIONS }}
+          QEMU_LD_PREFIX: ${{ matrix.QEMU_LD_PREFIX }}
+          QEMU_CPU: ${{ matrix.QEMU_CPU }}
+        run: |
+          if test x"$MEVAL" != x; then eval ${MEVAL}; fi
+          ./.ci/install.sh
+          ./.ci/build.sh
+
+  build:
+    name: Build & test with Cygwin
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Cygwin
+        uses: egor-tensin/setup-cygwin@v3
+        with:
+          platform: x64
+          packages: wget gcc-core make dejagnu automake autoconf libtool texinfo dos2unix unzip
+
+      - run: |
+          set -x
+          cd $(cygpath $RUNNER_WORKSPACE)/libffi
+          wget https://rl.gl/cli/rlgl-windows-amd64.zip
+          unzip rlgl-windows-amd64.zip
+          find . -name \*.m4|xargs dos2unix
+          find . -name \*.ac|xargs dos2unix
+          find . -name \*.am|xargs dos2unix
+          find . -name \*.host|xargs dos2unix
+          autoreconf -f -v -i
+          ./configure
+          find . -name libtool\*|xargs dos2unix
+          make -j 4
+          TERM=none DEJAGNU=$(pwd)/.ci/site.exp BOARDSDIR=$(pwd)/.ci make check || true
+          ./rlgl/rlgl.exe l --key=0LIBFFI-0LIBFFI-0LIBFFI-0LIBFFI https://rl.gl
+          ID=$(./rlgl/rlgl.exe start)
+          ./rlgl/rlgl.exe e --id=$ID --policy=https://github.com/libffi/rlgl-policy.git $(find . -name libffi.log)
+        shell: C:\tools\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+
+  build-msvc:
+    name: Build & test with Visual C++
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-cygwin@v3
+        with:
+          platform: x64
+          packages: wget make dejagnu automake autoconf libtool texinfo unzip dos2unix
+      - uses: ilammy/msvc-dev-cmd@v1.8.1
+      - uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Build and test
+        run: |
+          dos2unix $(cygpath $RUNNER_WORKSPACE)/libffi/.ci/msvs-detect
+          # $(cygpath $RUNNER_WORKSPACE)/libffi/.ci/msvs-detect --arch=x64 --with-assembler
+          export PATH=$PATH:"/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.16.27023/bin/HostX64/x64"
+          cd $(cygpath $RUNNER_WORKSPACE)/libffi
+          wget https://rl.gl/cli/rlgl-windows-amd64.zip
+          unzip rlgl-windows-amd64.zip
+          find . -name \*.sh|xargs dos2unix
+          find . -name \*.m4|xargs dos2unix
+          find . -name \*.ac|xargs dos2unix
+          find . -name \*.am|xargs dos2unix
+          find . -name \*.host|xargs dos2unix
+          dos2unix .ci/ar-lib
+          autoreconf -f -v -i
+          ./configure CC="$(pwd)/msvcc.sh -m64" CXX="$(pwd)/msvcc.sh -m64" LD='link' CPP='cl -nologo -EP' CXXCPP='cl -nologo -EP' CPPFLAGS='-DFFI_BUILDING_DLL' AR='$(pwd)/.ci/ar-lib lib' NM='dumpbin -symbols' STRIP=':' --build=$BUILD --host=$HOST $DEBUG_ARG $SHARED_ARG || cat */config.log
+          find . -name libtool\*|xargs dos2unix
+          make
+          cp $(find . -name 'libffi-?.dll') x86_64-pc-cygwin/testsuite/
+          TERM=none DEJAGNU=$(pwd)/.ci/site.exp BOARDSDIR=$(pwd)/.ci make check || true
+          ./rlgl/rlgl.exe l --key=0LIBFFI-0LIBFFI-0LIBFFI-0LIBFFI https://rl.gl
+          ID=$(./rlgl/rlgl.exe start)
+          ./rlgl/rlgl.exe e --id=$ID --policy=https://github.com/libffi/rlgl-policy.git $(find . -name libffi.log)
+        shell: C:\tools\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'

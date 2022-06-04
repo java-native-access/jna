@@ -75,7 +75,7 @@ int main (void)
 
 	CHECK( ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, retType, args) == FFI_OK);
 	ffi_call(&cif, FFI_FN(testNestedFloatStruct), &ts12_result, values);
-	CHECK(ts12_result == 138.2f);
+	CHECK_FLOAT_EQ(ts12_result, 138.2f);
 
 	free(struct_float1);
 	free(struct_float2);
