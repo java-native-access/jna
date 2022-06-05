@@ -76,7 +76,7 @@
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="6"/>
   <property name="jni.minor" value="1"/>
-  <property name="jni.revision" value="3"/>
+  <property name="jni.revision" value="4"/>
   <property name="jni.build" value="0"/> <!--${build.number}-->
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
   <property name="jni.md5" value="147a998f0cbc89681a1ae6c0dd121629"/>
