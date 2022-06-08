@@ -373,7 +373,32 @@ ffi_call_int (ffi_cif *cif, void (*fn) (void), void *rvalue, void **avalue,
 
     cb.used_float = cb.used_integer = 0;
     if (!return_by_ref && rvalue)
-        unmarshal(&cb, cif->rtype, 0, rvalue);
+      {
+	if (IS_INT(cif->rtype->type)
+	    && cif->rtype->size < sizeof (ffi_arg))
+	  {
+	    /* Integer types smaller than ffi_arg need to be extended.  */
+	    switch (cif->rtype->type)
+	      {
+	      case FFI_TYPE_SINT8:
+	      case FFI_TYPE_SINT16:
+	      case FFI_TYPE_SINT32:
+		unmarshal_atom (&cb, (sizeof (ffi_arg) > 4
+				      ? FFI_TYPE_SINT64 : FFI_TYPE_SINT32),
+				rvalue);
+		break;
+	      case FFI_TYPE_UINT8:
+	      case FFI_TYPE_UINT16:
+	      case FFI_TYPE_UINT32:
+		unmarshal_atom (&cb, (sizeof (ffi_arg) > 4
+				      ? FFI_TYPE_UINT64 : FFI_TYPE_UINT32),
+				rvalue);
+		break;
+	      }
+	  }
+	else
+	  unmarshal(&cb, cif->rtype, 0, rvalue);
+      }
 }
 
 void
@@ -417,7 +442,9 @@ ffi_status ffi_prep_closure_loc(ffi_closure *closure, ffi_cif *cif, void (*fun)(
     closure->fun = fun;
     closure->user_data = user_data;
 
+#if !defined(__FreeBSD__)
     __builtin___clear_cache(codeloc, codeloc + FFI_TRAMPOLINE_SIZE);
+#endif
 
     return FFI_OK;
 }

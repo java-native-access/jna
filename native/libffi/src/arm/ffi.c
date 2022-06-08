@@ -64,6 +64,10 @@ extern unsigned char ffi_arm_trampoline[12] FFI_HIDDEN;
 #include <machine/sysarch.h>
 #endif
 
+#if defined(__QNX__)
+#include <sys/mman.h>
+#endif
+
 /* Forward declares. */
 static int vfp_type_p (const ffi_type *);
 static void layout_vfp_args (ffi_cif *);
@@ -643,9 +647,9 @@ ffi_prep_closure_loc (ffi_closure * closure,
   memcpy(closure->tramp, (void*)((uintptr_t)ffi_arm_trampoline & 0xFFFFFFFE), FFI_TRAMPOLINE_CLOSURE_OFFSET);
 #endif
 
-#if defined (__QNX__)
-  msync(closure->tramp, 8, 0x1000000);	/* clear data map */
-  msync(codeloc, 8, 0x1000000);	/* clear insn map */
+#if defined(__QNX__)
+  msync (closure->tramp, 8, MS_INVALIDATE_ICACHE);	/* clear data map */
+  msync (codeloc, 8, MS_INVALIDATE_ICACHE);		/* clear insn map */
 #elif defined(_WIN32)
   FlushInstructionCache(GetCurrentProcess(), closure->tramp, FFI_TRAMPOLINE_SIZE);
 #else

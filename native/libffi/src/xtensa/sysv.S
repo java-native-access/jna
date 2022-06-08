@@ -43,6 +43,9 @@
 #error "xtensa/sysv.S out of sync with ffi.h"
 #endif
 
+#define FFI_REGISTER_ARGS_OFFSET ((XTENSA_STACK_ALIGNMENT - \
+				   FFI_REGISTER_NARGS * 4) & \
+				   (XTENSA_STACK_ALIGNMENT - 1))
 
 /* ffi_call_SYSV (rvalue, rbytes, flags, (*fnaddr)(), bytes, ecif)
       void *rvalue;            a2
@@ -62,28 +65,28 @@ ENTRY(ffi_call_SYSV)
 	mov	a7, a1              # fp
 	movsp	a1, a11             # set new sp = old_sp - bytes
 
+	# align ffi_prep_args stack argument so that arguments
+	# passed on stack if any start on 16-byte aligned boundary
+
+	addi	a11, a11, FFI_REGISTER_ARGS_OFFSET
+
 	movi	a8, ffi_prep_args
 	callx8	a8                  # ffi_prep_args(ecif, stack)
 
-	# prepare to move stack pointer back up to 6 arguments
-	# note that 'bytes' is already aligned
+	# prepare to move stack pointer back
+	# to point to arguments passed on stack
 
-	movi	a10, 6*4 
-	sub	a11, a6, a10
-	movgez	a6, a10, a11
-	add	a6, a1, a6
-
+	addi	a6, a1, FFI_REGISTER_ARGS_SPACE
 	
 	# we can pass up to 6 arguments in registers
 	# for simplicity, just load 6 arguments
-	# (the stack size is at least 32 bytes, so no risk to cross boundaries)
 
-	l32i	a10, a1, 0
-	l32i	a11, a1, 4
-	l32i	a12, a1, 8
-	l32i	a13, a1, 12
-	l32i	a14, a1, 16
-	l32i	a15, a1, 20
+	l32i	a10, a1, FFI_REGISTER_ARGS_OFFSET + 0
+	l32i	a11, a1, FFI_REGISTER_ARGS_OFFSET + 4
+	l32i	a12, a1, FFI_REGISTER_ARGS_OFFSET + 8
+	l32i	a13, a1, FFI_REGISTER_ARGS_OFFSET + 12
+	l32i	a14, a1, FFI_REGISTER_ARGS_OFFSET + 16
+	l32i	a15, a1, FFI_REGISTER_ARGS_OFFSET + 20
 
 	# move stack pointer
 
@@ -167,7 +170,7 @@ END(ffi_call_SYSV)
 
 ENTRY(ffi_cacheflush)
 
-	entry	a1, 16
+	entry	a1, 32
 
 1:	
 #if XCHAL_DCACHE_SIZE
@@ -187,7 +190,14 @@ END(ffi_cacheflush)
 
 ENTRY(ffi_trampoline)
 
-	entry	a1, 16 + (FFI_REGISTER_NARGS * 4) + (4 * 4)   # [ 0]
+	/* 32 bytes for spill + spill overflow area of a frame that uses
+	   call8,
+	   FFI_REGISTER_NARGS * 4 bytes for arguments passed in registers,
+	   aligned up to 4 to maintain 16 byte stack alignment,
+	   4 * 4 bytes for the result.
+	   This size must be in sync with ffi_closure_SYSV_inner logic.
+	 */
+	entry	a1, 32 + FFI_REGISTER_ARGS_SPACE + (4 * 4)   # [ 0]
 	j	2f                                # [ 3]
 	.align	4                                 # [ 6]
 1:	.long	0                                 # [ 8]

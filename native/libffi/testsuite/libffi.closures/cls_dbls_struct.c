@@ -17,6 +17,8 @@ void
 closure_test_fn(Dbls p)
 {
 	printf("%.1f %.1f\n", p.x, p.y);
+	CHECK(p.x == 1);
+	CHECK(p.y == 2);
 }
 
 void

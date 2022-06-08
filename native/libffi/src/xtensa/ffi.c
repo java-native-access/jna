@@ -86,11 +86,16 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       break;
   }
 
-  /* Round the stack up to a full 4 register frame, just in case
-     (we use this size in movsp). This way, it's also a  multiple of
-     8 bytes for 64-bit arguments.  */
-  cif->bytes = FFI_ALIGN(cif->bytes, 16);
-
+  /* Round up stack size needed for arguments.
+     Allocate FFI_REGISTER_ARGS_SPACE bytes when there are only arguments
+     passed in registers, round space reserved for arguments passed on stack
+     up to ABI-specified alignment.  */
+  if (cif->bytes < FFI_REGISTER_NARGS * 4)
+    cif->bytes = FFI_REGISTER_ARGS_SPACE;
+  else
+    cif->bytes = FFI_REGISTER_ARGS_SPACE +
+	    FFI_ALIGN(cif->bytes - FFI_REGISTER_NARGS * 4,
+		      XTENSA_STACK_ALIGNMENT);
   return FFI_OK;
 }
 
@@ -232,6 +237,9 @@ ffi_prep_closure_loc (ffi_closure* closure,
                       void *user_data,
                       void *codeloc)
 {
+  if (cif->abi != FFI_SYSV)
+    return FFI_BAD_ABI;
+
   /* copye trampoline to stack and patch 'ffi_closure_SYSV' pointer */
   memcpy(closure->tramp, ffi_trampoline, FFI_TRAMPOLINE_SIZE);
   *(unsigned int*)(&closure->tramp[8]) = (unsigned int)ffi_closure_SYSV;
@@ -277,15 +285,15 @@ ffi_closure_SYSV_inner(ffi_closure *closure, void **values, void *rvalue)
     if (arg_types[i]->alignment == 8 && (areg & 1) != 0)
       areg++;
 
-    // skip the entry 16,a1 framework, add 16 bytes (4 registers)
+    // skip the entry a1, * framework, see ffi_trampoline
     if (areg == FFI_REGISTER_NARGS)
-      areg += 4;
+      areg = (FFI_REGISTER_ARGS_SPACE + 32) / 4;
 
     if (arg_types[i]->type == FFI_TYPE_STRUCT)
     {
       int numregs = ((arg_types[i]->size + 3) & ~3) / 4;
       if (areg < FFI_REGISTER_NARGS && areg + numregs > FFI_REGISTER_NARGS)
-        areg = FFI_REGISTER_NARGS + 4;
+        areg = (FFI_REGISTER_ARGS_SPACE + 32) / 4;
     }
 
     avalue[i] = &values[areg];

@@ -5,7 +5,7 @@
    Originator:	        ARM Ltd. */
 
 /* { dg-do run } */
-/* { dg-output "" { xfail avr32*-*-* m68k-*-* alpha-*-* } } */
+/* { dg-output "" { xfail avr32*-*-* m68k-*-* } } */
 
 #include "ffitest.h"
 #include <stdarg.h>
@@ -24,6 +24,7 @@ struct large_tag
   unsigned d;
   unsigned e;
 };
+
 
 static int
 test_fn (int n, ...)
@@ -72,7 +73,29 @@ test_fn (int n, ...)
 	  ui, si,
 	  ul, sl,
 	  f, d);
+
   va_end (ap);
+
+  CHECK(s1.a == 5);
+  CHECK(s1.b == 6);
+  CHECK(l.a == 10);
+  CHECK(l.b == 11);
+  CHECK(l.c == 12);
+  CHECK(l.d == 13);
+  CHECK(l.e == 14);
+  CHECK(s2.a == 7);
+  CHECK(s2.b == 8);
+  CHECK(uc == 9);
+  CHECK(sc == 10);
+  CHECK(us == 11);
+  CHECK(ss == 12);
+  CHECK(ui == 13);
+  CHECK(si == 14);
+  CHECK(ul == 15);
+  CHECK(sl == 16);
+  CHECK((int)f == 2);
+  CHECK((int)d == 3);
+
   return n + 1;
 }
 
@@ -191,6 +214,7 @@ main (void)
   /* { dg-output "5 6 10 11 12 13 14 7 8 uc=9 sc=10 11 12 13 14 15 16 2.120000 3.130000" } */
   printf("res: %d\n", (int) res);
   /* { dg-output "\nres: 42" } */
+  CHECK(res == 42);
 
   return 0;
 }

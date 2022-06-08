@@ -123,8 +123,24 @@ ffi_call_int (ffi_cif *cif, void (*fn)(void), void *rvalue,
   UINT64 *stack;
   size_t rsize;
   struct win64_call_frame *frame;
+  ffi_type **arg_types = cif->arg_types;
+  int nargs = cif->nargs;
 
   FFI_ASSERT(cif->abi == FFI_GNUW64 || cif->abi == FFI_WIN64);
+
+  /* If we have any large structure arguments, make a copy so we are passing
+     by value.  */
+  for (i = 0; i < nargs; i++)
+    {
+      ffi_type *at = arg_types[i];
+      int size = at->size;
+      if (at->type == FFI_TYPE_STRUCT && size > 8)
+        {
+          char *argcopy = alloca (size);
+          memcpy (argcopy, avalue[i], size);
+          avalue[i] = argcopy;
+        }
+    }
 
   flags = cif->flags;
   rsize = 0;

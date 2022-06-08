@@ -37,7 +37,7 @@ void* ffi_prep_args(char *stack, extended_cif *ecif)
   ffi_type **arg;
   int count = 0;
   int nfixedargs;
-  
+
   nfixedargs = ecif->cif->nfixedargs;
   arg = ecif->cif->arg_types;
   void **argv = ecif->avalue;
@@ -47,7 +47,7 @@ void* ffi_prep_args(char *stack, extended_cif *ecif)
       *(void **) stack = ecif->rvalue;
       stack += 4;
       count = 4;
-    } 
+    }
   for(i=0; i<ecif->cif->nargs; i++)
   {
 
@@ -55,12 +55,12 @@ void* ffi_prep_args(char *stack, extended_cif *ecif)
     if ((nfixedargs == 0) && (count < 24))
       {
         count = 24;
-        stack = stacktemp + 24;        
+        stack = stacktemp + 24;
       }
     nfixedargs--;
 
     s = 4;
-    switch((*arg)->type) 
+    switch((*arg)->type)
       {
       case FFI_TYPE_STRUCT:
         *(void **)stack = *argv;
@@ -94,7 +94,7 @@ void* ffi_prep_args(char *stack, extended_cif *ecif)
           {
             stack += 4;
             count += 4;
-          }  
+          }
         s = (*arg)->size;
         memcpy(stack, *argv, s);
         break;
@@ -133,6 +133,19 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
         size += 4;
       else
         size += 8;
+
+      /* If we have any large structure arguments, make a copy so we are passing
+         by value.  */
+      {
+        ffi_type *at = cif->arg_types[i];
+        int size = at->size;
+        if (at->type == FFI_TYPE_STRUCT && size > 4)
+          {
+            char *argcopy = alloca (size);
+            memcpy (argcopy, avalue[i], size);
+            avalue[i] = argcopy;
+          }
+      }
     }
 
   /* for variadic functions more space is needed on the stack */
@@ -148,7 +161,7 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   ecif.avalue = avalue;
   ecif.rvalue = rvalue;
 
-  switch (cif->abi) 
+  switch (cif->abi)
   {
     case FFI_SYSV:
       ffi_call_SYSV(size, &ecif, ffi_prep_args, rvalue, fn, cif->flags);
@@ -160,7 +173,7 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 }
 
 
-void ffi_closure_SYSV(unsigned long r3, unsigned long r4, unsigned long r5, 
+void ffi_closure_SYSV(unsigned long r3, unsigned long r4, unsigned long r5,
                       unsigned long r6, unsigned long r7, unsigned long r8)
 {
   register int *sp __asm__ ("r17");
@@ -186,7 +199,7 @@ void ffi_closure_SYSV(unsigned long r3, unsigned long r4, unsigned long r5,
 
   /* preserve struct type return pointer passing */
 
-  if ((cif->rtype != NULL) && (cif->rtype->type == FFI_TYPE_STRUCT)) 
+  if ((cif->rtype != NULL) && (cif->rtype->type == FFI_TYPE_STRUCT))
   {
     ptr += 4;
     count = 4;
@@ -256,7 +269,7 @@ void ffi_closure_SYSV(unsigned long r3, unsigned long r4, unsigned long r5,
       long long rvalue;
       (closure->fun) (cif, &rvalue, avalue, closure->user_data);
       if (cif->rtype)
-        asm ("l.ori r12, %0, 0x0\n l.lwz r11, 0(r12)\n l.lwz r12, 4(r12)" : : "r" (&rvalue));      
+        asm ("l.ori r12, %0, 0x0\n l.lwz r11, 0(r12)\n l.lwz r12, 4(r12)" : : "r" (&rvalue));
     }
 }
 
@@ -303,11 +316,11 @@ ffi_prep_closure_loc (ffi_closure* closure,
 ffi_status ffi_prep_cif_machdep (ffi_cif *cif)
 {
   cif->flags = 0;
-	
+
   /* structures are returned as pointers */
   if (cif->rtype->type == FFI_TYPE_STRUCT)
     cif->flags = FFI_TYPE_STRUCT;
-  else 
+  else
   if (cif->rtype->size > 4)
     cif->flags = FFI_TYPE_UINT64;
 
@@ -325,4 +338,4 @@ ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
   status = ffi_prep_cif_machdep (cif);
   cif->nfixedargs = nfixedargs;
   return status;
-} 
+}

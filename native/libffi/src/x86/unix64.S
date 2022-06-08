@@ -39,14 +39,13 @@
    actual table.  The entry points into the table are all 8 bytes.
    The use of ORG asserts that we're at the correct location.  */
 /* ??? The clang assembler doesn't handle .org with symbolic expressions.  */
-#if defined(__clang__) || defined(__APPLE__) || (defined (__sun__) && defined(__svr4__))
+#ifdef __CET__
+/* Double slot size to 16 byte to add 4 bytes of ENDBR64.  */
+# define E(BASE, X)	.balign 8; .org BASE + X * 16
+#elif defined(__clang__) || defined(__APPLE__) || (defined (__sun__) && defined(__svr4__))
 # define E(BASE, X)	.balign 8
 #else
-# ifdef __CET__
-#  define E(BASE, X)	.balign 8; .org BASE + X * 16
-# else
-#  define E(BASE, X)	.balign 8; .org BASE + X * 8
-# endif
+# define E(BASE, X)	.balign 8; .org BASE + X * 8
 #endif
 
 /* ffi_call_unix64 (void *args, unsigned long bytes, unsigned flags,
@@ -505,11 +504,19 @@ C(ffi_closure_unix64_alt):
  * - restore the stack pointer to what it was when the trampoline was invoked.
  */
 #ifdef ENDBR_PRESENT
-#define X86_DATA_OFFSET		4077
-#define X86_CODE_OFFSET		4073
+# define X86_DATA_OFFSET	4077
+# ifdef __ILP32__
+#  define X86_CODE_OFFSET	4069
+# else
+#  define X86_CODE_OFFSET	4073
+# endif
 #else
-#define X86_DATA_OFFSET		4081
-#define X86_CODE_OFFSET		4077
+# define X86_DATA_OFFSET	4081
+# ifdef __ILP32__
+#  define X86_CODE_OFFSET	4073
+# else
+#  define X86_CODE_OFFSET	4077
+# endif
 #endif
 
 	.align	UNIX64_TRAMP_MAP_SIZE
@@ -521,9 +528,17 @@ C(trampoline_code_table):
 	_CET_ENDBR
 	subq	$16, %rsp			/* Make space on the stack */
 	movq	%r10, (%rsp)			/* Save %r10 on stack */
+#ifdef __ILP32__
+	movl	X86_DATA_OFFSET(%rip), %r10d	/* Copy data into %r10 */
+#else
 	movq	X86_DATA_OFFSET(%rip), %r10	/* Copy data into %r10 */
+#endif
 	movq	%r10, 8(%rsp)			/* Save data on stack */
+#ifdef __ILP32__
+	movl	X86_CODE_OFFSET(%rip), %r10d	/* Copy code into %r10 */
+#else
 	movq	X86_CODE_OFFSET(%rip), %r10	/* Copy code into %r10 */
+#endif
 	jmp	*%r10				/* Jump to code */
 	.align	8
 	.endr
