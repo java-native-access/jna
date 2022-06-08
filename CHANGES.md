@@ -15,6 +15,7 @@ Features
 Bug Fixes
 ---------
 * [#1438](https://github.com/java-native-access/jna/pull/1438): Handle arrays in structures with differing size - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1442](https://github.com/java-native-access/jna/issues/1442): Handle race condition in `c.s.j.p.win32.PdhUtil#PdhEnumObjectItems` - [@dbwiddis](https://github.com/dbwiddis).
 
 Important Changes
 -----------------
