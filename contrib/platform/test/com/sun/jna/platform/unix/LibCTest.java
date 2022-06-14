@@ -24,6 +24,7 @@
 package com.sun.jna.platform.unix;
 
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import java.sql.Date;
 import java.util.Map;
 
@@ -64,6 +65,10 @@ public class LibCTest extends AbstractUnixTestSupport {
 
     @Test
     public void testGetLoadAvg() {
+        if (Platform.isAIX()) {
+            System.out.println("Skip testGetLoadAvg - getloadavg is not implemented on AIX");
+            return;
+        }
         double[] loadavg = new double[3];
         int retval = LibC.INSTANCE.getloadavg(loadavg, 3);
         assertEquals(retval, 3);
@@ -79,10 +84,10 @@ public class LibCTest extends AbstractUnixTestSupport {
         LibC.INSTANCE.gethostname(buffer, buffer.length);
         String hostname = Native.toString(buffer);
         System.out.println("Hostname: " + hostname);
-        assertTrue(hostname.length() > 0);
+        assertNotNull(hostname);
         LibC.INSTANCE.getdomainname(buffer, buffer.length);
         String domainname = Native.toString(buffer);
         System.out.println("Domainname: " + domainname);
-        assertTrue(domainname.length() > 0);
+        assertNotNull(domainname);
     }
 }
