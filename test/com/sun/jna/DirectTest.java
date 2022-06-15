@@ -137,6 +137,11 @@ public class DirectTest extends TestCase implements Paths {
     }
 
     public void testRegisterMethods() throws Exception {
+        if (Platform.isAIX()) {
+            // https://stackoverflow.com/questions/8961441/java-system-loadlibrarym-fails-on-aix-6-1
+            System.out.println("Skip " + getName() + " - libm can't be dynamically linked on AIX");
+            return;
+        }
         assertEquals("Math library call failed", 1., MathLibrary.cos(0), .01);
         assertTrue("Library not registered",
                    Native.registered(MathLibrary.class));

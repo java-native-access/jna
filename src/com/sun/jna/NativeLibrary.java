@@ -781,7 +781,8 @@ public class NativeLibrary implements Closeable {
             }
         }
         else if (Platform.isAIX()) {    // can be libx.a, libx.a(shr.o), libx.so
-            if (libName.startsWith("lib")) {
+            if (isVersionedName(libName) || libName.endsWith(".so") || libName.startsWith("lib") || libName.endsWith(".a")) {
+                // A specific version was requested - use as is for search
                 return libName;
             }
         }
@@ -791,7 +792,12 @@ public class NativeLibrary implements Closeable {
             }
         }
 
-        return System.mapLibraryName(libName);
+        String mappedName = System.mapLibraryName(libName);
+        if(Platform.isAIX() && mappedName.endsWith(".so")) {
+            return mappedName.replaceAll(".so$", ".a");
+        } else {
+            return mappedName;
+        }
     }
 
     private static boolean isVersionedName(String name) {

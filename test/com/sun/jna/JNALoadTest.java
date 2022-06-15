@@ -79,6 +79,9 @@ public class JNALoadTest extends TestCase implements Paths {
     protected void assertLibraryExists() {
         String osPrefix = Platform.getNativeLibraryResourcePrefix();
         String name = System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
+        if(Platform.isAIX()) {
+            name = name.replaceAll(".so$", ".a");
+        }
         File lib = new File(CLASSES + "/com/sun/jna/" + osPrefix + "/" + name);
         if (!lib.exists()) {
             throw new Error("Expected JNA library at " + lib + " is missing");
