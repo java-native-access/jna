@@ -22,7 +22,6 @@
  */
 package com.sun.jna;
 
-import com.sun.jna.internal.Cleaner;
 import java.io.Closeable;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -31,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.sun.jna.internal.Cleaner;
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a
@@ -76,7 +77,7 @@ public class Memory extends Pointer implements Closeable {
         }
     }
 
-    private Cleaner.Cleanable cleanable;
+    private final Cleaner.Cleanable cleanable;
     protected long size; // Size of the malloc'ed space
 
     /** Provide a view into the original memory.  Keeps an implicit reference
@@ -123,6 +124,7 @@ public class Memory extends Pointer implements Closeable {
 
     protected Memory() {
         super();
+        cleanable = null;
     }
 
     /** Provide a view of this memory using the given offset as the base address.  The
@@ -180,9 +182,12 @@ public class Memory extends Pointer implements Closeable {
     }
 
     /** Free the native memory and set peer to zero */
+    @Override
     public void close() {
         peer = 0;
-        cleanable.clean();
+        if (cleanable != null) {
+            cleanable.clean();
+        }
     }
 
     @Deprecated
@@ -783,6 +788,7 @@ public class Memory extends Pointer implements Closeable {
             this.peer = peer;
         }
 
+        @Override
         public synchronized void run() {
             try {
                 free(peer);
