@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1447](https://github.com/java-native-access/jna/issues/1447): Null-check cleanable in `c.s.j.Memory#close` - [@dbwiddis](https://github.com/dbwiddis).
 
 Release 5.12.0
 ==============
