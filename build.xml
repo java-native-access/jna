@@ -63,8 +63,8 @@
 
   <!-- JNA library release version - android versionCode is derived from mjar/minor/revision -->
   <property name="jna.major" value="5"/>
-  <property name="jna.minor" value="13"/>
-  <property name="jna.revision" value="0"/>
+  <property name="jna.minor" value="12"/>
+  <property name="jna.revision" value="1"/>
   <property name="jna.build" value="0"/> <!--${build.number}-->
   <condition property="version.suffix" value="" else="-SNAPSHOT">
     <or>
