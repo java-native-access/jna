@@ -11,9 +11,9 @@ The definitive JNA reference (including an overview and usage details) is in the
 
 JNA provides Java programs easy access to native shared libraries without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.
 
-JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like the call does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
+JNA allows you to call directly into native functions using the natural Java method invocation. The Java call looks just like the call does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
 
-JNA uses a small JNI library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.  Read this [more in-depth description](https://github.com/java-native-access/jna/blob/master/www/FunctionalDescription.md).
+JNA uses a small JNI library stub to invoke native code dynamically. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.  Read this [more in-depth description](https://github.com/java-native-access/jna/blob/master/www/FunctionalDescription.md).
 
 While significant attention has been paid to performance, correctness and ease of use take priority.
 
@@ -58,7 +58,7 @@ There are also a number of examples and projects within the `contrib` directory 
 
 Supported Platforms
 ===================
-JNA will build on most linux-like platforms with a reasonable set of GNU tools and a JDK.  See the native [Makefile](https://raw.githubusercontent.com/java-native-access/jna/master/native/Makefile) for native configurations that have been built and tested.  If your platform is supported by [libffi](http://en.wikipedia.org/wiki/Libffi), then chances are you can build JNA for it.
+JNA will build on most Linux-like platforms with a reasonable set of GNU tools and a JDK.  See the native [Makefile](https://raw.githubusercontent.com/java-native-access/jna/master/native/Makefile) for native configurations that have been built and tested.  If your platform is supported by [libffi](http://en.wikipedia.org/wiki/Libffi), then chances are you can build JNA for it.
 
 Pre-built platform support may be found [here](https://github.com/java-native-access/jna/tree/master/lib/native).
 
@@ -80,9 +80,9 @@ JNA Platform
 
 [![Maven Central](https://img.shields.io/maven-central/v/net.java.dev.jna/jna-platform.svg?label=Maven%20Central)](https://search.maven.org/artifact/net.java.dev.jna/jna-platform/5.12.1/jar)&nbsp;[jna-platform-5.12.1.jar](https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.12.1/jna-platform-5.12.1.jar)&nbsp;[jna-platform-jpms-5.12.1.jar](https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform-jpms/5.12.1/jna-platform-jpms-5.12.1.jar)
 
-This artifact holds cross-platform mappings and mappings for a number of commonly used platform
+This artifact holds cross-platform mappings and mappings for several commonly used platform
 functions, including a large number of Win32 mappings as well as a set of utility classes
-that simplify native access. The code is tested and the utility interfaces ensure that
+that simplify native access. The code is tested, and the utility interfaces ensure that
 native memory management is taken care of correctly.
 
 See [PlatformLibrary.md](https://github.com/java-native-access/jna/blob/master/www/PlatformLibrary.md) for details.
