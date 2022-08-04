@@ -26,8 +26,10 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.ByReference;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -292,6 +294,18 @@ public interface Psapi extends StdCallLibrary {
      */
     boolean EnumProcesses(int[] lpidProcess, int cb, IntByReference lpcbNeeded);
 
+    /**
+     * Retrieves extended information about the pages at specific
+     * virtual addresses in the address space of the specified process.
+     *
+     * @param hProcess A Handle to the Process
+     * @param pv       A pointer to an array of PSAPI_WORKING_SET_EX_INFORMATION structures
+     * @param cb       The size of the pv buffer, in bytes.
+     * @return If the function succeeds, the return value is nonzero.
+     * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-queryworkingsetex">MSDN</a>
+     */
+    boolean QueryWorkingSetEx(HANDLE hProcess, Pointer pv, int cb);
+
     @FieldOrder({"lpBaseOfDll", "SizeOfImage", "EntryPoint"})
     class MODULEINFO extends Structure {
         public Pointer EntryPoint;
@@ -319,5 +333,107 @@ public interface Psapi extends StdCallLibrary {
         public DWORD HandleCount;
         public DWORD ProcessCount;
         public DWORD ThreadCount;
+    }
+
+    @FieldOrder({"Flags", "Data"})
+    class PSAPI_WORKING_SET_EX_BLOCK extends Structure implements ByReference {
+        public ULONG_PTR Flags;
+        public ULONG_PTR[] Data = new ULONG_PTR[Native.POINTER_SIZE == 8 ? 1 : 2];
+        private long innerValue;
+
+        @Override
+        public void read() {
+            super.read();
+            innerValue = this.Data[0].longValue();
+        }
+
+        /**
+         * If this bit is 1, the subsequent members are valid; otherwise they should be
+         * ignored.
+         */
+        public boolean isValid() {
+            return getBitFieldValue(1, 0) == 1;
+        }
+
+        /**
+         * The number of processes that share this page. The maximum value of this
+         * member is 7.
+         */
+        public int getShareCount() {
+            return getBitFieldValue(3, 1);
+        }
+
+        /**
+         * The memory protection attributes of the page. For a list of values see below.
+         *
+         * @see <a href=
+         *      "https://docs.microsoft.com/en-us/windows/desktop/Memory/memory-protection-constants">Memory
+         *      Protection Constants</a>.
+         */
+        public int getWin32Protection() {
+            return getBitFieldValue(11, 3 + 1);
+        }
+
+        /**
+         * If this bit is 1, the page can be shared.
+         */
+        public boolean isShared() {
+            return getBitFieldValue(1, 11 + 3 + 1) == 1;
+        }
+
+        /**
+         * The NUMA node. The maximum value of this member is 63.
+         */
+        public int getNode() {
+            return getBitFieldValue(6, 1 + 11 + 3 + 1);
+        }
+
+        /**
+         * If this bit is 1, the virtual page is locked in physical memory.
+         */
+        public boolean isLocked() {
+            return getBitFieldValue(1, 6 + 1 + 11 + 3 + 1) == 1;
+        }
+
+        /**
+         * If this bit is 1, the page is a large page.
+         */
+        public boolean isLargePage() {
+            return getBitFieldValue(1, 1 + 6 + 1 + 11 + 3 + 1) == 1;
+        }
+
+        /**
+         * If this bit is 1, the page is has been reported as bad.
+         */
+        public boolean isBad() {
+            return getBitFieldValue(1, 1 + 1 + 1 + 6 + 1 + 11 + 3 + 1) == 1;
+        }
+
+        /**
+         * Returns innerValue after shifting the value rightShiftAmount, and applying a
+         * Bit Mask of size maskLength. Example, <br/>
+         * innerValue = 0011<br/>
+         * getBitFieldValue(2, 1) = 0011 >> 1 & 11 = 01
+         *
+         * @param maskLength
+         *            Size of the Bit Mask
+         * @param rightShiftAmount
+         *            Amount to Shift innerValue to the right by
+         * @return innerValue with the mask and shift applied.
+         */
+        private int getBitFieldValue(final int maskLength, final int rightShiftAmount) {
+            long bitMask = 0;
+
+            for (int bit = 0; bit < maskLength; bit++) {
+                bitMask |= 1 << bit;
+            }
+            return (int) ((innerValue >>> rightShiftAmount) & bitMask);
+        }
+    }
+
+    @FieldOrder({"VirtualAddress", "VirtualAttributes"})
+    class PSAPI_WORKING_SET_EX_INFORMATION extends Structure {
+        public Pointer VirtualAddress;
+        public PSAPI_WORKING_SET_EX_BLOCK VirtualAttributes;
     }
 }

@@ -7,6 +7,7 @@ Next Release (5.13.0)
 
 Features
 --------
+* [#1454](https://github.com/java-native-access/jna/pull/1454): Add `c.s.j.p.win32.Psapi.QueryWorkingSetEx` and associated Types - [@crain-32](https://github.com/Crain-32).
 
 Bug Fixes
 ---------

@@ -23,6 +23,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
@@ -34,12 +36,15 @@ import org.junit.Test;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Psapi.MODULEINFO;
 import com.sun.jna.platform.win32.Psapi.PERFORMANCE_INFORMATION;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
+import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.ptr.IntByReference;
 
 /**
@@ -272,5 +277,42 @@ public class PsapiTest {
             }
         }
         assertTrue("List should contain my pid", foundMyPid);
+    }
+
+    @Test
+    public void testQueryWorkingSetEx() {
+        Win32Exception we = null;
+        HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentProcess();
+        MEMORY_BASIC_INFORMATION mbi = new MEMORY_BASIC_INFORMATION();
+        try {
+            SIZE_T bytesRead = Kernel32.INSTANCE.VirtualQueryEx(selfHandle, Pointer.NULL, mbi, new SIZE_T(mbi.size()));
+            assertNotEquals("Kernel should be able to read this Process' Bytes", bytesRead.intValue(), 0);
+            Psapi.PSAPI_WORKING_SET_EX_INFORMATION pswsi = new Psapi.PSAPI_WORKING_SET_EX_INFORMATION();
+            pswsi.VirtualAddress = mbi.baseAddress;
+            if (!Psapi.INSTANCE.QueryWorkingSetEx(selfHandle, pswsi.VirtualAddress, pswsi.size())) {
+                throw new Win32Exception(Native.getLastError());
+            }
+            assertTrue("Virual Attributes should not be null", pswsi.VirtualAttributes != null);
+            if (Psapi.INSTANCE.QueryWorkingSetEx(new HANDLE(), pswsi.VirtualAddress, pswsi.size())) {
+                throw new Win32Exception(Native.getLastError());
+            }
+            assertFalse("This line should never be called", true);
+        } catch (Win32Exception e) {
+            we = e;
+            throw we; // re-throw to invoke finally block
+        } finally {
+            try {
+                Kernel32Util.closeHandle(selfHandle);
+            } catch (Win32Exception e) {
+                if (we == null) {
+                    we = e;
+                } else {
+                    we.addSuppressedReflected(e);
+                }
+            }
+            if (we != null) {
+                throw we;
+            }
+        }
     }
 }
