@@ -30,6 +30,7 @@
 #include "dispatch.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -53,8 +54,8 @@
 #define DEFAULT_LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
 #endif
 #define LOAD_LIBRARY(NAME,OPTS) (NAME ? LoadLibraryExW(NAME, NULL, OPTS) : GetModuleHandleW(NULL))
-#define LOAD_ERROR(BUF,LEN) w32_format_error(GetLastError(), BUF, LEN)
-#define STR_ERROR(CODE,BUF,LEN) w32_format_error(CODE, BUF, LEN)
+#define LOAD_ERROR() w32_format_error(GetLastError())
+#define STR_ERROR(CODE) w32_format_error(CODE)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
 #define FIND_ENTRY(HANDLE, NAME) w32_find_entry(env, HANDLE, NAME)
 #else
@@ -69,19 +70,31 @@
 #endif
 #define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
-static inline char * LOAD_ERROR(char * buf, size_t len) {
-    const size_t count = snprintf(buf, len, "%s", dlerror());
-    assert(count <= len && "snprintf() output has been truncated");
+static inline char * LOAD_ERROR() {
+    char* message = dlerror();
+    char* buf = (char*) malloc(strlen(message) + 1 /* null */);
+    strcpy(buf, message);
     return buf;
 }
-static inline char * STR_ERROR(int code, char * buf, size_t len) {
-    // The conversion will fail if code is not a valid error code.
-    int err = strerror_r(code, buf, len);
-    if (err)
-        // Depending on glib version, "Unknown error" error code
-        // may be returned or passed using errno.
-        err = strerror_r(err > 0 ? err : errno, buf, len);
-    assert(err == 0 && "strerror_r() conversion has failed");
+static inline char * STR_ERROR(int code) {
+    char* buf = NULL;
+    for(int i = 256; i < (10 * 1024); i += 256) {
+        buf = (char*) malloc(i);
+        int res = strerror_r(code, buf, i);
+        if(res == 0) {
+            break;
+        }
+        free(buf);
+        buf = NULL;
+        if(res != ERANGE) {
+            break;
+        }
+    }
+    if(buf == NULL) {
+        int requiredBuffer = 25 /* static part*/ + 10 /* space for int */ + 1 /* null */;
+        buf = (char*) malloc(requiredBuffer);
+        snprintf(buf, requiredBuffer, "Failed to convert error: %d", code);
+    }
     return buf;
 }
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
@@ -263,26 +276,23 @@ typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
 
 #ifdef _WIN32
 static char*
-w32_format_error(int err, char* buf, int len) {
+w32_format_error(int err) {
   wchar_t* wbuf = NULL;
+  char* buf = NULL;
   int wlen =
     FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
                    |FORMAT_MESSAGE_IGNORE_INSERTS
                    |FORMAT_MESSAGE_ALLOCATE_BUFFER,
                    NULL, err, 0, (LPWSTR)&wbuf, 0, NULL);
   if (wlen > 0) {
-    int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, NULL, NULL);
+    int bufSize = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, NULL, 0, NULL, NULL);
+    buf = (char*)malloc(bufSize);
+    int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, bufSize, NULL, NULL);
     if (result == 0) {
       fprintf(stderr, "JNA: error converting error message: %d\n", (int)GET_LAST_ERROR());
-      *buf = 0;
+      free(buf);
+      buf = NULL;
     }
-    else {
-      buf[len-1] = 0;
-    }
-  }
-  else {
-    // Error retrieving message
-    *buf = 0;
   }
   if (wbuf) {
     LocalFree(wbuf);
@@ -307,16 +317,18 @@ w32_short_name(JNIEnv* env, jstring str) {
         wstr = wshort;
       }
       else {
-        char buf[MSG_SIZE];
-        throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
+        char* buf = LOAD_ERROR();
+        throwByName(env, EError, buf);
+        free((void *)buf);
         free((void *)wstr);
         free((void *)wshort);
         wstr = NULL;
       }
     }
     else if (GET_LAST_ERROR() != ERROR_FILE_NOT_FOUND) { 
-      char buf[MSG_SIZE];
-      throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
+      char* buf = LOAD_ERROR();
+      throwByName(env, EError, buf);
+      free((void *)buf);
       free((void *)wstr);
       wstr = NULL;
     }
@@ -680,8 +692,9 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
       int err = GET_LAST_ERROR();
       JNA_set_last_error(env, err);
       if ((flags & THROW_LAST_ERROR) && err) {
-        char emsg[MSG_SIZE - 3 /* literal characters */ - 10 /* max length of %d */];
-        snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
+        char* emsg = STR_ERROR(err);
+        snprintf(msg, MSG_SIZE, "[%d] %s", err, emsg);
+        free(emsg);
         throw_type = ELastError;
         throw_msg = msg;
       }
@@ -1926,8 +1939,9 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       int err = GET_LAST_ERROR();
       JNA_set_last_error(env, err);
       if (data->throw_last_error && err) {
-        char emsg[MSG_SIZE - 3 /* literal characters */ - 10 /* max length of %d */];
-        snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
+        char* emsg = STR_ERROR(err);
+        snprintf(msg, sizeof(msg), "[%d] %s", err, emsg);
+        free(emsg);
         throw_type = ELastError;
         throw_msg = msg;
       }
@@ -2266,8 +2280,9 @@ Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib, jint 
     }
 #endif
     if (!handle) {
-      char buf[MSG_SIZE];
-      throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+      char* buf = LOAD_ERROR();
+      throwByName(env, EUnsatisfiedLink, buf);
+      free(buf);
     }
     if (libname != NULL) {
       free((void *)libname);
@@ -2284,8 +2299,9 @@ JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_close(JNIEnv *env, jclass UNUSED(cls), jlong handle)
 {
   if (FREE_LIBRARY(L2A(handle))) {
-    char buf[MSG_SIZE];
-    throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
+    char* buf = LOAD_ERROR();
+    throwByName(env, EError, buf);
+    free(buf);
   }
 }
 
@@ -2305,8 +2321,9 @@ Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
     if (funname != NULL) {
       func = (void *)FIND_ENTRY(handle, funname);
       if (!func) {
-        char buf[MSG_SIZE];
-        throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+        char* buf = LOAD_ERROR();
+        throwByName(env, EUnsatisfiedLink, buf);
+        free(buf);
       }
       free((void *)funname);
     }
@@ -3120,8 +3137,9 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
       free((void *)prop);
     }
     if ((jawt_handle = LOAD_LIBRARY(path, DEFAULT_LOAD_OPTS)) == NULL) {
-      char msg[MSG_SIZE];
-      throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
+      char* msg = LOAD_ERROR();
+      throwByName(env, EUnsatisfiedLink, msg);
+      free(msg);
       return -1;
     }
 #else
@@ -3169,17 +3187,21 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
 
     if (jawt_handle == NULL) {
       if ((jawt_handle = LOAD_LIBRARY(jawtLibraryName, DEFAULT_LOAD_OPTS)) == NULL) {
-        char msg[MSG_SIZE];
-        throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
+        char* msg = LOAD_ERROR();
+        throwByName(env, EUnsatisfiedLink, msg);
+        free(msg);
         return -1;
       }
     }
 #endif
     if ((pJAWT_GetAWT = (void*)FIND_ENTRY(jawt_handle, METHOD_NAME)) == NULL) {
-      char msg[MSG_SIZE], buf[MSG_SIZE - 31 /* literal characters */ - sizeof(METHOD_NAME)];
-      snprintf(msg, sizeof(msg), "Error looking up JAWT method %s: %s",
-               METHOD_NAME, LOAD_ERROR(buf, sizeof(buf)));
+      char* buf = LOAD_ERROR();
+      size_t requiredBuffer = strlen(METHOD_NAME) + strlen(buf) + 31 /*static part*/ + 1 /*null*/;
+      char* msg = (char*) malloc(requiredBuffer);
+      snprintf(msg, requiredBuffer, "Error looking up JAWT method %s: %s", METHOD_NAME, buf);
       throwByName(env, EUnsatisfiedLink, msg);
+      free(buf);
+      free(msg);
       return -1;
     }
   }
