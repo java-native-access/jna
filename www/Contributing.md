@@ -7,7 +7,10 @@ JNA contains work from many developers. You're encouraged to contribute to both 
 - Fork the code from [github.com/java-native-access/jna](https://github.com/java-native-access/jna)
 - Check out the code with `git clone git@github.com:username/jna.git`
 - Ensure you can build the project with `ant dist test test-platform`
-- Make your code changes, write tests, build
+- Make your code changes, write tests, build. New code should follow the
+  conventions observable in the surrounding code/the codebase. Existing code
+  should only be changed if the change is necessary. In general reformating
+  unrelated code is not necessary.
 - Add entry to CHANGES.md describing the change
 - Submit pull requests, forks and/or topical branches are encouraged.
 
