@@ -26,6 +26,7 @@ package com.sun.jna.platform.win32;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +46,7 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.Psapi.PSAPI_WORKING_SET_EX_INFORMATION;
 import com.sun.jna.ptr.IntByReference;
 
 /**
@@ -280,38 +282,104 @@ public class PsapiTest {
     }
 
     @Test
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void testQueryWorkingSetEx() {
-        Win32Exception we = null;
         HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentProcess();
-        MEMORY_BASIC_INFORMATION mbi = new MEMORY_BASIC_INFORMATION();
+
+        Memory[] mem = new Memory[4];
+        mem[0] = new Memory(4096);
+        new Memory(8192); // Try to ensure the memory pages are not adjacent
+        mem[1] = new Memory(4096);
+        new Memory(8192); // Try to ensure the memory pages are not adjacent
+        mem[3] = new Memory(4096);
+
         try {
-            SIZE_T bytesRead = Kernel32.INSTANCE.VirtualQueryEx(selfHandle, Pointer.NULL, mbi, new SIZE_T(mbi.size()));
-            assertNotEquals("Kernel should be able to read this Process' Bytes", bytesRead.intValue(), 0);
-            Psapi.PSAPI_WORKING_SET_EX_INFORMATION pswsi = new Psapi.PSAPI_WORKING_SET_EX_INFORMATION();
-            pswsi.VirtualAddress = mbi.baseAddress;
-            if (!Psapi.INSTANCE.QueryWorkingSetEx(selfHandle, pswsi.VirtualAddress, pswsi.size())) {
-                throw new Win32Exception(Native.getLastError());
+            PSAPI_WORKING_SET_EX_INFORMATION[] pswsi = (PSAPI_WORKING_SET_EX_INFORMATION[]) new PSAPI_WORKING_SET_EX_INFORMATION().toArray(4);
+
+            pswsi[0].VirtualAddress = mem[0];
+            pswsi[1].VirtualAddress = mem[1];
+            pswsi[2].VirtualAddress = mem[2];
+            pswsi[3].VirtualAddress = mem[3];
+
+            for(int i = 0; i < pswsi.length; i++) {
+                pswsi[i].write();
             }
-            assertTrue("Virual Attributes should not be null", pswsi.VirtualAttributes != null);
-            if (Psapi.INSTANCE.QueryWorkingSetEx(new HANDLE(), pswsi.VirtualAddress, pswsi.size())) {
-                throw new Win32Exception(Native.getLastError());
+
+            assertTrue("Failed to invoke QueryWorkingSetEx (1)", Psapi.INSTANCE.QueryWorkingSetEx(selfHandle, pswsi[0].getPointer(), pswsi[0].size() * pswsi.length));
+
+            for (int i = 0; i < pswsi.length; i++) {
+                pswsi[i].read();
+                assertTrue("Virtual Attributes should not be null (1)", pswsi[i].VirtualAttributes != null);
+                assertEquals("Virtual Address should not change before and after call (1)", pswsi[i].VirtualAddress, mem[i]);
+                if (i != 2) {
+                    assertTrue("Data was invalid (1)", pswsi[i].isValid());
+                    assertFalse("Data was reported as bad (1)", pswsi[i].isBad());
+                    assertEquals("Data indicates sharing (1)", pswsi[i].getShareCount(), 0);
+                    assertEquals("Data indicated that protection does not match  PAGE_READWRITE (1)",
+                            pswsi[i].getWin32Protection(), WinNT.PAGE_READWRITE);
+                    assertFalse("Data was reported as shared (1)", pswsi[i].isShared());
+                    assertFalse("Data was reported as locked (1)", pswsi[i].isLocked());
+                    assertFalse("Data was reported as large pages (1)", pswsi[i].isLargePage());
+                } else {
+                    assertFalse("Data was reported valid, but expected to be invalid (1)", pswsi[i].isValid());
+                }
             }
-            assertFalse("This line should never be called", true);
-        } catch (Win32Exception e) {
-            we = e;
-            throw we;   // re-throw to invoke finally block
+
+            // Lock the page we used into memory - this should be reflected in the reported flags in the next call
+            assertTrue(Kernel32.INSTANCE.VirtualLock(mem[1], new SIZE_T(4096)));
+
+            for (int i = 0; i < pswsi.length; i++) {
+                pswsi[i].write();
+            }
+
+            assertTrue("Failed to invoke QueryWorkingSetEx (2)", Psapi.INSTANCE.QueryWorkingSetEx(selfHandle, pswsi[0].getPointer(), pswsi[0].size() * pswsi.length));
+
+            for (int i = 0; i < pswsi.length; i++) {
+                pswsi[i].read();
+                assertTrue("Virtual Attributes should not be null (2)", pswsi[i].VirtualAttributes != null);
+                assertEquals("Virtual Address should not change before and after call (2)", pswsi[i].VirtualAddress, mem[i]);
+                if (i != 2) {
+                    assertTrue("Virtual Attributes should not be null (2)", pswsi[i].VirtualAttributes != null);
+                    assertEquals("Virtual Address should not change before and after call (2)", pswsi[i].VirtualAddress, mem[i]);
+                    assertTrue("Data was invalid (2)", pswsi[i].isValid());
+                    assertFalse("Data was reported as bad (2)", pswsi[i].isBad());
+                    assertEquals("Data indicates sharing (2)", pswsi[i].getShareCount(), 0);
+                    assertEquals("Data indicated that protection does not match  PAGE_READWRITE (2)",
+                            pswsi[i].getWin32Protection(), WinNT.PAGE_READWRITE);
+                    assertFalse("Data was reported as shared (2)", pswsi[i].isShared());
+                    // Only the second page should be locked
+                    if( i == 1 ) {
+                        assertTrue("Data was reported as unlocked (2)", pswsi[i].isLocked());
+                    } else {
+                        assertFalse("Data was reported as locked (2)", pswsi[i].isLocked());
+                    }
+                    assertFalse("Data was reported as large pages (2)", pswsi[i].isLargePage());
+                } else {
+                    assertFalse("Data was reported valid, but expected to be invalid (2)", pswsi[i].isValid());
+                }
+            }
+
+            // Check that a query against an invalid target succeeds, but report
+            // invalid data
+            PSAPI_WORKING_SET_EX_INFORMATION pswsi2 = new PSAPI_WORKING_SET_EX_INFORMATION();
+            pswsi2.VirtualAddress = null;
+            pswsi2.write();
+            assertTrue("Failed to invoke QueryWorkingSetEx (3)", Psapi.INSTANCE.QueryWorkingSetEx(WinBase.INVALID_HANDLE_VALUE, pswsi2.getPointer(), pswsi2.size()));
+            pswsi2.read();
+
+            assertTrue("Virtual Attributes should not be null (3)", pswsi2.VirtualAttributes != null);
+            assertTrue("Virtual Address should not change before and after call (3)", pswsi2.VirtualAddress == null);
+            assertFalse("Data was reported valid, but expected to be invalid (3)", pswsi2.isValid());
         } finally {
             try {
                 Kernel32Util.closeHandle(selfHandle);
             } catch (Win32Exception e) {
-                if (we == null) {
-                    we = e;
-                } else {
-                    we.addSuppressedReflected(e);
-                }
+                // Ignore
             }
-            if (we != null) {
-                throw we;
+            try {
+                Kernel32.INSTANCE.VirtualUnlock(mem[1], new SIZE_T(4096));
+            } catch (Win32Exception e) {
+                // Ignore
             }
         }
     }
