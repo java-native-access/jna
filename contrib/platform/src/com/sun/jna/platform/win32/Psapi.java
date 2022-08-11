@@ -335,78 +335,80 @@ public interface Psapi extends StdCallLibrary {
         public DWORD ThreadCount;
     }
 
-    @FieldOrder({"Flags", "Data"})
-    class PSAPI_WORKING_SET_EX_BLOCK extends Structure implements ByReference {
-        public ULONG_PTR Flags;
-        public ULONG_PTR[] Data = new ULONG_PTR[Native.POINTER_SIZE == 8 ? 1 : 2];
-        private long innerValue;
+    @FieldOrder({"VirtualAddress", "VirtualAttributes"})
+    class PSAPI_WORKING_SET_EX_INFORMATION extends Structure {
 
-        @Override
-        public void read() {
-            super.read();
-            innerValue = this.Data[0].longValue();
-        }
+        public Pointer VirtualAddress;
+        public ULONG_PTR VirtualAttributes;
 
         /**
-         * If this bit is 1, the subsequent members are valid; otherwise they should be ignored.
+         * If this bit is 1, the subsequent members are valid; otherwise they
+         * should be ignored.
          */
-        public boolean Valid() {
+        public boolean isValid() {
             return getBitFieldValue(1, 0) == 1;
         }
 
         /**
-         * The number of processes that share this page. The maximum value of this member is 7.
+         * The number of processes that share this page. The maximum value of
+         * this member is 7.
          */
-        public int ShareCount() {
+        public int getShareCount() {
             return getBitFieldValue(3, 1);
         }
 
         /**
-         * The memory protection attributes of the page. For a list of values see below.
-         * @see <a href="https://docs.microsoft.com/en-us/windows/desktop/Memory/memory-protection-constants">Memory Protection Constants</a>.
+         * The memory protection attributes of the page. For a list of values
+         * see below.
+         *
+         * @see
+         * <a href="https://docs.microsoft.com/en-us/windows/desktop/Memory/memory-protection-constants">Memory
+         * Protection Constants</a>.
          */
-        public int Win32Protection() {
+        public int getWin32Protection() {
             return getBitFieldValue(11, 3 + 1);
         }
 
         /**
          * If this bit is 1, the page can be shared.
          */
-        public boolean Shared() {
+        public boolean isShared() {
             return getBitFieldValue(1, 11 + 3 + 1) == 1;
         }
 
         /**
          * The NUMA node. The maximum value of this member is 63.
          */
-        public int Node() {
+        public int getNode() {
             return getBitFieldValue(6, 1 + 11 + 3 + 1);
         }
 
         /**
          * If this bit is 1, the virtual page is locked in physical memory.
          */
-        public boolean Locked() {
+        public boolean isLocked() {
             return getBitFieldValue(1, 6 + 1 + 11 + 3 + 1) == 1;
         }
 
         /**
          * If this bit is 1, the page is a large page.
          */
-        public boolean LargePage() {
+        public boolean isLargePage() {
             return getBitFieldValue(1, 1 + 6 + 1 + 11 + 3 + 1) == 1;
         }
 
         /**
          * If this bit is 1, the page is has been reported as bad.
          */
-        public boolean Bad() {
-            return getBitFieldValue(1,1 + 1 + 1 + 6 + 1 + 11 + 3 + 1) == 1;
+        public boolean isBad() {
+            return getBitFieldValue(1, 1 + 1 + 1 + 6 + 1 + 11 + 3 + 1) == 1;
         }
 
         /**
-         * Returns innerValue after shifting the value rightShiftAmount, and applying a Bit Mask of size maskLength. Example, <br/>
+         * Returns innerValue after shifting the value rightShiftAmount, and
+         * applying a Bit Mask of size maskLength. Example, <br/>
          * innerValue = 0011<br/> getBitFieldValue(2, 1) = 0011 >> 1 & 11 = 01
+         *
          * @param maskLength Size of the Bit Mask
          * @param rightShiftAmount Amount to Shift innerValue to the right by
          * @return innerValue with the mask and shift applied.
@@ -417,14 +419,7 @@ public interface Psapi extends StdCallLibrary {
             for (int l = 0; l < maskLength; l++) {
                 bitMask |= 1 << l;
             }
-            return (int) ((innerValue >>> rightShiftAmount) & bitMask);
+            return (int) ((VirtualAttributes.longValue() >>> rightShiftAmount) & bitMask);
         }
-    }
-
-
-    @FieldOrder({"VirtualAddress", "VirtualAttributes"})
-    class PSAPI_WORKING_SET_EX_INFORMATION extends Structure {
-        public Pointer VirtualAddress;
-        public PSAPI_WORKING_SET_EX_BLOCK VirtualAttributes;
     }
 }
