@@ -4307,4 +4307,84 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @see <A HREF="https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getapplicationrestartsettings">MSDN Entry</A>
      */
     HRESULT GetApplicationRestartSettings(HANDLE hProcess, char[] pwzCommandline, IntByReference pcchSize, IntByReference pdwFlags);
+
+    /**
+     * Locks the specified region of the process's virtual address space into
+     * physical memory, ensuring that subsequent access to the region will not
+     * incur a page fault.
+     *
+     * @param lpAddress A pointer to the base address of the region of pages to
+     *                  be locked.
+     * @param dwSize    The size of the region to be locked, in bytes. The
+     *                  region of affected pages includes all pages that contain
+     *                  one or more bytes in the range from the lpAddress
+     *                  parameter to (lpAddress+dwSize). This means that a
+     *                  2-byte range straddling a page boundary causes both
+     *                  pages to be locked.
+     *
+     * @return {@code true} if locking succeeded.
+     *
+     * <p>
+     * All pages in the specified region must be committed. Memory protected
+     * with {@code PAGE_NOACCESS} cannot be locked.
+     * </p>
+     * <p>
+     * Locking pages into memory may degrade the performance of the system by
+     * reducing the available RAM and forcing the system to swap out other
+     * critical pages to the paging file. Each version of Windows has a limit on
+     * the maximum number of pages a process can lock. This limit is
+     * intentionally small to avoid severe performance degradation. Applications
+     * that need to lock larger numbers of pages must first call the
+     * SetProcessWorkingSetSize function to increase their minimum and maximum
+     * working set sizes. The maximum number of pages that a process can lock is
+     * equal to the number of pages in its minimum working set minus a small
+     * overhead.
+     * </p>
+     * <p>
+     * Pages that a process has locked remain in physical memory until the
+     * process unlocks them or terminates. These pages are guaranteed not to be
+     * written to the pagefile while they are locked.
+     * </p>
+     * <p>
+     * To unlock a region of locked pages, use the VirtualUnlock function.
+     * Locked pages are automatically unlocked when the process terminates.
+     * </p>
+     * <p>
+     * This function is not like the GlobalLock or LocalLock function in that it
+     * does not increment a lock count and translate a handle into a pointer.
+     * There is no lock count for virtual pages, so multiple calls to the
+     * VirtualUnlock function are never required to unlock a region of pages.
+     * </p>
+     */
+    boolean VirtualLock(Pointer lpAddress, SIZE_T dwSize);
+
+    /**
+     * Unlocks a specified range of pages in the virtual address space of a
+     * process, enabling the system to swap the pages out to the paging file if
+     * necessary.
+     *
+     * @param lpAddress A pointer to the base address of the region of pages to
+     *                  be unlocked.
+     * @param dwSize    The size of the region being unlocked, in bytes. The
+     *                  region of affected pages includes all pages containing
+     *                  one or more bytes in the range from the lpAddress
+     *                  parameter to (lpAddress+dwSize). This means that a
+     *                  2-byte range straddling a page boundary causes both
+     *                  pages to be unlocked.
+     *
+     * @return {@code true} if unlocking succeeded.
+     *
+     * <p>
+     * For the function to succeed, the range specified need not match a range
+     * passed to a previous call to the VirtualLock function, but all pages in
+     * the range must be locked. If any of the pages in the specified range are
+     * not locked, VirtualUnlock removes such pages from the working set, sets
+     * last error to ERROR_NOT_LOCKED, and returns FALSE.
+     * </p>
+     * <p>
+     * Calling VirtualUnlock on a range of memory that is not locked releases
+     * the pages from the process's working set.
+     * </p>
+     */
+    boolean VirtualUnlock(Pointer lpAddress, SIZE_T dwSize);
 }

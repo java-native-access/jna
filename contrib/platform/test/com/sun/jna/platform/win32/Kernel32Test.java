@@ -2088,4 +2088,15 @@ public class Kernel32Test extends TestCase {
 
     }
 
+    public void testVirtualLockUnlock() {
+        Memory mem = new Memory(4096);
+        // Test that locking works
+        assertTrue(Kernel32.INSTANCE.VirtualLock(mem, new SIZE_T(4096)));
+        // Test that unlocked region can be unlocked
+        assertTrue(Kernel32.INSTANCE.VirtualUnlock(mem, new SIZE_T(4096)));
+        // Locking a region we don't have access to should fail
+        assertFalse(Kernel32.INSTANCE.VirtualLock(null, new SIZE_T(4096)));
+        // Unlocking an unlocked region should fail
+        assertFalse(Kernel32.INSTANCE.VirtualUnlock(mem, new SIZE_T(4096)));
+    }
 }
