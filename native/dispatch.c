@@ -77,8 +77,9 @@ static inline char * LOAD_ERROR() {
     return buf;
 }
 static inline char * STR_ERROR(int code) {
+    int i;
     char* buf = NULL;
-    for(int i = 256; i < (10 * 1024); i += 256) {
+    for(i = 256; i < (10 * 1024); i += 256) {
         buf = (char*) malloc(i);
         int res = strerror_r(code, buf, i);
         if(res == 0) {
