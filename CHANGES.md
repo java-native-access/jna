@@ -12,6 +12,7 @@ Features
 
 Bug Fixes
 ---------
+* [#1452](https://github.com/java-native-access/jna/issues/1452): Fix memory allocation/handling for error message generation in native library code (`dispatch.c`) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.12.1
 ==============
