@@ -22,7 +22,7 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
+import java.util.Calendar;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
@@ -76,6 +76,7 @@ import static com.sun.jna.platform.win32.Variant.VT_UINT;
 import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
 import static com.sun.jna.platform.win32.Variant.VT_VARIANT;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.PointerByReference;
 import java.io.Closeable;
 import java.util.Date;
@@ -223,7 +224,7 @@ public interface OaIdl {
 
     @FieldOrder({"date"})
     public static class DATE extends Structure {
-        private final static long MICRO_SECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
+        private static final double MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
 
         public static class ByReference extends DATE implements
                 Structure.ByReference {
@@ -244,38 +245,28 @@ public interface OaIdl {
         }
 
         public Date getAsJavaDate() {
-            long days = (((long) this.date) * MICRO_SECONDS_PER_DAY) + DATE_OFFSET;
-            double timePart = 24 * Math.abs(this.date - ((long) this.date));
-            int hours = (int) timePart;
-            timePart = 60 * (timePart - ((int) timePart));
-            int minutes = (int) timePart;
-            timePart = 60 * (timePart - ((int) timePart));
-            int seconds = (int) timePart;
-            timePart = 1000 * (timePart - ((int) timePart));
-            int milliseconds = (int) timePart;
+            WinBase.SYSTEMTIME systemtime = new WinBase.SYSTEMTIME();
+            OleAuto.INSTANCE.VariantTimeToSystemTime(date, systemtime);
+            Calendar calendar = systemtime.toCalendar();
 
-            Date baseDate = new Date(days);
-            baseDate.setHours(hours);
-            baseDate.setMinutes(minutes);
-            baseDate.setSeconds(seconds);
-            baseDate.setTime(baseDate.getTime() + milliseconds);
-            return baseDate;
+            // Fix milliseconds, as VariantTimeToSystemTime rounds them off
+            int millis = (int) ((long) (Math.abs(date) * MILLISECONDS_PER_DAY + 0.5) % 1000L);
+            if (date > 0 && millis > 500 || date < 0 && millis > 499) {
+                millis -= 1000;
+            }
+            calendar.set(Calendar.MILLISECOND, millis);
+            return calendar.getTime();
         }
 
         public void setFromJavaDate(Date javaDate) {
-            double msSinceOrigin = javaDate.getTime() - DATE_OFFSET;
-            double daysAsFract = msSinceOrigin / MICRO_SECONDS_PER_DAY;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(javaDate);
+            DoubleByReference pvtime = new DoubleByReference();
+            OleAuto.INSTANCE.SystemTimeToVariantTime(new WinBase.SYSTEMTIME(calendar), pvtime);
+            double value = pvtime.getValue();
 
-            Date dayDate = new Date(javaDate.getTime());
-            dayDate.setHours(0);
-            dayDate.setMinutes(0);
-            dayDate.setSeconds(0);
-            dayDate.setTime(dayDate.getTime() / 1000 * 1000); // Clear milliseconds
-
-            double integralPart = Math.floor(daysAsFract);
-            double fractionalPart = Math.signum(daysAsFract) * ((javaDate.getTime() - dayDate.getTime()) / (24d * 60 * 60 * 1000));
-
-            this.date = integralPart + fractionalPart;
+            // Add milliseconds, as SystemTimeToVariantTime truncates them
+            date = value + Math.signum(value) * calendar.get(Calendar.MILLISECOND) / MILLISECONDS_PER_DAY;
         }
     }
 
