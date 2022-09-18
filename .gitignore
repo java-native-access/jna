@@ -1,6 +1,7 @@
 target/
 .project
 .classpath
+.clover
 build/
 build-d64
 build.eclipse
