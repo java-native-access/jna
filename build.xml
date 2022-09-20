@@ -480,6 +480,8 @@ com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win32,
 com/sun/jna/win32-x86-64/jnidispatch.dll;
 processor=x86-64;osname=win32,
+com/sun/jna/win32-aarch64/jnidispatch.dll;
+processor=aarch64;osname=win32,
 com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win,
 com/sun/jna/win32-x86-64/jnidispatch.dll;
