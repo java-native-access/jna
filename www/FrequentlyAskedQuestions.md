@@ -242,7 +242,7 @@ a combination of TypeMapper and FunctionMapper (see
 “String” rather than explicit “WString”.
 
 Does JNA publish a module descriptor (module-info.java) to support the Java Module System (JPMS)?
--------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
 
 Since version 5.8.0, JNA publishes an additional JAR with a `module-info` class alongside
 the main project JAR, using an artifact with `-jpms` appended, e.g., `jna-jpms-5.8.0.jar`
@@ -277,3 +277,15 @@ using either an `open` module, `opens`, or `opens ... to` directive, or an `expo
 or `exports ... to` directive, depending on the particular application and level of 
 access required. If migrating an existing project, `opens` replicates the full
 non-modular (classpath) reflective access.
+
+How can I run code coverage check over JNA?
+-------------------------------------------
+
+Run:
+
+```
+ant -lib lib/clover.jar clover
+```
+
+The result is placed in `$JNA_BASE/build/reports/clover` and can be opened with
+a webbrowser.

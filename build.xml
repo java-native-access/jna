@@ -1319,7 +1319,7 @@ cd ..
     <property name="build-native" value="true"/>
   </target>
 
-  <target name="-check-java6-compatibility" depends="-enable-native,jar,compile-tests" if="compatibility-check">
+  <target name="-check-java6-compatibility" depends="-enable-native,jar,compile-tests" if="compatibility-check" unless="clover">
     <echo>Checking JDK compatibility 1.6</echo>
 
     <echo></echo>
