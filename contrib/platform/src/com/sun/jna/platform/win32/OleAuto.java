@@ -24,8 +24,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import java.util.List;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -926,4 +924,15 @@ public interface OleAuto extends StdCallLibrary {
      * @return The function returns TRUE on success and FALSE otherwise.
      */
     int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime, DoubleByReference pvtime);
+
+    /**
+     * Converts a variant representation of time to a system time.
+     *
+     * @param vtime [in] The variant time.
+     *
+     * @param lpSystemTime [out] The system time.
+     *
+     * @return The function returns TRUE on success and FALSE otherwise.
+     */
+    int VariantTimeToSystemTime(double vtime, SYSTEMTIME lpSystemTime);
 }
