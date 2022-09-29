@@ -40,7 +40,11 @@ import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.SHORT;
+
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
+
 import org.junit.AfterClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -267,7 +271,50 @@ public class ConvertTest {
 
     @Test
     public void testConvertDate() {
-        Date testDate = new Date(2015 - 1900, 1, 1, 9, 0, 0);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 9, 0, 0));
+    }
+
+    @Test
+    public void testConvertDstOffsetTime() {
+        TimeZone timeZone = TimeZone.getDefault();
+        try {
+            // Use a timezone with a DST offset
+            TimeZone.setDefault(TimeZone.getTimeZone("PST"));
+            // Use a date in the DST period, and a time in the DST offset window
+            testConvertDate(new Date(2015 - 1900, 8 - 1, 1, 0, 30, 0));
+        } finally {
+            TimeZone.setDefault(timeZone);
+        }
+    }
+
+    @Test
+    public void testConvertMillisecondTime() {
+        testConvertDate(new Date(2015 - 1900, 1, 1, 0, 0, 0), 1);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 0, 0, 0), 499);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 0, 0, 0), 500);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 0, 0, 0), 999);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 0, 0, 0), 1);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 0, 0, 0), 499);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 0, 0, 0), 500);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 0, 0, 0), 999);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 23, 59, 59), 1);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 23, 59, 59), 499);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 23, 59, 59), 500);
+        testConvertDate(new Date(2015 - 1900, 1, 1, 23, 59, 59), 999);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 23, 59, 59), 1);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 23, 59, 59), 499);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 23, 59, 59), 500);
+        testConvertDate(new Date(1815 - 1900, 1, 1, 23, 59, 59), 999);
+    }
+
+    private static void testConvertDate(Date date, int milliseconds) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.MILLISECOND, milliseconds);
+        testConvertDate(calendar.getTime());
+    }
+
+    private static void testConvertDate(Date testDate) {
         VARIANT resultDate = Convert.toVariant(testDate);
         DATE testDATE = new DATE(testDate);
         VARIANT resultDATE = Convert.toVariant(testDATE);
