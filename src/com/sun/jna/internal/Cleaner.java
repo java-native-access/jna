@@ -60,7 +60,10 @@ public class Cleaner {
                             ((CleanerRef) ref).clean();
                         }
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
+                        // Can be raised on shutdown. If anyone else messes with
+                        // our reference queue, well, there is no way to separate
+                        // the two cases.
+                        // https://groups.google.com/g/jna-users/c/j0fw96PlOpM/m/vbwNIb2pBQAJ
                         break;
                     } catch (Exception ex) {
                         Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
