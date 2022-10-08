@@ -915,6 +915,18 @@ public class Advapi32UtilTest extends TestCase {
         }
     }
 
+    /**
+     * Test TOKEN_ELEVATION structure
+     */
+    public void testIsCurrentProcessElevated() {
+        // This is either true if we're elevated or false otherwise. Just exercising the function.
+        try {
+            Advapi32Util.isCurrentProcessElevated();
+        } catch (Exception ex) {
+            fail("Encountered unknown exception - " + ex.getMessage());
+        }
+    }
+
     private File createTempFile() throws Exception{
         String filePath = System.getProperty("java.io.tmpdir") + System.nanoTime()
                 + ".text";
