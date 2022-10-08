@@ -175,10 +175,13 @@ public class PointerTest extends TestCase {
 
     public void testCreateConstantPointer() {
         Pointer p = Pointer.createConstant(0xFFFFFFFF);
-        assertEquals("Wrong peer value", p.peer, 0xFFFFFFFF);
+        assertEquals("Wrong peer value", p.peer, 0xFFFFFFFFL);
 
-        p = Pointer.createConstant(-1);
+        p = Pointer.createConstant(-1L);
         assertEquals("Wrong peer value", p.peer, -1);
+
+        p = Pointer.createConstant(0x80000000);
+        assertEquals("createConstant(int) should avoid setting any high bits", 0, Pointer.nativeValue(p) >>> 32);
     }
 
     public void testReadStringArrayNULLElement() {
@@ -234,11 +237,6 @@ public class PointerTest extends TestCase {
                 fail("Need to fix test of method '" + m.getName() + "(" + Arrays.asList(argTypes) + ")'");
             }
         }
-    }
-
-    public void testOpaquePointerNoHighBits() throws Exception {
-        Pointer p = Pointer.createConstant(0x80000000);
-        assertEquals("createConstant(int) should avoid setting any high bits", 0, Pointer.nativeValue(p) >>> 32);
     }
 
     public static void main(String[] args) {
