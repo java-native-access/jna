@@ -4415,4 +4415,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     public int EVENT_MODIFY_STATE = 0x0002;
     public int EVENT_ALL_ACCESS = (STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x3);
+
+    /**
+     * The TOKEN_ELEVATION structure indicates whether a token has elevated privileges.
+     */
+    @FieldOrder({ "TokenIsElevated" })
+    class TOKEN_ELEVATION extends Structure {
+        public int TokenIsElevated;
+    }
 }

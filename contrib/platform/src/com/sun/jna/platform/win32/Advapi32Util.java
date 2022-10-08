@@ -86,6 +86,7 @@ import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
+import com.sun.jna.platform.win32.WinNT.TOKEN_ELEVATION;
 import com.sun.jna.platform.win32.WinNT.TOKEN_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
@@ -3413,5 +3414,28 @@ public abstract class Advapi32Util {
 
             return phThreadToken.getValue();
         }
+    }
+
+    /**
+     * Reports whether the current process is running with elevated permissions.
+     *
+     * @return true if the current process has elevated perissions, false otherwise.
+     */
+    public static boolean isCurrentProcessElevated() {
+        HANDLEByReference hToken = new HANDLEByReference();
+        IntByReference returnLength = new IntByReference();
+        if (Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(), WinNT.TOKEN_QUERY,
+                hToken)) {
+            try {
+                TOKEN_ELEVATION elevation = new TOKEN_ELEVATION();
+                if (Advapi32.INSTANCE.GetTokenInformation(hToken.getValue(),
+                        WinNT.TOKEN_INFORMATION_CLASS.TokenElevation, elevation, elevation.size(), returnLength)) {
+                    return elevation.TokenIsElevated > 0;
+                }
+            } finally {
+                Kernel32.INSTANCE.CloseHandle(hToken.getValue());
+            }
+        }
+        return false;
     }
 }
