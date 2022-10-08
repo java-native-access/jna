@@ -14,6 +14,7 @@ Bug Fixes
 ---------
 * [#1452](https://github.com/java-native-access/jna/issues/1452): Fix memory allocation/handling for error message generation in native library code (`dispatch.c`) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1460](https://github.com/java-native-access/jna/issues/1460): Fix win32 variant date conversion in DST offest window and with millisecond values - [@eranl](https://github.com/eranl).
+* [#1472](https://github.com/java-native-access/jna/issues/1472): Fix incorrect bitmask in `c.s.j.Pointer#createConstant(int)` - [@dbwiddis](https://github.com/dbwiddis).
 
 Release 5.12.1
 ==============
