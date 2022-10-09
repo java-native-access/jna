@@ -25,10 +25,11 @@
 
 package com.sun.jna;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 
@@ -174,10 +175,13 @@ public class PointerTest extends TestCase {
 
     public void testCreateConstantPointer() {
         Pointer p = Pointer.createConstant(0xFFFFFFFF);
-        assertEquals("Wrong peer value", p.peer, 0xFFFFFFFF);
+        assertEquals("Wrong peer value", p.peer, 0xFFFFFFFFL);
 
-        p = Pointer.createConstant(-1);
+        p = Pointer.createConstant(-1L);
         assertEquals("Wrong peer value", p.peer, -1);
+
+        p = Pointer.createConstant(0x80000000);
+        assertEquals("createConstant(int) should avoid setting any high bits", 0, Pointer.nativeValue(p) >>> 32);
     }
 
     public void testReadStringArrayNULLElement() {

@@ -189,7 +189,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
     @Override
     public int hashCode() {
         long id = this.getUnknownId();
-        return (int) ((id >>> 32) & 0xFFFFFFFF) + (int) (id & 0xFFFFFFFF);
+        return (int) ((id >>> 32) + (id & 0xFFFFFFFFL));
     }
 
     @Override

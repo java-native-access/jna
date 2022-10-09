@@ -60,7 +60,7 @@ public class Pointer {
         systems.
      */
     public static final Pointer createConstant(int peer) {
-        return new Opaque((long)peer & 0xFFFFFFFF);
+        return new Opaque(peer & 0xFFFFFFFFL);
     }
 
     /** Pointer value of the real native pointer. Use long to be 64-bit safe.
@@ -112,7 +112,7 @@ public class Pointer {
 
     @Override
     public int hashCode() {
-        return (int)((peer >>> 32) + (peer & 0xFFFFFFFF));
+        return (int) ((peer >>> 32) + (peer & 0xFFFFFFFFL));
     }
 
 
