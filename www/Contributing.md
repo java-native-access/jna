@@ -39,12 +39,31 @@ cross-compiling and a JavaME implementation (phoneME (http://davy.preuveneers.be
 
 For Android, see [Android Development Environment](AndroidDevelopmentEnvironment.md).
 
+Code Conventions
+================
+
+JNA is a community maintained project. 
+
+Code conventions (and their enforcement) were not established early, and implementing new standards now is just not practical. With thousands of commits by more than a hundred committers over more than a decade, there are a variety of styles/conventions used and it may be difficult for new contributors to ascertain code formatting, naming, or other conventions. Strive for consistency when committing, and consider style/naming/formatting requests from maintainers as an attempt to adhere to some sort of unwritten standard learned through experience.
+
+While difficult to explicitly define and enforce, the following general guidelines should help your contributions succeed:
+ - Strive to avoid changes unrelated your own submission. Occasional minor re-ordering of imports or whitespace adjustments near your contribution are inevitable, but avoid situations where the "noise" of your contribution exceeds the substantive change.
+ - When mapping native functions, attempt to use the same naming convention for the function name and its parameters. This may violate traditional Java naming conventions of casing or use of underscores. While not always possible, consider alignment with the native mapping a higher priority.
+   - Similarly, extract the substantive parts of the native method documentation and include it in the javadocs.
+ - Many mappings benefit from helper/utility functions. When considering where to place these:
+   - If the method will only ever be used with a single class, place it in the class.  For "getter" helper methods, prefer Java Bean (`getFoo()`) syntax to record-style (`foo()`) syntax which implies shallow immutability. JNA relies on reflection and fields are necessarily public and thus not immutable.
+   - If the function requires multiple method calls (e.g., to determine the size of output and allocate memory) place a helper method in a separate utility class. Do your best to minimize any user input/interpretation/casting requirements.
+ - Respect backwards compatibility. The only acceptable compatibility changes (without a major version bump) are for functions that have demonstrably "never worked".
+ - Realize that we still support JDK 6, and that users of the library still use JDK 6. While there are good arguments for moving to a higher minimum version with the next major version bump, your contribution is probably not one of those arguments.
+
 Required Testing
 ================
 
 Pull requests without tests will not be merged.
 
 If you're struggling with a mapping test, consider that it's not really necessary to verify the proper functionality of the APIs that are being mapped. It may be sufficient to exercise the mapping with parameters that produce an expected platform error code, therefore demonstrating that the mapping actually works.
+
+For mappings that may produce a nondeterministic result (e.g., a boolean dependent on environment), verifying that the called function does not throw an exception may be sufficient.
 
 Copyright Headers in Files
 ==========================
