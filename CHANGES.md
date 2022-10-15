@@ -10,6 +10,7 @@ Features
 * [#1454](https://github.com/java-native-access/jna/pull/1454): Add `c.s.j.p.win32.Psapi.QueryWorkingSetEx` and associated Types - [@crain-32](https://github.com/Crain-32).
 * [#1459](https://github.com/java-native-access/jna/pull/1459): Add `VirtualLock` and `VirtualUnlock` in `c.s.j.p.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1471](https://github.com/java-native-access/jna/pull/1471): Add `c.s.j.p.win32.Advapi32Util#isCurrentProcessElevated` and associated Types - [@dbwiddis](https://github.com/dbwiddis).
+* [#1474](https://github.com/java-native-access/jna/pull/1474): Add `c.s.j.p.win32.WbemCli#IWbemClassObject.IWbemQualifierSet`, `IWbemServices.GetObject`, `IWbemContext.SetValue` and associated methods - [@rchateauneu](https://github.com/rchateauneu).
 
 Bug Fixes
 ---------

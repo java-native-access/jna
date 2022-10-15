@@ -25,6 +25,9 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
@@ -45,8 +48,16 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface Wbemcli {
 
+    public static final int WBEM_FLAG_RETURN_WBEM_COMPLETE = 0x00000000;
     public static final int WBEM_FLAG_RETURN_IMMEDIATELY = 0x00000010;
     public static final int WBEM_FLAG_FORWARD_ONLY = 0x00000020;
+    public static final int WBEM_FLAG_NO_ERROR_OBJECT = 0x00000040;
+    public static final int WBEM_FLAG_SEND_STATUS = 0x00000080;
+    public static final int WBEM_FLAG_ENSURE_LOCATABLE = 0x00000100;
+    public static final int WBEM_FLAG_DIRECT_READ = 0x00000200;
+    public static final int WBEM_MASK_RESERVED_FLAGS = 0x0001F000;
+    public static final int WBEM_FLAG_USE_AMENDED_QUALIFIERS = 0x00020000;
+    public static final int WBEM_FLAG_STRONG_VALIDATION = 0x00100000;
     public static final int WBEM_INFINITE = 0xFFFFFFFF;
 
     // Non-error constants
@@ -145,6 +156,88 @@ public interface Wbemcli {
                 names[i] = (String) nameObjects[i];
             }
             return names;
+        }
+
+        public HRESULT GetQualifierSet(PointerByReference ppQualSet) {
+            // Get is the fourth method of IWbemClassObjectVtbl in WbemCli.h :
+            return (HRESULT) _invokeNativeObject(3,
+                    new Object[] { getPointer(), ppQualSet }, HRESULT.class);
+        }
+
+        public IWbemQualifierSet GetQualifierSet() {
+            PointerByReference ppQualSet = new PointerByReference();
+            HRESULT hr = GetQualifierSet(ppQualSet);
+            COMUtils.checkRC(hr);
+            IWbemQualifierSet qualifier = new IWbemQualifierSet(ppQualSet.getValue());
+
+            return qualifier;
+        }
+
+        /*
+        // https://docs.microsoft.com/en-us/windows/win32/api/wbemcli/nf-wbemcli-iwbemclassobject-getpropertyqualifierset
+        HRESULT GetPropertyQualifierSet(
+            [in]  LPCWSTR           wszProperty,
+            [out] IWbemQualifierSet **ppQualSet
+            );
+         */
+        public HRESULT GetPropertyQualifierSet(WString wszProperty, PointerByReference ppQualSet) {
+            // Get is 12th method of IWbemClassObjectVtbl in WbemCli.h :
+            return (HRESULT) _invokeNativeObject(11,
+                    new Object[] { getPointer(), wszProperty, ppQualSet }, HRESULT.class);
+        }
+
+        public IWbemQualifierSet GetPropertyQualifierSet(String strProperty) {
+            WString wszProperty = new WString(strProperty);
+            PointerByReference ppQualSet = new PointerByReference();
+
+            COMUtils.checkRC(GetPropertyQualifierSet(wszProperty, ppQualSet));
+            IWbemQualifierSet qualifier  = new IWbemQualifierSet(ppQualSet.getValue());
+            return qualifier;
+        }
+    }
+
+    class IWbemQualifierSet extends Unknown {
+        public IWbemQualifierSet(Pointer pvInstance) {
+            super(pvInstance);
+        }
+
+        public HRESULT Get(WString wszName, int lFlags, VARIANT.ByReference pVal, IntByReference plFlavor) {
+            return (HRESULT) _invokeNativeObject(3,
+                    new Object[] { getPointer(), wszName, lFlags, pVal, plFlavor }, HRESULT.class);
+        }
+
+        public String Get(String wszName) {
+            WString wszNameStr = new WString(wszName);
+            Variant.VARIANT.ByReference pQualifierVal = new Variant.VARIANT.ByReference();
+            HRESULT hres = Get(wszNameStr, 0, pQualifierVal, null);
+            if(hres.intValue() == 0x80041002) {
+                // This error for some classes only.
+                return null;
+            }
+            int qualifierInt = pQualifierVal.getVarType().intValue();
+            switch(qualifierInt) {
+                case Wbemcli.CIM_BOOLEAN:
+                    return String.valueOf(pQualifierVal.booleanValue());
+                case Wbemcli.CIM_STRING:
+                    return pQualifierVal.stringValue();
+            }
+            return null;
+        }
+
+        public HRESULT GetNames(int lFlags, PointerByReference pNames) {
+            return (HRESULT) _invokeNativeObject(6,
+                    new Object[] { getPointer(), lFlags, pNames }, HRESULT.class);
+        }
+
+        public String[] GetNames() {
+            PointerByReference pbr = new PointerByReference();
+            COMUtils.checkRC(GetNames(0, pbr));
+            Object[] nameObjects = (Object[]) OaIdlUtil.toPrimitiveArray(new SAFEARRAY(pbr.getValue()), true);
+            String[] qualifierNames = new String[nameObjects.length];
+            for(int i = 0; i < nameObjects.length; i++) {
+                qualifierNames[i] = (String) nameObjects[i];
+            }
+            return qualifierNames;
         }
     }
 
@@ -278,6 +371,25 @@ public interface Wbemcli {
                 OleAuto.INSTANCE.SysFreeString(strQueryBSTR);
             }
         }
+
+        public HRESULT GetObject(BSTR strObjectPath, int lFlags, IWbemContext pCtx,
+                                 PointerByReference ppObject, PointerByReference ppCallResult) {
+            // GetObject is the 7th method of IWbemServicesVtbl in WbemCli.h
+            return (HRESULT) _invokeNativeObject(6,
+                    new Object[] { getPointer(), strObjectPath, lFlags, pCtx, ppObject, ppCallResult}, HRESULT.class);
+        }
+
+        public IWbemClassObject GetObject(String strObjectPath, int lFlags, IWbemContext pCtx) {
+            BSTR strObjectPathBSTR = OleAuto.INSTANCE.SysAllocString(strObjectPath);
+            try {
+                PointerByReference ppObject = new PointerByReference();
+                HRESULT res = GetObject(strObjectPathBSTR, lFlags, pCtx, ppObject, null);
+                COMUtils.checkRC(res);
+                return new IWbemClassObject(ppObject.getValue());
+            } finally {
+                OleAuto.INSTANCE.SysFreeString(strObjectPathBSTR);
+            }
+        }
     }
 
     /**
@@ -285,12 +397,57 @@ public interface Wbemcli {
      * providers when submitting IWbemServices calls to WMI
      */
     class IWbemContext extends Unknown {
+        public static final CLSID CLSID_WbemContext  = new CLSID("674B6698-EE92-11D0-AD71-00C04FD8FDFF");
+        public static final GUID IID_IWbemContext  = new GUID("44aca674-e8fc-11d0-a07c-00c04fb68820");
 
         public IWbemContext() {
         }
 
+        public static IWbemContext create() {
+            PointerByReference pbr = new PointerByReference();
+
+            HRESULT hres = Ole32.INSTANCE.CoCreateInstance(CLSID_WbemContext, null, WTypes.CLSCTX_INPROC_SERVER,
+                    IID_IWbemContext, pbr);
+            if (COMUtils.FAILED(hres)) {
+                return null;
+            }
+
+            return new IWbemContext(pbr.getValue());
+        }
+
         public IWbemContext(Pointer pvInstance) {
             super(pvInstance);
+        }
+
+        public void SetValue(String wszName, int lFlag, Variant.VARIANT pValue) {
+            BSTR wszNameBSTR = OleAuto.INSTANCE.SysAllocString(wszName);
+            try {
+                // SetValue is the 9th method of IWbemContextVtbl in WbemCli.h
+                HRESULT res = (HRESULT) _invokeNativeObject(8,
+                        new Object[] { getPointer(), wszNameBSTR, lFlag, pValue}, HRESULT.class);
+                COMUtils.checkRC(res);
+            } finally {
+                OleAuto.INSTANCE.SysFreeString(wszNameBSTR);
+            }
+        }
+
+        public void SetValue(String wszName, int lFlag, boolean pValue) {
+            Variant.VARIANT aVariant = new Variant.VARIANT();
+            aVariant.setValue(Variant.VT_BOOL, pValue ? Variant.VARIANT_TRUE : Variant.VARIANT_FALSE);
+            SetValue(wszName, lFlag, aVariant);
+            OleAuto.INSTANCE.VariantClear(aVariant);
+        }
+
+        public void SetValue(String wszName, int lFlag, String pValue) {
+            Variant.VARIANT aVariant = new Variant.VARIANT();
+            BSTR strValue = OleAuto.INSTANCE.SysAllocString(pValue);
+            try {
+                aVariant.setValue(Variant.VT_LPSTR, strValue);
+                SetValue(wszName, lFlag, aVariant);
+            }
+            finally {
+                OleAuto.INSTANCE.SysFreeString(strValue);
+            }
         }
     }
 }
