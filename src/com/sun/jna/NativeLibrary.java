@@ -279,13 +279,15 @@ public class NativeLibrary implements Closeable {
             if (handle == 0) {
                 try {
                     File embedded = Native.extractFromResourcePath(libraryName, (ClassLoader)options.get(Library.OPTION_CLASSLOADER));
-                    try {
-                        handle = Native.open(embedded.getAbsolutePath(), openFlags);
-                        libraryPath = embedded.getAbsolutePath();
-                    } finally {
-                        // Don't leave temporary files around
-                        if (Native.isUnpacked(embedded)) {
-                            Native.deleteLibrary(embedded);
+                    if (embedded != null) {
+                        try {
+                            handle = Native.open(embedded.getAbsolutePath(), openFlags);
+                            libraryPath = embedded.getAbsolutePath();
+                        } finally {
+                            // Don't leave temporary files around
+                            if (Native.isUnpacked(embedded)) {
+                                Native.deleteLibrary(embedded);
+                            }
                         }
                     }
                 }
