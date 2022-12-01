@@ -179,13 +179,34 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
+     * Format a message from a code.
+     *
+     * @param code The error code
+     * @return Formatted message in the default locale.
+     */
+    public static String formatMessage(int code) {
+        return formatMessage(code, 0, 0);
+    }
+
+    /**
      * Format a message from the value obtained from
      * {@link Kernel32#GetLastError()} or {@link Native#getLastError()}.
      *
+     * <p>If you pass in zero, FormatMessage looks for a message for LANGIDs in the following order:</p>
+     * <ol>
+     *   <li>Language neutral</li>
+     *   <li>Thread LANGID, based on the thread's locale value</li>
+     *   <li>User default LANGID, based on the user's default locale value</li>
+     *   <li>System default LANGID, based on the system default locale value</li>
+     *   <li>US English</li>
+     * </ol>
+     *
      * @param code The error code
-     * @return Formatted message.
+     * @param primaryLangId The primary language identifier
+     * @param sublangId The sublanguage identifier
+     * @return Formatted message in the specified locale.
      */
-    public static String formatMessage(int code) {
+    public static String formatMessage(int code, int primaryLangId, int sublangId) {
         PointerByReference buffer = new PointerByReference();
         int nLen = Kernel32.INSTANCE.FormatMessage(
                 WinBase.FORMAT_MESSAGE_ALLOCATE_BUFFER
@@ -193,7 +214,7 @@ public abstract class Kernel32Util implements WinDef {
                 | WinBase.FORMAT_MESSAGE_IGNORE_INSERTS,
                 null,
                 code,
-                0, // TODO: // MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT)
+                WinNT.LocaleMacros.MAKELANGID(primaryLangId, sublangId),
                 buffer, 0, null);
         if (nLen == 0) {
             throw new LastErrorException(Native.getLastError());
@@ -213,10 +234,25 @@ public abstract class Kernel32Util implements WinDef {
      *
      * @param code
      *            HRESULT
-     * @return Formatted message.
+     * @return Formatted message in the default locale.
      */
     public static String formatMessage(HRESULT code) {
         return formatMessage(code.intValue());
+    }
+
+    /**
+     * Format a message from an HRESULT.
+     *
+     * @param code
+     *            HRESULT
+     * @param primaryLangId
+     *            The primary language identifier
+     * @param sublangId
+     *            The primary language identifier
+     * @return Formatted message in the specified locale.
+     */
+    public static String formatMessage(HRESULT code, int primaryLangId, int sublangId) {
+        return formatMessage(code.intValue(), primaryLangId, sublangId);
     }
 
     /**
@@ -224,19 +260,43 @@ public abstract class Kernel32Util implements WinDef {
      *
      * @param code
      *            Error code, typically a result of GetLastError.
-     * @return Formatted message.
+     * @return Formatted message in the default locale.
      */
     public static String formatMessageFromLastErrorCode(int code) {
         return formatMessage(W32Errors.HRESULT_FROM_WIN32(code));
     }
 
     /**
+     * Format a system message from an error code.
+     *
+     * @param code
+     *            Error code, typically a result of GetLastError.
+     * @param primaryLangId
+     *            The primary language identifier
+     * @param sublangId
+     *            The primary language identifier
+     * @return Formatted message in the specified locale.
+     */
+    public static String formatMessageFromLastErrorCode(int code, int primaryLangId, int sublangId) {
+        return formatMessage(W32Errors.HRESULT_FROM_WIN32(code), primaryLangId, sublangId);
+    }
+
+    /**
      * @return Obtains the human-readable error message text from the last error
-     *         that occurred by invocating {@code Kernel32.GetLastError()}.
+     *         that occurred by invocating {@code Kernel32.GetLastError()} in the default locale.
      */
     public static String getLastErrorMessage() {
         return Kernel32Util.formatMessageFromLastErrorCode(Kernel32.INSTANCE
                 .GetLastError());
+    }
+
+    /**
+     * @return Obtains the human-readable error message text from the last error
+     *         that occurred by invocating {@code Kernel32.GetLastError()} in the specified locale.
+     */
+    public static String getLastErrorMessage(int primaryLangId, int sublangId) {
+        return Kernel32Util.formatMessageFromLastErrorCode(Kernel32.INSTANCE
+                .GetLastError(), primaryLangId, sublangId);
     }
 
     /**
