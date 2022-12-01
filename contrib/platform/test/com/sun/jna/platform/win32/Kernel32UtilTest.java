@@ -159,6 +159,18 @@ public class Kernel32UtilTest extends TestCase {
         }
     }
 
+    public void testFormatMessageFromErrorCodeWithNonEnglishLocale() {
+        int errorCode = W32Errors.S_OK.intValue();
+        String formattedMsgInDefaultLocale = Kernel32Util.formatMessage(errorCode);
+        // primary and sub languages id's of the english locale, because it is present on most machines
+        String formattedMsgInEnglishLocale = Kernel32Util.formatMessage(errorCode, 9, 1);
+        if(AbstractWin32TestSupport.isEnglishLocale) {
+            assertEquals(formattedMsgInDefaultLocale, formattedMsgInEnglishLocale);
+        } else {
+            assertNotSame(formattedMsgInDefaultLocale, formattedMsgInEnglishLocale);
+        }
+    }
+
     public void testGetTempPath() {
         assertTrue(Kernel32Util.getTempPath().length() > 0);
     }
