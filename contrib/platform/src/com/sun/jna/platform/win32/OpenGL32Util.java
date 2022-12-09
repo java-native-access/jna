@@ -41,7 +41,7 @@ public abstract class OpenGL32Util {
      * @return the function
      */
     public static Function wglGetProcAddress(String procName) {
-        Pointer funcPointer = OpenGL32.INSTANCE.wglGetProcAddress("wglEnumGpusNV");
+        Pointer funcPointer = OpenGL32.INSTANCE.wglGetProcAddress(procName);
         return (funcPointer == null) ? null : Function.getFunction(funcPointer);
     }
 

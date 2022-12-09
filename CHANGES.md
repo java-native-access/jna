@@ -19,6 +19,7 @@ Bug Fixes
 * [#1460](https://github.com/java-native-access/jna/issues/1460): Fix win32 variant date conversion in DST offest window and with millisecond values - [@eranl](https://github.com/eranl).
 * [#1472](https://github.com/java-native-access/jna/issues/1472): Fix incorrect bitmask in `c.s.j.Pointer#createConstant(int)` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1481](https://github.com/java-native-access/jna/issues/1481): Fix NPE in NativeLibrary when unpacking from classpath is disabled - [@trespasserw](https://github.com/trespasserw).
+* [#1489](https://github.com/java-native-access/jna/pull/1489): Fixes typo in `OpenGL32Util` - [@soywiz](https://github.com/soywiz).
 
 Release 5.12.1
 ==============
