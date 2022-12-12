@@ -6,7 +6,7 @@
 # THIS TABLE IS SORTED.  KEEP IT THAT WAY.
 # Most of the time we can define all the variables all at once...
 case "${host}" in
-  aarch64*-*-cygwin* | aarch64*-*-mingw* | aarch64*-*-win* )
+  aarch64*-*-cygwin* | aarch64*-*-msys* | aarch64*-*-mingw* | aarch64*-*-win* )
 	TARGET=ARM_WIN64; TARGETDIR=aarch64
 	if test "${ax_cv_c_compiler_vendor}" = "microsoft"; then
 	  MSVC=1
@@ -30,7 +30,7 @@ case "${host}" in
 	SOURCES="ffi.c arcompact.S"
 	;;
 
-  arm*-*-cygwin* | arm*-*-mingw* | arm*-*-win* )
+  arm*-*-cygwin* | arm*-*-msys* | arm*-*-mingw* | arm*-*-win* )
 	TARGET=ARM_WIN32; TARGETDIR=arm
 	if test "${ax_cv_c_compiler_vendor}" = "microsoft"; then
 	  MSVC=1
@@ -83,8 +83,8 @@ case "${host}" in
 	TARGET=X86_FREEBSD; TARGETDIR=x86
 	;;
 
-  i?86-*-cygwin* | i?86-*-mingw* | i?86-*-win* | i?86-*-os2* | i?86-*-interix* \
-  | x86_64-*-cygwin* | x86_64-*-mingw* | x86_64-*-win* )
+  i?86-*-cygwin* | i?86-*-msys* | i?86-*-mingw* | i?86-*-win* | i?86-*-os2* | i?86-*-interix* \
+  | x86_64-*-cygwin* | x86_64-*-msys* | x86_64-*-mingw* | x86_64-*-win* )
 	TARGETDIR=x86
 	if test $ac_cv_sizeof_size_t = 4; then
 	  TARGET=X86_WIN32
@@ -212,6 +212,8 @@ case "${host}" in
 	;;
   powerpc-*-aix* | rs6000-*-aix*)
 	TARGET=POWERPC_AIX; TARGETDIR=powerpc
+	# Create AIX-style "FAT" libraries.
+	tmake_file="t-aix"
 	;;
   powerpc-*-freebsd* | powerpc-*-openbsd* | powerpc-*-netbsd*)
 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc

@@ -519,8 +519,16 @@ ffi_prep_closure_loc (ffi_closure *closure, ffi_cif *cif,
   if (cif->abi <= FFI_FIRST_ABI || cif->abi >= FFI_LAST_ABI)
     return FFI_BAD_ABI;
 
-  /* We will call ffi_closure_inner with codeloc, not closure, but as long
-     as the memory is readable it should work.  */
+#if defined(FFI_EXEC_STATIC_TRAMP)
+  if (ffi_tramp_is_present(closure))
+    {
+      ffi_tramp_set_parms (closure->ftramp, ffi_closure_asm, closure);
+      goto out;
+    }
+#endif
+
+  /* Fill the dynamic trampoline.  We will call ffi_closure_inner with codeloc,
+     not closure, but as long as the memory is readable it should work.  */
   tramp[0] = 0x1800000c; /* pcaddi $t0, 0 (i.e. $t0 <- tramp) */
   tramp[1] = 0x28c0418d; /* ld.d   $t1, $t0, 16 */
   tramp[2] = 0x4c0001a0; /* jirl   $zero, $t1, 0 */
@@ -528,11 +536,15 @@ ffi_prep_closure_loc (ffi_closure *closure, ffi_cif *cif,
   tramp[4] = fn;
   tramp[5] = fn >> 32;
 
+  __builtin___clear_cache (codeloc, codeloc + FFI_TRAMPOLINE_SIZE);
+
+#if defined(FFI_EXEC_STATIC_TRAMP)
+out:
+#endif
   closure->cif = cif;
   closure->fun = fun;
   closure->user_data = user_data;
 
-  __builtin___clear_cache (codeloc, codeloc + FFI_TRAMPOLINE_SIZE);
   return FFI_OK;
 }
 
@@ -593,3 +605,17 @@ ffi_closure_inner (ffi_cif *cif,
       marshal (&cb, cif->rtype, 0, rvalue);
     }
 }
+
+#if defined(FFI_EXEC_STATIC_TRAMP)
+void *
+ffi_tramp_arch (size_t *tramp_size, size_t *map_size)
+{
+  extern void *trampoline_code_table;
+
+  *tramp_size = 16;
+  /* A mapping size of 64K is chosen to cover the page sizes of 4K, 16K, and
+     64K.  */
+  *map_size = 1 << 16;
+  return &trampoline_code_table;
+}
+#endif

@@ -61,6 +61,7 @@ typedef struct call_builder
     int used_integer;
     int used_float;
     size_t *used_stack;
+    void *struct_stack;
 } call_builder;
 
 /* integer (not pointer) less than ABI XLEN */
@@ -227,7 +228,9 @@ static void marshal(call_builder *cb, ffi_type *type, int var, void *data) {
 #endif
 
     if (type->size > 2 * __SIZEOF_POINTER__) {
-        /* pass by reference */
+        /* copy to stack and pass by reference */
+        data = memcpy (cb->struct_stack, data, type->size);
+        cb->struct_stack = (size_t *) FFI_ALIGN ((char *) cb->struct_stack + type->size, __SIZEOF_POINTER__);
         marshal_atom(cb, FFI_TYPE_POINTER, &data);
     } else if (IS_INT(type->type) || type->type == FFI_TYPE_POINTER) {
         marshal_atom(cb, type->type, data);
@@ -335,10 +338,12 @@ ffi_call_int (ffi_cif *cif, void (*fn) (void), void *rvalue, void **avalue,
        that all remaining arguments are long long / __int128 */
     size_t arg_bytes = cif->nargs <= 3 ? 0 :
         FFI_ALIGN(2 * sizeof(size_t) * (cif->nargs - 3), STKALIGN);
+    /* Allocate space for copies of big structures.  */
+    size_t struct_bytes = FFI_ALIGN (cif->bytes, STKALIGN);
     size_t rval_bytes = 0;
     if (rvalue == NULL && cif->rtype->size > 2*__SIZEOF_POINTER__)
         rval_bytes = FFI_ALIGN(cif->rtype->size, STKALIGN);
-    size_t alloc_size = arg_bytes + rval_bytes + sizeof(call_context);
+    size_t alloc_size = arg_bytes + rval_bytes + struct_bytes + sizeof(call_context);
 
     /* the assembly code will deallocate all stack data at lower addresses
        than the argument region, so we need to allocate the frame and the
@@ -358,8 +363,9 @@ ffi_call_int (ffi_cif *cif, void (*fn) (void), void *rvalue, void **avalue,
 
     call_builder cb;
     cb.used_float = cb.used_integer = 0;
-    cb.aregs = (call_context*)(alloc_base + arg_bytes + rval_bytes);
+    cb.aregs = (call_context*)(alloc_base + arg_bytes + rval_bytes + struct_bytes);
     cb.used_stack = (void*)alloc_base;
+    cb.struct_stack = (void *) (alloc_base + arg_bytes + rval_bytes);
 
     int return_by_ref = passed_by_ref(&cb, cif->rtype, 0);
     if (return_by_ref)

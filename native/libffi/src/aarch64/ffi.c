@@ -295,7 +295,7 @@ allocate_to_stack (struct arg_state *state, void *stack,
   if (alignment < 8)
     alignment = 8;
 #endif
-    
+
   nsaa = FFI_ALIGN (nsaa, alignment);
   state->nsaa = nsaa + size;
 
@@ -323,24 +323,55 @@ extend_integer_type (void *source, int type)
   switch (type)
     {
     case FFI_TYPE_UINT8:
-      return *(UINT8 *) source;
+      {
+        UINT8 u8;
+        memcpy (&u8, source, sizeof (u8));
+        return u8;
+      }
     case FFI_TYPE_SINT8:
-      return *(SINT8 *) source;
+      {
+        SINT8 s8;
+        memcpy (&s8, source, sizeof (s8));
+        return s8;
+      }
     case FFI_TYPE_UINT16:
-      return *(UINT16 *) source;
+      {
+        UINT16 u16;
+        memcpy (&u16, source, sizeof (u16));
+        return u16;
+      }
     case FFI_TYPE_SINT16:
-      return *(SINT16 *) source;
+      {
+        SINT16 s16;
+        memcpy (&s16, source, sizeof (s16));
+        return s16;
+      }
     case FFI_TYPE_UINT32:
-      return *(UINT32 *) source;
+      {
+        UINT32 u32;
+        memcpy (&u32, source, sizeof (u32));
+        return u32;
+      }
     case FFI_TYPE_INT:
     case FFI_TYPE_SINT32:
-      return *(SINT32 *) source;
+      {
+        SINT32 s32;
+        memcpy (&s32, source, sizeof (s32));
+        return s32;
+      }
     case FFI_TYPE_UINT64:
     case FFI_TYPE_SINT64:
-      return *(UINT64 *) source;
-      break;
+      {
+        UINT64 u64;
+        memcpy (&u64, source, sizeof (u64));
+        return u64;
+      }
     case FFI_TYPE_POINTER:
-      return *(uintptr_t *) source;
+      {
+        uintptr_t uptr;
+        memcpy (&uptr, source, sizeof (uptr));
+        return uptr;
+      }
     default:
       abort();
     }
@@ -825,21 +856,21 @@ ffi_prep_closure_loc (ffi_closure *closure,
     return FFI_BAD_ABI;
 
   void (*start)(void);
-  
+
   if (cif->flags & AARCH64_FLAG_ARG_V)
     start = ffi_closure_SYSV_V;
   else
     start = ffi_closure_SYSV;
 
 #if FFI_EXEC_TRAMPOLINE_TABLE
-#ifdef __MACH__
-#ifdef HAVE_PTRAUTH
+# ifdef __MACH__
+#  ifdef HAVE_PTRAUTH
   codeloc = ptrauth_auth_data(codeloc, ptrauth_key_function_pointer, 0);
-#endif
+#  endif
   void **config = (void **)((uint8_t *)codeloc - PAGE_MAX_SIZE);
   config[0] = closure;
   config[1] = start;
-#endif
+# endif
 #else
   static const unsigned char trampoline[16] = {
     0x90, 0x00, 0x00, 0x58,	/* ldr	x16, tramp+16	*/
@@ -848,7 +879,7 @@ ffi_prep_closure_loc (ffi_closure *closure,
   };
   char *tramp = closure->tramp;
 
-#if defined(FFI_EXEC_STATIC_TRAMP)
+# if defined(FFI_EXEC_STATIC_TRAMP)
   if (ffi_tramp_is_present(closure))
     {
       /* Initialize the static trampoline's parameters. */
@@ -859,25 +890,27 @@ ffi_prep_closure_loc (ffi_closure *closure,
       ffi_tramp_set_parms (closure->ftramp, start, closure);
       goto out;
     }
-#endif
+# endif
 
   /* Initialize the dynamic trampoline. */
   memcpy (tramp, trampoline, sizeof(trampoline));
-  
+
   *(UINT64 *)(tramp + 16) = (uintptr_t)start;
 
   ffi_clear_cache(tramp, tramp + FFI_TRAMPOLINE_SIZE);
 
   /* Also flush the cache for code mapping.  */
-#ifdef _WIN32
+# ifdef _WIN32
   // Not using dlmalloc.c for Windows ARM64 builds
   // so calling ffi_data_to_code_pointer() isn't necessary
   unsigned char *tramp_code = tramp;
-  #else
+# else
   unsigned char *tramp_code = ffi_data_to_code_pointer (tramp);
-  #endif
+# endif
   ffi_clear_cache (tramp_code, tramp_code + FFI_TRAMPOLINE_SIZE);
+# if defined(FFI_EXEC_STATIC_TRAMP)
 out:
+# endif
 #endif
 
   closure->cif = cif;
@@ -989,7 +1022,7 @@ ffi_closure_SYSV_inner (ffi_cif *cif,
                     {
                       void *reg = &context->x[state.ngrn];
                       state.ngrn += (unsigned int)n;
-    
+
                       /* Eeek! We need a pointer to the structure, however the
                        homogeneous float elements are being passed in individual
                        registers, therefore for float and double the structure
@@ -1027,9 +1060,18 @@ ffi_closure_SYSV_inner (ffi_cif *cif,
             {
               /* Replace Composite type of size greater than 16 with a
                   pointer.  */
+#ifdef __ILP32__
+             UINT64 avalue_tmp;
+             memcpy (&avalue_tmp,
+                  allocate_int_to_reg_or_stack (context, &state,
+                                               stack, sizeof (void *)),
+                  sizeof (UINT64));
+             avalue[i] = (void *)(UINT32)avalue_tmp;
+#else
               avalue[i] = *(void **)
               allocate_int_to_reg_or_stack (context, &state, stack,
                                          sizeof (void *));
+#endif
             }
           else
             {

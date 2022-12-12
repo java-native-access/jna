@@ -799,7 +799,9 @@ ffi_prep_closure_loc (ffi_closure* closure,
   memcpy (tramp, trampoline, sizeof(trampoline));
   *(UINT64 *)(tramp + sizeof (trampoline)) = (uintptr_t)dest;
 
+#if defined(FFI_EXEC_STATIC_TRAMP)
 out:
+#endif
   closure->cif = cif;
   closure->fun = fun;
   closure->user_data = user_data;

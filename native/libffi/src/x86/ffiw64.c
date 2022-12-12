@@ -263,7 +263,9 @@ EFI64(ffi_prep_closure_loc)(ffi_closure* closure,
   memcpy (tramp, trampoline, sizeof(trampoline));
   *(UINT64 *)(tramp + sizeof (trampoline)) = (uintptr_t)ffi_closure_win64;
 
+#if defined(FFI_EXEC_STATIC_TRAMP)
 out:
+#endif
   closure->cif = cif;
   closure->fun = fun;
   closure->user_data = user_data;

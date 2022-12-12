@@ -6,7 +6,7 @@ if [[ $RUNNER_OS != 'Linux' ]]; then
     # brew update > brew-update.log 2>&1
     # fix an issue with libtool on travis by reinstalling it
     brew uninstall libtool;
-    brew install libtool dejagnu;
+    brew install automake libtool dejagnu;
 
     # Download and extract the rlgl client
     wget -qO - https://rl.gl/cli/rlgl-darwin-amd64.tgz | \
@@ -35,6 +35,12 @@ else
 
     sudo apt-get clean # clear the cache
     sudo apt-get update
+
+    set -x
+    wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 0 -qO - https://ftpmirror.gnu.org/autoconf/autoconf-2.71.tar.gz | tar -xvzf -
+    mkdir -p ~/i
+    (cd autoconf-2.71; ./configure --prefix=$HOME/i; make; make install)
+
     case $HOST in
 	mips64el-linux-gnu | sparc64-linux-gnu)
         ;;

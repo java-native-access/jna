@@ -5,7 +5,7 @@
 #
 # Here are a set of rules to help you update your library version
 # information:
-# 
+#
 # 1. Start with version information of `0:0:0' for each libtool library.
 #
 # 2. Update the version information only immediately before a public
@@ -26,4 +26,4 @@
 #    release, then set age to 0.
 #
 # CURRENT:REVISION:AGE
-9:0:1
+9:2:1

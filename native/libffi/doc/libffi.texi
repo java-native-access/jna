@@ -18,7 +18,7 @@
 This manual is for libffi, a portable foreign function interface
 library.
 
-Copyright @copyright{} 2008--2019, 2021 Anthony Green and Red Hat, Inc.
+Copyright @copyright{} 2008--2019, 2021, 2022 Anthony Green and Red Hat, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -91,10 +91,10 @@ sometimes called the @dfn{ABI} or @dfn{Application Binary Interface}.
 Some programs may not know at the time of compilation what arguments
 are to be passed to a function.  For instance, an interpreter may be
 told at run-time about the number and types of arguments used to call
-a given function.  @samp{Libffi} can be used in such programs to
+a given function.  @code{libffi} can be used in such programs to
 provide a bridge from the interpreter program to compiled code.
 
-The @samp{libffi} library provides a portable, high level programming
+The @code{libffi} library provides a portable, high level programming
 interface to various calling conventions.  This allows a programmer to
 call any function specified by a call interface description at run
 time.
@@ -102,9 +102,9 @@ time.
 @acronym{FFI} stands for Foreign Function Interface.  A foreign
 function interface is the popular name for the interface that allows
 code written in one language to call code written in another language.
-The @samp{libffi} library really only provides the lowest, machine
+The @code{libffi} library really only provides the lowest, machine
 dependent layer of a fully featured foreign function interface.  A
-layer must exist above @samp{libffi} that handles type conversions for
+layer must exist above @code{libffi} that handles type conversions for
 values passed between the two languages.
 @cindex FFI
 @cindex Foreign Function Interface
@@ -127,7 +127,7 @@ values passed between the two languages.
 @node The Basics
 @section The Basics
 
-@samp{Libffi} assumes that you have a pointer to the function you wish
+@code{libffi} assumes that you have a pointer to the function you wish
 to call and that you know the number and types of arguments to pass
 it, as well as the return type of the function.
 
@@ -213,22 +213,20 @@ to ensure this.  If @var{cif} declares that the function returns
 @code{void} (using @code{ffi_type_void}), then @var{rvalue} is
 ignored.
 
-In most situations, @samp{libffi} will handle promotion according to
+In most situations, @code{libffi} will handle promotion according to
 the ABI.  However, for historical reasons, there is a special case
 with return values that must be handled by your code.  In particular,
 for integral (not @code{struct}) types that are narrower than the
 system register size, the return value will be widened by
-@samp{libffi}.  @samp{libffi} provides a type, @code{ffi_arg}, that
+@code{libffi}.  @code{libffi} provides a type, @code{ffi_arg}, that
 can be used as the return type.  For example, if the CIF was defined
-with a return type of @code{char}, @samp{libffi} will try to store a
+with a return type of @code{char}, @code{libffi} will try to store a
 full @code{ffi_arg} into the return value.
 
 @var{avalues} is a vector of @code{void *} pointers that point to the
 memory locations holding the argument values for a call.  If @var{cif}
 declares that the function has no arguments (i.e., @var{nargs} was 0),
-then @var{avalues} is ignored.  Note that argument values may be
-modified by the callee (for instance, structs passed by value); the
-burden of copying pass-by-value arguments is placed on the caller.
+then @var{avalues} is ignored.
 
 Note that while the return value must be register-sized, arguments
 should exactly match their declared type.  For example, if an argument
@@ -412,8 +410,8 @@ when passing to @code{ffi_prep_cif}.
 @node Structures
 @subsection Structures
 
-@samp{libffi} is perfectly happy passing structures back and forth.
-You must first describe the structure to @samp{libffi} by creating a
+@code{libffi} is perfectly happy passing structures back and forth.
+You must first describe the structure to @code{libffi} by creating a
 new @code{ffi_type} object for it.
 
 @tindex ffi_type
@@ -433,7 +431,7 @@ For a structure, this should be set to @code{FFI_TYPE_STRUCT}.
 This is a @samp{NULL}-terminated array of pointers to @code{ffi_type}
 objects.  There is one element per field of the struct.
 
-Note that @samp{libffi} has no special support for bit-fields.  You
+Note that @code{libffi} has no special support for bit-fields.  You
 must manage these manually.
 @end table
 @end deftp
@@ -510,7 +508,7 @@ valid here.
 
 @subsubsection Arrays
 
-@samp{libffi} does not have direct support for arrays or unions.
+@code{libffi} does not have direct support for arrays or unions.
 However, they can be emulated using structures.
 
 To emulate an array, simply create an @code{ffi_type} using
@@ -537,7 +535,7 @@ structure types created like this should only be used to refer to
 members of real @code{FFI_TYPE_STRUCT} objects.
 
 However, a phony array type like this will not cause any errors from
-@samp{libffi} if you use it as an argument or return type.  This may
+@code{libffi} if you use it as an argument or return type.  This may
 be confusing.
 
 @subsubsection Unions
@@ -646,7 +644,7 @@ Here is the corresponding code to describe this struct to
 @node Complex
 @subsection Complex Types
 
-@samp{libffi} supports the complex types defined by the C99
+@code{libffi} supports the complex types defined by the C99
 standard (@code{_Complex float}, @code{_Complex double} and
 @code{_Complex long double} with the built-in type descriptors
 @code{ffi_type_complex_float}, @code{ffi_type_complex_double} and
@@ -654,7 +652,7 @@ standard (@code{_Complex float}, @code{_Complex double} and
 
 Custom complex types like @code{_Complex int} can also be used.
 An @code{ffi_type} object has to be defined to describe the
-complex type to @samp{libffi}.
+complex type to @code{libffi}.
 
 @tindex ffi_type
 @deftp {Data type} ffi_type
@@ -821,7 +819,6 @@ Free memory allocated using @code{ffi_closure_alloc}.  The argument is
 the writable address that was returned.
 @end defun
 
-
 Once you have allocated the memory for a closure, you must construct a
 @code{ffi_cif} describing the function call.  Finally you can prepare
 the closure function:
@@ -977,7 +974,7 @@ type is @code{long double}.
 Note that memory allocated by @code{ffi_closure_alloc} and freed by
 @code{ffi_closure_free} does not come from the same general pool of
 memory that @code{malloc} and @code{free} use.  To accomodate security
-settings, @samp{libffi} may aquire memory, for example, by mapping
+settings, @code{libffi} may aquire memory, for example, by mapping
 temporary files into multiple places in the address space (once to
 write out the closure, a second to execute it).  The search follows
 this list, using the first that works:

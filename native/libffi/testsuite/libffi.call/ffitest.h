@@ -88,8 +88,8 @@
 
 #endif
 
-/* MinGW kludge.  */
-#if defined(_WIN64) | defined(_WIN32)
+/* msvc kludge.  */
+#if defined(_MSC_VER)
 #define PRIdLL "I64d"
 #define PRIuLL "I64u"
 #else
