@@ -1,18 +1,17 @@
 os: linux
-dist: trusty
+dist: jammy
 
 language: java
 
 before_install:
-  - |
-    if ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md$)'
-    then
-      echo "Not running CI since only docs were changed."
-      travis_terminate 0
-    fi
-  - sudo apt-get -m install openjdk-11-jdk libltdl-dev;
+  - sudo apt-get -m install openjdk-11-jdk libltdl-dev curl;
   - export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64;
-  - export PATH=$JAVA_HOME/bin:$PATH; 
+  - export PATH=$JAVA_HOME/bin:$PATH;
+  - mkdir $HOME/local
+  - export PATH=$HOME/local/bin:$PATH
+  - curl -o autoconf-2.71.tar.gz https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+  - tar xzvf autoconf-2.71.tar.gz
+  - cd autoconf-2.71; ./configure --prefix $HOME/local; make; make install; cd ..
 
 install:
   - export APACHE_ANT_BASE=$(curl http://apache.mirror.iphh.net/ant/binaries/ | grep "apache-ant-1.9..*-bin.tar.gz" | tail -1 | sed  's/.*href="\([^"]*\)-bin.tar.gz".*/\1/g')
