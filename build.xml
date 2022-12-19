@@ -470,7 +470,11 @@
               <attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
               <attribute name="Bundle-Vendor" value="${vendor}"/>
               <attribute name="Bundle-ActivationPolicy" value="lazy"/>
-              <attribute name="Export-Package" value="com.sun.jna;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.ptr;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.win32;version=${jna.major}.${jna.minor}.${jna.revision}"/>
+              <attribute name="Export-Package" value="
+com.sun.jna;version=&quot;${osgi.version}&quot;,
+com.sun.jna.ptr;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna&quot;,
+com.sun.jna.win32;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna&quot;
+"/>
               <!-- Note that no terminal "*" is included in this list,
                  which will force failure on unsupported platforms.
               -->

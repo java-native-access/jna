@@ -147,20 +147,20 @@
                 <attribute name="Require-Bundle" value="com.sun.jna;bundle-version=&quot;${osgi.version}&quot;"/>
                 <attribute name="Export-Package"
                            value="
-com.sun.jna.platform;version=${osgi.version},
-com.sun.jna.platform.dnd;version=${osgi.version},
-com.sun.jna.platform.linux;version=${osgi.version},
-com.sun.jna.platform.mac;version=${osgi.version},
-com.sun.jna.platform.unix;version=${osgi.version},
-com.sun.jna.platform.unix.aix;version=${osgi.version},
-com.sun.jna.platform.unix.solaris;version=${osgi.version},
-com.sun.jna.platform.win32;version=${osgi.version},
-com.sun.jna.platform.win32.COM;version=${osgi.version},
-com.sun.jna.platform.win32.COM.tlb;version=${osgi.version},
-com.sun.jna.platform.win32.COM.tlb.imp;version=${osgi.version},
-com.sun.jna.platform.win32.COM.util;version=${osgi.version},
-com.sun.jna.platform.win32.COM.util.annotation;version=${osgi.version},
-com.sun.jna.platform.wince;version=${osgi.version}
+com.sun.jna.platform;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.platform.win32&quot;,
+com.sun.jna.platform.dnd;version=&quot;${osgi.version}&quot;,
+com.sun.jna.platform.linux;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.platform.unix&quot;,
+com.sun.jna.platform.mac;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.platform,com.sun.jna.platform.unix,com.sun.jna.ptr&quot;,
+com.sun.jna.platform.unix;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.ptr&quot;,
+com.sun.jna.platform.unix.aix;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna&quot;,
+com.sun.jna.platform.unix.solaris;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.ptr&quot;,
+com.sun.jna.platform.win32;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.platform,com.sun.jna.platform.win32.COM,com.sun.jna.ptr,com.sun.jna.win32&quot;,
+com.sun.jna.platform.win32.COM;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.platform.win32,com.sun.jna.platform.win32.COM.util,com.sun.jna.ptr,com.sun.jna.win32&quot;,
+com.sun.jna.platform.win32.COM.tlb;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna.platform.win32.COM.tlb.imp&quot;,
+com.sun.jna.platform.win32.COM.tlb.imp;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna.platform.win32,com.sun.jna.platform.win32.COM&quot;,
+com.sun.jna.platform.win32.COM.util;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.platform.win32,com.sun.jna.platform.win32.COM,com.sun.jna.platform.win32.COM.util.annotation,com.sun.jna.ptr&quot;,
+com.sun.jna.platform.win32.COM.util.annotation;version=&quot;${osgi.version}&quot;,
+com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.sun.jna,com.sun.jna.platform.win32&quot;
 "/>
             </manifest>
             <manifest file="@{target}" mode="update" if:true="@{module-info}">
