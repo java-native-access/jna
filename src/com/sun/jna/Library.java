@@ -114,6 +114,11 @@ public interface Library {
      */
     String OPTION_CLASSLOADER = "classloader";
 
+    /**
+     * Supports a custom symbol provider for the NativeLibrary (see {@link SymbolProvider})
+     */
+    String OPTION_SYMBOL_PROVIDER = "symbol-provider";
+
     static class Handler implements InvocationHandler {
 
         static final Method OBJECT_TOSTRING;

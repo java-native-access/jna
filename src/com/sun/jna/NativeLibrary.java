@@ -87,13 +87,20 @@ import java.util.logging.Logger;
 public class NativeLibrary implements Closeable {
 
     private static final Logger LOG = Logger.getLogger(NativeLibrary.class.getName());
-    private final static Level DEBUG_LOAD_LEVEL = DEBUG_LOAD ? Level.INFO : Level.FINE;
+    private static final Level DEBUG_LOAD_LEVEL = DEBUG_LOAD ? Level.INFO : Level.FINE;
+    private static final SymbolProvider NATIVE_SYMBOL_PROVIDER = new SymbolProvider() {
+        @Override
+        public long getSymbolAddress(long handle, String name, SymbolProvider parent) {
+            return Native.findSymbol(handle, name);
+        }
+    };
 
     private Cleaner.Cleanable cleanable;
     private long handle;
     private final String libraryName;
     private final String libraryPath;
     private final Map<String, Function> functions = new HashMap<String, Function>();
+    private final SymbolProvider symbolProvider;
     final int callFlags;
     private String encoding;
     final Map<String, ?> options;
@@ -123,6 +130,13 @@ public class NativeLibrary implements Closeable {
         this.callFlags = callingConvention;
         this.options = options;
         this.encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
+        SymbolProvider optionSymbolProvider = (SymbolProvider)options.get(Library.OPTION_SYMBOL_PROVIDER);
+        if (optionSymbolProvider == null) {
+            this.symbolProvider = NATIVE_SYMBOL_PROVIDER;
+        } else {
+            this.symbolProvider = optionSymbolProvider;
+        }
+
         if (this.encoding == null) {
             this.encoding = Native.getDefaultStringEncoding();
         }
@@ -636,7 +650,7 @@ public class NativeLibrary implements Closeable {
         if (handle == 0) {
             throw new UnsatisfiedLinkError("Library has been unloaded");
         }
-        return Native.findSymbol(handle, name);
+        return this.symbolProvider.getSymbolAddress(handle, name, NATIVE_SYMBOL_PROVIDER);
     }
 
     @Override

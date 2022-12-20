@@ -12,6 +12,7 @@ Features
 * [#1471](https://github.com/java-native-access/jna/pull/1471): Add `c.s.j.p.win32.Advapi32Util#isCurrentProcessElevated` and associated Types - [@dbwiddis](https://github.com/dbwiddis).
 * [#1474](https://github.com/java-native-access/jna/pull/1474): Add `c.s.j.p.win32.WbemCli#IWbemClassObject.IWbemQualifierSet`, `IWbemServices.GetObject`, `IWbemContext.SetValue` and associated methods - [@rchateauneu](https://github.com/rchateauneu).
 * [#1482](https://github.com/java-native-access/jna/pull/1482): Add multilingual support of `Kernel32Util.formatMessage` - [@overpathz](https://github.com/overpathz).
+* [#1490](https://github.com/java-native-access/jna/pull/1490): Adds support for a custom `SymbolProvider` in `NativeLibrary` & `Library` - [@soywiz](https://github.com/soywiz).
 
 Bug Fixes
 ---------
