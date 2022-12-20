@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 2017  Anthony Green
+   ffi.c - Copyright (c) 2017, 2022  Anthony Green
            Copyright (c) 1996, 1998, 1999, 2001, 2007, 2008  Red Hat, Inc.
            Copyright (c) 2002  Ranjit Mathew
            Copyright (c) 2002  Bo Thorsen
@@ -117,35 +117,37 @@ ffi_prep_cif_machdep(ffi_cif *cif)
       flags = X86_RET_INT64;
       break;
     case FFI_TYPE_STRUCT:
-#ifndef X86
-      /* ??? This should be a different ABI rather than an ifdef.  */
-      if (cif->rtype->size == 1)
-	flags = X86_RET_STRUCT_1B;
-      else if (cif->rtype->size == 2)
-	flags = X86_RET_STRUCT_2B;
-      else if (cif->rtype->size == 4)
-	flags = X86_RET_INT32;
-      else if (cif->rtype->size == 8)
-	flags = X86_RET_INT64;
-      else
+      {
+#ifdef X86_WIN32
+        size_t size = cif->rtype->size;
+        if (size == 1)
+          flags = X86_RET_STRUCT_1B;
+        else if (size == 2)
+          flags = X86_RET_STRUCT_2B;
+        else if (size == 4)
+          flags = X86_RET_INT32;
+        else if (size == 8)
+          flags = X86_RET_INT64;
+        else
 #endif
-	{
-	do_struct:
-	  switch (cabi)
-	    {
-	    case FFI_THISCALL:
-	    case FFI_FASTCALL:
-	    case FFI_STDCALL:
-	    case FFI_MS_CDECL:
-	      flags = X86_RET_STRUCTARG;
-	      break;
-	    default:
-	      flags = X86_RET_STRUCTPOP;
-	      break;
-	    }
-	  /* Allocate space for return value pointer.  */
-	  bytes += FFI_ALIGN (sizeof(void*), FFI_SIZEOF_ARG);
-	}
+          {
+          do_struct:
+            switch (cabi)
+              {
+              case FFI_THISCALL:
+              case FFI_FASTCALL:
+              case FFI_STDCALL:
+              case FFI_MS_CDECL:
+                flags = X86_RET_STRUCTARG;
+                break;
+              default:
+                flags = X86_RET_STRUCTPOP;
+                break;
+              }
+            /* Allocate space for return value pointer.  */
+            bytes += FFI_ALIGN (sizeof(void*), FFI_SIZEOF_ARG);
+          }
+      }
       break;
     case FFI_TYPE_COMPLEX:
       switch (cif->rtype->elements[0]->type)
@@ -182,10 +184,12 @@ ffi_prep_cif_machdep(ffi_cif *cif)
     {
       ffi_type *t = cif->arg_types[i];
 
-#if defined(_M_IX86)
-      if (cif->abi != FFI_STDCALL)
+#if defined(X86_WIN32)
+      if (cabi == FFI_STDCALL)
+        bytes = FFI_ALIGN (bytes, FFI_SIZEOF_ARG);
+      else
 #endif
-      bytes = FFI_ALIGN (bytes, t->alignment);
+        bytes = FFI_ALIGN (bytes, t->alignment);
       bytes += FFI_ALIGN (t->size, FFI_SIZEOF_ARG);
     }
   cif->bytes = bytes;
@@ -381,7 +385,7 @@ ffi_call_int (ffi_cif *cif, void (*fn)(void), void *rvalue,
 	     cases.  */
 	  if (t == FFI_TYPE_STRUCT && ty->alignment >= 16)
 	    align = 16;
-	    
+
 	  if (dir < 0)
 	    {
 	      /* ??? These reverse argument ABIs are probably too old
@@ -612,7 +616,9 @@ ffi_prep_closure_loc (ffi_closure* closure,
   tramp[9] = 0xe9;
   *(unsigned *)(tramp + 10) = (unsigned)dest - ((unsigned)codeloc + 14);
 
+#if defined(FFI_EXEC_STATIC_TRAMP)
 out:
+#endif
   closure->cif = cif;
   closure->fun = fun;
   closure->user_data = user_data;

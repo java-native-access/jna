@@ -147,7 +147,7 @@ ffi_call_asm:
 	.size	ffi_call_asm, .-ffi_call_asm
 
 
-/* ffi_closure_asm. Expects address of the passed-in ffi_closure in t1.
+/* ffi_closure_asm. Expects address of the passed-in ffi_closure in t0.
    void ffi_closure_inner (ffi_cif *cif,
 			   void (*fun)(ffi_cif *, void *, void **, void *),
 			   void *user_data,
@@ -218,6 +218,37 @@ ffi_closure_asm:
 	jr	$ra
 	.cfi_endproc
 	.size	ffi_closure_asm, .-ffi_closure_asm
+
+/* Static trampoline code table, in which each element is a trampoline.
+
+   The trampoline clobbers t0 and t1, but we don't save them on the stack
+   because our psABI explicitly says they are scratch registers, at least for
+   ELF.  Our dynamic trampoline is already clobbering them anyway.
+
+   The trampoline has two parameters - target code to jump to and data for
+   the target code. The trampoline extracts the parameters from its parameter
+   block (see tramp_table_map()).  The trampoline saves the data address in
+   t0 and jumps to the target code.  As ffi_closure_asm() already expects the
+   data address to be in t0, we don't need a "ffi_closure_asm_alt".  */
+
+#if defined(FFI_EXEC_STATIC_TRAMP)
+	.align	16
+	.globl	trampoline_code_table
+	.hidden	trampoline_code_table
+	.type	trampoline_code_table, @function
+
+trampoline_code_table:
+
+	.rept	65536 / 16
+	pcaddu12i	$t1, 16 # 65536 >> 12
+	ld.d	$t0, $t1, 0
+	ld.d	$t1, $t1, 8
+	jirl	$zero, $t1, 0
+	.endr
+	.size	trampoline_code_table, .-trampoline_code_table
+
+	.align	2
+#endif
 
 /* ffi_go_closure_asm.  Expects address of the passed-in ffi_go_closure in t2.
    void ffi_closure_inner (ffi_cif *cif,

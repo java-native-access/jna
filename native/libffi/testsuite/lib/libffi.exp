@@ -1,4 +1,4 @@
-#   Copyright (C) 2003, 2005, 2008, 2009, 2010, 2011, 2014, 2019 Free Software Foundation, Inc.
+#   Copyright (C) 2003, 2005, 2008, 2009, 2010, 2011, 2014, 2019, 2022 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ proc is-effective-target { arg } {
     if { [info procs check_effective_target_${arg}] != [list] } {
 	set selected [check_effective_target_${arg}]
     } else {
-	error "unknown effective target keyword `$arg'" 
+	error "unknown effective target keyword `$arg'"
     }
     verbose "is-effective-target: $arg $selected" 2
     return $selected
@@ -196,7 +196,7 @@ if { [info procs saved-dg-process-target] == [list] } {
 		return "N"
 	    }
 	    return [dg-process-target-1 $xfail_selector]
-	    
+
 	}
 	return [dg-process-target-1 $selector]
     }
@@ -269,6 +269,8 @@ proc libffi-dg-test { prog do_what extra_tool_flags } {
 proc libffi-dg-prune { target_triplet text } {
     # We get this with some qemu emulated systems (eg. ppc64le-linux-gnu)
     regsub -all "(^|\n)\[^\n\]*unable to perform all requested operations" $text "" text
+    # We get this from sparc64 linux systems
+    regsub -all "(^|\n)\[^\n\]*warning: .* has a LOAD segment with RWX permissions" $text "" text
     return $text
 }
 
@@ -376,7 +378,8 @@ proc libffi_target_compile { source dest type options } {
 
     if { [istarget "*-*-darwin9*"] || [istarget "*-*-darwin1*"]
 	 || [istarget "*-*-darwin2*"] } {
-	lappend options "additional_flags=-Wl,-allow_stack_execute"
+	# lappend options "additional_flags=-Wl,-allow_stack_execute"
+        lappend options "additional_flags=-Wno-unused-command-line-argument"
     }
 
     # If you're building the compiler with --prefix set to a place
@@ -394,17 +397,23 @@ proc libffi_target_compile { source dest type options } {
 
     lappend options "libs= -lffi"
 
-    if { [string match "aarch64*-*-linux*" $target_triplet] } {
-	lappend options "libs= -lpthread"
-    }
+    if { ![string match "*android*" $target_triplet] } {
 
-    # this may be required for g++, but just confused clang.
-    if { [string match "*.cc" $source] } {
-        lappend options "c++"
-    }
+        if { [string match "aarch64*-*-linux*" $target_triplet] } {
+            lappend options "libs= -lpthread"
+        }
 
-    if { [string match "arc*-*-linux*" $target_triplet] } {
-	lappend options "libs= -lpthread"
+        # this may be required for g++, but just confused clang.
+        if { [string match "*.cc" $source] } {
+            lappend options "c++"
+            if { [string match "*-*-darwin*" $target_triplet] } {
+                lappend options "libs= -lc++"
+            }
+        }
+
+        if { [string match "arc*-*-linux*" $target_triplet] } {
+            lappend options "libs= -lpthread"
+        }
     }
 
     verbose "options: $options"
@@ -486,7 +495,7 @@ proc run-many-tests { testcases extra_flags } {
         set common "-W -Wall"
         if [info exists env(LIBFFI_TEST_OPTIMIZATION)] {
 	  set optimizations [ list $env(LIBFFI_TEST_OPTIMIZATION) ]
-        } else { 
+        } else {
           set optimizations { "-O0" "-O2" }
         }
       }
@@ -494,7 +503,7 @@ proc run-many-tests { testcases extra_flags } {
         set common "-W -Wall -Wno-psabi"
         if [info exists env(LIBFFI_TEST_OPTIMIZATION)] {
 	  set optimizations [ list $env(LIBFFI_TEST_OPTIMIZATION) ]
-        } else { 
+        } else {
           set optimizations { "-O0" "-O2" }
         }
       }
@@ -503,7 +512,7 @@ proc run-many-tests { testcases extra_flags } {
         set common ""
         if [info exists env(LIBFFI_TEST_OPTIMIZATION)] {
 	  set optimizations [ list $env(LIBFFI_TEST_OPTIMIZATION) ]
-        } else { 
+        } else {
           set optimizations { "" }
         }
       }
@@ -592,7 +601,7 @@ proc check-flags { args } {
     # compare them to the actual options.
     if { [string compare [lindex $args 2] "*"] == 0
 	 && [string compare [lindex $args 3] "" ] == 0 } {
-	set result 1    
+	set result 1
     } else {
 	# The target list might be an effective-target keyword, so replace
 	# the original list with "*-*-*", since we already know it matches.

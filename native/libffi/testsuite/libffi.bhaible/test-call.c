@@ -50,6 +50,7 @@ int _fprintf(FILE *stream, const char *format, ...)
     case 3:
       vsprintf(&rbuf2[strlen(rbuf2)], format, args);
       printf("%s", rbuf2);
+      fflush (stdout);
       if (strcmp (rbuf1, rbuf2)) abort();
       break;
     }

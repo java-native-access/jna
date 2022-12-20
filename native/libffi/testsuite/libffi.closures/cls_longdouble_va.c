@@ -5,7 +5,7 @@
    Originator:	Blake Chaffin 6/6/2007	 */
 
 /* { dg-do run { xfail strongarm*-*-* xscale*-*-* } } */
-/* { dg-output "" { xfail avr32*-*-* x86_64-*-mingw* } } */
+/* { dg-output "" { xfail avr32*-*-* } } */
 /* { dg-output "" { xfail mips-sgi-irix6* } } PR libffi/46660 */
 
 #include "ffitest.h"
@@ -14,7 +14,7 @@
 static char buffer[BUF_SIZE];
 
 static void
-cls_longdouble_va_fn(ffi_cif* cif __UNUSED__, void* resp, 
+cls_longdouble_va_fn(ffi_cif* cif __UNUSED__, void* resp,
 		     void** args, void* userdata __UNUSED__)
 {
 	char*		format	= *(char**)args[0];

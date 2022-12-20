@@ -66,7 +66,7 @@ ifneq ($(DYNAMIC_LIBFFI),true)
 FFI_SRC=$(shell pwd)/libffi
 FFI_BUILD=$(BUILD)/libffi
 FFI_LIB=$(FFI_BUILD)/.libs/libffi$(ARSFX)
-FFI_ENV=CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)"
+FFI_ENV=CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) -DFFI_STATIC_BUILD" CPPFLAGS="$(CDEFINES) -DFFI_STATIC_BUILD"
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes
 endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
@@ -172,7 +172,7 @@ CPP=$(PREFIX)cpp
 LD=$(CC)
 RANLIB=$(PREFIX)ranlib
 STRIP=$(PREFIX)strip -x
-CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
+CDEFINES=-DFFI_STATIC_BUILD -DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
 COPT+=-fpic -ffunction-sections -funwind-tables -fno-short-enums
 JAVA_INCLUDES=
 CINCLUDES+=-I"$(NDK_PLATFORM)/arch-$(AARCH)/usr/include" # -I/usr/include

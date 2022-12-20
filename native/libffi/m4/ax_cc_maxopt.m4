@@ -55,7 +55,7 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 18
+#serial 22
 
 AC_DEFUN([AX_CC_MAXOPT],
 [
@@ -67,7 +67,7 @@ AC_ARG_ENABLE(portable-binary, [AS_HELP_STRING([--enable-portable-binary], [disa
 	acx_maxopt_portable=$enableval, acx_maxopt_portable=no)
 
 # Try to determine "good" native compiler flags if none specified via CFLAGS
-if test "$ac_test_CFLAGS" != "set"; then
+if test "x$ac_test_CFLAGS" = "x"; then
   case $ax_cv_c_compiler_vendor in
     dec) CFLAGS="$CFLAGS -newc -w0 -O5 -ansi_alias -ansi_args -fp_reorder -tune host"
 	 if test "x$acx_maxopt_portable" = xno; then
@@ -143,12 +143,18 @@ if test "$ac_test_CFLAGS" != "set"; then
         fi
 	;;
 
+    nvhpc)
+     # default optimization flags for nvhpc
+     CFLAGS="$CFLAGS -O3"
+     ;;
+
     gnu)
      # default optimization flags for gcc on all systems
      CFLAGS="$CFLAGS -O3 -fomit-frame-pointer"
 
      # -malign-double for x86 systems
-     # libffi local change -- don't align double, as it changes the ABI
+     # LIBFFI_LOCAL: don't do this.
+     # The testsuite doesn't use these flags and we'll get test failures.
      # AX_CHECK_COMPILE_FLAG(-malign-double, CFLAGS="$CFLAGS -malign-double")
 
      #  -fstrict-aliasing for gcc-2.95+

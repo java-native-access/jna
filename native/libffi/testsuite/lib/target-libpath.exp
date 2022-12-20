@@ -175,7 +175,7 @@ proc set_ld_library_path_env_vars { } {
   } else {
     setenv DYLD_LIBRARY_PATH "$ld_library_path"
   }
-  if { [istarget *-*-cygwin*] || [istarget *-*-mingw*] } {
+  if { [istarget *-*-cygwin*] || [ istarget *-*-msys* ] || [istarget *-*-mingw*] } {
     if { $orig_path_saved } {
       setenv PATH "$ld_library_path:$orig_path"
     } else {
@@ -271,7 +271,7 @@ proc get_shlib_extension { } {
 
     if { [ istarget *-*-darwin* ] } {
 	set shlib_ext "dylib"
-    } elseif { [ istarget *-*-cygwin* ] || [ istarget *-*-mingw* ] } {
+    } elseif { [ istarget *-*-cygwin* ] || [ istarget *-*-msys* ] || [ istarget *-*-mingw* ] } {
 	set shlib_ext "dll"
     } elseif { [ istarget hppa*-*-hpux* ] } {
 	set shlib_ext "sl"

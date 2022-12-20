@@ -421,12 +421,28 @@ ffi_call_int(ffi_cif *cif, void (*fn)(void), void *rvalue,
 	     void **avalue, void *closure)
 {
   size_t bytes = cif->bytes;
+  size_t i, nargs = cif->nargs;
+  ffi_type **arg_types = cif->arg_types;
 
   FFI_ASSERT (cif->abi == FFI_V9);
 
   if (rvalue == NULL && (cif->flags & SPARC_FLAG_RET_IN_MEM))
     bytes += FFI_ALIGN (cif->rtype->size, 16);
 
+  /* If we have any large structure arguments, make a copy so we are passing
+     by value.  */
+  for (i = 0; i < nargs; i++)
+    {
+      ffi_type *at = arg_types[i];
+      int size = at->size;
+      if (at->type == FFI_TYPE_STRUCT && size > 4)
+        {
+          char *argcopy = alloca (size);
+          memcpy (argcopy, avalue[i], size);
+          avalue[i] = argcopy;
+        }
+    }  
+  
   ffi_call_v9(cif, fn, rvalue, avalue, -bytes, closure);
 }
 
