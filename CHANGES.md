@@ -14,6 +14,7 @@ Features
 * [#1482](https://github.com/java-native-access/jna/pull/1482): Add multilingual support of `Kernel32Util.formatMessage` - [@overpathz](https://github.com/overpathz).
 * [#1490](https://github.com/java-native-access/jna/pull/1490): Adds support for a custom `SymbolProvider` in `NativeLibrary` & `Library` - [@soywiz](https://github.com/soywiz).
 * [#1491](https://github.com/java-native-access/jna/pull/1491): Update libffi to v3.4.4  - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1487](https://github.com/java-native-access/jna/issues/1487): Add 'uses' information to OSGI metadata in MANIFEST.MF to improve stability of package resolution - [@sratz](https://github.com/sratz).
 
 Bug Fixes
 ---------
