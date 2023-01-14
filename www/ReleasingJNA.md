@@ -16,7 +16,7 @@ JNA Release Process
 
 * Run `ant -Drelease=true -Dmaven-release=true clean dist stage`
 
-* Commit and push generated files in `dist`, `pom-*.xml`, `CHANGES.md`, `README.md` and `src/com/sun/jna/Version.java`.
+* Commit and push generated files in `dist`, `CHANGES.md` and `README.md`.
 
 * Tag
   * Tag using the new version number (e.g. `git tag 4.2.1`)
