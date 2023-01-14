@@ -1668,9 +1668,9 @@ cd ..
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
-      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-jar-jpms},${dist-aar}"/>
-      <arg value="-Dclassifiers=sources,javadoc,jpms,"/>
-      <arg value="-Dtypes=jar,jar,jar,aar"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-aar}"/>
+      <arg value="-Dclassifiers=sources,javadoc,"/>
+      <arg value="-Dtypes=jar,jar,aar"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
@@ -1681,9 +1681,9 @@ cd ..
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
-      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar},${platform-jpms-jar}"/>
-      <arg value="-Dclassifiers=sources,javadoc,jpms"/>
-      <arg value="-Dtypes=jar,jar,jar"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+      <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
