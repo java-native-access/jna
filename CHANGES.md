@@ -2,6 +2,16 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
+Next Release (5.14.0)
+=====================
+
+Features
+--------
+
+Bug Fixes
+---------
+
+
 Release (5.13.0)
 ================
 
