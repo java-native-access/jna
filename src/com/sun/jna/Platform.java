@@ -262,8 +262,12 @@ public final class Platform {
             arch = "ppc64le";
         }
         // Map arm to armel if the binary is running as softfloat build
-        if("arm".equals(arch) && platform == Platform.LINUX && isSoftFloat()) {
-            arch = "armel";
+        if("arm".equals(arch) && platform == Platform.LINUX ) {
+            if(isSoftFloat()) {
+                arch = "armel";
+            } else if(!is64Bit()) {
+                arch = "armhf";
+            }
         }
 
         return arch;
@@ -351,5 +355,31 @@ public final class Platform {
                 break;
         }
         return osPrefix;
+    }
+
+    public static String getMultiArchPath() {
+        String cpu = ARCH;
+        String kernel = iskFreeBSD()
+            ? "-kfreebsd"
+            : (isGNU() ? "" : "-linux");
+        String libc = "-gnu";
+
+        if (isIntel()) {
+            cpu = (is64Bit() ? "x86_64" : "i386");
+        }
+        else if (isPPC()) {
+            cpu = cpu.replace("ppc", "powerpc");
+        }
+        else if (isARM()) {
+            cpu = (is64Bit() ? "aarch64" : "arm");
+            libc = is64Bit()
+                ? "-gnu"
+                : ("armhf".equals(ARCH) ? "-gnueabihf" : "-gnueabi");
+        }
+        else if (ARCH.equals("mips64el")) {
+            libc = "-gnuabi64";
+        }
+
+        return cpu + kernel + libc;
     }
 }
