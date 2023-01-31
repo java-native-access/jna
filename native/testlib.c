@@ -31,6 +31,8 @@ extern "C" {
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
+
 #if !defined(_WIN32_WCE)
 #include <errno.h>
 #endif
@@ -1076,6 +1078,35 @@ returnLastElementOfComponentsDSDAL(DemoStructureDifferentArrayLengths ts, int de
     printf("DemoStructureDifferentArrayLengths.t3[4]: %1.3f\n", result.t3[4]);
   }
   return result;
+}
+
+/**
+ * Copy the input char array to the output char array. The caller is responsible
+ * to allocate a correctly sized buffer.
+ */
+EXPORT size_t copyString(char* input, char* output) {
+    size_t len = strlen(input) + 1;
+    memcpy(output, input, len);
+    return len;
+}
+
+/**
+ * Copy the input array of char arrays to the output char array. The caller is
+ * responsible to allocate a correctly sized buffer.
+ */
+EXPORT size_t copyStringArray(char** input, char* output) {
+    size_t len = 0;
+    for(int i = 0;; i++) {
+        char* currInput = input[i];
+        if(currInput == NULL) {
+            break;
+        }
+        size_t localLen = strlen(currInput) + 1;
+        memcpy(output, currInput, localLen);
+        output += localLen;
+        len += localLen;
+    }
+    return len;
 }
 
 #ifdef __cplusplus
