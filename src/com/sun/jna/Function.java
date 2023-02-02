@@ -561,7 +561,7 @@ public class Function extends Pointer {
             // than in native code so that the values will be valid until
             // this method returns.
             // Convert String to native pointer (const)
-            return new NativeString((String)arg, false).getPointer();
+            return new NativeString((String)arg, encoding).getPointer();
         } else if (arg instanceof WString) {
             // Convert WString to native pointer (const)
             return new NativeString(arg.toString(), true).getPointer();

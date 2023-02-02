@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1501](https://github.com/java-native-access/jna/pull/1501): `Library.OPTION_STRING_ENCODING` is ignore for string arguments function calls - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release (5.13.0)
 ================
