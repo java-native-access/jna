@@ -82,16 +82,22 @@ public class NativeLibraryTest extends TestCase {
     }
 
     public void testAvoidDuplicateLoads() throws Exception {
-        NativeLibrary.disposeAll();
-        // Give the system a moment to unload the library; on OSX we
-        // occasionally get the same library handle back on subsequent dlopen
-        Thread.sleep(2);
+        // This test basicly tests whether unloading works. It relies on the
+        // runtime to unload the library when dlclose is called. This is not
+        // required by POSIX and dt time of writing macOS is known to be flaky
+        // in that regard.
+        //
+        // This test causes false test failures
+        if (!Platform.isMac()) {
+            NativeLibrary.disposeAll();
+            Thread.sleep(2);
 
-        TestLibrary lib = Native.load("testlib", TestLibrary.class);
-        assertEquals("Library should be newly loaded after explicit dispose of all native libraries",
-                     1, lib.callCount());
-        if (lib.callCount() <= 1) {
-            fail("Library should not be reloaded without dispose");
+            TestLibrary lib = Native.load("testlib", TestLibrary.class);
+            assertEquals("Library should be newly loaded after explicit dispose of all native libraries",
+                    1, lib.callCount());
+            if (lib.callCount() <= 1) {
+                fail("Library should not be reloaded without dispose");
+            }
         }
     }
 
