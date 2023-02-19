@@ -75,12 +75,12 @@
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <property name="osgi.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->
-  <property name="jni.major" value="6"/>
-  <property name="jni.minor" value="1"/>
-  <property name="jni.revision" value="6"/>
+  <property name="jni.major" value="7"/>
+  <property name="jni.minor" value="0"/>
+  <property name="jni.revision" value="0"/>
   <property name="jni.build" value="0"/> <!--${build.number}-->
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="147a998f0cbc89681a1ae6c0dd121629"/>
+  <property name="jni.md5" value="5fb98531302accd485c534c452dd952a"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
