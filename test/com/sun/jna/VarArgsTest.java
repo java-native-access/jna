@@ -41,6 +41,7 @@ public class VarArgsTest extends TestCase {
             }
         }
         public int addVarArgs(String fmt, Number... args);
+        public int addSeveralFixedArgsAndVarArgs(int a, int b, int c, int d, int nArgs, Integer... args);
         public String returnStringVarArgs(String fmt, Object... args);
         public void modifyStructureVarArgs(String fmt, Object... args);
         public String returnStringVarArgs2(String fmt, String... args);
@@ -100,6 +101,22 @@ public class VarArgsTest extends TestCase {
         Object[] args = new Object[] { "Test" };
         assertEquals("Did not return correct string", args[0],
                      lib.returnStringVarArgs2("", "Test"));
+    }
+
+    public void testSeveralFixedAndVarArgs() {
+        int fixedarg1 = 1;
+        int fixedarg2 = 2;
+        int fixedarg3 = 3;
+        int fixedarg4 = 4;
+        int vararg1 = 100;
+        int vararg2 = 200;
+
+        int expected = fixedarg1 + fixedarg2 + fixedarg3 + fixedarg4 + vararg1 + vararg2;
+        int result = lib.addSeveralFixedArgsAndVarArgs(fixedarg1, fixedarg2, fixedarg3, fixedarg4,
+                                                       2, vararg1, vararg2);
+
+        assertEquals("varargs not passed correctly with multiple fixed args",
+                     expected, result);
     }
 
     public void testAppendNullToVarargs() {

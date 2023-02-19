@@ -908,6 +908,19 @@ addVarArgs(const char *fmt, ...) {
   return sum;
 }
 
+EXPORT int32_t
+addSeveralFixedArgsAndVarArgs(int a, int b, int c, int d, int n_varargs, ...) {
+  va_list ap;
+  int32_t sum = a + b + c + d;
+  va_start(ap, n_varargs);
+
+  for (int i = 0; i < n_varargs; i++) {
+    sum += va_arg(ap, int32_t);
+  }
+  va_end(ap);
+  return sum;
+}
+
 EXPORT void
 modifyStructureVarArgs(const char* fmt, ...) {
   struct _ss {
