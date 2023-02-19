@@ -818,6 +818,12 @@ osname=macosx;processor=aarch64
       <arg value="JNIEXPORT"/>
       <fileset dir="${build.headers}" includes="*.h"/>
     </apply>
+    <apply dir="${build.headers}" executable="${grep}" parallel="true"
+           failonerror="${grep.required}" relative="true" output="${md5.file}"
+           error="${md5.file}.error" append="true">
+      <arg value="#define"/>
+      <fileset dir="${build.headers}" includes="*.h"/>
+    </apply>
     <!-- Clean up gcj javah output to match that of Sun's javah -->
     <fixcrlf file="${md5.file}" eol="unix"/>
     <replaceregexp match="^((.*\.h):JNIEXPORT[^(]+)( +\(.*)"
