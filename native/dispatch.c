@@ -71,7 +71,7 @@
 #define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 static inline char * LOAD_ERROR() {
-    char* message = dlerror();
+    const char* message = dlerror();
     char* buf = (char*) malloc(strlen(message) + 1 /* null */);
     strcpy(buf, message);
     return buf;
