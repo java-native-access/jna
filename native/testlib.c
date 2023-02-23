@@ -908,6 +908,20 @@ addVarArgs(const char *fmt, ...) {
   return sum;
 }
 
+EXPORT int32_t
+addSeveralFixedArgsAndVarArgs(int a, int b, int c, int d, int n_varargs, ...) {
+  va_list ap;
+  int i;
+  int32_t sum = a + b + c + d;
+  va_start(ap, n_varargs);
+
+  for (i = 0; i < n_varargs; i++) {
+    sum += va_arg(ap, int32_t);
+  }
+  va_end(ap);
+  return sum;
+}
+
 EXPORT void
 modifyStructureVarArgs(const char* fmt, ...) {
   struct _ss {
@@ -1095,8 +1109,9 @@ EXPORT size_t copyString(char* input, char* output) {
  * responsible to allocate a correctly sized buffer.
  */
 EXPORT size_t copyStringArray(char** input, char* output) {
+    int i;
     size_t len = 0;
-    for(int i = 0;; i++) {
+    for(i = 0;; i++) {
         char* currInput = input[i];
         if(currInput == NULL) {
             break;

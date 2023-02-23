@@ -76,9 +76,12 @@ public class Function extends Pointer {
     /** Whether to throw an exception if last error is non-zero after call. */
     @java.lang.annotation.Native
     public static final int THROW_LAST_ERROR = 0x40;
-    /** Mask for number of fixed args (1-3) for varargs calls. */
+    /** Mask for number of fixed args (max 255) for varargs calls. */
     @java.lang.annotation.Native
-    public static final int USE_VARARGS = 0x180;
+    public static final int USE_VARARGS = 0xFF;
+    /** Offset of USE_VARARGS in call flags */
+    @java.lang.annotation.Native
+    public static final int USE_VARARGS_SHIFT = 7;
 
     static final Integer INTEGER_TRUE = Integer.valueOf(-1);
     static final Integer INTEGER_FALSE = Integer.valueOf(0);
@@ -410,7 +413,7 @@ public class Function extends Pointer {
     /* @see NativeLibrary#NativeLibrary(String,String,long,Map) implementation */
     Object invoke(Object[] args, Class<?> returnType, boolean allowObjects, int fixedArgs) {
         Object result = null;
-        int callFlags = this.callFlags | ((fixedArgs & 0x3) << 7);
+        int callFlags = this.callFlags | ((fixedArgs & USE_VARARGS) << USE_VARARGS_SHIFT);
         if (returnType == null || returnType==void.class || returnType==Void.class) {
             Native.invokeVoid(this, this.peer, callFlags, args);
             result = null;

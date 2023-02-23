@@ -71,7 +71,7 @@
 #define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 static inline char * LOAD_ERROR() {
-    char* message = dlerror();
+    const char* message = dlerror();
     char* buf = (char*) malloc(strlen(message) + 1 /* null */);
     strcpy(buf, message);
     return buf;
@@ -144,9 +144,10 @@ extern "C" {
   PSTART(); memset(D,C,L); PEND(ENV); \
 } while(0)
 
-#define MASK_CC          com_sun_jna_Function_MASK_CC
-#define THROW_LAST_ERROR com_sun_jna_Function_THROW_LAST_ERROR
-#define USE_VARARGS      com_sun_jna_Function_USE_VARARGS
+#define MASK_CC           com_sun_jna_Function_MASK_CC
+#define THROW_LAST_ERROR  com_sun_jna_Function_THROW_LAST_ERROR
+#define USE_VARARGS       com_sun_jna_Function_USE_VARARGS
+#define USE_VARARGS_SHIFT com_sun_jna_Function_USE_VARARGS_SHIFT
 
 /* Cached class, field and method IDs */
 static jclass classObject;
@@ -480,7 +481,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
   callconv_t callconv = flags & MASK_CC;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
-  int fixed_args = (flags & USE_VARARGS) >> 7;
+  int fixed_args = (flags >> USE_VARARGS_SHIFT) & USE_VARARGS;
 
   nargs = (*env)->GetArrayLength(env, args);
 
