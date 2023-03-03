@@ -28,17 +28,441 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinDef.HBITMAP;
-import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.Union;
+
+import java.text.ParseException;
+
+import static com.sun.jna.platform.win32.WinDef.*;
 
 /**
  * Ported from WinGDI.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
+ * @author SSHTOOLS Limited, support@sshtools.com
  */
 public interface WinGDI {
     int RDH_RECTANGLES = 1;
+
+    @FieldOrder({ "dmDeviceName", "dmSpecVersion", "dmDriverVersion", "dmSize", "dmDriverExtra", "dmFields", "dmUnion1", "dmColor",
+            "dmDuplex", "dmYResolution", "dmTTOption", "dmCollate", "dmFormName", "dmLogPixels", "dmBitsPerPel", "dmPelsWidth",
+            "dmPelsHeight", "dummyunionname2", "dmDisplayFrequency", "dmICMMethod", "dmICMIntent", "dmMediaType", "dmDitherType",
+            "dmReserved1", "dmReserved2", "dmPanningWidth", "dmPanningHeight" })
+    /**
+     * The size of the "public" <code>DEVMODE</code> data can vary for different versions of the structure.
+     * <p>
+     * - The <code>dmSize</code> member specifies the number of bytes of "public" data
+     * - The <code>dmDriverExtra</code> member specifies the number of bytes of "private" data.
+     *
+     * A device driver's "private" data follows the public portion of the <code>DEVMODE</code> structure.
+     *
+     * @see <a href=
+     *      "https://docs.microsoft.com/ewindows/win32/api/wingdi/ns-wingdi-devmodew">
+     * DEVMODEW structure</a>
+     */
+    public static class DEVMODE extends Structure {
+        public static class ByReference extends DEVMODE implements Structure.ByReference {}
+        private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
+        private static boolean XP_OR_HIGHER = false;
+        static {
+            try {
+                String osVersion = String.getString("os.version");
+                if(osVersion != null) {
+                    float osVersion = Float.parseFloat(osVersion);
+                    XP_OR_HIGHER = osVersion >= 5.1f;
+                }
+            } catch(ParseException ignore) {}
+        }
+
+        /**
+         * A zero-terminated character array that specifies the "friendly" name of the printer or display
+         * <p>
+         * For a printer: "PCL/HP LaserJet" in the case of PCL/HP LaserJet.
+         *
+         * For a display: "perm3dd" in the case of the 3Dlabs Permedia3 display driver.
+         *
+         * This string is unique among device driverers.  Note that this name may be truncated to fit in the
+         * <code>dmDeviceName</code> array.
+         */
+        public byte[] dmDeviceName = new byte[Winspool.CCHDEVICENAME * CHAR_WIDTH];
+
+        /**
+         * The version number of the initialization data specification on which the structure is based. To ensure the
+         * correct version is used for any operating system, use <code>DM_SPECVERSION</code> constant in <code>wingdi.h</code>
+         */
+        public short dmSpecVersion;
+
+        /**
+         * For a printer: Specifies the printer driver version number assigned by the printer driver developer.
+         *
+         * For a display: Drivers can set this member to <code>DM_SPECVERSION</code> constant in <code>wingdi.h</code>.
+         */
+        public short dmDriverVersion;
+
+        /**
+         * Specifies the size in bytes of the public <code>DEVMODE</code> structure, not including any private
+         * driver-specified members identified by the <code>dmDriverExtra</code> member.
+         */
+        public short dmSize;
+
+        /**
+         * Contains the number of bytes of private driver-data that follow this structure. If a device driver
+         * does not use device-specific information, set this member to zero.
+         *
+         * Since the size and format of this data is driver-specific, applications needing it
+         * must read the data into a separate one-off struct to match.
+         */
+        public short dmDriverExtra;
+
+        /**
+         * Specifies bit flags identifying which of the following <code>DEVMODE</code> members are in use.
+         *
+         * For example, the <code>DM_ORIENTATION</<code> flag is set when the <code>dmOrientation</code> member
+         * contains valid data. The <code>DM_XXX</code> flags are defined in <code>wingdi.h.</code>
+         */
+        public int dmFields;
+
+        public DUMMYUNIONNAME dmUnion1;
+
+        /**
+         * For printers: Specifies whether a color printer should print color or monochrome. This member can be one of
+         * <code>DMCOLOR_COLOR</code> or <code>DMCOLOR_MONOCHROME</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public short dmColor;
+
+        /**
+         * For printers: Specifies duplex (double-sided) printing for duplex-capable printers. This member can be
+         * <code>DMCOLOR_COLOR</code> or <code>DMCOLOR_MONOCHROME</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public short dmDuplex;
+
+        /**
+         * For printers: Specifies the y resolution of the printer, in DPI. If this member is used, the
+         * <code>dmPrintQuality</code> member specifies the x resolution.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public short dmYResolution;
+
+        /**
+         * For printers: Specifies how TrueType fonts should be printed. This member must be one of the
+         * <code>DMTT_XXX</code> constants defined in <code>wingdi.h</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public short dmTTOption;
+
+        /**
+         * For printers: Specifies whether multiple copies should be collated. This member can be one of
+         * <code>DMCOLLATE_TRUE</code>, <code>DMCOLLATE_FALSE</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public short dmCollate;
+
+        /**
+         * For printers: Specifies the name of the form to use; such as "Letter" or "Legal". This must be a name that
+         * can be obtain by calling the Win32 <code>EnumForms</code> function (described in the Microsoft Window SDK
+         * documentation).
+         *
+         * For displays: This member is not used for displays.
+         */
+        public byte[] dmFormName = new byte[Winspool.CCHFORMNAME * CHAR_WIDTH];
+
+        /**
+         * For displays: Specifies the number of logical pixels per inch of a display device and should be equal to the
+         * <code>ulLogPixels</code> member of the <code>GDIINFO</code> structure.
+         *
+         * For printers: This member is not used for printers.
+         */
+        public short dmLogPixels;
+
+        /**
+         * For displays: Specifies the color resolution, in bits per pixel, of a display device.
+         *
+         * For printers: This member is not used for printers.
+         */
+        public int dmBitsPerPel;
+
+        /**
+         * For displays: Specifies the width, in pixels, of the visible device surface.
+         *
+         * For printers: This member is not used for printers.
+         */
+        public int dmPelsWidth;
+
+        /**
+         * For displays: Specifies the height, in pixels, of the visible device surface.
+         *
+         * For printers: This member is not used for printers.
+         */
+        public int dmPelsHeight;
+        public DUMMYUNIONNAME2 dummyunionname2;
+        public POINT dmPosition;
+        public DUMMYSTRUCTNAME2 dummystructname2;
+
+        public static class DUMMYUNIONNAME extends Union {
+            public DUMMYSTRUCTNAME dummystructname;
+
+            @FieldOrder({ "dmOrientation", "dmPaperSize", "dmPaperLength", "dmPaperWidth", "dmScale", "dmCopies", "dmDefaultSource",
+                    "dmPrintQuality" })
+            public static class DUMMYSTRUCTNAME extends Structure {
+                /**
+                 * For printers: Specifies the paper orientation. This member can be either DMORIENT_PORTRAIT or DMORIENT_LANDSCAPE.
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmOrientation;
+
+                /**
+                 * For printers, specifies the size of the paper to be printed on. This member must be zero if the
+                 * length and width of the paper are specified by the dmPaperLength and
+                 * <code>dmPaperWidth</code> members. Otherwise, the <code>dmPaperSize</code> member must be one of the
+                 * <code>DMPAPER_XXX</code> constants defined in <code>wingdi.h</code>.
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmPaperSize;
+
+                /**
+                 * For printers: Specifies the length of the paper, in units of 1/10 of a millimeter. This value
+                 * overrides the length of the paper specified by the <code>dmPaperSize</code> member, and is used if
+                 * the paper is of a custom size, or if the device is a dot matrix printer, which can print a page of
+                 * arbitrary length.
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmPaperLength;
+
+                /**
+                 * For printers: Specifies the width of the paper, in units of 1/10 of a millimeter. This value
+                 * overrides the width of the paper specified by the <code>dmPaperSize</code> member. This member must
+                 * be used if <code>dmPaperLength</code> is used.
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmPaperWidth;
+
+                /**
+                 * For printers: Specifies the percentage by which the image is to be scaled for printing.
+                 * The image's page size is scaled to the physical page by a factor of <code>dmScale</code>/100.
+                 *
+                 * For example, a 17-inch by 22-inch image with a scale value of 100 requires 17x22-inch paper, while
+                 * the same image with a scale value of 50 should print as half-sized and fit on letter-sized paper.
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmScale;
+
+                /**
+                 * For printers: Specifies the number of copies to be printed, if the device supports multiple copies.
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmCopies;
+
+                /**
+                 * For printers: Specifies the printer's default input bin (paper source). This must be one of the
+                 * <code>DMBIN_XXX</code> constants defined in <code>wingdi.h</code>. If the specified constant is
+                 * <code>DMBIN_FORMSOURCE</code>, the input bin should be selected automatically.
+                 *
+                 * To retrieve a list of the available paper sources for a printer, use the
+                 * <code>DeviceCapabilities</code> function with the <code>DC_BINS</code> flag.
+                 *
+                 * This member can be one of the <code>DMBIN_XXX</code>> values, or it can be a device-specific value greater than or
+                 * equal to <code>DMBIN_USER</code>.
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmDefaultSource;
+
+                /**
+                 * For printers: Specifies the printer resolution. The following negative constant values are defined in
+                 * <code>wingdi.h</code>:
+                 *
+                 * <code>DMRES_HIGH</code>
+                 * <code>DMRES_MEDIUM</code>
+                 * <code>DMRES_LOW</code>
+                 * <code>DMRES_DRAFT</code>
+                 *
+                 * For displays: This member is not used for displays.
+                 */
+                public short dmPrintQuality;
+
+                public DUMMYSTRUCTNAME() {
+                    super();
+                }
+            }
+
+            @FieldOrder({ "dmPosition", "dmDisplayOrientation", "dmDisplayFixedOutput" })
+            public static class DUMMYSTRUCTNAME2 extends Structure {
+
+                /**
+                 * For displays: Specifies a <code>POINTL</code> structure containing the x- and y-coordinates of
+                 * upper-left corner of the display, in desktop coordinates. This member is used to determine the
+                 * relative position of monitors in a multiple monitor environment.
+                 *
+                 * For printers: This member is not used for printers.
+                 *
+                 * Note: This member is defined only for Windows XP and later.
+                 */
+                public POINT dmPosition;
+
+                /**
+                 * For displays: Specifies the orientation at which images should be presented. When the
+                 * <code>DM_DISPLAYORIENTATION</code> bit is not set in the <code>dmFields</code> member, this member
+                 * must be set to zero. When the <code>DM_DISPLAYORIENTATION</code> bit is set in the
+                 * <code>dmFields</code> member, this member must be set to one of the <code>DMDO_XXX</code> values
+                 *
+                 * For printers: This member is not used for printers.
+                 *
+                 * Note: This member is defined only for Windows XP and later.
+                 */
+                public int dmDisplayOrientation;
+
+                /**
+                 * For displays: For fixed-resolution displays, specifies how the device can present a lower-resolution
+                 * mode on a higher-resolution display. For example, if a display device's resolution is fixed at
+                 * <code>1024 X 768</code>, and its mode is set to <code>640 x 480</code>, the device can either
+                 * display a <code>640 X 480</code> image within the <code>1024 X 768</code> screen space, or stretch
+                 * the <code>640 X 480</code> image to fill the larger screen space.
+                 *
+                 * When the <code>DM_DISPLAYFIXEDOUTPUT</code> bit is not set in the <code>dmFields</code> member,
+                 * this member must be set to zero. When the <code>DM_DISPLAYFIXEDOUTPUT</code> bit is set in the
+                 * <code>dmFields</code> member, this member must be set to one of the <code>DMDFO_XXX</code> values.
+                 *
+                 * For printers: This member is not used for printers.
+                 *
+                 * Note: This member is defined only for Windows XP and later.
+                 */
+                public int dmDisplayFixedOutput;
+
+                public DUMMYSTRUCTNAME2() {
+                    if(XP_OR_HIGHER) {
+                        super();
+                    }
+                }
+            }
+        }
+
+        public static class DUMMYUNIONNAME2 extends Union {
+            /**
+             * For displays: Specifies a display device's display mode. This member can be
+             * <code>DM_GRAYSCALE</code>, <code>DM_INTERLACED</code> or <code>DMDISPLAYFLAGS_TEXTMODE</code>,
+             * however values other than <code>DM_INTERLACED</code> are invalid for newer systems.
+             *
+             * For printers: This member is not used for printers.
+             */
+            public int dmDisplayFlags;
+
+            /**
+             * For printers: Specifies where the N-UP (pages per sheet) is done. It can be <code>DMNUP_SYSTEM</code> or
+             * <code>DMNUP_ONEUP</code> being controlled by the spooler or the application, respectively.
+             *
+             * For displays: This member is not used for displays.
+             */
+            public int dmNup;
+        }
+
+
+        /**
+         * For displays: Specifies the frequency, in hertz (cycles per second), of the display device in a particular
+         * mode. This value is also known as the display device's vertical refresh rate. Display drivers use this
+         * member. It is used, for example, in the <code>ChangeDisplaySettings</code> function.
+         *
+         * When you call the <code>EnumDisplaySettings</code> function, the <code>dmDisplayFrequency</code> member may
+         * return with the value 0 or 1. These values represent the display hardware's default refresh rate. This
+         * default rate is typically set by switches on a display card or computer motherboard, or by a configuration
+         * program that does not use display functions such as <code>ChangeDisplaySettings</code>.
+         *
+         * For printers: This member is not used for printers.
+         */
+        public int dmDisplayFrequency;
+
+        /**
+         * For printers: Specifies how ICM (image color management) is handled. For a non-ICM application, this member determines
+         * if ICM is enabled or disabled. For ICM applications, the system examines this member to determine how to
+         * handle ICM support. This member can be one of the predefined <code>DMICMMETHOD_XXX</code>values, or a driver-defined value
+         * greater than or equal to the value of <code>DMICMMETHOD_USER</code>.
+         *
+         * The printer driver must provide a user interface for setting this member. Most printer drivers support only
+         * the <code>DMICMMETHOD_SYSTEM</code> or <code>DMICMMETHOD_NONE</code> value. Drivers for PostScript printers
+         * support all <code>DCMICMMETHOD_XXX</code>values.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmICMMethod;
+
+        /**
+         * For printers: Specifies which color matching method, or intent, should be used by default. This member is primarily for
+         * non-ICM applications. ICM applications can establish intents by using the ICM functions. This member can be
+         * one of the following predefined values, or a driver defined value greater than or equal to the value of
+         * <code>DMICM_USER</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmICMIntent;
+
+        /**
+         * For printers: Specifies the type of media being printed on. The member can be one of the predefined
+         * <code>DMMEDIA_XXX</code> values, or a driver-defined value greater than or equal to the value of <code>DMMEDIA_USER</code>.
+         *
+         * To retrieve a list of the available media types for a printer, use the <code>DeviceCapabilities</code>
+         * function with the <code>DC_MEDIATYPES</code> flag.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmMediaType;
+
+        /**
+         * For printers: Specifies how dithering is to be done. The member can be one of the predefined
+         * <code>DMDITHER_XXX</code> values, or a driver-defined value greater than or equal to the value of
+         * <code>DMDITHER_USER</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmDitherType;
+
+        /**
+         * Not used; must be zero.
+         */
+        public int dmReserved1;
+
+        /**
+         * Not used; must be zero.
+         */
+        public int dmReserved2;
+
+        /**
+         * This member must be zero.
+         */
+        public int dmPanningWidth;
+
+        /**
+         * This member must be zero.
+         */
+        public int dmPanningHeight;
+
+        /**
+         * Converts dmDeviceName from raw byte[] to String
+         */
+        public String getDmDeviceName() {
+            int offset = fieldOffset("dmDeviceName");
+            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+        }
+
+        /**
+         * Converts dmFormName from raw byte[] to String
+         */
+        public String getDmFormName() {
+            int offset = fieldOffset("dmFormName");
+            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+        }
+    }
 
     @FieldOrder({"dwSize", "iType", "nCount", "nRgnSize", "rcBound"})
     class RGNDATAHEADER extends Structure {
@@ -64,6 +488,163 @@ public interface WinGDI {
     }
 
     HANDLE HGDI_ERROR = new HANDLE(Pointer.createConstant(0xFFFFFFFF));
+
+    int DMCOLOR_MONOCHROME = 1;
+    int DMCOLOR_COLOR = 2;
+
+    /* TrueType options */
+    /** print TT fonts as graphics **/
+    int DMTT_BITMAP = 1;
+    /** download TT fonts as soft fonts **/
+    int DMTT_DOWNLOAD = 2;
+    /** substitute device fonts for TT fonts **/
+    int DMTT_SUBDEV = 3;
+    /** download TT fonts as outline soft fonts **/
+    int DMTT_DOWNLOAD_OUTLINE = 4;
+
+
+    int DMORIENT_PORTRAIT = 1;
+    int DMORIENT_LANDSCAPE = 2;
+
+    /* device capabilities indices */
+    int DC_FIELDS =1;
+    int DC_PAPERS = 2;
+    int DC_PAPERSIZE = 3;
+    int DC_MINEXTENT = 4;
+    int DC_MAXEXTENT = 5;
+    int DC_BINS = 6;
+    int DC_DUPLEX = 7;
+    int DC_SIZE = 8;
+    int DC_EXTRA = 9;
+    int DC_VERSION = 10;
+    int DC_DRIVER = 11;
+    int DC_BINNAMES = 12;
+    int DC_ENUMRESOLUTIONS = 13;
+    int DC_FILEDEPENDENCIES = 14;
+    int DC_TRUETYPE = 15;
+    int DC_PAPERNAMES = 16;
+    int DC_ORIENTATION = 17;
+    int DC_COPIES = 18;
+    int DC_BINADJUST = 19;
+    int DC_EMF_COMPLIANT = 20;
+    int DC_DATATYPE_PRODUCED = 21;
+    int DC_COLLATE = 22;
+    int DC_MANUFACTURER = 23;
+    int DC_MODEL = 24;
+    int DC_PERSONALITY = 25;
+    int DC_PRINTRATE = 26;
+    int DC_PRINTRATEUNIT = 27;
+    int  PRINTRATEUNIT_PPM = 1;
+    int  PRINTRATEUNIT_CPS = 2;
+    int  PRINTRATEUNIT_LPM = 3;
+    int  PRINTRATEUNIT_IPM = 4;
+    int DC_PRINTERMEM = 28;
+    int DC_MEDIAREADY = 29;
+    int DC_STAPLE = 30;
+    int DC_PRINTRATEPPM = 31;
+    int DC_COLORDEVICE = 32;
+    int DC_NUP = 33;
+    int DC_MEDIATYPENAMES = 34;
+    int DC_MEDIATYPES = 35;
+
+    /* print qualities */
+    int DMRES_DRAFT = -1;
+    int DMRES_LOW = -2;
+    int DMRES_MEDIUM = -3;
+    int DMRES_HIGH = -4;
+
+    /* bin selections */
+    int DMBIN_UPPER = 0x0001;
+    int DMBIN_LOWER = 0x0002;
+    int DMBIN_MIDDLE = 0x0003;
+    int DMBIN_MANUAL = 0x0004;
+    int DMBIN_ENVELOPE = 0x0005;
+    int DMBIN_ENVMANUAL = 0x0006;
+    int DMBIN_AUTO = 0x0007;
+    int DMBIN_TRACTOR = 0x0008;
+    int DMBIN_SMALLFMT = 0x0009;
+    int DMBIN_LARGEFMT = 0x000A;
+    int DMBIN_LARGECAPACITY = 0x000B;
+    int DMBIN_CASSETTE = 0x000E;
+    int DMBIN_FORMSOURCE = 0x000F;
+
+    /* DEVMODE dmDisplayOrientation specifiations */
+    int DMDO_DEFAULT = 0;
+    int DMDO_90 = 1;
+    int DMDO_180 = 2;
+    int DMDO_270 = 3;
+
+    /* DEVMODE dmDisplayFixedOutput specifiations */
+    int DMDFO_DEFAULT = 0;
+    int DMDFO_STRETCH = 1;
+    int DMDFO_CENTER = 2;
+
+    /* DEVMODE dmDisplayFlags flags */
+    int DM_GRAYSCALE = 0x00000001;
+    int DM_INTERLACED = 0x00000002;
+    int DMDISPLAYFLAGS_TEXTMODE = 0x00000004;
+
+    /* DEVMODE dmNup: multiple logical page per physical page options */
+    /** The print spooler does the NUP (pages per sheet) **/
+    int DMNUP_SYSTEM = 1;
+    /** The application does the NUP (pages per sheet) **/
+    int DMNUP_ONEUP = 2;
+
+    /* ICM methods */
+    /** ICM disabled **/
+    int DMICMMETHOD_NONE = 1;
+    /** ICM handled by system **/
+    int DMICMMETHOD_SYSTEM = 2;
+    /** ICM handled by driver **/
+    int DMICMMETHOD_DRIVER = 3;
+    /** ICM handled by device **/
+    int DMICMMETHOD_DEVICE = 4;
+
+    /* ICM Intents */
+    /** Maximize color saturation **/
+    int DMICM_SATURATE = 1;
+    /** Maximize color contrast **/'
+    int DMICM_CONTRAST = 2;
+    /** Use specific color metric **/
+    int DMICM_COLORIMETRIC  = 3;
+    /** Use specific color metric **/
+    int DMICM_ABS_COLORIMETRIC =  4;
+    /** Device-specific intents start here **/
+    int DMICM_USER = 256;
+
+    /* Media types */
+    /** Standard paper **/
+    int DMMEDIA_STANDARD = 1;
+    /** Transparency **/
+    int DMMEDIA_TRANSPARENCY = 2;
+    /** Glossy paper **/
+    int DMMEDIA_GLOSSY = 3;
+    /** Device-specific media start here */
+    int DMMEDIA_USER = 256;
+
+    /* Dither types */
+    /** No dithering **/
+    int DMDITHER_NONE= 1;
+    /** Dither with a coarse brush **/
+    int DMDITHER_COARSE     = 2;
+    /** Dither with a fine brush **/
+    int DMDITHER_FINE= 3;
+    /** LineArt dithering **/
+    int DMDITHER_LINEART   = 4;
+    /** LineArt dithering **/
+    int DMDITHER_ERRORDIFFUSION = 5;
+    /** LineArt dithering **/
+    int DMDITHER_RESERVED6 = 6;
+    /** LineArt dithering **/
+    int DMDITHER_RESERVED7 = 7;
+    /** LineArt dithering **/
+    int DMDITHER_RESERVED8 = 8;
+    /** LineArt dithering **/
+    int DMDITHER_RESERVED9 = 9;
+    /** Device does grayscaling **/
+    int DMDITHER_GRAYSCALE  = 10;
+    /** Device-specific dithers start here **/
+    int DMDITHER_USER = 256;
 
     int RGN_AND = 1;
     int RGN_OR = 2;
