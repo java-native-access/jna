@@ -1,5 +1,9 @@
 # Security Policy
 
-To report a security issue, please disclose it at [security advisory](https://github.com/java-native-access/jna/security/advisories/new).
+## Supported Versions
 
-We will respond within 7 working days of your submission. If the issue is confirmed as a vulnerability, we will open a Security Advisory and acknowledge your contributions as part of it. This project follows a 90 day disclosure timeline.
+Security updates are applied only to the latest release.
+
+## Reporting a Vulnerability
+
+Tidelift acts as the security contact for this open-source project. To make a report, please email the security team at [security@tidelift.com](mailto:security@tidelift.com). Please do not create a public GitHub issue. See [tidelift.com/security](https://tidelift.com/security) for details and more options.
