@@ -26,8 +26,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -4387,4 +4385,77 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * </p>
      */
     boolean VirtualUnlock(Pointer lpAddress, SIZE_T dwSize);
+
+    /**
+     * Sets the user interface language for the current thread.
+     *
+     * <p>
+     * Windows Vista and later: This function cannot clear the thread preferred UI languages list. Your MUI application
+     * should call SetThreadPreferredUILanguages to clear the language list.
+     * </p>
+     * <p>
+     * Windows XP: This function is limited to allowing the operating system to identify and set a value that is safe
+     * to use on the Windows console.
+     * </p>
+     *
+     * <p><strong>Remarks</strong></p>
+     * <p>
+     * When a thread is created, the thread user interface language setting is empty and the user interface for
+     * the thread is displayed in the user-selected language. This function enables the application to change
+     * the user interface language for the current running thread.
+     * </p>
+     * <p>
+     * Windows Vista and later: Calling this function and specifying 0 for the language identifier is identical
+     * to calling SetThreadPreferredUILanguages with the MUI_CONSOLE_FILTER flag set. If the application specifies
+     * a valid nonzero language identifier, the function sets a particular user interface language for the thread.
+     * </p>
+     *
+     * @param LangId Language identifier for the user interface language for the thread.
+     *
+     * @return Returns the input language identifier if successful.
+     *         If the input identifier is nonzero, the function returns that value.
+     *         If the language identifier is 0, the function always succeeds and returns
+     *         the identifier of the language that best supports the Windows console.
+     *
+     * @see <a href="https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-setthreaduilanguage">SetThreadUILanguage</a>
+     */
+    int SetThreadUILanguage(int LangId);
+
+    /**
+     * Sets the thread preferred UI languages for the current thread.
+     * @see <a href="https://learn.microsoft.com/en-us/windows/win32/intl/user-interface-language-management">User Interface Language Management</a>
+     *
+     * @param dwFlags            Flags identifying format and filtering for the languages to set.
+     *
+     * <p>
+     * The following format flags specify the language format to use for the thread preferred UI languages.
+     * The flags are mutually exclusive, and the default is MUI_LANGUAGE_NAME.
+     * </p>
+     * <p>
+     * We recommend that you use MUI_LANGUAGE_NAME instead of MUI_LANGUAGE_ID.
+     * </p>
+     *
+     * @param pwszLanguagesBuffer Pointer to a double null-terminated multi-string buffer that contains an ordered,
+     *                            null-delimited list, in the format specified by dwFlags.
+     * <p>
+     * To clear the thread preferred UI languages list, an application sets this parameter to a null string or an empty
+     * double null-terminated string. If an application clears a language list, it should specify either a format flag
+     * or 0 for the dwFlags parameter.
+     * </p>
+     *
+     * @param pulNumLanguages     Pointer to the number of languages that the function has set in the thread preferred UI languages list.
+     *                            When the application specifies one of the filtering flags, the function must set this parameter to NULL.
+     *
+     * @return Returns {@code true} if the function succeeds or {@code false} otherwise.
+     */
+    boolean SetThreadPreferredUILanguages(int dwFlags, String[] pwszLanguagesBuffer, IntByReference pulNumLanguages);
+
+    /**
+     * Returns the language identifier of the first user interface language for the current thread.
+     *
+     * @return Returns the identifier for a language explicitly associated with the thread by SetThreadUILanguage or
+     *         SetThreadPreferredUILanguages. Alternatively, if no language has been explicitly associated with the
+     *         current thread, the identifier can indicate a user or system user interface language.
+     */
+    int GetThreadUILanguage();
 }

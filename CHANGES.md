@@ -7,6 +7,7 @@ Next Release (5.14.0)
 
 Features
 --------
+* [#1514](https://github.com/java-native-access/jna/pull/1514): Add `SetThreadUILanguage`, `SetThreadPreferredUILanguages` and `GetThreadUILanguage` in `c.s.j.p.win32.Kernel32` - [@overpathz](https://github.com/overpathz).
 
 Bug Fixes
 ---------

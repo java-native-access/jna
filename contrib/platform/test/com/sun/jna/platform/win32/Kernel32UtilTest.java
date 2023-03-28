@@ -171,6 +171,12 @@ public class Kernel32UtilTest extends TestCase {
         }
     }
 
+    public void testSetThreadPreferredUILanguages() {
+        String[] languages = {};
+        boolean result = Kernel32Util.setThreadPreferredUILanguages(languages);
+        assertTrue(result);
+    }
+
     public void testGetTempPath() {
         assertTrue(Kernel32Util.getTempPath().length() > 0);
     }
