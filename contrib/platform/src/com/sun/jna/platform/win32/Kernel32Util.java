@@ -300,6 +300,18 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
+     * Sets the thread preferred UI languages for the current thread.
+     *
+     * @param languages String array of preferred languages to set.
+     *
+     * @return Returns TRUE if the function succeeds or FALSE otherwise.
+     */
+    public static boolean setThreadPreferredUILanguages(String[] languages) {
+        IntByReference pulNumLanguages = new IntByReference(languages.length);
+        return Kernel32.INSTANCE.SetThreadPreferredUILanguages(0, languages, pulNumLanguages);
+    }
+
+    /**
      * Return the path designated for temporary files.
      *
      * @return Path.

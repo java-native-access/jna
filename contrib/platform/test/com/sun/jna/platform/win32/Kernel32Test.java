@@ -63,6 +63,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
@@ -2098,5 +2099,33 @@ public class Kernel32Test extends TestCase {
         assertFalse(Kernel32.INSTANCE.VirtualLock(null, new SIZE_T(4096)));
         // Unlocking an unlocked region should fail
         assertFalse(Kernel32.INSTANCE.VirtualUnlock(mem, new SIZE_T(4096)));
+    }
+
+    public void testSetThreadUILanguage() {
+        int langId = 0x0409; // English (United States)
+        int result = Kernel32.INSTANCE.SetThreadUILanguage(langId);
+        if (result == 0) {
+            int errorCode = Kernel32.INSTANCE.GetLastError();
+            fail("SetThreadUILanguage failed with error code " + errorCode);
+        }
+        assertEquals(langId, result);
+    }
+
+    public void testSetThreadPreferredUILanguages() {
+        String[] languages = {};
+        IntByReference pulNumLanguages = new IntByReference(languages.length);
+        boolean result = Kernel32.INSTANCE.SetThreadPreferredUILanguages(0, languages, pulNumLanguages);
+        assertTrue(result);
+    }
+
+    public void testGetThreadUILanguage() {
+        int langId = 0x0409; // English (United States)
+        int result = Kernel32.INSTANCE.SetThreadUILanguage(langId);
+        if (result == 0) {
+            int errorCode = Kernel32.INSTANCE.GetLastError();
+            fail("SetThreadUILanguage failed with error code " + errorCode);
+        }
+        int uiLangId = Kernel32.INSTANCE.GetThreadUILanguage();
+        assertEquals(langId, uiLangId);
     }
 }
