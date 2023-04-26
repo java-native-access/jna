@@ -38,9 +38,26 @@ public interface Fcntl {
      * Bits OR'd into the second argument to open. Note these are defined
      * differently on linux than unix fcntl header
      */
-    int O_CREAT = 0100; // Create file if it doesn't exist.
-    int O_EXCL = 0200; // Fail if file already exists.
-    int O_TRUNC = 01000; // Truncate file to zero length.
+    int O_CREAT     = 000000100; // Create file if it doesn't exist.
+    int O_EXCL      = 000000200; // Fail if file already exists.
+    int O_TRUNC     = 000001000; // Truncate file to zero length.
+    int O_APPEND    = 000002000;
+    int O_NONBLOCK  = 000004000;
+    int O_DSYNC     = 000010000;
+    int O_FASYNC    = 000020000;
+    int O_DIRECT    = 000040000;
+    int O_LARGEFILE = 000100000;
+    int O_DIRECTORY = 000200000;
+    int O_NOFOLLOW  = 000400000;
+    int O_NOATIME   = 001000000;
+    int O_CLOEXEC   = 002000000;
+    int __O_SYNC    = 004000000;
+    int O_PATH      = 010000000;
+    int __O_TMPFILE = 020000000;
+
+    int O_SYNC = (__O_SYNC | O_DSYNC);
+    int O_TMPFILE = (__O_TMPFILE | O_DIRECTORY);
+    int O_NDELAY = O_NONBLOCK;
 
     /* Protection bits. */
     int S_IRUSR = 00400; // Read by owner.

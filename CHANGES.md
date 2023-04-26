@@ -11,6 +11,7 @@ Features
 * [#1544](https://github.com/java-native-access/jna/pull/1544): Add `GetPriorityClass`, `SetPriorityClass`, `GetThreadPriority`, `SetThreadPriority` and associated constants to `c.s.j.p.win32.Kernel32` - [@dEajL3kA](https://github.com/dEajL3kA).
 * [#1548](https://github.com/java-native-access/jna/pull/1548): Make interface `c.s.j.p.mac.XAttr public` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1551](https://github.com/java-native-access/jna/pull/1551): Add `c.s.j.p.bsd.ExtAttr` and `c.s.j.p.bsd.ExtAttrUtil` to wrap BSD [<sys/extattr.h>](https://man.freebsd.org/cgi/man.cgi?query=extattr&sektion=2) system calls. [@rednoah](https://github.com/rednoah).
+* [#1517](https://github.com/java-native-access/jna/pull/1517): Add missing `O_*` (e.g. `O_APPEND`, `O_SYNC`, `O_DIRECT`, ...) to `c.s.j.p.linux.Fcntl` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
