@@ -137,6 +137,23 @@ public interface Wbemcli {
             return Get(wszName == null ? null : new WString(wszName), lFlags, pVal, pType, plFlavor);
         }
 
+        public HRESULT GetMethod(String wszName, int lFlags, PointerByReference ppInSignature, PointerByReference ppOutSignature) {
+            return GetMethod(wszName == null ? null : new WString(wszName), lFlags, ppInSignature, ppOutSignature);
+        }
+
+        public HRESULT GetMethod(WString wszName, int lFlags, PointerByReference ppInSignature, PointerByReference ppOutSignature) {
+            // 20th method in IWbemClassObjectVtbl
+            return (HRESULT) _invokeNativeObject(19,
+                new Object[]{ getPointer(), wszName, lFlags, ppInSignature, ppOutSignature}, HRESULT.class);
+        }
+
+        public IWbemClassObject GetMethod(String wszName) {
+            PointerByReference ppInSignature = new PointerByReference();
+            HRESULT res = GetMethod(wszName, 0, ppInSignature, null);
+            COMUtils.checkRC(res);
+            return new IWbemClassObject(ppInSignature.getValue());
+        }
+
         public HRESULT GetNames(String wszQualifierName, int lFlags, VARIANT.ByReference pQualifierVal, PointerByReference pNames) {
             return GetNames(wszQualifierName == null ? null : new WString(wszQualifierName), lFlags, pQualifierVal, pNames);
         }
@@ -193,6 +210,42 @@ public interface Wbemcli {
             COMUtils.checkRC(GetPropertyQualifierSet(wszProperty, ppQualSet));
             IWbemQualifierSet qualifier  = new IWbemQualifierSet(ppQualSet.getValue());
             return qualifier;
+        }
+
+        public HRESULT Put(String wszName, int lFlags, Variant.VARIANT pVal, int Type) {
+            return Put(wszName == null ? null : new WString(wszName), lFlags, pVal, Type);
+        }
+
+        public HRESULT Put(WString wszName, int lFlags, Variant.VARIANT pVal, int Type) {
+            // 6th method in IWbemClassObjectVtbl
+            return (HRESULT) _invokeNativeObject(5,
+                new Object[]{ getPointer(), wszName, lFlags, pVal, Type}, HRESULT.class);
+        }
+
+        public void Put(String wszName, String pValue) {
+            Variant.VARIANT aVariant = new Variant.VARIANT();
+            BSTR strValue = OleAuto.INSTANCE.SysAllocString(pValue);
+            try {
+                aVariant.setValue(Variant.VT_BSTR, strValue);
+                HRESULT res = Put(wszName, 0, aVariant, 0);
+                COMUtils.checkRC(res);
+            }
+            finally {
+                OleAuto.INSTANCE.VariantClear(aVariant);
+            }
+        }
+
+        public HRESULT SpawnInstance(int lFlags, PointerByReference ppNewInstance) {
+            // 16th method in IWbemClassObjectVtbl
+            return (HRESULT) _invokeNativeObject(15,
+                new Object[]{ getPointer(), lFlags, ppNewInstance}, HRESULT.class);
+        }
+
+        public IWbemClassObject SpawnInstance() {
+            PointerByReference ppNewInstance = new PointerByReference();
+            HRESULT res = SpawnInstance(0, ppNewInstance);
+            COMUtils.checkRC(res);
+            return new IWbemClassObject(ppNewInstance.getValue());
         }
     }
 
@@ -346,6 +399,31 @@ public interface Wbemcli {
 
         public IWbemServices(Pointer pvInstance) {
             super(pvInstance);
+        }
+
+        public HRESULT ExecMethod(BSTR strObjectPath, BSTR strMethodName, int lFlags, IWbemContext pCtx,
+                Pointer pInParams, PointerByReference ppOutParams, PointerByReference ppCallResult) {
+            // ExecMethod is 25st method of IWbemServicesVtbl in WbemCli.h
+            return (HRESULT) _invokeNativeObject(24,
+                    new Object[] { getPointer(), strObjectPath, strMethodName, lFlags, pCtx, pInParams, ppOutParams, ppCallResult }, HRESULT.class);
+        }
+
+        public IWbemClassObject ExecMethod(String strObjectPath, String strMethodName, int lFlags, IWbemContext pCtx,
+                IWbemClassObject inParams) {
+            BSTR strObjectPathBSTR = OleAuto.INSTANCE.SysAllocString(strObjectPath);
+            BSTR strMethodNameBSTR = OleAuto.INSTANCE.SysAllocString(strMethodName);
+            try {
+                PointerByReference ppOutParams = new PointerByReference();
+
+                HRESULT res = ExecMethod(strObjectPathBSTR, strMethodNameBSTR, lFlags, pCtx, inParams.getPointer(), ppOutParams, null);
+
+                COMUtils.checkRC(res);
+
+                return new IWbemClassObject(ppOutParams.getValue());
+            } finally {
+                OleAuto.INSTANCE.SysFreeString(strObjectPathBSTR);
+                OleAuto.INSTANCE.SysFreeString(strMethodNameBSTR);
+            }
         }
 
         public HRESULT ExecQuery(BSTR strQueryLanguage, BSTR strQuery, int lFlags, IWbemContext pCtx,
