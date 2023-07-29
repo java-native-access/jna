@@ -952,9 +952,6 @@ public final class Native implements Version {
 
         String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
         String bootPath = System.getProperty("jna.boot.library.path");
-        if (bootPath == null) {
-            bootPath = "/usr/lib/jni" + File.pathSeparator + "/usr/lib/" + Platform.getMultiArchPath() + "/jni";
-        }
         if (bootPath != null) {
             // String.split not available in 1.4
             StringTokenizer dirs = new StringTokenizer(bootPath, File.pathSeparator);

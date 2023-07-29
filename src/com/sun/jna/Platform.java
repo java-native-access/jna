@@ -262,12 +262,8 @@ public final class Platform {
             arch = "ppc64le";
         }
         // Map arm to armel if the binary is running as softfloat build
-        if("arm".equals(arch) && platform == Platform.LINUX ) {
-            if(isSoftFloat()) {
-                arch = "armel";
-            } else if(!is64Bit()) {
-                arch = "armhf";
-            }
+        if("arm".equals(arch) && platform == Platform.LINUX && isSoftFloat()) {
+            arch = "armel";
         }
 
         return arch;
@@ -374,7 +370,7 @@ public final class Platform {
             cpu = (is64Bit() ? "aarch64" : "arm");
             libc = is64Bit()
                 ? "-gnu"
-                : ("armhf".equals(ARCH) ? "-gnueabihf" : "-gnueabi");
+                : ("armel".equals(ARCH) ? "-gnueabi" : "-gnueabihf");
         }
         else if (ARCH.equals("mips64el")) {
             libc = "-gnuabi64";
