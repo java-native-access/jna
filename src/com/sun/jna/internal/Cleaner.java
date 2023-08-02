@@ -27,6 +27,11 @@ package com.sun.jna.internal;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,116 +40,204 @@ import java.util.logging.Logger;
  * objects. It replaces the {@code Object#finalize} based resource deallocation
  * that is deprecated for removal from the JDK.
  *
- * <p><strong>This class is intented to be used only be JNA itself.</strong></p>
+ * <p><strong>This class is intended to be used only be JNA itself.</strong></p>
  */
 public class Cleaner {
-    private static final Cleaner INSTANCE = new Cleaner();
+    /* General idea:
+     *
+     * There's one Cleaner per thread, kept in a ThreadLocal static variable.
+     * This instance handles all to-be-cleaned objects registered by this
+     * thread. Whenever the thread registers another object, it first checks
+     * if there are references in the queue and cleans them up, then continues
+     * with the registration.
+     *
+     * This leaves two cases open, for which we employ a "Master Cleaner" and
+     * a separate cleaning thread.
+     * 1. If a long-lived thread registers some objects in the beginning, but
+     *    then stops registering more objects, the previously registered
+     *    objects will never be cleared.
+     * 2. When a thread exists before all its registered objects have been
+     *    cleared, the ThreadLocal instance are lost, and so are the pending
+     *    objects.
+     *
+     * The Master Cleaner handles the first issue by regularly handling the
+     * queues of the Cleaners registered with it.
+     * The seconds issue is handled by registering the per-thread Cleaner
+     * instances with the Master's reference queue.
+     */
 
-    public static Cleaner getCleaner() {
-        return INSTANCE;
-    }
+    private static class CleanerImpl {
+        protected final ReferenceQueue<Object> referenceQueue = new ReferenceQueue<Object>();
+        protected final Map<Long,CleanerRef> cleanables = new ConcurrentHashMap<Long,CleanerRef>();
+        private final AtomicBoolean lock = new AtomicBoolean(false);
 
-    private final ReferenceQueue<Object> referenceQueue;
-    private final Thread cleanerThread;
-    private CleanerRef firstCleanable;
-
-    private Cleaner() {
-        referenceQueue = new ReferenceQueue<Object>();
-        cleanerThread = new Thread() {
-            @Override
-            public void run() {
-                while(true) {
-                    try {
-                        Reference<? extends Object> ref = referenceQueue.remove();
-                        if(ref instanceof CleanerRef) {
-                            ((CleanerRef) ref).clean();
+        private void cleanQueue() {
+            if (lock.compareAndSet(false, true)) {
+                try {
+                    Reference<?> ref;
+                    while ((ref = referenceQueue.poll()) != null) {
+                        try {
+                            if (ref instanceof Cleanable) {
+                                ((Cleanable) ref).clean();
+                            }
+                        } catch (RuntimeException ex) {
+                            Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                    } catch (InterruptedException ex) {
-                        // Can be raised on shutdown. If anyone else messes with
-                        // our reference queue, well, there is no way to separate
-                        // the two cases.
-                        // https://groups.google.com/g/jna-users/c/j0fw96PlOpM/m/vbwNIb2pBQAJ
-                        break;
-                    } catch (Exception ex) {
-                        Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                } finally {
+                    lock.set(false);
                 }
             }
-        };
-        cleanerThread.setName("JNA Cleaner");
-        cleanerThread.setDaemon(true);
-        cleanerThread.start();
+        }
+
+        public Cleanable register(Object obj, Runnable cleanupTask) {
+            cleanQueue();
+            // The important side effect is the PhantomReference, that is yielded
+            // after the referent is GCed
+            return new CleanerRef(this, obj, referenceQueue, cleanupTask);
+        }
+
+        protected void put(long n, CleanerRef ref) {
+            cleanables.put(n, ref);
+        }
+
+        protected boolean remove(long n) {
+            return cleanables.remove(n) != null;
+        }
     }
 
-    public synchronized Cleanable register(Object obj, Runnable cleanupTask) {
-        // The important side effect is the PhantomReference, that is yielded
-        // after the referent is GCed
-        return add(new CleanerRef(this, obj, referenceQueue, cleanupTask));
+    private static class MasterCleanerImpl extends CleanerImpl {
+        @Override
+        protected synchronized void put(long n, CleanerRef ref) {
+            super.put(n, ref);
+        }
+
+        @Override
+        protected synchronized boolean remove(long n) {
+            return super.remove(n);
+        }
     }
 
-    private synchronized CleanerRef add(CleanerRef ref) {
-        if(firstCleanable == null) {
-            firstCleanable = ref;
+    public static class MasterCleaner extends Cleaner {
+        public static final long CLEANUP_INTERVAL_MS = 5000;
+        public static final long MAX_LINGER_MS = 30000;
+
+        private static MasterCleaner INSTANCE;
+
+        public static synchronized void add(Cleaner cleaner) {
+            if (INSTANCE == null) {
+                INSTANCE = new MasterCleaner();
+            }
+            final CleanerImpl impl = cleaner.impl;
+            INSTANCE.cleanerImpls.put(impl, true);
+            INSTANCE.register(cleaner, new Runnable() {
+                @Override
+                public void run() {
+                    INSTANCE.cleanerImpls.put(impl, false);
+                }
+            });
+        }
+
+        private static synchronized boolean deleteIfEmpty() {
+            if (INSTANCE != null && INSTANCE.cleanerImpls.isEmpty()) {
+                INSTANCE = null;
+                return true;
+            }
+            return false;
+        }
+
+        private final Map<CleanerImpl,Boolean> cleanerImpls = new ConcurrentHashMap<CleanerImpl,Boolean>();
+        private long lastNonEmpty = System.currentTimeMillis();
+
+        private MasterCleaner() {
+            super(true);
+            Thread cleanerThread = new Thread() {
+                @Override
+                public void run() {
+                    long now;
+                    while ((now = System.currentTimeMillis()) < lastNonEmpty + MAX_LINGER_MS || !deleteIfEmpty()) {
+                        if (!cleanerImpls.isEmpty()) { lastNonEmpty = now; }
+                        try {
+                            Reference<?> ref = impl.referenceQueue.remove(CLEANUP_INTERVAL_MS);
+                            if(ref instanceof CleanerRef) {
+                                ((CleanerRef) ref).clean();
+                            } else {
+                                masterCleanup();
+                            }
+                        } catch (InterruptedException ex) {
+                            // Can be raised on shutdown. If anyone else messes with
+                            // our reference queue, well, there is no way to separate
+                            // the two cases.
+                            // https://groups.google.com/g/jna-users/c/j0fw96PlOpM/m/vbwNIb2pBQAJ
+                            break;
+                        } catch (Exception ex) {
+                            Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            };
+            cleanerThread.setName("JNA Cleaner");
+            cleanerThread.setDaemon(true);
+            cleanerThread.start();
+        }
+
+        private void masterCleanup() {
+            Iterator<Map.Entry<CleanerImpl,Boolean>> it = cleanerImpls.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<CleanerImpl,Boolean> entry = it.next();
+                entry.getKey().cleanQueue();
+                if (!entry.getValue() && entry.getKey().cleanables.isEmpty()) {
+                    it.remove();
+                }
+            }
+        }
+    }
+
+    private static final ThreadLocal<Cleaner> MY_INSTANCE = new ThreadLocal<Cleaner>() {
+        @Override
+        protected Cleaner initialValue() {
+            return new Cleaner(false);
+        }
+    };
+
+    public static Cleaner getCleaner() {
+        return MY_INSTANCE.get();
+    }
+
+    protected final CleanerImpl impl;
+
+    private Cleaner(boolean master) {
+        if (master) {
+            impl = new MasterCleanerImpl();
         } else {
-            ref.setNext(firstCleanable);
-            firstCleanable.setPrevious(ref);
-            firstCleanable = ref;
+            impl = new CleanerImpl();
+            MasterCleaner.add(this);
         }
-        return ref;
     }
 
-    private synchronized boolean remove(CleanerRef ref) {
-        boolean inChain = false;
-        if(ref == firstCleanable) {
-            firstCleanable = ref.getNext();
-            inChain = true;
-        }
-        if(ref.getPrevious() != null) {
-            ref.getPrevious().setNext(ref.getNext());
-        }
-        if(ref.getNext() != null) {
-            ref.getNext().setPrevious(ref.getPrevious());
-        }
-        if(ref.getPrevious() != null || ref.getNext() != null) {
-            inChain = true;
-        }
-        ref.setNext(null);
-        ref.setPrevious(null);
-        return inChain;
+    public Cleanable register(Object obj, Runnable cleanupTask) {
+        return impl.register(obj, cleanupTask);
     }
 
     private static class CleanerRef extends PhantomReference<Object> implements Cleanable {
-        private final Cleaner cleaner;
-        private final Runnable cleanupTask;
-        private CleanerRef previous;
-        private CleanerRef next;
+        private static final AtomicLong COUNTER = new AtomicLong(Long.MIN_VALUE);
 
-        public CleanerRef(Cleaner cleaner, Object referent, ReferenceQueue<? super Object> q, Runnable cleanupTask) {
+        private final CleanerImpl cleaner;
+        private final long number = COUNTER.incrementAndGet();
+        private Runnable cleanupTask;
+
+        public CleanerRef(CleanerImpl impl, Object referent, ReferenceQueue<Object> q, Runnable cleanupTask) {
             super(referent, q);
-            this.cleaner = cleaner;
+            this.cleaner = impl;
             this.cleanupTask = cleanupTask;
+            cleaner.put(number, this);
         }
 
         public void clean() {
-            if(cleaner.remove(this)) {
+            if(cleaner.remove(this.number) && cleanupTask != null) {
                 cleanupTask.run();
+                cleanupTask = null;
             }
-        }
-
-        CleanerRef getPrevious() {
-            return previous;
-        }
-
-        void setPrevious(CleanerRef previous) {
-            this.previous = previous;
-        }
-
-        CleanerRef getNext() {
-            return next;
-        }
-
-        void setNext(CleanerRef next) {
-            this.next = next;
         }
     }
 
