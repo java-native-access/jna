@@ -38,6 +38,7 @@ import java.util.WeakHashMap;
 
 import com.sun.jna.Callback.UncaughtExceptionHandler;
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
+import com.sun.jna.internal.Cleaner;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
@@ -362,7 +363,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
         cb = null;
         System.gc();
-        for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
+        for (int i = 0; i < Cleaner.MasterCleaner.CLEANUP_INTERVAL_MS / 10 + 5 && (ref.get() != null || refs.containsValue(ref)); ++i) {
             Thread.sleep(10); // Give the GC a chance to run
             System.gc();
         }
@@ -371,11 +372,11 @@ public class CallbacksTest extends TestCase implements Paths {
 
         ref = null;
         System.gc();
-        for (int i = 0; i < 100 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
+        for (int i = 0; i < Cleaner.MasterCleaner.CLEANUP_INTERVAL_MS / 10 + 5 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
             // Flush weak hash map
             refs.size();
             try {
-                Thread.sleep(10); // Give the GC a chance to run
+                Thread.sleep(Cleaner.MasterCleaner.CLEANUP_INTERVAL_MS + 10); // Give the GC a chance to run
                 System.gc();
             } finally {}
         }
