@@ -429,6 +429,44 @@ public class WbemcliTest {
         assertEquals(currentPid, pVal.longValue());
     }
 
+    @Test
+    public void testWmiObject() {
+        Wbemcli.IWbemServices svc = null;
+        Variant.VARIANT.ByReference pVal = new Variant.VARIANT.ByReference();
+
+        String className = "StdRegProv";
+        String methodName = "GetStringValue";
+
+        IWbemClassObject regClass = null;
+        IWbemClassObject method = null;
+        IWbemClassObject instance = null;
+        IWbemClassObject result = null;
+
+        try {
+            svc = WbemcliUtil.connectServer("ROOT\\Default");
+
+            regClass = svc.GetObject(className, 0, null);
+            method = regClass.GetMethod(methodName);
+            instance = method.SpawnInstance();
+
+            instance.Put("sSubKeyName", "SOFTWARE\\Microsoft\\Windows\\CurrentVersion");
+            instance.Put("sValueName", "CommonFilesDir");
+
+            result = svc.ExecMethod(className, methodName, 0, null, instance);
+
+            result.Get("sValue", 0, pVal, null, null);
+            assertEquals(Variant.VT_BSTR, pVal.getVarType().intValue());
+            assertTrue(!pVal.stringValue().isEmpty());
+            OleAuto.INSTANCE.VariantClear(pVal);
+        } finally {
+            if (svc != null) svc.Release();
+            if (result != null) result.Release();
+            if (method != null) method.Release();
+            if (instance != null) instance.Release();
+            if (regClass != null) regClass.Release();
+        }
+    }
+
     /**
      * Copy from WbemcliUtil#connectServer with American English selected as
      * locale.
