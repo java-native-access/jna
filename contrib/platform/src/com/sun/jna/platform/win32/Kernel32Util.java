@@ -1258,6 +1258,80 @@ public abstract class Kernel32Util implements WinDef {
         }
     }
 
+    /**
+     * Sets the priority class for the current process.
+     * 
+     * @param dwPriorityClass The priority class for the process.
+     * @throws Win32Exception if an error occurs.
+     */
+    public static void setCurrentProcessPriority(final DWORD dwPriorityClass) {
+        if (!Kernel32.INSTANCE.SetPriorityClass(Kernel32.INSTANCE.GetCurrentProcess(), dwPriorityClass)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
+
+    /**
+     * Sets the priority value for the current thread.
+     * 
+     * @param nPriority The priority value for the thread.
+     * @throws Win32Exception if an error occurs.
+     */
+    public static void setCurrentThreadPriority(final int nPriority) {
+        if (!Kernel32.INSTANCE.SetThreadPriority(Kernel32.INSTANCE.GetCurrentThread(), nPriority)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
+
+    /**
+     * Sets the priority class for the specified process.
+     * 
+     * @param pid Identifier for the running process.
+     * @param dwPriorityClass The priority class for the process.
+     * @throws Win32Exception if an error occurs.
+     */
+    public static final void setProcessPriority(final int pid, final DWORD dwPriorityClass) {
+        final HANDLE hProcess = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_SET_INFORMATION, false, pid);
+        if (hProcess == null) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        Win32Exception we = null;
+        try {
+            if (!Kernel32.INSTANCE.SetPriorityClass(hProcess, dwPriorityClass)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }    
+        } catch (final Win32Exception e) {
+            we = e;
+        } finally {
+            cleanUp(snapshot, we);
+        }
+    }
+
+    /**
+     * Sets the priority value for the specified thread.
+     * 
+     * @param tid Identifier for the running thread.
+     * @param nPriority The priority value for the thread.
+     * @throws Win32Exception if an error occurs.
+     */
+    public static void setThreadPriority(final int tid, final int nPriority) {
+        final HANDLE hThread = Kernel32.INSTANCE.OpenThread(WinNT.THREAD_SET_INFORMATION, false, pid);
+        if (hThread == null) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        Win32Exception we = null;
+        try {
+            if (!Kernel32.INSTANCE.SetThreadPriority(hThread, nPriority)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }    
+        } catch (final Win32Exception e) {
+            we = e;
+        } finally {
+            cleanUp(snapshot, we);
+        }
+    }
+
     private static void cleanUp(final HANDLE h, Win32Exception we) {
         try {
             closeHandle(h);
