@@ -37,6 +37,7 @@ import java.util.Map;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Tlhelp32.MODULEENTRY32W;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinNT.CACHE_RELATIONSHIP;
 import com.sun.jna.platform.win32.WinNT.GROUP_RELATIONSHIP;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -512,5 +513,91 @@ public class Kernel32UtilTest extends TestCase {
                     || cache.type == PROCESSOR_CACHE_TYPE.CacheData || cache.type == PROCESSOR_CACHE_TYPE.CacheTrace);
             assertTrue(cache.associativity == WinNT.CACHE_FULLY_ASSOCIATIVE || cache.associativity > 0);
         }
+    }
+
+    public void testGetCurrentProcessPriority() {
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32Util.getCurrentProcessPriority()));
+    }
+
+    public void testSetCurrentProcessPriority() {
+        Kernel32Util.setCurrentProcessPriority(Kernel32.HIGH_PRIORITY_CLASS);
+    }
+
+    public void testSetCurrentProcessBackgroundMode() {
+        try {
+            Kernel32Util.setCurrentProcessBackgroundMode(true);
+        } finally {
+            try {
+                Kernel32Util.setCurrentProcessBackgroundMode(false); // Reset the "background" mode!
+            } catch (Exception e) { }
+        }
+    }
+
+    public void testGetCurrentThreadPriority() {
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32Util.getCurrentThreadPriority()));
+    }
+
+    public void testSetCurrentThreadPriority() {
+        Kernel32Util.setCurrentThreadPriority(Kernel32.THREAD_PRIORITY_ABOVE_NORMAL);
+    }
+
+    public void testSetCurrentThreadBackgroundMode() {
+        try {
+            Kernel32Util.setCurrentThreadBackgroundMode(true);
+        } finally {
+            try {
+                Kernel32Util.setCurrentThreadBackgroundMode(false); // Reset the "background" mode!
+            } catch (Exception e) { }
+        }
+    }
+
+    public void testGetProcessPriority() {
+        final int pid = Kernel32.INSTANCE.GetCurrentProcessId();
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32Util.getProcessPriority(pid)));
+    }
+
+    public void testSetProcessPriority() {
+        final int pid = Kernel32.INSTANCE.GetCurrentProcessId();
+        Kernel32Util.setProcessPriority(pid, Kernel32.HIGH_PRIORITY_CLASS);
+    }
+
+    public void testGetThreadPriority() {
+        final int tid = Kernel32.INSTANCE.GetCurrentThreadId();
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32Util.getThreadPriority(tid)));
+    }
+
+    public void testSetThreadPriority() {
+        final int tid = Kernel32.INSTANCE.GetCurrentThreadId();
+        Kernel32Util.setThreadPriority(tid, Kernel32.THREAD_PRIORITY_ABOVE_NORMAL);
+    }
+
+    public void testIsValidPriorityClass() {
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32.NORMAL_PRIORITY_CLASS));
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32.IDLE_PRIORITY_CLASS));
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32.HIGH_PRIORITY_CLASS));
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32.REALTIME_PRIORITY_CLASS));
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32.BELOW_NORMAL_PRIORITY_CLASS));
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32.ABOVE_NORMAL_PRIORITY_CLASS));
+        assertFalse(Kernel32Util.isValidPriorityClass(new DWORD(0L)));
+        assertFalse(Kernel32Util.isValidPriorityClass(new DWORD(1L)));
+        assertFalse(Kernel32Util.isValidPriorityClass(new DWORD(0xFFFFFFFF)));
+        assertFalse(Kernel32Util.isValidPriorityClass(Kernel32.PROCESS_MODE_BACKGROUND_BEGIN));
+        assertFalse(Kernel32Util.isValidPriorityClass(Kernel32.PROCESS_MODE_BACKGROUND_END));
+    }
+
+    public void testIsValidThreadPriority() {
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_PRIORITY_IDLE));
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_PRIORITY_LOWEST));
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_PRIORITY_BELOW_NORMAL));
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_PRIORITY_NORMAL));
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_PRIORITY_ABOVE_NORMAL));
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_PRIORITY_HIGHEST));
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_PRIORITY_TIME_CRITICAL));
+        assertFalse(Kernel32Util.isValidThreadPriority(  3));
+        assertFalse(Kernel32Util.isValidThreadPriority( -3));
+        assertFalse(Kernel32Util.isValidThreadPriority( 16));
+        assertFalse(Kernel32Util.isValidThreadPriority(-16));
+        assertFalse(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_MODE_BACKGROUND_BEGIN));
+        assertFalse(Kernel32Util.isValidThreadPriority(Kernel32.THREAD_MODE_BACKGROUND_END));
     }
 }

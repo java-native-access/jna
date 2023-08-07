@@ -69,6 +69,44 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     int LOAD_LIBRARY_AS_DATAFILE = 0x2;
 
     /**
+     * Process priority classes
+     */
+    DWORD NORMAL_PRIORITY_CLASS         = new DWORD(0x00000020L);
+    DWORD IDLE_PRIORITY_CLASS           = new DWORD(0x00000040L);
+    DWORD HIGH_PRIORITY_CLASS           = new DWORD(0x00000080L);
+    DWORD REALTIME_PRIORITY_CLASS       = new DWORD(0x00000100L);
+    DWORD BELOW_NORMAL_PRIORITY_CLASS   = new DWORD(0x00004000L);
+    DWORD ABOVE_NORMAL_PRIORITY_CLASS   = new DWORD(0x00008000L);
+
+    /**
+     * Process mode flags
+     */
+    DWORD PROCESS_MODE_BACKGROUND_BEGIN = new DWORD(0x00100000L);
+    DWORD PROCESS_MODE_BACKGROUND_END   = new DWORD(0x00200000L);
+
+    /**
+     * Thread priorities
+     */
+    int THREAD_PRIORITY_IDLE          = -15;
+    int THREAD_PRIORITY_LOWEST        =  -2;
+    int THREAD_PRIORITY_BELOW_NORMAL  =  -1;
+    int THREAD_PRIORITY_NORMAL        =   0;
+    int THREAD_PRIORITY_ABOVE_NORMAL  =   1;
+    int THREAD_PRIORITY_HIGHEST       =   2;
+    int THREAD_PRIORITY_TIME_CRITICAL =  15;
+
+    /**
+     * Thread mode flags
+     */
+    int THREAD_MODE_BACKGROUND_BEGIN = 0x10000;
+    int THREAD_MODE_BACKGROUND_END   = 0x20000;
+
+    /**
+     * Thread priority error code
+     */
+    int THREAD_PRIORITY_ERROR_RETURN = 0x7FFFFFFF;
+
+    /**
      * Reads data from the specified file or input/output (I/O) device. Reads
      * occur at the position specified by the file pointer if supported by the
      * device.
@@ -4151,6 +4189,45 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * <p>If the function fails, the return value is zero.</p>
      */
     boolean GetExitCodeThread(HANDLE hThread, IntByReference exitCode);
+
+    /**
+     * Gets the priority class of the specified process.
+     *
+     * @param hProcess A handle to the process.
+     * @return If the function succeeds, the return value is the priority class of
+     *                  the specified process.
+     * <p>If the function fails, the return value is zero.</p>
+     */
+    DWORD GetPriorityClass(HANDLE hProcess);
+
+    /**
+     * Sets the priority class for the specified process.
+     *
+     * @param hProcess A handle to the process.
+     * @param dwPriorityClass The priority class for the process.
+     * @return If the function succeeds, the return value is nonzero.
+     */
+    boolean SetPriorityClass(HANDLE hProcess, DWORD dwPriorityClass);
+
+    /**
+     * Gets the priority value of the specified thread.
+     *
+     * @param hProcess A handle to the process.
+     * @return If the function succeeds, the return value is the priority class of
+     *                  the specified thread.
+     * <p>If the function fails, the return value is
+     *                  THREAD_PRIORITY_ERROR_RETURN.</p>
+     */
+    int GetThreadPriority(HANDLE hProcess);
+
+    /**
+     * Sets the priority value for the specified thread.
+     *
+     * @param hThread A handle to the thread whose priority value is to be set.
+     * @param nPriority The priority value for the thread.
+     * @return If the function succeeds, the return value is nonzero.
+     */
+    boolean SetThreadPriority(HANDLE hThread, int nPriority);
 
     /**
      * Releases, decommits, or releases and decommits a region of memory within
