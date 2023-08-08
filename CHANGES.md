@@ -13,6 +13,7 @@ Bug Fixes
 ---------
 * [#1501](https://github.com/java-native-access/jna/pull/1501): `Library.OPTION_STRING_ENCODING` is ignore for string arguments function calls - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1504](https://github.com/java-native-access/jna/pull/1504): Increase maximum supported fixed args on varargs calls from 3 to 255 - [@andrew-nowak](https://github.com/andrew-nowak).
+* [#1545](https://github.com/java-native-access/jna/pull/1545): Fix Java 6 incompatibility in `c.s.j.p.win32.Kerne32Util` and `c.s.j.p.win32.DBT` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Important Changes
 -----------------
