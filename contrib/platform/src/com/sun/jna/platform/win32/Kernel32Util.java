@@ -392,23 +392,10 @@ public abstract class Kernel32Util implements WinDef {
                 default:
                     return type;
             }
-        } catch(Win32Exception e) {
+        } catch(final Win32Exception e) {
             err = e;
-            throw err;  // re-throw so finally block executed
         } finally {
-            try {
-                closeHandle(hFile);
-            } catch(Win32Exception e) {
-                if (err == null) {
-                    err = e;
-                } else {
-                    err.addSuppressedReflected(e);
-                }
-            }
-
-            if (err != null) {
-                throw err;
-            }
+            cleanUp(hFile, err);
         }
     }
 
@@ -944,22 +931,10 @@ public abstract class Kernel32Util implements WinDef {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
             return QueryFullProcessImageName(hProcess, dwFlags);
-        } catch (Win32Exception e) {
+        } catch (final Win32Exception e) {
             we = e;
-            throw we; // re-throw to invoke finally block
         } finally {
-            try {
-                closeHandle(hProcess);
-            } catch (Win32Exception e) {
-                if (we == null) {
-                    we = e;
-                } else {
-                    we.addSuppressed(e);
-                }
-            }
-            if (we != null) {
-                throw we;
-            }
+            cleanUp(hProcess, we);
         }
     }
 
@@ -1223,23 +1198,10 @@ public abstract class Kernel32Util implements WinDef {
             }
 
             return modules;
-        } catch (Win32Exception e) {
+        } catch (final Win32Exception e) {
             we = e;
-            throw we;   // re-throw so finally block is executed
         } finally {
-            try {
-                closeHandle(snapshot);
-            } catch(Win32Exception e) {
-                if (we == null) {
-                    we = e;
-                } else {
-                    we.addSuppressedReflected(e);
-                }
-            }
-
-            if (we != null) {
-                throw we;
-            }
+            cleanUp(snapshot, we);
         }
     }
 
@@ -1294,5 +1256,20 @@ public abstract class Kernel32Util implements WinDef {
         } else {
             return resultMemory.getString(0);
         }
+    }
+
+    private static void cleanUp(final HANDLE h, Win32Exception we) {
+        try {
+            closeHandle(h);
+        } catch (final Win32Exception e) {
+            if (we == null) {
+                we = e;
+            } else {
+                we.addSuppressedReflected(e);
+            }
+        }
+        if (we != null) {
+            throw we;
+        } 
     }
 }
