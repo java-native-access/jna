@@ -954,7 +954,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (we == null) {
                     we = e;
                 } else {
-                    we.addSuppressed(e);
+                    we.addSuppressedReflected(e);
                 }
             }
             if (we != null) {

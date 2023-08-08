@@ -32,7 +32,7 @@ import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.HDEVNOTIFY;
 import com.sun.jna.win32.W32APITypeMapper;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 /**
@@ -326,7 +326,13 @@ public interface DBT {
             if(W32APITypeMapper.DEFAULT == W32APITypeMapper.ASCII) {
                 return Native.toString(this.dbcp_name);
             } else {
-                return new String(this.dbcp_name, StandardCharsets.UTF_16LE);
+                try {
+                    return new String(this.dbcp_name, "UTF-16LE");
+                } catch (UnsupportedEncodingException ex) {
+                    // UTF-16LE is documented to be present at least beginning
+                    // with JDK 6
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
