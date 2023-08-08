@@ -35,7 +35,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Msi extends StdCallLibrary {
 
-    Msi INSTANCE = Native.load("msi", Msi.class, W32APIOptions.DEFAULT_OPTIONS);
+    Msi INSTANCE = Native.load("msi", Msi.class, W32APIOptions.UNICODE_OPTIONS);
 
     /**
      * The component being requested is disabled on the computer.
