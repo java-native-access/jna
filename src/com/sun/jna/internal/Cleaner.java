@@ -155,14 +155,18 @@ public class Cleaner {
                 @Override
                 public void run() {
                     long now;
+                    long lastMasterRun = 0;
                     while ((now = System.currentTimeMillis()) < lastNonEmpty + MASTER_MAX_LINGER_MS || !deleteIfEmpty()) {
                         if (!cleanerImpls.isEmpty()) { lastNonEmpty = now; }
                         try {
                             Reference<?> ref = impl.referenceQueue.remove(MASTER_CLEANUP_INTERVAL_MS);
                             if(ref instanceof CleanerRef) {
                                 ((CleanerRef) ref).clean();
-                            } else {
+                            }
+                            // "now" is not really *now* at this point, but off by no more than MASTER_CLEANUP_INTERVAL_MS
+                            if (lastMasterRun + MASTER_CLEANUP_INTERVAL_MS <= now) {
                                 masterCleanup();
+                                lastMasterRun = now;
                             }
                         } catch (InterruptedException ex) {
                             // Can be raised on shutdown. If anyone else messes with
