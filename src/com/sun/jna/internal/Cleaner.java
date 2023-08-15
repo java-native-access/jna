@@ -56,8 +56,8 @@ public class Cleaner {
      * 1. If a long-lived thread registers some objects in the beginning, but
      *    then stops registering more objects, the previously registered
      *    objects will never be cleared.
-     * 2. When a thread exists before all its registered objects have been
-     *    cleared, the ThreadLocal instance are lost, and so are the pending
+     * 2. When a thread exits before all its registered objects have been
+     *    cleared, the ThreadLocal instance is lost, and so are the pending
      *    objects.
      *
      * The Master Cleaner handles the first issue by regularly handling the
@@ -65,6 +65,9 @@ public class Cleaner {
      * The seconds issue is handled by registering the per-thread Cleaner
      * instances with the Master's reference queue.
      */
+
+    public static final long MASTER_CLEANUP_INTERVAL_MS = 5000;
+    public static final long MASTER_MAX_LINGER_MS = 30000;
 
     private static class CleanerImpl {
         protected final ReferenceQueue<Object> referenceQueue = new ReferenceQueue<Object>();
@@ -118,10 +121,7 @@ public class Cleaner {
         }
     }
 
-    public static class MasterCleaner extends Cleaner {
-        public static final long CLEANUP_INTERVAL_MS = 5000;
-        public static final long MAX_LINGER_MS = 30000;
-
+    private static class MasterCleaner extends Cleaner {
         private static MasterCleaner INSTANCE;
 
         public static synchronized void add(Cleaner cleaner) {
@@ -155,10 +155,10 @@ public class Cleaner {
                 @Override
                 public void run() {
                     long now;
-                    while ((now = System.currentTimeMillis()) < lastNonEmpty + MAX_LINGER_MS || !deleteIfEmpty()) {
+                    while ((now = System.currentTimeMillis()) < lastNonEmpty + MASTER_MAX_LINGER_MS || !deleteIfEmpty()) {
                         if (!cleanerImpls.isEmpty()) { lastNonEmpty = now; }
                         try {
-                            Reference<?> ref = impl.referenceQueue.remove(CLEANUP_INTERVAL_MS);
+                            Reference<?> ref = impl.referenceQueue.remove(MASTER_CLEANUP_INTERVAL_MS);
                             if(ref instanceof CleanerRef) {
                                 ((CleanerRef) ref).clean();
                             } else {
