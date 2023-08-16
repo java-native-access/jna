@@ -2099,4 +2099,24 @@ public class Kernel32Test extends TestCase {
         // Unlocking an unlocked region should fail
         assertFalse(Kernel32.INSTANCE.VirtualUnlock(mem, new SIZE_T(4096)));
     }
+
+    public void testGetPriorityClass() {
+        final HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentProcess();
+        assertTrue(Kernel32Util.isValidPriorityClass(Kernel32.INSTANCE.GetPriorityClass(selfHandle)));
+    }
+
+    public void testSetPriorityClass() {
+        final HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentProcess();
+        assertTrue(Kernel32.INSTANCE.SetPriorityClass(selfHandle, Kernel32.HIGH_PRIORITY_CLASS));
+    }
+
+    public void testGetThreadPriority() {
+        final HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentThread();
+        assertTrue(Kernel32Util.isValidThreadPriority(Kernel32.INSTANCE.GetThreadPriority(selfHandle)));
+    }
+
+    public void testSetThreadPriority() {
+        final HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentThread();
+        assertTrue(Kernel32.INSTANCE.SetThreadPriority(selfHandle, Kernel32.THREAD_PRIORITY_ABOVE_NORMAL));
+    }
 }

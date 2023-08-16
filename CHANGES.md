@@ -8,6 +8,7 @@ Next Release (5.14.0)
 Features
 --------
 * [#1534](https://github.com/java-native-access/jna/pull/1534): Add `GetMethod`, `Put`, `SpawnInstance` to `c.s.j.p.win32.COM.WbemCli#IWbemClassObject` and `ExecMethod` to `c.s.j.p.win32.COM.WbemCli#IWbemServices` - [@faddom](https://github.com/faddom).
+* [#1544](https://github.com/java-native-access/jna/pull/1544): Add `GetPriorityClass`, `SetPriorityClass`, `GetThreadPriority`, `SetThreadPriority` and associated constants to `c.s.j.p.win32.Kernel32` - [@dEajL3kA](https://github.com/dEajL3kA).
 
 Bug Fixes
 ---------
