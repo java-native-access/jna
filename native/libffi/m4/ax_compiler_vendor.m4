@@ -1,5 +1,5 @@
 # ===========================================================================
-#    http://www.gnu.org/software/autoconf-archive/ax_compiler_vendor.html
+#    https://www.gnu.org/software/autoconf-archive/ax_compiler_vendor.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -29,7 +29,7 @@
 #   Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License along
-#   with this program. If not, see <http://www.gnu.org/licenses/>.
+#   with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 #   As a special exception, the respective Autoconf Macro's copyright owner
 #   gives unlimited permission to copy, distribute and modify the configure
@@ -44,22 +44,25 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 11
+#serial 17
 
 AC_DEFUN([AX_COMPILER_VENDOR],
 [AC_CACHE_CHECK([for _AC_LANG compiler vendor], ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor,
+  dnl Please add if possible support to ax_compiler_version.m4
   [# note: don't check for gcc first since some other compilers define __GNUC__
   vendors="intel:     __ICC,__ECC,__INTEL_COMPILER
            ibm:       __xlc__,__xlC__,__IBMC__,__IBMCPP__
            pathscale: __PATHCC__,__PATHSCALE__
            clang:     __clang__
+           cray:      _CRAYC
+           fujitsu:   __FUJITSU
+           sdcc:      SDCC, __SDCC
            gnu:       __GNUC__
            sun:       __SUNPRO_C,__SUNPRO_CC
            hp:        __HP_cc,__HP_aCC
            dec:       __DECC,__DECCXX,__DECC_VER,__DECCXX_VER
-           borland:   __BORLANDC__,__TURBOC__
+           borland:   __BORLANDC__,__CODEGEARC__,__TURBOC__
            comeau:    __COMO__
-           cray:      _CRAYC
            kai:       __KCC
            lcc:       __LCC__
            sgi:       __sgi,sgi
@@ -67,6 +70,7 @@ AC_DEFUN([AX_COMPILER_VENDOR],
            metrowerks: __MWERKS__
            watcom:    __WATCOMC__
            portland:  __PGI
+	   tcc:       __TINYC__
            unknown:   UNKNOWN"
   for ventest in $vendors; do
     case $ventest in

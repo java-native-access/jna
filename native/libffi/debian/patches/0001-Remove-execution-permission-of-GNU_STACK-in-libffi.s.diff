@@ -1,0 +1,40 @@
+From 57b8417ab8ab56ace6203950163504cfe48f6bc1 Mon Sep 17 00:00:00 2001
+From: xuhao <xuhao@loongson.cn>
+Date: Mon, 30 Aug 2021 16:04:12 +0800
+Subject: [PATCH] * Remove execution permission of GNU_STACK in libffi.so.7. *
+ Add '\' at the end of Makefile.am:57.
+
+Change-Id: Ie617bae0bba28eb557092a959b4b98d29ea38a20
+---
+ Makefile.am          | 2 +-
+ src/loongarch/sysv.S | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index a0c0ad0..c675b1e 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -54,7 +54,7 @@ noinst_HEADERS = \
+ 	src/cris/ffitarget.h						\
+ 	src/frv/ffitarget.h						\
+ 	src/ia64/ffitarget.h src/ia64/ia64_flags.h			\
+-	src/loongarch/ffitarget.h
++	src/loongarch/ffitarget.h					\
+ 	src/m32r/ffitarget.h						\
+ 	src/m68k/ffitarget.h						\
+ 	src/m88k/ffitarget.h						\
+diff --git a/src/loongarch/sysv.S b/src/loongarch/sysv.S
+index 91027ca..405c883 100644
+--- a/src/loongarch/sysv.S
++++ b/src/loongarch/sysv.S
+@@ -286,3 +286,7 @@ ffi_go_closure_asm:
+     jirl $r0, $ra, 0
+     .cfi_endproc
+     .size ffi_go_closure_asm, .-ffi_go_closure_asm
++
++#if defined __ELF__ && defined __linux__
++        .section .note.GNU-stack,"",%progbits
++#endif
+-- 
+2.20.1
+

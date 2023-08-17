@@ -1,0 +1,13 @@
+diff --git a/src/powerpc/ffi_powerpc.h b/src/powerpc/ffi_powerpc.h
+index 5ee2a70..8e2f2f0 100644
+--- a/src/powerpc/ffi_powerpc.h
++++ b/src/powerpc/ffi_powerpc.h
+@@ -62,7 +62,7 @@ typedef _Float128 float128;
+ #elif defined(__FLOAT128__)
+ typedef __float128 float128;
+ #else
+-typedef __int128 float128;
++typedef char float128[16] __attribute__((aligned(16)));
+ #endif
+ 
+ void FFI_HIDDEN ffi_closure_SYSV (void);

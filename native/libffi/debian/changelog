@@ -1,0 +1,580 @@
+libffi (3.3-5.lnd.2) unstable; urgency=medium
+
+  * Remove execution permission of GNU_STACK in libffi.so.7.
+  * Add '\' at the end of Makefile.am:57. 
+
+ -- XuHao <xuhao@loongson.cn>  Mon, 30 Aug 2021 11:20:36 +0800
+
+libffi (3.3-5.lnd.1) unstable; urgency=medium
+
+  * Add loongarch support.
+
+ -- ChengLulu <chenglulu@loongson.cn>  Tue, 08 Dec 2020 14:17:07 +0800
+
+libffi (3.3-5) unstable; urgency=medium
+
+  * Bump standards and debhelper version.
+  * Update mips64 symbols (Helmut Grohne). Closes: #960224.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 11 Nov 2020 17:12:05 +0100
+
+libffi (3.3-4) unstable; urgency=medium
+
+  * Update powerpc sysv assembly for ffi_powerpc.h changes (#541).
+    Closes: #951496.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 23 Mar 2020 21:28:54 +0100
+
+libffi (3.3-3) unstable; urgency=medium
+
+  * Upload to unstable.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 19 Jan 2020 12:39:28 +0100
+
+libffi (3.3-2.3) experimental; urgency=medium
+
+  * Add one more fix for ppc64.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 05 Jan 2020 11:29:35 +0100
+
+libffi (3.3-2.2) experimental; urgency=medium
+
+  * Fix the build on ppc64..
+
+ -- Matthias Klose <doko@debian.org>  Fri, 29 Nov 2019 15:59:19 +0100
+
+libffi (3.3-2.1) experimental; urgency=medium
+
+  * Fix the build on powerpc.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 28 Nov 2019 15:45:08 +0100
+
+libffi (3.3-1) experimental; urgency=medium
+
+  * libffi 3.3 release.
+  * Don't use toolexeclibdir in the pkg-config file.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 25 Nov 2019 11:54:12 +0100
+
+libffi (3.3~rc1-1) experimental; urgency=medium
+
+  * libffi 3.3 release candidate 1.
+  * Bump standards version.
+
+ -- Matthias Klose <doko@ubuntu.com>  Thu, 24 Oct 2019 13:59:17 +0200
+
+libffi (3.3~rc0-8) experimental; urgency=medium
+
+  * Updates from the trunk 20190508.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 08 May 2019 16:32:47 +0200
+
+libffi (3.3~rc0-7) experimental; urgency=medium
+
+  * Updates from the trunk 20180924.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 24 Sep 2018 13:31:19 +0200
+
+libffi (3.3~rc0-6) experimental; urgency=medium
+
+  * Updates from the trunk 20180512.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 12 May 2018 14:52:33 -0400
+
+libffi (3.3~rc0-5) experimental; urgency=medium
+
+  * Updates from the trunk 20180502.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 02 May 2018 17:27:56 +0200
+
+libffi (3.3~rc0-3) experimental; urgency=medium
+
+  * Updates from the trunk 20180425.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 25 Apr 2018 16:17:27 +0200
+
+libffi (3.3~rc0-2) experimental; urgency=medium
+
+  * Add fix for issues #421, #422 (Andreas Krebbel).
+
+ -- Matthias Klose <doko@debian.org>  Thu, 05 Apr 2018 21:01:40 +0200
+
+libffi (3.3~rc0-1) experimental; urgency=medium
+
+  * libffi 3.3 release candidate 0.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 02 Apr 2018 16:37:49 +0200
+
+libffi (3.3~20180313-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+    - Add RISC-V support. Closes: #892217.
+  * Stop building the libffi-dbg package.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 13 Mar 2018 14:36:40 +0100
+
+libffi (3.3~20180131-2) experimental; urgency=medium
+
+  * Fix symbols file for ia64.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 31 Jan 2018 08:24:36 +0100
+
+libffi (3.3~20180131-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 31 Jan 2018 05:46:23 +0100
+
+libffi (3.3~20180107-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+    - Includes mips r6 updates.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 07 Jan 2018 10:41:51 +0100
+
+libffi (3.3~20171026-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+
+ -- Matthias Klose <doko@ubuntu.com>  Thu, 26 Oct 2017 14:32:00 +0200
+
+libffi (3.3~20171020-2) experimental; urgency=medium
+
+  * Ignore setting nocheck on m68k, powerpcspe and sh4.
+  * Update symbols file for sh4.
+  * Fix issue #381, test failures on ARM32.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 25 Oct 2017 09:59:58 +0200
+
+libffi (3.3~20171020-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 20 Oct 2017 09:22:07 +0200
+
+libffi (3.3~20170512-2) experimental; urgency=medium
+
+  * Update symbols file.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 15 May 2017 10:27:26 -0700
+
+libffi (3.3~20170512-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+  * Bump soname to 7.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 12 May 2017 12:52:23 -0700
+
+libffi (3.3~20160224-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+  * Update more symbols files (WARNING: Removed missing symbols for now).
+
+ -- Matthias Klose <doko@debian.org>  Wed, 24 Feb 2016 12:02:18 +0100
+
+libffi (3.3~20160120-1) experimental; urgency=medium
+
+  * Snapshot, taken from the trunk.
+  * Update symbols files (WARNING: Removed missing symbols for now).
+
+ -- Matthias Klose <doko@debian.org>  Wed, 20 Jan 2016 23:39:34 +0100
+
+libffi (3.2.1-4) unstable; urgency=medium
+
+  * Fix CCASFLAGS. Closes: #787071.
+  * Build using dh-autoreconf. Closes: #803039.
+  * Configure with --enable-pax_emutramp. Closes: #751907.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 14 Dec 2015 19:05:27 +0100
+
+libffi (3.2.1-3) unstable; urgency=medium
+
+  * Update symbols files.
+  * Fix build failure on alpha.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 08 Jul 2015 12:54:12 +0200
+
+libffi (3.2.1-2) experimental; urgency=medium
+
+  * Fix an AArch64 issue, taken from upstream:
+    For any 1-16 byte structure not passed in registers, we weren't copying
+    from the object to be passed, but from the array of objects.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 27 Feb 2015 04:04:10 +0100
+
+libffi (3.2.1-1) experimental; urgency=medium
+
+  * libffi 3.2.1 release.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 18 Nov 2014 16:59:48 +0100
+
+libffi (3.1-2) unstable; urgency=medium
+
+  * Fix HAVE_LONG_DOUBLE_VARIANT conditional in the ffi.h header.
+  * Fail the build if the testsuite doesn't pass. Closes: #597919.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 04 Jun 2014 15:23:33 +0200
+
+libffi (3.1-1) unstable; urgency=medium
+
+  * libffi 3.1 release.
+  * Update symbols file for ppc64. Closes: #736344.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 30 May 2014 14:10:15 +0200
+
+libffi (3.1~rc1-2) unstable; urgency=medium
+
+  * Update symbols file for armel and armhf.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 27 Mar 2014 13:51:48 +0100
+
+libffi (3.1~rc1-1) unstable; urgency=medium
+
+  * libffi 3.1 release candidate 1.
+  * Update symbols file for ppc64. Closes: #736344.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 27 Mar 2014 11:32:39 +0100
+
+libffi (3.0.14~rc0-1) experimental; urgency=medium
+
+  * libffi 3.0.14 release candidate 1.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 04 Mar 2014 10:46:40 +0100
+
+libffi (3.0.13-12) unstable; urgency=medium
+
+  * armhf: Fix ffi_call_VFP with no VFP arguments (Will Newton).
+
+ -- Matthias Klose <doko@debian.org>  Tue, 21 Jan 2014 17:19:04 +0100
+
+libffi (3.0.13-11) unstable; urgency=medium
+
+  * Fix call frame information in ffi_closure_SYSV on AArch64, patch
+    provided by Linaro.
+  * Add symbols file for ppc64el.
+  * Stop building the multilib packages.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 14 Jan 2014 13:21:39 +0100
+
+libffi (3.0.13-10) unstable; urgency=low
+
+  * Fix powerpc symbols files for the biarch builds.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 28 Nov 2013 22:16:31 +0100
+
+libffi (3.0.13-9) unstable; urgency=low
+
+  * Remove private symbols in all the powerpc symbols files. Closes: #730590.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 28 Nov 2013 15:37:17 +0000
+
+libffi (3.0.13-8) unstable; urgency=low
+
+  * Regenerate the autotools files.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 26 Nov 2013 07:30:23 +0100
+
+libffi (3.0.13-7) unstable; urgency=low
+
+  * Updated the powerpc ABIv2 support.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 25 Nov 2013 13:01:05 +0100
+
+libffi (3.0.13-6) unstable; urgency=low
+
+  * Add symbols file for powerpcspe. Closes: #730021.
+  * Don't apply the powerpc ABIv2 patch for now. Closes: #730020.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 21 Nov 2013 10:17:22 +0100
+
+libffi (3.0.13-5) unstable; urgency=low
+
+  * Add a stage1 build profile (Daniel Schepler). Closes: #709627.
+  * Backport powerpc ABIv2 support from the trunk (Alan Modra).
+
+ -- Matthias Klose <doko@debian.org>  Mon, 18 Nov 2013 09:20:37 +0100
+
+libffi (3.0.13-4) unstable; urgency=medium
+
+  * Fix symbols file for s390x.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 10 May 2013 17:24:46 +0200
+
+libffi (3.0.13-3) unstable; urgency=low
+
+  * Upload to unstable. Closes: #667906.
+  * Use multiarch tuples for the non-default biarch installs.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 08 May 2013 17:47:22 +0200
+
+libffi (3.0.13-2) experimental; urgency=low
+
+  * Fix wheezy build on i386.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 20 Mar 2013 17:44:41 -0700
+
+libffi (3.0.13-1) experimental; urgency=low
+
+  * libffi 3.0.13 release.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 20 Mar 2013 16:09:48 -0700
+
+libffi (3.0.12-1) experimental; urgency=low
+
+  * libffi 3.0.12 release.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 11 Feb 2013 22:04:02 +0100
+
+libffi (3.0.12~rc3-1) experimental; urgency=low
+
+  * libffi 3.0.12 release candidate 3.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 08 Feb 2013 22:31:36 +0100
+
+libffi (3.0.12~rc2-1) experimental; urgency=low
+
+  * libffi 3.0.12 release candidate 2.
+  * Update symbols files for ARM, alpha and m68k.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 08 Feb 2013 05:11:55 +0100
+
+libffi (3.0.12~rc1-1) experimental; urgency=low
+
+  * libffi 3.0.12 release candidate 1.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 07 Feb 2013 00:29:01 +0100
+
+libffi (3.0.11-3) experimental; urgency=low
+
+  * Add missing AArch64 patches.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 06 Nov 2012 18:48:50 +0100
+
+libffi (3.0.11-2) experimental; urgency=low
+
+  * Apply AArch64 patches.
+  * Add symbols files for ppc64. Closes: #677285.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 10 Oct 2012 14:09:24 +0200
+
+libffi (3.0.11-1) experimental; urgency=low
+
+  * Final 3.0.11 release.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 12 Apr 2012 11:42:22 +0200
+
+libffi (3.0.11~rc3-2) experimental; urgency=low
+
+  * Don't include debug info for the biarch libs in the -dbg package.
+    Closes: #650106.
+  * Fix symbols file for sparc64. Closes: #647150.
+  * Copy symbols files for kfreebsd-*. Closes: #645595.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 07 Apr 2012 13:05:09 +0200
+
+libffi (3.0.11~rc3-1) experimental; urgency=low
+
+  * New upstream release candidate.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 06 Apr 2012 21:02:38 +0200
+
+libffi (3.0.11~rc1-5) experimental; urgency=low
+
+  * Fix powerpc and ppc64 builds (Kyle Moffett).
+  * Use dpkg-buildflags to set CFLAGS and LDFLAGS.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 12 Oct 2011 21:42:28 +0200
+
+libffi (3.0.11~rc1-4) experimental; urgency=low
+
+  * Fix PowerPC soft-floating-point support (Kyle Moffett).
+    Closes: #644338.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 08 Oct 2011 13:46:26 +0200
+
+libffi (3.0.11~rc1-3) experimental; urgency=low
+
+  * Explicitly use the host compiler.
+  * Define FFI_MMAP_EXEC_WRIT on kfreebsd-* (Petr Salinger). Closes: #642928.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 27 Sep 2011 16:35:17 +0200
+
+libffi (3.0.11~rc1-2) experimental; urgency=low
+
+  * Install the test logs with different names depending on the architecture.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 01 Sep 2011 21:49:27 +0200
+
+libffi (3.0.11~rc1-1) experimental; urgency=low
+
+  * New upstream release candidate.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 23 Aug 2011 19:00:11 +0200
+
+libffi (3.0.10~rc8-6) experimental; urgency=low
+
+  * For multicore ARM, clear both caches, not just the dcache (proposed
+    patch by Andrew Haley).
+
+ -- Matthias Klose <doko@debian.org>  Tue, 12 Jul 2011 01:40:30 +0200
+
+libffi (3.0.10~rc8-5) experimental; urgency=low
+
+  * libffi6-udeb: Fix dependency information (Colin Watson). Closes: #630006.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 11 Jun 2011 21:36:09 +0200
+
+libffi (3.0.10~rc8-4) experimental; urgency=low
+
+  * Don't make libffi6-udeb multiarch.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 10 Jun 2011 16:14:25 +0200
+
+libffi (3.0.10~rc8-3) experimental; urgency=low
+
+  * Add libffi6-udeb, since libgobject-2.0 requires libffi6 as of GLib
+    2.29.4 (Colin Watson). Closes: #630006.
+  * Build for multiarch.
+  * Update symbols files.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 10 Jun 2011 12:40:44 +0200
+
+libffi (3.0.10~rc8-2) experimental; urgency=low
+
+  * Add variadic support for armhf (David Gilbert). LP: #739305.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 25 May 2011 00:02:58 +0200
+
+libffi (3.0.10~rc8-1) experimental; urgency=low
+
+  * New upstream version (release candidate 8).
+    - Adds VFP hard-float calling convention support. Closes: #597920.
+  * Install to the multiarch triplet directories, not the gnu triplet
+    directories (Steve Langasek). Closes: #622976.
+  * Bump soversion, update symbols files.
+  * Update debian/copyright file.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 18 Apr 2011 20:53:34 +0200
+
+libffi (3.0.9-3) unstable; urgency=low
+
+  * Fix PR target/44452, taken from the GCC 4.5 branch.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 01 Oct 2010 14:08:36 +0200
+
+libffi (3.0.9-2ubuntu2) maverick; urgency=low
+
+  * Don't explictely set CC/CXX when configuring. LP: #623222.
+
+ -- Matthias Klose <doko@ubuntu.com>  Fri, 17 Sep 2010 14:08:37 +0200
+
+libffi (3.0.9-2ubuntu1) maverick; urgency=low
+
+  * On arch i386, install headers into /usr/include/i686-linux-gnu.
+
+ -- Matthias Klose <doko@ubuntu.com>  Thu, 20 May 2010 11:03:16 +0200
+
+libffi (3.0.9-2) unstable; urgency=low
+
+  * Fix unsigned long long bug on Sparc v8.
+  * Drop build dependency on expect-tcl8.3 [hppa].
+
+ -- Matthias Klose <doko@debian.org>  Wed, 21 Apr 2010 01:37:11 +0200
+
+libffi (3.0.9-1) unstable; urgency=low
+
+  * New upstream version (final release).
+
+ -- Matthias Klose <doko@debian.org>  Thu, 31 Dec 2009 16:25:53 +0100
+
+libffi (3.0.9~rc9-1) unstable; urgency=low
+
+  * New upstream version (release candidate 9).
+  * Change priority of source and binary packages libffi-dev and libffi5
+    to optional. Closes: #559074.
+  * Fix location of library files in lib32ffi5. Closes: #533009.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 26 Dec 2009 17:05:36 +0100
+
+libffi (3.0.9~rc3-1) unstable; urgency=low
+
+  * New upstream version (release candidate 3).
+  * Work around dejagnu configury, failing all tests on 64bit powerpc.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 01 Nov 2009 13:30:24 +0100
+
+libffi (3.0.9~rc1-1) unstable; urgency=low
+
+  * New upstream version (release candidate 1).
+
+ -- Matthias Klose <doko@debian.org>  Sun, 11 Oct 2009 12:09:36 +0200
+
+libffi (3.0.7-3) unstable; urgency=low
+
+  * Really apply the patch to fix PR libffi/40242, PR libffi/41443.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 04 Oct 2009 21:11:10 +0200
+
+libffi (3.0.7-2) unstable; urgency=low
+
+  * Fix build failure on armel with -mfloat-abi=softfp.
+  * Don't pessimize the code for newer armv6 and armv7 processors.
+  * lib32ffi5: Add a conflict with libc6-i386 (<= 2.9-18). Closes: #533009.
+  * Fix include of example in ffi_call(3). Closes: #512686.
+  * Fix lintian errors and warnings.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 23 Sep 2009 15:24:00 +0200
+
+libffi (3.0.7-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 30 Nov 2008 14:44:36 +0100
+
+libffi (3.0.6-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 23 Jul 2008 01:32:07 +0200
+
+libffi (3.0.5-4) unstable; urgency=low
+
+  * Build-depend on expect-tcl8.3 on hppa.
+  * Set CCASFLAGS to generate debugging symbols for assembly code.
+    Closes: #480443.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 25 May 2008 19:31:02 +0200
+
+libffi (3.0.5-3) unstable; urgency=high
+
+  * Fix installation of header files on mips* (Thiemo Seufer).
+    Closes: #481628.
+  * Set CXX in configure targets.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 21 May 2008 16:51:03 +0200
+
+libffi (3.0.5-2) unstable; urgency=low
+
+  * Install header files in multiarch directories. Closes: #480208.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 13 May 2008 04:49:49 +0000
+
+libffi (3.0.5-1) unstable; urgency=low
+
+  * New upstream version.
+  * Suport mips triarch (Arthur Loiret). Closes: #474049.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 04 Apr 2008 21:20:12 +0000
+
+libffi (3.0.4-2) unstable; urgency=medium
+
+  * Fix lib64ffi-dev package description.
+  * Fix FTBFS on kfreebsd-amd64 (Aurelian Jarno). Closes: #471399.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 22 Mar 2008 18:39:07 +0100
+
+libffi (3.0.4-1) unstable; urgency=low
+
+  * The 10th Anniversary Release, split out from the GCC sources.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 10 Mar 2008 06:46:40 +0100

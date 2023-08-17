@@ -438,6 +438,11 @@ DEFAULT_MMAP_THRESHOLD       default: 256K
 
 */
 
+#if defined __linux__ && !defined _GNU_SOURCE
+/* mremap() on Linux requires this via sys/mman.h */
+#define _GNU_SOURCE 1
+#endif
+
 #ifndef WIN32
 #ifdef _WIN32
 #define WIN32 1
@@ -2282,7 +2287,7 @@ static size_t traverse_and_check(mstate m);
 /* ---------------------------- Indexing Bins ---------------------------- */
 
 #define is_small(s)         (((s) >> SMALLBIN_SHIFT) < NSMALLBINS)
-#define small_index(s)      (bindex_t)((s)  >> SMALLBIN_SHIFT)
+#define small_index(s)      ((s)  >> SMALLBIN_SHIFT)
 #define small_index2size(i) ((i)  << SMALLBIN_SHIFT)
 #define MIN_SMALL_INDEX     (small_index(MIN_CHUNK_SIZE))
 
@@ -2291,7 +2296,7 @@ static size_t traverse_and_check(mstate m);
 #define treebin_at(M,i)     (&((M)->treebins[i]))
 
 /* assign tree index for size S to variable I */
-#if defined(__GNUC__) && defined(i386)
+#if defined(__GNUC__) && defined(__i386__)
 #define compute_tree_index(S, I)\
 {\
   size_t X = S >> TREEBIN_SHIFT;\
@@ -2320,7 +2325,7 @@ static size_t traverse_and_check(mstate m);
     N += K;\
     N += K = (((Y <<= K) - 0x4000) >> 16) & 2;\
     K = 14 - N + ((Y <<= K) >> 15);\
-    I = (bindex_t)(K << 1) + ((S >> (K + (TREEBIN_SHIFT-1)) & 1));\
+    I = (K << 1) + ((S >> (K + (TREEBIN_SHIFT-1)) & 1));\
   }\
 }
 #endif /* GNUC */
@@ -2356,7 +2361,7 @@ static size_t traverse_and_check(mstate m);
 
 /* index corresponding to given bit */
 
-#if defined(__GNUC__) && defined(i386)
+#if defined(__GNUC__) && defined(__i386__)
 #define compute_bit2idx(X, I)\
 {\
   unsigned int J;\

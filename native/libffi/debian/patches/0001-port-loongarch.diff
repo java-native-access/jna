@@ -1,0 +1,4401 @@
+From b1fac910c2a8cf9010452ed61fdb00442d87d722 Mon Sep 17 00:00:00 2001
+From: chenglulu <chenglulu@loongson.cn>
+Date: Tue, 8 Dec 2020 11:40:12 +0800
+Subject: [PATCH] port loongarch.
+
+---
+ Makefile.am                                   |   4 +-
+ Makefile.in                                   |  42 +-
+ config.guess                                  |   3 +
+ config.sub                                    |   1 +
+ configure.host                                |   5 +
+ src/loongarch/ffi.c                           | 490 ++++++++++++++++++
+ src/loongarch/ffitarget.h                     |  69 +++
+ src/loongarch/sysv.S                          | 288 ++++++++++
+ testsuite/libffi.call/many3.c                 | 106 ++++
+ testsuite/libffi.call/many4.c                 | 106 ++++
+ testsuite/libffi.call/many5.c                 | 103 ++++
+ testsuite/libffi.call/many6.c                 | 103 ++++
+ testsuite/libffi.call/many7.c                 | 106 ++++
+ testsuite/libffi.call/many8.c                 |  92 ++++
+ testsuite/libffi.call/struct11.c              |  72 +++
+ testsuite/libffi.call/struct12.c              |  72 +++
+ testsuite/libffi.call/struct13.c              |  76 +++
+ testsuite/libffi.call/struct14.c              |  84 +++
+ testsuite/libffi.call/struct15.c              |  60 +++
+ testsuite/libffi.call/struct16.c              |  60 +++
+ testsuite/libffi.call/struct17.c              |  60 +++
+ testsuite/libffi.call/struct18.c              |  67 +++
+ testsuite/libffi.call/struct19.c              | 111 ++++
+ testsuite/libffi.call/struct20.c              | 113 ++++
+ testsuite/libffi.call/struct21.c              |  70 +++
+ testsuite/libffi.call/struct22.c              |  81 +++
+ testsuite/libffi.call/va_2.c                  | 106 ++++
+ testsuite/libffi.call/va_struct4.c            | 121 +++++
+ testsuite/libffi.call/va_struct5.c            | 123 +++++
+ testsuite/libffi.closures/cls_float_va.c      |  61 +++
+ .../libffi.complex/cls_complex_struct1.inc    |  66 +++
+ .../cls_complex_struct1_double.c              |   4 +
+ .../cls_complex_struct1_float.c               |   4 +
+ .../cls_complex_struct1_longdouble.c          |   4 +
+ .../libffi.complex/return_complex_struct.inc  |  58 +++
+ .../return_complex_struct_double.c            |   4 +
+ .../return_complex_struct_float.c             |   4 +
+ .../return_complex_struct_longdouble.c        |   4 +
+ .../libffi.complex/test_complex_non_va.inc    |  78 +++
+ .../libffi.complex/test_complex_non_va1.inc   |  71 +++
+ .../test_complex_non_va1_double.c             |   5 +
+ .../test_complex_non_va1_float.c              |   5 +
+ .../test_complex_non_va1_longdouble.c         |   5 +
+ .../libffi.complex/test_complex_non_va2.inc   |  78 +++
+ .../test_complex_non_va2_double.c             |   5 +
+ .../test_complex_non_va2_float.c              |   5 +
+ .../test_complex_non_va2_longdouble.c         |   5 +
+ .../libffi.complex/test_complex_non_va3.inc   |  78 +++
+ .../test_complex_non_va3_double.c             |   5 +
+ .../test_complex_non_va3_float.c              |   5 +
+ .../test_complex_non_va3_longdouble.c         |   5 +
+ .../test_complex_non_va_double.c              |   5 +
+ .../test_complex_non_va_float.c               |   5 +
+ .../test_complex_non_va_longdouble.c          |   5 +
+ testsuite/libffi.complex/test_complex_va.inc  |  78 +++
+ testsuite/libffi.complex/test_complex_va1.inc |  71 +++
+ .../libffi.complex/test_complex_va1_double.c  |   5 +
+ .../libffi.complex/test_complex_va1_float.c   |   5 +
+ .../test_complex_va1_longdouble.c             |   5 +
+ testsuite/libffi.complex/test_complex_va2.inc |  78 +++
+ .../libffi.complex/test_complex_va2_double.c  |   5 +
+ .../libffi.complex/test_complex_va2_float.c   |   5 +
+ .../test_complex_va2_longdouble.c             |   5 +
+ testsuite/libffi.complex/test_complex_va3.inc |  78 +++
+ .../libffi.complex/test_complex_va3_double.c  |   5 +
+ .../libffi.complex/test_complex_va3_float.c   |   5 +
+ .../test_complex_va3_longdouble.c             |   5 +
+ .../libffi.complex/test_complex_va_double.c   |   5 +
+ .../libffi.complex/test_complex_va_float.c    |   5 +
+ .../test_complex_va_longdouble.c              |   5 +
+ 70 files changed, 3723 insertions(+), 10 deletions(-)
+ create mode 100644 src/loongarch/ffi.c
+ create mode 100644 src/loongarch/ffitarget.h
+ create mode 100644 src/loongarch/sysv.S
+ create mode 100644 testsuite/libffi.call/many3.c
+ create mode 100644 testsuite/libffi.call/many4.c
+ create mode 100644 testsuite/libffi.call/many5.c
+ create mode 100644 testsuite/libffi.call/many6.c
+ create mode 100644 testsuite/libffi.call/many7.c
+ create mode 100644 testsuite/libffi.call/many8.c
+ create mode 100644 testsuite/libffi.call/struct11.c
+ create mode 100644 testsuite/libffi.call/struct12.c
+ create mode 100644 testsuite/libffi.call/struct13.c
+ create mode 100644 testsuite/libffi.call/struct14.c
+ create mode 100644 testsuite/libffi.call/struct15.c
+ create mode 100644 testsuite/libffi.call/struct16.c
+ create mode 100644 testsuite/libffi.call/struct17.c
+ create mode 100644 testsuite/libffi.call/struct18.c
+ create mode 100644 testsuite/libffi.call/struct19.c
+ create mode 100644 testsuite/libffi.call/struct20.c
+ create mode 100644 testsuite/libffi.call/struct21.c
+ create mode 100644 testsuite/libffi.call/struct22.c
+ create mode 100644 testsuite/libffi.call/va_2.c
+ create mode 100644 testsuite/libffi.call/va_struct4.c
+ create mode 100644 testsuite/libffi.call/va_struct5.c
+ create mode 100644 testsuite/libffi.closures/cls_float_va.c
+ create mode 100644 testsuite/libffi.complex/cls_complex_struct1.inc
+ create mode 100644 testsuite/libffi.complex/cls_complex_struct1_double.c
+ create mode 100644 testsuite/libffi.complex/cls_complex_struct1_float.c
+ create mode 100644 testsuite/libffi.complex/cls_complex_struct1_longdouble.c
+ create mode 100644 testsuite/libffi.complex/return_complex_struct.inc
+ create mode 100644 testsuite/libffi.complex/return_complex_struct_double.c
+ create mode 100644 testsuite/libffi.complex/return_complex_struct_float.c
+ create mode 100644 testsuite/libffi.complex/return_complex_struct_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va1.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va1_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va1_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va1_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va2.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va2_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va2_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va2_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va3.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va3_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va3_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va3_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_non_va_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_va1.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_va1_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va1_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va1_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va2.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_va2_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va2_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va2_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va3.inc
+ create mode 100644 testsuite/libffi.complex/test_complex_va3_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va3_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va3_longdouble.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va_double.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va_float.c
+ create mode 100644 testsuite/libffi.complex/test_complex_va_longdouble.c
+
+diff --git a/Makefile.am b/Makefile.am
+index 4fd6193..a0c0ad0 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -54,6 +54,7 @@ noinst_HEADERS = \
+ 	src/cris/ffitarget.h						\
+ 	src/frv/ffitarget.h						\
+ 	src/ia64/ffitarget.h src/ia64/ia64_flags.h			\
++	src/loongarch/ffitarget.h
+ 	src/m32r/ffitarget.h						\
+ 	src/m68k/ffitarget.h						\
+ 	src/m88k/ffitarget.h						\
+@@ -82,7 +83,8 @@ EXTRA_libffi_la_SOURCES = src/aarch64/ffi.c src/aarch64/sysv.S \
+ 	src/arm/sysv.S src/arm/ffi.c src/arm/sysv_msvc_arm32.S \
+ 	src/avr32/ffi.c src/avr32/sysv.S src/bfin/ffi.c	\
+ 	src/bfin/sysv.S src/cris/ffi.c src/cris/sysv.S src/frv/ffi.c \
+-	src/frv/eabi.S src/ia64/ffi.c src/ia64/unix.S src/m32r/ffi.c \
++	src/frv/eabi.S src/ia64/ffi.c src/ia64/unix.S src/loongarch/ffi.c \
++	src/loongarch/sysv.S src/m32r/ffi.c \
+ 	src/m32r/sysv.S src/m68k/ffi.c src/m68k/sysv.S src/m88k/ffi.c \
+ 	src/m88k/obsd.S src/metag/ffi.c src/metag/sysv.S \
+ 	src/microblaze/ffi.c src/microblaze/sysv.S src/mips/ffi.c \
+diff --git a/Makefile.in b/Makefile.in
+index adce607..83b32d9 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -207,11 +207,12 @@ am__depfiles_remade = src/$(DEPDIR)/closures.Plo \
+ 	src/cris/$(DEPDIR)/ffi.Plo src/cris/$(DEPDIR)/sysv.Plo \
+ 	src/frv/$(DEPDIR)/eabi.Plo src/frv/$(DEPDIR)/ffi.Plo \
+ 	src/ia64/$(DEPDIR)/ffi.Plo src/ia64/$(DEPDIR)/unix.Plo \
+-	src/m32r/$(DEPDIR)/ffi.Plo src/m32r/$(DEPDIR)/sysv.Plo \
+-	src/m68k/$(DEPDIR)/ffi.Plo src/m68k/$(DEPDIR)/sysv.Plo \
+-	src/m88k/$(DEPDIR)/ffi.Plo src/m88k/$(DEPDIR)/obsd.Plo \
+-	src/metag/$(DEPDIR)/ffi.Plo src/metag/$(DEPDIR)/sysv.Plo \
+-	src/microblaze/$(DEPDIR)/ffi.Plo \
++	src/loongarch/$(DEPDIR)/ffi.Plo \
++	src/loongarch/$(DEPDIR)/sysv.Plo src/m32r/$(DEPDIR)/ffi.Plo \
++	src/m32r/$(DEPDIR)/sysv.Plo src/m68k/$(DEPDIR)/ffi.Plo \
++	src/m68k/$(DEPDIR)/sysv.Plo src/m88k/$(DEPDIR)/ffi.Plo \
++	src/m88k/$(DEPDIR)/obsd.Plo src/metag/$(DEPDIR)/ffi.Plo \
++	src/metag/$(DEPDIR)/sysv.Plo src/microblaze/$(DEPDIR)/ffi.Plo \
+ 	src/microblaze/$(DEPDIR)/sysv.Plo src/mips/$(DEPDIR)/ffi.Plo \
+ 	src/mips/$(DEPDIR)/n32.Plo src/mips/$(DEPDIR)/o32.Plo \
+ 	src/moxie/$(DEPDIR)/eabi.Plo src/moxie/$(DEPDIR)/ffi.Plo \
+@@ -326,8 +327,8 @@ CTAGS = ctags
+ CSCOPE = cscope
+ DIST_SUBDIRS = include testsuite man doc
+ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/fficonfig.h.in \
+-	$(srcdir)/libffi.pc.in compile config.guess config.sub depcomp \
+-	install-sh ltmain.sh missing
++	$(srcdir)/libffi.pc.in ChangeLog compile config.guess \
++	config.sub depcomp install-sh ltmain.sh missing
+ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+ distdir = $(PACKAGE)-$(VERSION)
+ top_distdir = $(distdir)
+@@ -569,7 +570,8 @@ noinst_HEADERS = \
+ 	src/vax/ffitarget.h						\
+ 	src/x86/ffitarget.h src/x86/internal.h src/x86/internal64.h src/x86/asmnames.h \
+ 	src/xtensa/ffitarget.h						\
+-	src/dlmalloc.c
++	src/dlmalloc.c 							\
++	src/loongarch/ffitarget.h
+ 
+ EXTRA_libffi_la_SOURCES = src/aarch64/ffi.c src/aarch64/sysv.S \
+ 	src/aarch64/win64_armasm.S src/alpha/ffi.c src/alpha/osf.S \
+@@ -577,7 +579,8 @@ EXTRA_libffi_la_SOURCES = src/aarch64/ffi.c src/aarch64/sysv.S \
+ 	src/arm/sysv.S src/arm/ffi.c src/arm/sysv_msvc_arm32.S \
+ 	src/avr32/ffi.c src/avr32/sysv.S src/bfin/ffi.c	\
+ 	src/bfin/sysv.S src/cris/ffi.c src/cris/sysv.S src/frv/ffi.c \
+-	src/frv/eabi.S src/ia64/ffi.c src/ia64/unix.S src/m32r/ffi.c \
++	src/frv/eabi.S src/ia64/ffi.c src/ia64/unix.S src/loongarch/ffi.c \
++	src/loongarch/sysv.S src/m32r/ffi.c \
+ 	src/m32r/sysv.S src/m68k/ffi.c src/m68k/sysv.S src/m88k/ffi.c \
+ 	src/m88k/obsd.S src/metag/ffi.c src/metag/sysv.S \
+ 	src/microblaze/ffi.c src/microblaze/sysv.S src/mips/ffi.c \
+@@ -825,6 +828,16 @@ src/ia64/ffi.lo: src/ia64/$(am__dirstamp) \
+ 	src/ia64/$(DEPDIR)/$(am__dirstamp)
+ src/ia64/unix.lo: src/ia64/$(am__dirstamp) \
+ 	src/ia64/$(DEPDIR)/$(am__dirstamp)
++src/loongarch/$(am__dirstamp):
++	@$(MKDIR_P) src/loongarch
++	@: > src/loongarch/$(am__dirstamp)
++src/loongarch/$(DEPDIR)/$(am__dirstamp):
++	@$(MKDIR_P) src/loongarch/$(DEPDIR)
++	@: > src/loongarch/$(DEPDIR)/$(am__dirstamp)
++src/loongarch/ffi.lo: src/loongarch/$(am__dirstamp) \
++	src/loongarch/$(DEPDIR)/$(am__dirstamp)
++src/loongarch/sysv.lo: src/loongarch/$(am__dirstamp) \
++	src/loongarch/$(DEPDIR)/$(am__dirstamp)
+ src/m32r/$(am__dirstamp):
+ 	@$(MKDIR_P) src/m32r
+ 	@: > src/m32r/$(am__dirstamp)
+@@ -1092,6 +1105,8 @@ mostlyclean-compile:
+ 	-rm -f src/frv/*.lo
+ 	-rm -f src/ia64/*.$(OBJEXT)
+ 	-rm -f src/ia64/*.lo
++	-rm -f src/loongarch/*.$(OBJEXT)
++	-rm -f src/loongarch/*.lo
+ 	-rm -f src/m32r/*.$(OBJEXT)
+ 	-rm -f src/m32r/*.lo
+ 	-rm -f src/m68k/*.$(OBJEXT)
+@@ -1162,6 +1177,8 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@src/frv/$(DEPDIR)/ffi.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/ia64/$(DEPDIR)/ffi.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/ia64/$(DEPDIR)/unix.Plo@am__quote@ # am--include-marker
++@AMDEP_TRUE@@am__include@ @am__quote@src/loongarch/$(DEPDIR)/ffi.Plo@am__quote@ # am--include-marker
++@AMDEP_TRUE@@am__include@ @am__quote@src/loongarch/$(DEPDIR)/sysv.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/m32r/$(DEPDIR)/ffi.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/m32r/$(DEPDIR)/sysv.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/m68k/$(DEPDIR)/ffi.Plo@am__quote@ # am--include-marker
+@@ -1292,6 +1309,7 @@ clean-libtool:
+ 	-rm -rf src/cris/.libs src/cris/_libs
+ 	-rm -rf src/frv/.libs src/frv/_libs
+ 	-rm -rf src/ia64/.libs src/ia64/_libs
++	-rm -rf src/loongarch/.libs src/loongarch/_libs
+ 	-rm -rf src/m32r/.libs src/m32r/_libs
+ 	-rm -rf src/m68k/.libs src/m68k/_libs
+ 	-rm -rf src/m88k/.libs src/m88k/_libs
+@@ -1691,6 +1709,8 @@ distclean-generic:
+ 	-rm -f src/frv/$(am__dirstamp)
+ 	-rm -f src/ia64/$(DEPDIR)/$(am__dirstamp)
+ 	-rm -f src/ia64/$(am__dirstamp)
++	-rm -f src/loongarch/$(DEPDIR)/$(am__dirstamp)
++	-rm -f src/loongarch/$(am__dirstamp)
+ 	-rm -f src/m32r/$(DEPDIR)/$(am__dirstamp)
+ 	-rm -f src/m32r/$(am__dirstamp)
+ 	-rm -f src/m68k/$(DEPDIR)/$(am__dirstamp)
+@@ -1769,6 +1789,8 @@ distclean: distclean-recursive
+ 	-rm -f src/frv/$(DEPDIR)/ffi.Plo
+ 	-rm -f src/ia64/$(DEPDIR)/ffi.Plo
+ 	-rm -f src/ia64/$(DEPDIR)/unix.Plo
++	-rm -f src/loongarch/$(DEPDIR)/ffi.Plo
++	-rm -f src/loongarch/$(DEPDIR)/sysv.Plo
+ 	-rm -f src/m32r/$(DEPDIR)/ffi.Plo
+ 	-rm -f src/m32r/$(DEPDIR)/sysv.Plo
+ 	-rm -f src/m68k/$(DEPDIR)/ffi.Plo
+@@ -1902,6 +1924,8 @@ maintainer-clean: maintainer-clean-recursive
+ 	-rm -f src/frv/$(DEPDIR)/ffi.Plo
+ 	-rm -f src/ia64/$(DEPDIR)/ffi.Plo
+ 	-rm -f src/ia64/$(DEPDIR)/unix.Plo
++	-rm -f src/loongarch/$(DEPDIR)/ffi.Plo
++	-rm -f src/loongarch/$(DEPDIR)/sysv.Plo
+ 	-rm -f src/m32r/$(DEPDIR)/ffi.Plo
+ 	-rm -f src/m32r/$(DEPDIR)/sysv.Plo
+ 	-rm -f src/m68k/$(DEPDIR)/ffi.Plo
+diff --git a/config.guess b/config.guess
+index faa63aa..f5edc3a 100644
+--- a/config.guess
++++ b/config.guess
+@@ -982,6 +982,9 @@ EOF
+     m68*:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+ 	exit ;;
++    loongarch32:Linux:*:* | loongarch64:Linux:*:*)
++        echo "$UNAME_MACHINE"-unknown-linux-"$LIBC"
++        exit ;;
+     mips:Linux:*:* | mips64:Linux:*:*)
+ 	eval $set_cc_for_build
+ 	sed 's/^	//' << EOF >$dummy.c
+diff --git a/config.sub b/config.sub
+index 40ea5df..eb5737e 100644
+--- a/config.sub
++++ b/config.sub
+@@ -268,6 +268,7 @@ case $basic_machine in
+ 	| k1om \
+ 	| le32 | le64 \
+ 	| lm32 \
++	| loongarch32 | loongarch64 \
+ 	| m32c | m32r | m32rle | m68000 | m68k | m88k \
+ 	| maxq | mb | microblaze | microblazeel | mcore | mep | metag \
+ 	| mips | mipsbe | mipseb | mipsel | mipsle \
+diff --git a/configure.host b/configure.host
+index 9a72cda..eb26a6c 100644
+--- a/configure.host
++++ b/configure.host
+@@ -134,6 +134,11 @@ case "${host}" in
+ 	SOURCES="ffi.c unix.S"
+ 	;;
+ 
++  loongarch64-*-*)
++	TARGET=LOONGARCH; TARGETDIR=loongarch
++	SOURCES="ffi.c sysv.S"
++	;;
++
+   m32r*-*-*)
+ 	TARGET=M32R; TARGETDIR=m32r
+ 	SOURCES="ffi.c sysv.S"
+diff --git a/src/loongarch/ffi.c b/src/loongarch/ffi.c
+new file mode 100644
+index 0000000..310b4cb
+--- /dev/null
++++ b/src/loongarch/ffi.c
+@@ -0,0 +1,490 @@
++/* -----------------------------------------------------------------------
++   ffi.c - Copyright (c) 2015 Michael Knyszek <mknyszek@berkeley.edu>
++                         2015 Andrew Waterman <waterman@cs.berkeley.edu>
++                         2018 Stef O'Rear <sorear2@gmail.com>
++   Based on MIPS N32/64 port
++
++   LOONGARCH Foreign Function Interface
++
++   Permission is hereby granted, free of charge, to any person obtaining
++   a copy of this software and associated documentation files (the
++   ``Software''), to deal in the Software without restriction, including
++   without limitation the rights to use, copy, modify, merge, publish,
++   distribute, sublicense, and/or sell copies of the Software, and to
++   permit persons to whom the Software is furnished to do so, subject to
++   the following conditions:
++
++   The above copyright notice and this permission notice shall be included
++   in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++   DEALINGS IN THE SOFTWARE.
++   ----------------------------------------------------------------------- */
++
++#include <ffi.h>
++#include <ffi_common.h>
++
++#include <stdlib.h>
++#include <stdint.h>
++
++#define ABI_FLEN 64
++#define ABI_FLOAT double
++
++#define NARGREG 8
++#define STKALIGN 16
++#define MAXCOPYARG (2 * sizeof(double))
++
++typedef struct call_context
++{
++    ABI_FLOAT fa[8];
++    size_t a[8];
++    /* used by the assembly code to in-place construct its own stack frame */
++    char frame[16];
++} call_context;
++
++typedef struct call_builder
++{
++    call_context *aregs;
++    int used_integer;
++    int used_float;
++    size_t *used_stack;
++} call_builder;
++
++/* integer (not pointer) less than ABI XLEN */
++/* FFI_TYPE_INT does not appear to be used */
++#if __SIZEOF_POINTER__ == 8
++#define IS_INT(type) ((type) >= FFI_TYPE_UINT8 && (type) <= FFI_TYPE_SINT64)
++#else
++#define IS_INT(type) ((type) >= FFI_TYPE_UINT8 && (type) <= FFI_TYPE_SINT32)
++#endif
++
++#if ABI_FLEN
++typedef struct {
++    char as_elements, type1, offset2, type2;
++} float_struct_info;
++
++#if ABI_FLEN >= 64
++#define IS_FLOAT(type) ((type) >= FFI_TYPE_FLOAT && (type) <= FFI_TYPE_DOUBLE)
++#else
++#define IS_FLOAT(type) ((type) == FFI_TYPE_FLOAT)
++#endif
++
++static ffi_type **flatten_struct(ffi_type *in, ffi_type **out, ffi_type **out_end) {
++    int i;
++    if (out == out_end) return out;
++    if (in->type != FFI_TYPE_STRUCT) {
++        *(out++) = in;
++    } else {
++        for (i = 0; in->elements[i]; i++)
++            out = flatten_struct(in->elements[i], out, out_end);
++    }
++    return out;
++}
++
++/* Structs with at most two fields after flattening, one of which is of
++   floating point type, are passed in multiple registers if sufficient
++   registers are available. */
++static float_struct_info struct_passed_as_elements(call_builder *cb, ffi_type *top) {
++    float_struct_info ret = {0, 0, 0, 0};
++    ffi_type *fields[3];
++    int num_floats, num_ints;
++    int num_fields = flatten_struct(top, fields, fields + 3) - fields;
++
++    if (num_fields == 1) {
++        if (IS_FLOAT(fields[0]->type)) {
++            ret.as_elements = 1;
++            ret.type1 = fields[0]->type;
++        }
++    } else if (num_fields == 2) {
++        num_floats = IS_FLOAT(fields[0]->type) + IS_FLOAT(fields[1]->type);
++        num_ints = IS_INT(fields[0]->type) + IS_INT(fields[1]->type);
++        if (num_floats == 0 || num_floats + num_ints != 2)
++            return ret;
++        if (cb->used_float + num_floats > NARGREG || cb->used_integer + (2 - num_floats) > NARGREG)
++            return ret;
++        if (!IS_FLOAT(fields[0]->type) && !IS_FLOAT(fields[1]->type))
++            return ret;
++
++        ret.type1 = fields[0]->type;
++        ret.type2 = fields[1]->type;
++        ret.offset2 = FFI_ALIGN(fields[0]->size, fields[1]->alignment);
++        ret.as_elements = 1;
++    }
++
++    return ret;
++}
++#endif
++
++/* allocates a single register, float register, or XLEN-sized stack slot to a datum */
++static void marshal_atom(call_builder *cb, int type, void *data) {
++    size_t value = 0;
++    switch (type) {
++        case FFI_TYPE_UINT8: value = *(uint8_t *)data; break;
++        case FFI_TYPE_SINT8: value = *(int8_t *)data; break;
++        case FFI_TYPE_UINT16: value = *(uint16_t *)data; break;
++        case FFI_TYPE_SINT16: value = *(int16_t *)data; break;
++        /* 32-bit quantities are always sign-extended in the ABI */
++        case FFI_TYPE_UINT32: value = *(int32_t *)data; break;
++        case FFI_TYPE_SINT32: value = *(int32_t *)data; break;
++#if __SIZEOF_POINTER__ == 8
++        case FFI_TYPE_UINT64: value = *(uint64_t *)data; break;
++        case FFI_TYPE_SINT64: value = *(int64_t *)data; break;
++#endif
++        case FFI_TYPE_POINTER: value = *(size_t *)data; break;
++
++        /* float values may be recoded in an implementation-defined way
++           by hardware conforming to 2.1 or earlier, so use asm to
++           reinterpret floats as doubles */
++#if ABI_FLEN >= 32
++        case FFI_TYPE_FLOAT:
++            asm("" : "=f"(cb->aregs->fa[cb->used_float++]) : "0"(*(float *)data));
++            return;
++#endif
++#if ABI_FLEN >= 64
++        case FFI_TYPE_DOUBLE:
++            asm("" : "=f"(cb->aregs->fa[cb->used_float++]) : "0"(*(double *)data));
++            return;
++#endif
++        default: FFI_ASSERT(0); break;
++    }
++
++    if (cb->used_integer == NARGREG) {
++        *cb->used_stack++ = value;
++    } else {
++        cb->aregs->a[cb->used_integer++] = value;
++    }
++}
++
++static void unmarshal_atom(call_builder *cb, int type, void *data) {
++    size_t value;
++    switch (type) {
++#if ABI_FLEN >= 32
++        case FFI_TYPE_FLOAT:
++            asm("" : "=f"(*(float *)data) : "0"(cb->aregs->fa[cb->used_float++]));
++            return;
++#endif
++#if ABI_FLEN >= 64
++        case FFI_TYPE_DOUBLE:
++            asm("" : "=f"(*(double *)data) : "0"(cb->aregs->fa[cb->used_float++]));
++            return;
++#endif
++    }
++
++    if (cb->used_integer == NARGREG) {
++        value = *cb->used_stack++;
++    } else {
++        value = cb->aregs->a[cb->used_integer++];
++    }
++
++    switch (type) {
++        case FFI_TYPE_UINT8: *(uint8_t *)data = value; break;
++        case FFI_TYPE_SINT8: *(uint8_t *)data = value; break;
++        case FFI_TYPE_UINT16: *(uint16_t *)data = value; break;
++        case FFI_TYPE_SINT16: *(uint16_t *)data = value; break;
++        case FFI_TYPE_UINT32: *(uint32_t *)data = value; break;
++        case FFI_TYPE_SINT32: *(uint32_t *)data = value; break;
++#if __SIZEOF_POINTER__ == 8
++        case FFI_TYPE_UINT64: *(uint64_t *)data = value; break;
++        case FFI_TYPE_SINT64: *(uint64_t *)data = value; break;
++#endif
++        case FFI_TYPE_POINTER: *(size_t *)data = value; break;
++        default: FFI_ASSERT(0); break;
++    }
++}
++
++/* adds an argument to a call, or a not by reference return value */
++static void marshal(call_builder *cb, ffi_type *type, int var, void *data) {
++    size_t realign[2];
++
++#if ABI_FLEN
++    if (!var && type->type == FFI_TYPE_STRUCT) {
++        float_struct_info fsi = struct_passed_as_elements(cb, type);
++        if (fsi.as_elements) {
++            marshal_atom(cb, fsi.type1, data);
++            if (fsi.offset2)
++                marshal_atom(cb, fsi.type2, ((char*)data) + fsi.offset2);
++            return;
++        }
++    }
++
++    if (!var && cb->used_float < NARGREG && IS_FLOAT(type->type)) {
++        marshal_atom(cb, type->type, data);
++        return;
++    }
++
++    double promoted;
++    if (var && type->type == FFI_TYPE_FLOAT)
++    {
++        /* C standard requires promoting float -> double for variable arg */
++      promoted = *(float *)data;
++      type = &ffi_type_double;
++      data = &promoted;
++    }
++#endif
++
++    if (type->size > 2 * __SIZEOF_POINTER__) {
++        /* pass by reference */
++        marshal_atom(cb, FFI_TYPE_POINTER, &data);
++    } else if (IS_INT(type->type) || type->type == FFI_TYPE_POINTER) {
++        marshal_atom(cb, type->type, data);
++    } else {
++        /* overlong integers, soft-float floats, and structs without special
++           float handling are treated identically from this point on */
++
++        /* variadics are aligned even in registers */
++        if (type->alignment > __SIZEOF_POINTER__) {
++            if (var)
++                cb->used_integer = FFI_ALIGN(cb->used_integer, 2);
++            cb->used_stack = (size_t *)FFI_ALIGN(cb->used_stack, 2*__SIZEOF_POINTER__);
++        }
++
++        memcpy(realign, data, type->size);
++        if (type->size > 0)
++            marshal_atom(cb, FFI_TYPE_POINTER, realign);
++        if (type->size > __SIZEOF_POINTER__)
++            marshal_atom(cb, FFI_TYPE_POINTER, realign + 1);
++    }
++}
++
++/* for arguments passed by reference returns the pointer, otherwise the arg is copied (up to MAXCOPYARG bytes) */
++static void *unmarshal(call_builder *cb, ffi_type *type, int var, void *data) {
++    size_t realign[2];
++    void *pointer;
++
++#if ABI_FLEN
++    if (!var && type->type == FFI_TYPE_STRUCT) {
++        float_struct_info fsi = struct_passed_as_elements(cb, type);
++        if (fsi.as_elements) {
++            unmarshal_atom(cb, fsi.type1, data);
++            if (fsi.offset2)
++                unmarshal_atom(cb, fsi.type2, ((char*)data) + fsi.offset2);
++            return data;
++        }
++    }
++
++    if (!var && cb->used_float < NARGREG && IS_FLOAT(type->type)) {
++        unmarshal_atom(cb, type->type, data);
++        return data;
++    }
++
++    if (var && type->type == FFI_TYPE_FLOAT)
++    {
++      int m = cb->used_integer;
++      void *promoted = m < NARGREG ? cb->aregs->a + m:cb->used_stack + m - NARGREG + 1;
++      *(float*)promoted = *(double *)promoted;
++    }
++#endif
++
++    if (type->size > 2 * __SIZEOF_POINTER__) {
++        /* pass by reference */
++        unmarshal_atom(cb, FFI_TYPE_POINTER, (char*)&pointer);
++        return pointer;
++    } else if (IS_INT(type->type) || type->type == FFI_TYPE_POINTER) {
++        unmarshal_atom(cb, type->type, data);
++        return data;
++    } else {
++        /* overlong integers, soft-float floats, and structs without special
++           float handling are treated identically from this point on */
++
++        /* variadics are aligned even in registers */
++        if (type->alignment > __SIZEOF_POINTER__) {
++            if (var)
++                cb->used_integer = FFI_ALIGN(cb->used_integer, 2);
++            cb->used_stack = (size_t *)FFI_ALIGN(cb->used_stack, 2*__SIZEOF_POINTER__);
++        }
++
++        if (type->size > 0)
++            unmarshal_atom(cb, FFI_TYPE_POINTER, realign);
++        if (type->size > __SIZEOF_POINTER__)
++            unmarshal_atom(cb, FFI_TYPE_POINTER, realign + 1);
++        memcpy(data, realign, type->size);
++        return data;
++    }
++}
++
++static int passed_by_ref(call_builder *cb, ffi_type *type, int var) {
++#if ABI_FLEN
++    if (!var && type->type == FFI_TYPE_STRUCT) {
++        float_struct_info fsi = struct_passed_as_elements(cb, type);
++        if (fsi.as_elements) return 0;
++    }
++#endif
++
++    return type->size > 2 * __SIZEOF_POINTER__;
++}
++
++/* Perform machine dependent cif processing */
++ffi_status ffi_prep_cif_machdep(ffi_cif *cif) {
++    cif->loongarch_nfixedargs = cif->nargs;
++    return FFI_OK;
++}
++
++/* Perform machine dependent cif processing when we have a variadic function */
++
++ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif, unsigned int nfixedargs, unsigned int ntotalargs) {
++    cif->loongarch_nfixedargs = nfixedargs;
++    return FFI_OK;
++}
++
++/* Low level routine for calling functions */
++extern void ffi_call_asm (void *stack, struct call_context *regs,
++			  void (*fn) (void), void *closure) FFI_HIDDEN;
++
++static void
++ffi_call_int (ffi_cif *cif, void (*fn) (void), void *rvalue, void **avalue,
++	      void *closure)
++{
++    /* this is a conservative estimate, assuming a complex return value and
++       that all remaining arguments are long long / __int128 */
++    size_t arg_bytes = cif->nargs <= 3 ? 0 :
++        FFI_ALIGN(2 * sizeof(size_t) * (cif->nargs - 3), STKALIGN);
++    size_t rval_bytes = 0;
++    if (rvalue == NULL && cif->rtype->size > 2*__SIZEOF_POINTER__)
++        rval_bytes = FFI_ALIGN(cif->rtype->size, STKALIGN);
++    size_t alloc_size = arg_bytes + rval_bytes + sizeof(call_context);
++
++    /* the assembly code will deallocate all stack data at lower addresses
++       than the argument region, so we need to allocate the frame and the
++       return value after the arguments in a single allocation */
++    size_t alloc_base;
++    /* Argument region must be 16-byte aligned */
++    if (_Alignof(max_align_t) >= STKALIGN) {
++        /* since sizeof long double is normally 16, the compiler will
++           guarantee alloca alignment to at least that much */
++        alloc_base = (size_t)alloca(alloc_size);
++    } else {
++        alloc_base = FFI_ALIGN(alloca(alloc_size + STKALIGN - 1), STKALIGN);
++    }
++
++    if (rval_bytes)
++        rvalue = (void*)(alloc_base + arg_bytes);
++
++    call_builder cb;
++    cb.used_float = cb.used_integer = 0;
++    cb.aregs = (call_context*)(alloc_base + arg_bytes + rval_bytes);
++    cb.used_stack = (void*)alloc_base;
++
++    int return_by_ref = passed_by_ref(&cb, cif->rtype, 0);
++    if (return_by_ref)
++        marshal(&cb, &ffi_type_pointer, 0, &rvalue);
++
++    int i;
++    for (i = 0; i < cif->nargs; i++)
++        marshal(&cb, cif->arg_types[i], i >= cif->loongarch_nfixedargs, avalue[i]);
++
++    ffi_call_asm ((void *) alloc_base, cb.aregs, fn, closure);
++
++    cb.used_float = cb.used_integer = 0;
++    if (!return_by_ref && rvalue)
++        unmarshal(&cb, cif->rtype, 0, rvalue);
++}
++
++void
++ffi_call (ffi_cif *cif, void (*fn) (void), void *rvalue, void **avalue)
++{
++  ffi_call_int(cif, fn, rvalue, avalue, NULL);
++}
++
++void
++ffi_call_go (ffi_cif *cif, void (*fn) (void), void *rvalue,
++	     void **avalue, void *closure)
++{
++  ffi_call_int(cif, fn, rvalue, avalue, closure);
++}
++
++extern void ffi_closure_asm(void) FFI_HIDDEN;
++
++ffi_status ffi_prep_closure_loc(ffi_closure *closure, ffi_cif *cif, void (*fun)(ffi_cif*,void*,void**,void*), void *user_data, void *codeloc)
++{
++    uint32_t *tramp = (uint32_t *) &closure->tramp[0];
++    uint64_t fn = (uint64_t) (uintptr_t) ffi_closure_asm;
++
++    if (cif->abi <= FFI_FIRST_ABI || cif->abi >= FFI_LAST_ABI)
++        return FFI_BAD_ABI;
++
++    /* we will call ffi_closure_inner with codeloc, not closure, but as long
++       as the memory is readable it should work */
++
++  tramp[0] = 0x1800000c; /* pcaddi      $t0, 0 (i.e. $t0 <- tramp) */
++#ifdef _ABILP64
++  tramp[1] = 0x28c0418d; /* ld.d        $t1, $t0, 16 */
++#elif defined _ABILPX32
++  tramp[1] = 0x2880418d; /* ld.w        $t1, $t0, 16 */
++#endif
++  tramp[2] = 0x4c0001a0; /* jirl        $zero, $t1, 0 */
++  tramp[3] = 0x03400000; /* nop */
++    tramp[4] = fn;
++    tramp[5] = fn >> 32;
++
++    closure->cif = cif;
++    closure->fun = fun;
++    closure->user_data = user_data;
++
++    __builtin___clear_cache(codeloc, codeloc + FFI_TRAMPOLINE_SIZE);
++
++    return FFI_OK;
++}
++
++extern void ffi_go_closure_asm (void) FFI_HIDDEN;
++
++ffi_status
++ffi_prep_go_closure (ffi_go_closure *closure, ffi_cif *cif,
++		     void (*fun) (ffi_cif *, void *, void **, void *))
++{
++  if (cif->abi <= FFI_FIRST_ABI || cif->abi >= FFI_LAST_ABI)
++    return FFI_BAD_ABI;
++
++  closure->tramp = (void *) ffi_go_closure_asm;
++  closure->cif = cif;
++  closure->fun = fun;
++
++  return FFI_OK;
++}
++
++/* Called by the assembly code with aregs pointing to saved argument registers
++   and stack pointing to the stacked arguments.  Return values passed in
++   registers will be reloaded from aregs. */
++void FFI_HIDDEN
++ffi_closure_inner (ffi_cif *cif,
++		   void (*fun) (ffi_cif *, void *, void **, void *),
++		   void *user_data,
++		   size_t *stack, call_context *aregs)
++{
++    void **avalue = alloca(cif->nargs * sizeof(void*));
++    /* storage for arguments which will be copied by unmarshal().  We could
++       theoretically avoid the copies in many cases and use at most 128 bytes
++       of memory, but allocating disjoint storage for each argument is
++       simpler. */
++    char *astorage = alloca(cif->nargs * MAXCOPYARG);
++    void *rvalue;
++    call_builder cb;
++    int return_by_ref;
++    int i;
++
++    cb.aregs = aregs;
++    cb.used_integer = cb.used_float = 0;
++    cb.used_stack = stack;
++
++    return_by_ref = passed_by_ref(&cb, cif->rtype, 0);
++    if (return_by_ref)
++        unmarshal(&cb, &ffi_type_pointer, 0, &rvalue);
++    else
++        rvalue = alloca(cif->rtype->size);
++
++    for (i = 0; i < cif->nargs; i++)
++        avalue[i] = unmarshal(&cb, cif->arg_types[i],
++            i >= cif->loongarch_nfixedargs, astorage + i*MAXCOPYARG);
++
++    fun (cif, rvalue, avalue, user_data);
++
++    if (!return_by_ref && cif->rtype->type != FFI_TYPE_VOID) {
++        cb.used_integer = cb.used_float = 0;
++        marshal(&cb, cif->rtype, 0, rvalue);
++    }
++}
+diff --git a/src/loongarch/ffitarget.h b/src/loongarch/ffitarget.h
+new file mode 100644
+index 0000000..8f61fdc
+--- /dev/null
++++ b/src/loongarch/ffitarget.h
+@@ -0,0 +1,69 @@
++/* -----------------------------------------------------------------*-C-*-
++   ffitarget.h - 2014 Michael Knyszek
++
++   Target configuration macros for LOONGARCH.
++
++   Permission is hereby granted, free of charge, to any person obtaining
++   a copy of this software and associated documentation files (the
++   ``Software''), to deal in the Software without restriction, including
++   without limitation the rights to use, copy, modify, merge, publish,
++   distribute, sublicense, and/or sell copies of the Software, and to
++   permit persons to whom the Software is furnished to do so, subject to
++   the following conditions:
++
++   The above copyright notice and this permission notice shall be included
++   in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++   DEALINGS IN THE SOFTWARE.
++
++   ----------------------------------------------------------------------- */
++
++#ifndef LIBFFI_TARGET_H
++#define LIBFFI_TARGET_H
++
++#ifndef LIBFFI_H
++#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
++#endif
++
++#ifndef __loongarch__
++#error "libffi was configured for a LOONGARCH target but this does not appear to be a LOONGARCH compiler."
++#endif
++
++#ifndef LIBFFI_ASM
++
++typedef unsigned long ffi_arg;
++typedef   signed long ffi_sarg;
++
++/* FFI_UNUSED_NN and loongarch_unused are to maintain ABI compatibility with a
++   distributed Berkeley patch from 2014, and can be removed at SONAME bump */
++typedef enum ffi_abi {
++    FFI_FIRST_ABI = 0,
++    FFI_LP64,
++    FFI_UNUSED_1,
++    FFI_UNUSED_2,
++    FFI_UNUSED_3,
++    FFI_LAST_ABI,
++
++    FFI_DEFAULT_ABI = FFI_LP64
++} ffi_abi;
++
++#endif /* LIBFFI_ASM */
++
++/* ---- Definitions for closures ----------------------------------------- */
++
++#define FFI_CLOSURES 1
++#define FFI_GO_CLOSURES 1
++#define FFI_TRAMPOLINE_SIZE 24
++#define FFI_NATIVE_RAW_API 0
++#define FFI_EXTRA_CIF_FIELDS unsigned loongarch_nfixedargs; unsigned loongarch_unused;
++#define FFI_TARGET_SPECIFIC_VARIADIC
++//#define FFI_TARGET_HAS_COMPLEX_TYPE 1
++#endif
++
+diff --git a/src/loongarch/sysv.S b/src/loongarch/sysv.S
+new file mode 100644
+index 0000000..91027ca
+--- /dev/null
++++ b/src/loongarch/sysv.S
+@@ -0,0 +1,288 @@
++/* -----------------------------------------------------------------------
++   ffi.c - Copyright (c) 2015 Michael Knyszek <mknyszek@berkeley.edu>
++                         2015 Andrew Waterman <waterman@cs.berkeley.edu>
++                         2018 Stef O'Rear <sorear2@gmail.com>
++
++   LOONGARCH Foreign Function Interface
++
++   Permission is hereby granted, free of charge, to any person obtaining
++   a copy of this software and associated documentation files (the
++   ``Software''), to deal in the Software without restriction, including
++   without limitation the rights to use, copy, modify, merge, publish,
++   distribute, sublicense, and/or sell copies of the Software, and to
++   permit persons to whom the Software is furnished to do so, subject to
++   the following conditions:
++
++   The above copyright notice and this permission notice shall be included
++   in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++   DEALINGS IN THE SOFTWARE.
++   ----------------------------------------------------------------------- */
++
++#define LIBFFI_ASM
++#include <fficonfig.h>
++#include <ffi.h>
++
++/* Define aliases so that we can handle all ABIs uniformly */
++
++#if __SIZEOF_POINTER__ == 8
++#define PTRS 8
++#define LARG ld.d
++#define SARG st.d
++#else
++#define PTRS 4
++#define LARG ld.w
++#define SARG st.w
++#endif
++
++#ifdef __loongarch_hard_float
++# if defined __loongarch_single_float
++#  define FLT	float
++#  define FLEN	4
++#  define FLD	fld.w
++#  define FST	fst.w
++#  error "need check"
++# else
++#  define FLT	double
++#  define FLEN	8
++#  define FLARG	fld.d
++#  define FSARG	fst.d
++# endif
++#else
++# define FLEN	0
++# error "need check"
++#endif
++
++#define FLTS 8
++
++
++    .text
++    .globl  ffi_call_asm
++    .type   ffi_call_asm, @function
++    .hidden ffi_call_asm
++/*
++  struct call_context {
++      floatreg fa[8];
++      intreg a[8];
++      intreg pad[rv32 ? 2 : 0];
++      intreg save_fp, save_ra;
++  }
++  void ffi_call_asm (size_t *stackargs, struct call_context *regargs,
++                     void (*fn) (void), void *closure);
++*/
++
++#define FRAME_LEN (8 * FLTS + 8 * PTRS + 8 * 2)
++
++ffi_call_asm:
++    .cfi_startproc
++
++    /*
++      We are NOT going to set up an ordinary stack frame.  In order to pass
++      the stacked args to the called function, we adjust our stack pointer to
++      a0, which is in the _caller's_ alloca area.  We establish our own stack
++      frame at the end of the call_context.
++
++      Anything below the arguments will be freed at this point, although we
++      preserve the call_context so that it can be read back in the caller.
++    */
++
++    .cfi_def_cfa 5, FRAME_LEN # interim CFA based on a1
++    SARG    $fp, $a1, FRAME_LEN - 2*PTRS
++    .cfi_offset 22, -2*PTRS
++    SARG    $ra, $a1, FRAME_LEN - 1*PTRS
++    .cfi_offset 1, -1*PTRS
++
++    addi.d    $fp, $a1, FRAME_LEN
++    move      $sp, $a0
++    .cfi_def_cfa 22, 0 # our frame is fully set up
++
++    # Load arguments
++    move      $t1, $a2
++    move      $t2, $a3
++
++    FLARG   $fa0, $fp, -FRAME_LEN+0*FLTS
++    FLARG   $fa1, $fp, -FRAME_LEN+1*FLTS
++    FLARG   $fa2, $fp, -FRAME_LEN+2*FLTS
++    FLARG   $fa3, $fp, -FRAME_LEN+3*FLTS
++    FLARG   $fa4, $fp, -FRAME_LEN+4*FLTS
++    FLARG   $fa5, $fp, -FRAME_LEN+5*FLTS
++    FLARG   $fa6, $fp, -FRAME_LEN+6*FLTS
++    FLARG   $fa7, $fp, -FRAME_LEN+7*FLTS
++
++    LARG    $a0, $fp, -FRAME_LEN+8*FLTS+0*PTRS
++    LARG    $a1, $fp, -FRAME_LEN+8*FLTS+1*PTRS
++    LARG    $a2, $fp, -FRAME_LEN+8*FLTS+2*PTRS
++    LARG    $a3, $fp, -FRAME_LEN+8*FLTS+3*PTRS
++    LARG    $a4, $fp, -FRAME_LEN+8*FLTS+4*PTRS
++    LARG    $a5, $fp, -FRAME_LEN+8*FLTS+5*PTRS
++    LARG    $a6, $fp, -FRAME_LEN+8*FLTS+6*PTRS
++    LARG    $a7, $fp, -FRAME_LEN+8*FLTS+7*PTRS
++
++    /* Call */
++    jirl    $ra,$t1,0
++
++    /* Save return values - only a0/a1 (fa0/fa1) are used */
++    FSARG   $fa0, $fp, -FRAME_LEN+0*FLTS
++    FSARG   $fa1, $fp, -FRAME_LEN+1*FLTS
++
++    SARG    $a0, $fp, -FRAME_LEN+8*FLTS+0*PTRS
++    SARG    $a1, $fp, -FRAME_LEN+8*FLTS+1*PTRS
++
++    /* Restore and return */
++    addi.d    $sp, $fp, -FRAME_LEN
++    .cfi_def_cfa 3, FRAME_LEN
++    LARG    $ra, $fp, -1*PTRS
++    .cfi_restore 1
++    LARG    $fp, $fp, -2*PTRS
++    .cfi_restore 22
++    jirl $r0, $ra, 0
++    .cfi_endproc
++    .size   ffi_call_asm, .-ffi_call_asm
++
++
++/*
++  ffi_closure_asm. Expects address of the passed-in ffi_closure in t1.
++  void ffi_closure_inner (ffi_cif *cif,
++		          void (*fun) (ffi_cif *, void *, void **, void *),
++		          void *user_data,
++		          size_t *stackargs, struct call_context *regargs)
++*/
++
++    .globl ffi_closure_asm
++    .hidden ffi_closure_asm
++    .type ffi_closure_asm, @function
++ffi_closure_asm:
++    .cfi_startproc
++
++    addi.d    $sp,  $sp, -FRAME_LEN
++    .cfi_def_cfa_offset FRAME_LEN
++
++    /* make a frame */
++    SARG    $fp, $sp, FRAME_LEN - 2*PTRS
++    .cfi_offset 22, -2*PTRS
++    SARG    $ra, $sp, FRAME_LEN - 1*PTRS
++    .cfi_offset 1, -1*PTRS
++    addi.d    $fp, $sp, FRAME_LEN
++
++    /* save arguments */
++    FSARG   $fa0, $sp, 0*FLTS
++    FSARG   $fa1, $sp, 1*FLTS
++    FSARG   $fa2, $sp, 2*FLTS
++    FSARG   $fa3, $sp, 3*FLTS
++    FSARG   $fa4, $sp, 4*FLTS
++    FSARG   $fa5, $sp, 5*FLTS
++    FSARG   $fa6, $sp, 6*FLTS
++    FSARG   $fa7, $sp, 7*FLTS
++
++    SARG    $a0, $sp, 8*FLTS+0*PTRS
++    SARG    $a1, $sp, 8*FLTS+1*PTRS
++    SARG    $a2, $sp, 8*FLTS+2*PTRS
++    SARG    $a3, $sp, 8*FLTS+3*PTRS
++    SARG    $a4, $sp, 8*FLTS+4*PTRS
++    SARG    $a5, $sp, 8*FLTS+5*PTRS
++    SARG    $a6, $sp, 8*FLTS+6*PTRS
++    SARG    $a7, $sp, 8*FLTS+7*PTRS
++
++    /* enter C */
++    LARG    $a0, $t0, FFI_TRAMPOLINE_SIZE+0*PTRS
++    LARG    $a1, $t0, FFI_TRAMPOLINE_SIZE+1*PTRS
++    LARG    $a2, $t0, FFI_TRAMPOLINE_SIZE+2*PTRS
++    addi.d    $a3, $sp, FRAME_LEN
++    move      $a4, $sp
++
++    bl   ffi_closure_inner
++
++    /* return values */
++    FLARG   $fa0, $sp, 0*FLTS
++    FLARG   $fa1, $sp, 1*FLTS
++
++    LARG    $a0, $sp, 8*FLTS+0*PTRS
++    LARG    $a1, $sp, 8*FLTS+1*PTRS
++
++    /* restore and return */
++    LARG    $ra, $sp, FRAME_LEN-1*PTRS
++    .cfi_restore 1
++    LARG    $fp, $sp, FRAME_LEN-2*PTRS
++    .cfi_restore 22
++    addi.d    $sp, $sp, FRAME_LEN
++    .cfi_def_cfa_offset 0
++    jirl $r0, $ra, 0
++    .cfi_endproc
++    .size ffi_closure_asm, .-ffi_closure_asm
++
++/*
++  ffi_go_closure_asm.  Expects address of the passed-in ffi_go_closure in t2.
++  void ffi_closure_inner (ffi_cif *cif,
++		          void (*fun) (ffi_cif *, void *, void **, void *),
++		          void *user_data,
++		          size_t *stackargs, struct call_context *regargs)
++*/
++
++    .globl ffi_go_closure_asm
++    .hidden ffi_go_closure_asm
++    .type ffi_go_closure_asm, @function
++ffi_go_closure_asm:
++    .cfi_startproc
++
++    addi.d    $sp,  $sp, -FRAME_LEN
++    .cfi_def_cfa_offset FRAME_LEN
++
++    /* make a frame */
++    SARG    $fp, $sp, FRAME_LEN - 2*PTRS
++    .cfi_offset 22, -2*PTRS
++    SARG    $ra, $sp, FRAME_LEN - 1*PTRS
++    .cfi_offset 1, -1*PTRS
++    addi.d    $fp, $sp, FRAME_LEN
++
++    /* save arguments */
++    FSARG   $fa0, $sp, 0*FLTS
++    FSARG   $fa1, $sp, 1*FLTS
++    FSARG   $fa2, $sp, 2*FLTS
++    FSARG   $fa3, $sp, 3*FLTS
++    FSARG   $fa4, $sp, 4*FLTS
++    FSARG   $fa5, $sp, 5*FLTS
++    FSARG   $fa6, $sp, 6*FLTS
++    FSARG   $fa7, $sp, 7*FLTS
++
++    SARG    $a0, $sp, 8*FLTS+0*PTRS
++    SARG    $a1, $sp, 8*FLTS+1*PTRS
++    SARG    $a2, $sp, 8*FLTS+2*PTRS
++    SARG    $a3, $sp, 8*FLTS+3*PTRS
++    SARG    $a4, $sp, 8*FLTS+4*PTRS
++    SARG    $a5, $sp, 8*FLTS+5*PTRS
++    SARG    $a6, $sp, 8*FLTS+6*PTRS
++    SARG    $a7, $sp, 8*FLTS+7*PTRS
++
++    /* enter C */
++    LARG    $a0, $t2, 1*PTRS
++    LARG    $a1, $t2, 2*PTRS
++    move      $a2, $t2
++    addi.d    $a3, $sp, FRAME_LEN
++    move      $a4, $sp
++
++    bl    ffi_closure_inner
++
++    /* return values */
++    FLARG   $fa0, $sp, 0*FLTS
++    FLARG   $fa1, $sp, 1*FLTS
++
++    LARG    $a0, $sp, 8*FLTS+0*PTRS
++    LARG    $a1, $sp, 8*FLTS+1*PTRS
++
++    /* restore and return */
++    LARG    $ra, $sp, FRAME_LEN-1*PTRS
++    .cfi_restore 1
++    LARG    $fp, $sp, FRAME_LEN-2*PTRS
++    .cfi_restore 22
++    addi.d    $sp, $sp, FRAME_LEN
++    .cfi_def_cfa_offset 0
++    jirl $r0, $ra, 0
++    .cfi_endproc
++    .size ffi_go_closure_asm, .-ffi_go_closure_asm
+diff --git a/testsuite/libffi.call/many3.c b/testsuite/libffi.call/many3.c
+new file mode 100644
+index 0000000..5e66a10
+--- /dev/null
++++ b/testsuite/libffi.call/many3.c
+@@ -0,0 +1,106 @@
++/* Area:	ffi_call
++   Purpose:	Check return value double, with many arguments
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++#include <stdlib.h>
++#include <float.h>
++#include <math.h>
++
++typedef struct
++{
++	unsigned ret;
++	unsigned one;
++	unsigned two;
++} s3i;
++
++static double many(double f1,
++		  double f2,
++		  s3i arg,
++		  double f3,
++		  double f4,
++		  long int i2,
++		  double f5,
++		  double f6,
++		  long int i3,
++		  double f7,
++		  double f8,
++		  long int i4,
++		  double f9,
++		  double f10,
++		  long int i5,
++		  double f11,
++		  double f12,
++		  long int i6,
++		  double f13)
++{
++  return ((double) (arg.ret + arg.one + arg.two + i2 + i3 + i4 + i5 + i6) + (f1/f2+f3/f4+f5/f6+f7/f8+f9/f10+f11/f12) * f13);
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[19];
++  ffi_type s3i_type;
++  ffi_type *s3i_type_elements[4];
++  s3i arg;
++  void *values[19];
++  double fa[19];
++  long int la[19];
++  double f, ff;
++  int i;
++
++  s3i_type.size = 0;
++  s3i_type.alignment = 0;
++  s3i_type.type = FFI_TYPE_STRUCT;
++  s3i_type.elements = s3i_type_elements;
++  s3i_type_elements[0] = &ffi_type_uint;
++  s3i_type_elements[1] = &ffi_type_uint;
++  s3i_type_elements[2] = &ffi_type_uint;
++  s3i_type_elements[3] = NULL;
++
++  arg.ret = 3;
++  arg.one = 1;
++  arg.two = 2;
++
++  for (i = 0; i < 19; i++)
++    {
++	  if(i == 2) {
++            args[i] = &s3i_type;
++	    values[i] = &arg;
++            continue;
++          }
++	  if( (i - 2) % 3 == 0) {
++	    args[i] = &ffi_type_slong;
++	    la[i] = (long int) i;
++	    values[i] = &la[i];
++	  }
++	  else {
++	    args[i] = &ffi_type_double;
++	    fa[i] = (double) i;
++	    values[i] = &fa[i];
++	  }
++    }
++
++    /* Initialize the cif */
++    CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 19,
++		       &ffi_type_double, args) == FFI_OK);
++
++    ffi_call(&cif, FFI_FN(many), &f, values);
++
++    ff =  many(fa[0], fa[1], arg,
++               fa[3], fa[4], la[5],
++               fa[6], fa[7], la[8],
++               fa[9], fa[10], la[11],
++               fa[12], fa[13], la[14],
++               fa[15], fa[16], la[17],
++               fa[18]);
++    if (fabs(f - ff) < FLT_EPSILON)
++      exit(0);
++    else
++      abort();
++}
+diff --git a/testsuite/libffi.call/many4.c b/testsuite/libffi.call/many4.c
+new file mode 100644
+index 0000000..ced067f
+--- /dev/null
++++ b/testsuite/libffi.call/many4.c
+@@ -0,0 +1,106 @@
++/* Area:	ffi_call
++   Purpose:	Check return value double, with many arguments
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++#include <stdlib.h>
++#include <float.h>
++#include <math.h>
++
++typedef struct
++{
++	unsigned ret;
++	unsigned one;
++	unsigned two;
++} s3i;
++
++static double many(double f1,
++		  double f2,
++		  long int i1,
++		  double f3,
++		  double f4,
++		  long int i2,
++		  double f5,
++		  double f6,
++		  long int i3,
++		  s3i arg,
++		  double f8,
++		  long int i4,
++		  double f9,
++		  double f10,
++		  long int i5,
++		  double f11,
++		  double f12,
++		  long int i6,
++		  double f13)
++{
++  return ((double) (i1 + i2 + i3 + i4 + i5 + i6) + (f1/f2+f3/f4+f5/f6+(arg.ret + arg.one + arg.two)/f8+f9/f10+f11/f12) * f13);
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[19];
++  ffi_type s3i_type;
++  ffi_type *s3i_type_elements[4];
++  s3i arg;
++  void *values[19];
++  double fa[19];
++  long int la[19];
++  double f, ff;
++  int i;
++
++  s3i_type.size = 0;
++  s3i_type.alignment = 0;
++  s3i_type.type = FFI_TYPE_STRUCT;
++  s3i_type.elements = s3i_type_elements;
++  s3i_type_elements[0] = &ffi_type_uint;
++  s3i_type_elements[1] = &ffi_type_uint;
++  s3i_type_elements[2] = &ffi_type_uint;
++  s3i_type_elements[3] = NULL;
++
++  arg.ret = 3;
++  arg.one = 1;
++  arg.two = 2;
++
++  for (i = 0; i < 19; i++)
++    {
++	  if(i == 9) {
++            args[i] = &s3i_type;
++	    values[i] = &arg;
++            continue;
++          }
++	  if( (i - 2) % 3 == 0) {
++	    args[i] = &ffi_type_slong;
++	    la[i] = (long int) i;
++	    values[i] = &la[i];
++	  }
++	  else {
++	    args[i] = &ffi_type_double;
++	    fa[i] = (double) i;
++	    values[i] = &fa[i];
++	  }
++    }
++
++    /* Initialize the cif */
++    CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 19,
++		       &ffi_type_double, args) == FFI_OK);
++
++    ffi_call(&cif, FFI_FN(many), &f, values);
++
++    ff =  many(fa[0], fa[1], la[2],
++               fa[3], fa[4], la[5],
++               fa[6], fa[7], la[8],
++               arg, fa[10], la[11],
++               fa[12], fa[13], la[14],
++               fa[15], fa[16], la[17],
++               fa[18]);
++    if (fabs(f - ff) < FLT_EPSILON)
++      exit(0);
++    else
++      abort();
++}
+diff --git a/testsuite/libffi.call/many5.c b/testsuite/libffi.call/many5.c
+new file mode 100644
+index 0000000..e39d587
+--- /dev/null
++++ b/testsuite/libffi.call/many5.c
+@@ -0,0 +1,103 @@
++/* Area:	ffi_call
++   Purpose:	Check return value double, with many arguments
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++#include <stdlib.h>
++#include <float.h>
++#include <math.h>
++
++typedef struct
++{
++	float one;
++	int two;
++} s3i;
++
++static double many(double f1,
++		  double f2,
++		  long int i1,
++		  double f3,
++		  double f4,
++		  long int i2,
++		  double f5,
++		  double f6,
++		  long int i3,
++		  s3i arg,
++		  double f8,
++		  long int i4,
++		  double f9,
++		  double f10,
++		  long int i5,
++		  double f11,
++		  double f12,
++		  long int i6,
++		  double f13)
++{
++  return ((double) (i1 + i2 + i3 + i4 + i5 + i6) + (f1/f2+f3/f4+f5/f6+(arg.one + arg.two)/f8+f9/f10+f11/f12) * f13);
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[19];
++  ffi_type s3i_type;
++  ffi_type *s3i_type_elements[4];
++  s3i arg;
++  void *values[19];
++  double fa[19];
++  long int la[19];
++  double f, ff;
++  int i;
++
++  s3i_type.size = 0;
++  s3i_type.alignment = 0;
++  s3i_type.type = FFI_TYPE_STRUCT;
++  s3i_type.elements = s3i_type_elements;
++  s3i_type_elements[0] = &ffi_type_float;
++  s3i_type_elements[1] = &ffi_type_sint;
++  s3i_type_elements[2] = NULL;
++
++  arg.one = 1;
++  arg.two = 2;
++
++  for (i = 0; i < 19; i++)
++    {
++	  if(i == 9) {
++            args[i] = &s3i_type;
++	    values[i] = &arg;
++            continue;
++          }
++	  if( (i - 2) % 3 == 0) {
++	    args[i] = &ffi_type_slong;
++	    la[i] = (long int) i;
++	    values[i] = &la[i];
++	  }
++	  else {
++	    args[i] = &ffi_type_double;
++	    fa[i] = (double) i;
++	    values[i] = &fa[i];
++	  }
++    }
++
++    /* Initialize the cif */
++    CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 19,
++		       &ffi_type_double, args) == FFI_OK);
++
++    ffi_call(&cif, FFI_FN(many), &f, values);
++
++    ff =  many(fa[0], fa[1], la[2],
++               fa[3], fa[4], la[5],
++               fa[6], fa[7], la[8],
++               arg, fa[10], la[11],
++               fa[12], fa[13], la[14],
++               fa[15], fa[16], la[17],
++               fa[18]);
++    if (fabs(f - ff) < FLT_EPSILON)
++      exit(0);
++    else
++      abort();
++}
+diff --git a/testsuite/libffi.call/many6.c b/testsuite/libffi.call/many6.c
+new file mode 100644
+index 0000000..af196e7
+--- /dev/null
++++ b/testsuite/libffi.call/many6.c
+@@ -0,0 +1,103 @@
++/* Area:	ffi_call
++   Purpose:	Check return value double, with many arguments
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++#include <stdlib.h>
++#include <float.h>
++#include <math.h>
++
++typedef struct
++{
++	float one;
++	int two;
++} s3i;
++
++static double many(double f1,
++		  double f2,
++		  s3i arg,
++		  double f3,
++		  double f4,
++		  long int i2,
++		  double f5,
++		  double f6,
++		  long int i3,
++		  double f7,
++		  double f8,
++		  long int i4,
++		  double f9,
++		  double f10,
++		  long int i5,
++		  double f11,
++		  double f12,
++		  long int i6,
++		  double f13)
++{
++  return ((double) (arg.one + arg.two + i2 + i3 + i4 + i5 + i6) + (f1/f2+f3/f4+f5/f6+f7/f8+f9/f10+f11/f12) * f13);
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[19];
++  ffi_type s3i_type;
++  ffi_type *s3i_type_elements[4];
++  s3i arg;
++  void *values[19];
++  double fa[19];
++  long int la[19];
++  double f, ff;
++  int i;
++
++  s3i_type.size = 0;
++  s3i_type.alignment = 0;
++  s3i_type.type = FFI_TYPE_STRUCT;
++  s3i_type.elements = s3i_type_elements;
++  s3i_type_elements[0] = &ffi_type_float;
++  s3i_type_elements[1] = &ffi_type_sint;
++  s3i_type_elements[2] = NULL;
++
++  arg.one = 1;
++  arg.two = 2;
++
++  for (i = 0; i < 19; i++)
++    {
++	  if(i == 2) {
++            args[i] = &s3i_type;
++	    values[i] = &arg;
++            continue;
++          }
++	  if( (i - 2) % 3 == 0) {
++	    args[i] = &ffi_type_slong;
++	    la[i] = (long int) i;
++	    values[i] = &la[i];
++	  }
++	  else {
++	    args[i] = &ffi_type_double;
++	    fa[i] = (double) i;
++	    values[i] = &fa[i];
++	  }
++    }
++
++    /* Initialize the cif */
++    CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 19,
++		       &ffi_type_double, args) == FFI_OK);
++
++    ffi_call(&cif, FFI_FN(many), &f, values);
++
++    ff =  many(fa[0], fa[1], arg,
++               fa[3], fa[4], la[5],
++               fa[6], fa[7], la[8],
++               fa[9], fa[10], la[11],
++               fa[12], fa[13], la[14],
++               fa[15], fa[16], la[17],
++               fa[18]);
++    if (fabs(f - ff) < FLT_EPSILON)
++      exit(0);
++    else
++      abort();
++}
+diff --git a/testsuite/libffi.call/many7.c b/testsuite/libffi.call/many7.c
+new file mode 100644
+index 0000000..e677476
+--- /dev/null
++++ b/testsuite/libffi.call/many7.c
+@@ -0,0 +1,106 @@
++/* Area:	ffi_call
++   Purpose:	Check return value double, with many arguments
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++#include <stdlib.h>
++#include <float.h>
++#include <math.h>
++
++typedef struct
++{
++	unsigned ret;
++	unsigned one;
++	unsigned two;
++} s3i;
++
++static double many(double f1,
++		  double f2,
++		  long int i1,
++		  double f3,
++		  double f4,
++		  long int i2,
++		  double f5,
++		  s3i arg,
++		  long int i3,
++		  double f7,
++		  double f8,
++		  long int i4,
++		  double f9,
++		  double f10,
++		  long int i5,
++		  double f11,
++		  double f12,
++		  long int i6,
++		  double f13)
++{
++  return ((double) (i1 + i2 + i3 + i4 + i5 + i6) + (f1/f2+f3/f4+f5/(arg.ret + arg.one + arg.two)+f7/f8+f9/f10+f11/f12) * f13);
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[19];
++  ffi_type s3i_type;
++  ffi_type *s3i_type_elements[4];
++  s3i arg;
++  void *values[19];
++  double fa[19];
++  long int la[19];
++  double f, ff;
++  int i;
++
++  s3i_type.size = 0;
++  s3i_type.alignment = 0;
++  s3i_type.type = FFI_TYPE_STRUCT;
++  s3i_type.elements = s3i_type_elements;
++  s3i_type_elements[0] = &ffi_type_uint;
++  s3i_type_elements[1] = &ffi_type_uint;
++  s3i_type_elements[2] = &ffi_type_uint;
++  s3i_type_elements[3] = NULL;
++
++  arg.ret = 3;
++  arg.one = 1;
++  arg.two = 2;
++
++  for (i = 0; i < 19; i++)
++    {
++	  if(i == 7) {
++            args[i] = &s3i_type;
++	    values[i] = &arg;
++            continue;
++          }
++	  if( (i - 2) % 3 == 0) {
++	    args[i] = &ffi_type_slong;
++	    la[i] = (long int) i;
++	    values[i] = &la[i];
++	  }
++	  else {
++	    args[i] = &ffi_type_double;
++	    fa[i] = (double) i;
++	    values[i] = &fa[i];
++	  }
++    }
++
++    /* Initialize the cif */
++    CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 19,
++		       &ffi_type_double, args) == FFI_OK);
++
++    ffi_call(&cif, FFI_FN(many), &f, values);
++
++    ff =  many(fa[0], fa[1], la[2],
++               fa[3], fa[4], la[5],
++               fa[6], arg, la[8],
++               fa[9], fa[10], la[11],
++               fa[12], fa[13], la[14],
++               fa[15], fa[16], la[17],
++               fa[18]);
++    if (fabs(f - ff) < FLT_EPSILON)
++      exit(0);
++    else
++      abort();
++}
+diff --git a/testsuite/libffi.call/many8.c b/testsuite/libffi.call/many8.c
+new file mode 100644
+index 0000000..8faab58
+--- /dev/null
++++ b/testsuite/libffi.call/many8.c
+@@ -0,0 +1,92 @@
++/* Area:	ffi_call
++   Purpose:	Check return value double, with many arguments
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++#include <stdlib.h>
++#include <float.h>
++#include <math.h>
++
++typedef struct
++{
++  char c1, c2;
++} Ss;
++
++static int many(
++double a1,
++float a2, 
++Ss a3,
++long double a4,
++float a5,
++short a6,
++int a7,
++float a8)
++{
++return a1 + a2 + a3.c1 + a3.c2 + a4 + a5 + a6 + a7 + a8;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[9];
++  ffi_type Ss_type;
++  ffi_type *Ss_type_elements[4];
++
++  double a1 = 1;
++  float a2 = 2;
++  Ss a3 = {3, 4};
++  long double a4 = 5;
++  float a5 = 6;
++  short a6 = 7;
++  int a7 = 8;
++  float a8 = 9;
++
++  ffi_arg r1;
++  int r2;
++
++  void *values[9];
++
++  Ss_type.size = 0;
++  Ss_type.alignment = 0;
++  Ss_type.type = FFI_TYPE_STRUCT;
++  Ss_type.elements = Ss_type_elements;
++  Ss_type_elements[0] = &ffi_type_uchar;
++  Ss_type_elements[1] = &ffi_type_uchar;
++  Ss_type_elements[2] = NULL;
++
++  args[0] = &ffi_type_double;
++  args[1] = &ffi_type_float;
++  args[2] = &Ss_type;
++  args[3] = &ffi_type_longdouble;
++  args[4] = &ffi_type_float;
++  args[5] = &ffi_type_sshort;
++  args[6] = &ffi_type_sint;
++  args[7] = &ffi_type_float;
++  args[8] = NULL;
++
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++  values[6] = &a7;
++  values[7] = &a8;
++  values[8] = NULL;
++
++    /* Initialize the cif */
++    CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 8,
++		       &ffi_type_sint, args) == FFI_OK);
++
++    ffi_call(&cif, FFI_FN(many), &r1, values);
++
++    r2 =  many(a1,a2,a3,a4,a5,a6,a7,a8);
++    if ((int)r1 == r2)
++      exit(0);
++    else
++      abort();
++}
+diff --git a/testsuite/libffi.call/struct11.c b/testsuite/libffi.call/struct11.c
+new file mode 100644
+index 0000000..5331ff5
+--- /dev/null
++++ b/testsuite/libffi.call/struct11.c
+@@ -0,0 +1,72 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  unsigned char uc;
++  double d;
++  unsigned int ui;
++} test_structure_1;
++
++static test_structure_1 ABI_ATTR struct1(test_structure_1 ts, int *another_ret)
++{
++  ts.uc++;
++  ts.d--;
++  ts.ui++;
++  *another_ret = 1;
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  ffi_type ts1_type;
++  ffi_type *ts1_type_elements[4];
++  int i = 0;
++  int *ptr = &i;
++
++  test_structure_1 ts1_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
++  ts1_type.size = 0;
++  ts1_type.alignment = 0;
++  ts1_type.type = FFI_TYPE_STRUCT;
++  ts1_type.elements = ts1_type_elements;
++  ts1_type_elements[0] = &ffi_type_uchar;
++  ts1_type_elements[1] = &ffi_type_double;
++  ts1_type_elements[2] = &ffi_type_uint;
++  ts1_type_elements[3] = NULL;
++  
++  args[0] = &ts1_type;
++  args[1] = &ffi_type_pointer; 
++  values[0] = &ts1_arg;
++  values[1] = &ptr;
++  
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 2,
++		     &ts1_type, args) == FFI_OK);
++  
++  ts1_arg.uc = '\x01';
++  ts1_arg.d = 3.14159;
++  ts1_arg.ui = 555;
++
++  ffi_call(&cif, FFI_FN(struct1), ts1_result, values);
++  
++  CHECK(ts1_result->ui == 556);
++  CHECK(ts1_result->d == 3.14159 - 1);
++  CHECK(i == 1);
++ 
++  free (ts1_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct12.c b/testsuite/libffi.call/struct12.c
+new file mode 100644
+index 0000000..24c1288
+--- /dev/null
++++ b/testsuite/libffi.call/struct12.c
+@@ -0,0 +1,72 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  unsigned char uc;
++  double d;
++  unsigned int ui;
++} test_structure_1;
++
++static test_structure_1 ABI_ATTR struct1(int *another_ret, test_structure_1 ts)
++{
++  ts.uc++;
++  ts.d--;
++  ts.ui++;
++  *another_ret = 1;
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  ffi_type ts1_type;
++  ffi_type *ts1_type_elements[4];
++  int i = 0;
++  int *ptr = &i;
++
++  test_structure_1 ts1_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
++  ts1_type.size = 0;
++  ts1_type.alignment = 0;
++  ts1_type.type = FFI_TYPE_STRUCT;
++  ts1_type.elements = ts1_type_elements;
++  ts1_type_elements[0] = &ffi_type_uchar;
++  ts1_type_elements[1] = &ffi_type_double;
++  ts1_type_elements[2] = &ffi_type_uint;
++  ts1_type_elements[3] = NULL;
++
++  args[0] = &ffi_type_pointer;
++  args[1] = &ts1_type;
++  values[0] = &ptr;
++  values[1] = &ts1_arg;
++  
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 2,
++		     &ts1_type, args) == FFI_OK);
++  
++  ts1_arg.uc = '\x01';
++  ts1_arg.d = 3.14159;
++  ts1_arg.ui = 555;
++
++  ffi_call(&cif, FFI_FN(struct1), ts1_result, values);
++  
++  CHECK(ts1_result->ui == 556);
++  CHECK(ts1_result->d == 3.14159 - 1);
++  CHECK(i == 1);
++ 
++  free (ts1_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct13.c b/testsuite/libffi.call/struct13.c
+new file mode 100644
+index 0000000..3225d35
+--- /dev/null
++++ b/testsuite/libffi.call/struct13.c
+@@ -0,0 +1,76 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  unsigned char uc;
++  double d;
++  unsigned int ui;
++} test_structure_1;
++
++static test_structure_1 ABI_ATTR struct1(test_structure_1 ts, test_structure_1 ts1)
++{
++  ts.uc++;
++  ts.d--;
++  ts.ui++;
++  CHECK (ts1.uc == 2);
++  CHECK (ts1.d == 4.0);
++  CHECK (ts1.ui == 100);
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  ffi_type ts1_type;
++  ffi_type *ts1_type_elements[4];
++
++  test_structure_1 ts1_arg1, ts1_arg2;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
++  ts1_type.size = 0;
++  ts1_type.alignment = 0;
++  ts1_type.type = FFI_TYPE_STRUCT;
++  ts1_type.elements = ts1_type_elements;
++  ts1_type_elements[0] = &ffi_type_uchar;
++  ts1_type_elements[1] = &ffi_type_double;
++  ts1_type_elements[2] = &ffi_type_uint;
++  ts1_type_elements[3] = NULL;
++  
++  args[0] = &ts1_type;
++  values[0] = &ts1_arg1;
++  args[1] = &ts1_type;
++  values[1] = &ts1_arg2;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 2,
++		     &ts1_type, args) == FFI_OK);
++  
++  ts1_arg1.uc = '\x01';
++  ts1_arg1.d = 3.14159;
++  ts1_arg1.ui = 555;
++
++  ts1_arg2.uc = 2;
++  ts1_arg2.d = 4.0;
++  ts1_arg2.ui = 100;
++
++
++  ffi_call(&cif, FFI_FN(struct1), ts1_result, values);
++  
++  CHECK(ts1_result->ui == 556);
++  CHECK(ts1_result->d == 3.14159 - 1);
++ 
++  free (ts1_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct14.c b/testsuite/libffi.call/struct14.c
+new file mode 100644
+index 0000000..15543e6
+--- /dev/null
++++ b/testsuite/libffi.call/struct14.c
+@@ -0,0 +1,84 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  unsigned char uc;
++  double d;
++  unsigned int ui;
++} test_structure_1;
++
++static test_structure_1 ABI_ATTR struct1(test_structure_1 ts, test_structure_1 arg2, test_structure_1 arg3)
++{
++  ts.uc++;
++  ts.d--;
++  ts.ui++;
++  CHECK (arg2.uc == 2);
++  CHECK (arg2.d == 4.0);
++  CHECK (arg2.ui == 100);
++  CHECK (arg3.uc == 5);
++  CHECK (arg3.d == 6.0);
++  CHECK (arg3.ui == 7);
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  ffi_type ts1_type;
++  ffi_type *ts1_type_elements[4];
++
++  test_structure_1 ts1_arg1, ts1_arg2, ts1_arg3;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
++  ts1_type.size = 0;
++  ts1_type.alignment = 0;
++  ts1_type.type = FFI_TYPE_STRUCT;
++  ts1_type.elements = ts1_type_elements;
++  ts1_type_elements[0] = &ffi_type_uchar;
++  ts1_type_elements[1] = &ffi_type_double;
++  ts1_type_elements[2] = &ffi_type_uint;
++  ts1_type_elements[3] = NULL;
++  
++  args[0] = &ts1_type;
++  values[0] = &ts1_arg1;
++  args[1] = &ts1_type;
++  values[1] = &ts1_arg2;
++  args[2] = &ts1_type;
++  values[2] = &ts1_arg3;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 3,
++		     &ts1_type, args) == FFI_OK);
++  
++  ts1_arg1.uc = '\x01';
++  ts1_arg1.d = 3.14159;
++  ts1_arg1.ui = 555;
++
++  ts1_arg2.uc = 2;
++  ts1_arg2.d = 4.0;
++  ts1_arg2.ui = 100;
++
++  ts1_arg3.uc = 5;
++  ts1_arg3.d = 6.0;
++  ts1_arg3.ui = 7;
++
++  ffi_call(&cif, FFI_FN(struct1), ts1_result, values);
++  
++  CHECK(ts1_result->ui == 556);
++  CHECK(ts1_result->d == 3.14159 - 1);
++ 
++  free (ts1_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct15.c b/testsuite/libffi.call/struct15.c
+new file mode 100644
+index 0000000..cc6b8e6
+--- /dev/null
++++ b/testsuite/libffi.call/struct15.c
+@@ -0,0 +1,60 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  double d1;
++} test_structure_2;
++
++static test_structure_2 ABI_ATTR struct2(test_structure_2 ts)
++{
++  ts.d1--;
++
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  test_structure_2 ts2_arg;
++  ffi_type ts2_type;
++  ffi_type *ts2_type_elements[2];
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_2 *ts2_result =
++    (test_structure_2 *) malloc (sizeof(test_structure_2));
++
++  ts2_type.size = 0;
++  ts2_type.alignment = 0;
++  ts2_type.type = FFI_TYPE_STRUCT;
++  ts2_type.elements = ts2_type_elements;
++  ts2_type_elements[0] = &ffi_type_double;
++  ts2_type_elements[1] = NULL;
++
++  args[0] = &ts2_type;
++  values[0] = &ts2_arg;
++  
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 1, &ts2_type, args) == FFI_OK);
++  
++  ts2_arg.d1 = 5.55;
++  
++  printf ("%g\n", ts2_arg.d1);
++  
++  ffi_call(&cif, FFI_FN(struct2), ts2_result, values);
++  
++  printf ("%g\n", ts2_result->d1);
++  
++  CHECK(ts2_result->d1 == (double) 5.55 - 1);
++  
++  free (ts2_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct16.c b/testsuite/libffi.call/struct16.c
+new file mode 100644
+index 0000000..41152ea
+--- /dev/null
++++ b/testsuite/libffi.call/struct16.c
+@@ -0,0 +1,60 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  float d1;
++} test_structure_2;
++
++static test_structure_2 ABI_ATTR struct2(test_structure_2 ts)
++{
++  ts.d1--;
++
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  test_structure_2 ts2_arg;
++  ffi_type ts2_type;
++  ffi_type *ts2_type_elements[2];
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_2 *ts2_result =
++    (test_structure_2 *) malloc (sizeof(test_structure_2));
++
++  ts2_type.size = 0;
++  ts2_type.alignment = 0;
++  ts2_type.type = FFI_TYPE_STRUCT;
++  ts2_type.elements = ts2_type_elements;
++  ts2_type_elements[0] = &ffi_type_float;
++  ts2_type_elements[1] = NULL;
++
++  args[0] = &ts2_type;
++  values[0] = &ts2_arg;
++  
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 1, &ts2_type, args) == FFI_OK);
++  
++  ts2_arg.d1 = 5.55;
++  
++  printf ("%g\n", ts2_arg.d1);
++  
++  ffi_call(&cif, FFI_FN(struct2), ts2_result, values);
++  
++  printf ("%g\n", ts2_result->d1);
++  
++  CHECK(ts2_result->d1 == (float) 5.55 - 1);
++  
++  free (ts2_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct17.c b/testsuite/libffi.call/struct17.c
+new file mode 100644
+index 0000000..354d6de
+--- /dev/null
++++ b/testsuite/libffi.call/struct17.c
+@@ -0,0 +1,60 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  long double d1;
++} test_structure_2;
++
++static test_structure_2 ABI_ATTR struct2(test_structure_2 ts)
++{
++  ts.d1--;
++
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  test_structure_2 ts2_arg;
++  ffi_type ts2_type;
++  ffi_type *ts2_type_elements[2];
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_2 *ts2_result =
++    (test_structure_2 *) malloc (sizeof(test_structure_2));
++
++  ts2_type.size = 0;
++  ts2_type.alignment = 0;
++  ts2_type.type = FFI_TYPE_STRUCT;
++  ts2_type.elements = ts2_type_elements;
++  ts2_type_elements[0] = &ffi_type_longdouble;
++  ts2_type_elements[1] = NULL;
++
++  args[0] = &ts2_type;
++  values[0] = &ts2_arg;
++  
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 1, &ts2_type, args) == FFI_OK);
++  
++  ts2_arg.d1 = 5.55;
++  
++  printf ("%Lg\n", ts2_arg.d1);
++  
++  ffi_call(&cif, FFI_FN(struct2), ts2_result, values);
++  
++  printf ("%Lg\n", ts2_result->d1);
++  
++  CHECK(ts2_result->d1 == (long double) 5.55 - 1);
++  
++  free (ts2_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct18.c b/testsuite/libffi.call/struct18.c
+new file mode 100644
+index 0000000..360a5af
+--- /dev/null
++++ b/testsuite/libffi.call/struct18.c
+@@ -0,0 +1,67 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  unsigned char uc;
++  long double d;
++  unsigned int ui;
++} test_structure_1;
++
++static test_structure_1 ABI_ATTR struct1(test_structure_1 ts)
++{
++  ts.uc++;
++  ts.d--;
++  ts.ui++;
++
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  ffi_type ts1_type;
++  ffi_type *ts1_type_elements[4];
++
++  test_structure_1 ts1_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
++  ts1_type.size = 0;
++  ts1_type.alignment = 0;
++  ts1_type.type = FFI_TYPE_STRUCT;
++  ts1_type.elements = ts1_type_elements;
++  ts1_type_elements[0] = &ffi_type_uchar;
++  ts1_type_elements[1] = &ffi_type_longdouble;
++  ts1_type_elements[2] = &ffi_type_uint;
++  ts1_type_elements[3] = NULL;
++  
++  args[0] = &ts1_type;
++  values[0] = &ts1_arg;
++  
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 1,
++		     &ts1_type, args) == FFI_OK);
++  
++  ts1_arg.uc = '\x01';
++  ts1_arg.d = 3.14159;
++  ts1_arg.ui = 555;
++
++  ffi_call(&cif, FFI_FN(struct1), ts1_result, values);
++  
++  CHECK(ts1_result->ui == 556);
++  CHECK(ts1_result->d == (long double) 3.14159 - 1);
++ 
++  free (ts1_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct19.c b/testsuite/libffi.call/struct19.c
+new file mode 100644
+index 0000000..eaca16d
+--- /dev/null
++++ b/testsuite/libffi.call/struct19.c
+@@ -0,0 +1,111 @@
++/* Area:		ffi_call
++   Purpose:		Test passing struct in variable argument lists.
++   Limitations:	none.
++   PR:			none.
++   Originator: ARM Ltd. */
++
++/* { dg-do run } */
++/* { dg-output "" { xfail avr32*-*-* } } */
++
++#include "ffitest.h"
++#include <stdarg.h>
++
++struct small_tag
++{
++  unsigned char a;
++  long double b;
++};
++
++struct large_tag
++{
++  unsigned a;
++  unsigned b;
++  unsigned c;
++  unsigned d;
++  unsigned e;
++};
++
++static int
++test_fn (int n, struct small_tag s1, struct large_tag l, struct small_tag s2)
++{
++  printf ("%u %u %u %u %u %u %u %u %u\n", s1.a, (unsigned) s1.b, l.a, l.b, l.c, l.d, l.e,
++	  s2.a, (unsigned) s2.b);
++  return n + 1;
++}
++
++int
++main (void)
++{
++  ffi_cif cif;
++  void* args[5];
++  ffi_type* arg_types[5];
++
++  ffi_type s_type;
++  ffi_type *s_type_elements[3];
++
++  ffi_type l_type;
++  ffi_type *l_type_elements[6];
++
++  struct small_tag s1;
++  struct small_tag s2;
++  struct large_tag l1;
++
++  int n;
++  ffi_arg res;
++
++  s_type.size = 0;
++  s_type.alignment = 0;
++  s_type.type = FFI_TYPE_STRUCT;
++  s_type.elements = s_type_elements;
++
++  s_type_elements[0] = &ffi_type_uchar;
++  s_type_elements[1] = &ffi_type_longdouble;
++  s_type_elements[2] = NULL;
++
++  l_type.size = 0;
++  l_type.alignment = 0;
++  l_type.type = FFI_TYPE_STRUCT;
++  l_type.elements = l_type_elements;
++
++  l_type_elements[0] = &ffi_type_uint;
++  l_type_elements[1] = &ffi_type_uint;
++  l_type_elements[2] = &ffi_type_uint;
++  l_type_elements[3] = &ffi_type_uint;
++  l_type_elements[4] = &ffi_type_uint;
++  l_type_elements[5] = NULL;
++
++  arg_types[0] = &ffi_type_sint;
++  arg_types[1] = &s_type;
++  arg_types[2] = &l_type;
++  arg_types[3] = &s_type;
++  arg_types[4] = NULL;
++
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 4, &ffi_type_sint, arg_types) == FFI_OK);
++
++  s1.a = 5;
++  s1.b = 6;
++
++  l1.a = 10;
++  l1.b = 11;
++  l1.c = 12;
++  l1.d = 13;
++  l1.e = 14;
++
++  s2.a = 7;
++  s2.b = 8;
++
++  n = 41;
++
++  args[0] = &n;
++  args[1] = &s1;
++  args[2] = &l1;
++  args[3] = &s2;
++  args[4] = NULL;
++
++  ffi_call(&cif, FFI_FN(test_fn), &res, args);
++  /* { dg-output "5 6 10 11 12 13 14 7 8" } */
++  printf("res: %d\n", (int) res);
++  /* { dg-output "\nres: 42" } */
++
++  return 0;
++}
+diff --git a/testsuite/libffi.call/struct20.c b/testsuite/libffi.call/struct20.c
+new file mode 100644
+index 0000000..5e06091
+--- /dev/null
++++ b/testsuite/libffi.call/struct20.c
+@@ -0,0 +1,113 @@
++/* Area:		ffi_call
++   Purpose:		Test passing struct in variable argument lists.
++   Limitations:	none.
++   PR:			none.
++   Originator: ARM Ltd. */
++
++/* { dg-do run } */
++/* { dg-output "" { xfail avr32*-*-* } } */
++
++#include "ffitest.h"
++#include <stdarg.h>
++
++struct small_tag
++{
++  unsigned char a;
++  long double b;
++};
++
++struct large_tag
++{
++  unsigned a;
++  unsigned b;
++  unsigned c;
++  unsigned d;
++  unsigned e;
++};
++
++static struct small_tag
++test_fn (int n, struct small_tag s1, struct large_tag l, struct small_tag s2)
++{
++  printf ("%d %u %u %u %u %u %u %u %u %u\n", n, s1.a, (unsigned) s1.b, l.a, l.b, l.c, l.d, l.e,
++	  s2.a, (unsigned) s2.b);
++  s1.a += s2.a;
++  s1.b += s2.b;
++  return s1;
++}
++
++int
++main (void)
++{
++  ffi_cif cif;
++  void* args[5];
++  ffi_type* arg_types[5];
++
++  ffi_type s_type;
++  ffi_type *s_type_elements[3];
++
++  ffi_type l_type;
++  ffi_type *l_type_elements[6];
++
++  struct small_tag s1;
++  struct small_tag s2;
++  struct large_tag l1;
++
++  int n;
++  struct small_tag res;
++
++  s_type.size = 0;
++  s_type.alignment = 0;
++  s_type.type = FFI_TYPE_STRUCT;
++  s_type.elements = s_type_elements;
++
++  s_type_elements[0] = &ffi_type_uchar;
++  s_type_elements[1] = &ffi_type_longdouble;
++  s_type_elements[2] = NULL;
++
++  l_type.size = 0;
++  l_type.alignment = 0;
++  l_type.type = FFI_TYPE_STRUCT;
++  l_type.elements = l_type_elements;
++
++  l_type_elements[0] = &ffi_type_uint;
++  l_type_elements[1] = &ffi_type_uint;
++  l_type_elements[2] = &ffi_type_uint;
++  l_type_elements[3] = &ffi_type_uint;
++  l_type_elements[4] = &ffi_type_uint;
++  l_type_elements[5] = NULL;
++
++  arg_types[0] = &ffi_type_sint;
++  arg_types[1] = &s_type;
++  arg_types[2] = &l_type;
++  arg_types[3] = &s_type;
++  arg_types[4] = NULL;
++
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 4, &s_type, arg_types) == FFI_OK);
++
++  s1.a = 5;
++  s1.b = 6;
++
++  l1.a = 10;
++  l1.b = 11;
++  l1.c = 12;
++  l1.d = 13;
++  l1.e = 14;
++
++  s2.a = 7;
++  s2.b = 8;
++
++  n = 41;
++
++  args[0] = &n;
++  args[1] = &s1;
++  args[2] = &l1;
++  args[3] = &s2;
++  args[4] = NULL;
++
++  ffi_call(&cif, FFI_FN(test_fn), &res, args);
++  /* { dg-output "5 6 10 11 12 13 14 7 8" } */
++  printf("res: %d %d\n", res.a, (unsigned) res.b);
++  /* { dg-output "\nres: 12 14" } */
++
++  return 0;
++}
+diff --git a/testsuite/libffi.call/struct21.c b/testsuite/libffi.call/struct21.c
+new file mode 100644
+index 0000000..9d7cf91
+--- /dev/null
++++ b/testsuite/libffi.call/struct21.c
+@@ -0,0 +1,70 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++typedef struct
++{
++  unsigned char uc;
++  double d;
++  long double ld;
++  unsigned int ui;
++} test_structure_1;
++
++static test_structure_1 ABI_ATTR struct1(test_structure_1 ts)
++{
++  ts.uc++;
++  ts.d--;
++  ts.ui++;
++  ts.ld += ts.uc + ts.d + ts.ui;
++  return ts;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  ffi_type ts1_type;
++  ffi_type *ts1_type_elements[5];
++
++  test_structure_1 ts1_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
++  ts1_type.size = 0;
++  ts1_type.alignment = 0;
++  ts1_type.type = FFI_TYPE_STRUCT;
++  ts1_type.elements = ts1_type_elements;
++  ts1_type_elements[0] = &ffi_type_uchar;
++  ts1_type_elements[1] = &ffi_type_double;
++  ts1_type_elements[2] = &ffi_type_longdouble;
++  ts1_type_elements[3] = &ffi_type_uint;
++  ts1_type_elements[4] = NULL;
++  
++  args[0] = &ts1_type;
++  values[0] = &ts1_arg;
++  
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 1,
++		     &ts1_type, args) == FFI_OK);
++  
++  ts1_arg.uc = '\x01';
++  ts1_arg.d = 3.14159;
++  ts1_arg.ld = 5.0;
++  ts1_arg.ui = 555;
++
++  ffi_call(&cif, FFI_FN(struct1), ts1_result, values);
++  
++  CHECK(ts1_result->ui == 556);
++  CHECK(ts1_result->d == (double) 3.14159 - 1);
++  CHECK((double)ts1_result->ld == (ts1_arg.uc + 1) + (ts1_arg.d - 1) + (double)ts1_arg.ld + (ts1_arg.ui + 1)); 
++  free (ts1_result);
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/struct22.c b/testsuite/libffi.call/struct22.c
+new file mode 100644
+index 0000000..c65f1db
+--- /dev/null
++++ b/testsuite/libffi.call/struct22.c
+@@ -0,0 +1,81 @@
++/* Area:	ffi_call
++   Purpose:	Check structures.
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++struct Ls {
++  double d;
++  long double ld;
++  unsigned char c1, c2;
++  int i;
++  unsigned char c3;
++};
++
++static struct Ls ABI_ATTR
++struct1 (double a1, int a2, struct Ls a3, int a4, struct Ls a5)
++{
++  int res = a1 + a2 + a3.d + a3.ld + a3.c1 + a3.c2 + a3.i + a3.c3 + a4 + a5.d + a5.ld + a5.c1 + a5.c2 + a5.i + a5.c3;
++  struct Ls ret = {res, res + 1, res + 2, res + 3, res + 4, res + 5};
++  return ret;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++  ffi_type Ls_type;
++  ffi_type *Ls_type_elements[7];
++
++  double a1 = 1;
++  int a2 = 2;
++  struct Ls a3 = {3, 4, 5, 6, 7, 8};
++  int a4 = 9;
++  struct Ls a5 = {10, 11, 12, 13, 14, 15};
++
++  struct Ls r1, r2;
++
++  Ls_type.size = 0;
++  Ls_type.alignment = 0;
++  Ls_type.type = FFI_TYPE_STRUCT;
++  Ls_type.elements = Ls_type_elements;
++  Ls_type_elements[0] = &ffi_type_double;
++  Ls_type_elements[1] = &ffi_type_longdouble;
++  Ls_type_elements[2] = &ffi_type_uchar;
++  Ls_type_elements[3] = &ffi_type_uchar;
++  Ls_type_elements[4] = &ffi_type_sint;
++  Ls_type_elements[5] = &ffi_type_uchar;
++  Ls_type_elements[6] = NULL;
++  
++  args[0] = &ffi_type_double;
++  args[1] = &ffi_type_sint;
++  args[2] = &Ls_type;
++  args[3] = &ffi_type_sint;
++  args[4] = &Ls_type;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++
++  r1 = struct1 (a1, a2, a3, a4, a5);
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, ABI_NUM, 5,
++		     &Ls_type, args) == FFI_OK);
++  
++  ffi_call(&cif, FFI_FN(struct1), &r2, values);
++
++  CHECK(r1.d == r2.d);
++  CHECK(r1.ld == r2.ld);
++  CHECK(r1.c1 == r2.c1);
++  CHECK(r1.c2 == r2.c2);
++  CHECK(r1.i == r2.i);
++  CHECK(r1.c3 == r2.c3);
++
++  exit(0);
++}
+diff --git a/testsuite/libffi.call/va_2.c b/testsuite/libffi.call/va_2.c
+new file mode 100644
+index 0000000..65e21ff
+--- /dev/null
++++ b/testsuite/libffi.call/va_2.c
+@@ -0,0 +1,106 @@
++/* Area:	ffi_call
++   Purpose:	Check return value double, with many arguments
++   Limitations:	none.
++   PR:		none.
++   Originator:	From the original ffitest.c  */
++
++/* { dg-do run } */
++#include "ffitest.h"
++
++#include <stdlib.h>
++#include <float.h>
++#include <math.h>
++#include <stdarg.h>
++
++typedef struct
++{
++  char c1, c2;
++} Ss;
++
++static int many(double a1, ...)
++{
++  va_list ap;
++  float a2;
++  Ss a3;
++  long double a4;
++  float a5;
++  short a6;
++  int a7;
++  float a8;
++  int r;
++  
++  va_start (ap, a1);
++  a2 = va_arg (ap, double);
++  a3 = va_arg (ap, Ss);
++  a4 = va_arg (ap, long double);
++  a5 = va_arg (ap, double);
++  a6 = va_arg (ap, int);
++  a7 = va_arg (ap, int);
++  a8 = va_arg (ap, double);
++  va_end (ap);
++
++r = a1 + a2 + a3.c1 + a3.c2 + a4 + a5 + a6 + a7 + a8;
++return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[9];
++  ffi_type Ss_type;
++  ffi_type *Ss_type_elements[4];
++
++  double a1 = 1;
++  float a2 = 2;
++  Ss a3 = {3, 4};
++  long double a4 = 5;
++  float a5 = 6;
++  short a6 = 7;
++  int a7 = 8;
++  float a8 = 9;
++
++  ffi_arg r1;
++  int r2;
++
++  void *values[9];
++
++  Ss_type.size = 0;
++  Ss_type.alignment = 0;
++  Ss_type.type = FFI_TYPE_STRUCT;
++  Ss_type.elements = Ss_type_elements;
++  Ss_type_elements[0] = &ffi_type_uchar;
++  Ss_type_elements[1] = &ffi_type_uchar;
++  Ss_type_elements[2] = NULL;
++
++  args[0] = &ffi_type_double;
++  args[1] = &ffi_type_float;
++  args[2] = &Ss_type;
++  args[3] = &ffi_type_longdouble;
++  args[4] = &ffi_type_float;
++  args[5] = &ffi_type_sshort;
++  args[6] = &ffi_type_sint;
++  args[7] = &ffi_type_float;
++  args[8] = NULL;
++
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++  values[6] = &a7;
++  values[7] = &a8;
++  values[8] = NULL;
++
++    /* Initialize the cif */
++    CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 8,
++		       &ffi_type_sint, args) == FFI_OK);
++
++    ffi_call(&cif, FFI_FN(many), &r1, values);
++
++    r2 = many(a1,a2,a3,a4,a5,a6,a7,a8);
++    if ((int)r1 == r2)
++      exit(0);
++    else
++      abort();
++}
+diff --git a/testsuite/libffi.call/va_struct4.c b/testsuite/libffi.call/va_struct4.c
+new file mode 100644
+index 0000000..9535ddc
+--- /dev/null
++++ b/testsuite/libffi.call/va_struct4.c
+@@ -0,0 +1,121 @@
++/* Area:		ffi_call
++   Purpose:		Test passing struct in variable argument lists.
++   Limitations:	none.
++   PR:			none.
++   Originator: ARM Ltd. */
++
++/* { dg-do run } */
++/* { dg-output "" { xfail avr32*-*-* } } */
++
++#include "ffitest.h"
++#include <stdarg.h>
++
++struct small_tag
++{
++  unsigned char a;
++  long double b;
++};
++
++struct large_tag
++{
++  unsigned a;
++  unsigned b;
++  unsigned c;
++  unsigned d;
++  unsigned e;
++};
++
++static int
++test_fn (int n, ...)
++{
++  va_list ap;
++  struct small_tag s1;
++  struct small_tag s2;
++  struct large_tag l;
++
++  va_start (ap, n);
++  s1 = va_arg (ap, struct small_tag);
++  l = va_arg (ap, struct large_tag);
++  s2 = va_arg (ap, struct small_tag);
++  printf ("%u %u %u %u %u %u %u %u %u\n", s1.a, (unsigned) s1.b, l.a, l.b, l.c, l.d, l.e,
++	  s2.a, (unsigned) s2.b);
++  va_end (ap);
++  return n + 1;
++}
++
++int
++main (void)
++{
++  ffi_cif cif;
++  void* args[5];
++  ffi_type* arg_types[5];
++
++  ffi_type s_type;
++  ffi_type *s_type_elements[3];
++
++  ffi_type l_type;
++  ffi_type *l_type_elements[6];
++
++  struct small_tag s1;
++  struct small_tag s2;
++  struct large_tag l1;
++
++  int n;
++  ffi_arg res;
++
++  s_type.size = 0;
++  s_type.alignment = 0;
++  s_type.type = FFI_TYPE_STRUCT;
++  s_type.elements = s_type_elements;
++
++  s_type_elements[0] = &ffi_type_uchar;
++  s_type_elements[1] = &ffi_type_longdouble;
++  s_type_elements[2] = NULL;
++
++  l_type.size = 0;
++  l_type.alignment = 0;
++  l_type.type = FFI_TYPE_STRUCT;
++  l_type.elements = l_type_elements;
++
++  l_type_elements[0] = &ffi_type_uint;
++  l_type_elements[1] = &ffi_type_uint;
++  l_type_elements[2] = &ffi_type_uint;
++  l_type_elements[3] = &ffi_type_uint;
++  l_type_elements[4] = &ffi_type_uint;
++  l_type_elements[5] = NULL;
++
++  arg_types[0] = &ffi_type_sint;
++  arg_types[1] = &s_type;
++  arg_types[2] = &l_type;
++  arg_types[3] = &s_type;
++  arg_types[4] = NULL;
++
++  CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 4, &ffi_type_sint, arg_types) == FFI_OK);
++
++  s1.a = 5;
++  s1.b = 6;
++
++  l1.a = 10;
++  l1.b = 11;
++  l1.c = 12;
++  l1.d = 13;
++  l1.e = 14;
++
++  s2.a = 7;
++  s2.b = 8;
++
++  n = 41;
++
++  args[0] = &n;
++  args[1] = &s1;
++  args[2] = &l1;
++  args[3] = &s2;
++  args[4] = NULL;
++
++  ffi_call(&cif, FFI_FN(test_fn), &res, args);
++  /* { dg-output "5 6 10 11 12 13 14 7 8" } */
++  printf("res: %d\n", (int) res);
++  /* { dg-output "\nres: 42" } */
++
++  return 0;
++}
+diff --git a/testsuite/libffi.call/va_struct5.c b/testsuite/libffi.call/va_struct5.c
+new file mode 100644
+index 0000000..88d039b
+--- /dev/null
++++ b/testsuite/libffi.call/va_struct5.c
+@@ -0,0 +1,123 @@
++/* Area:		ffi_call
++   Purpose:		Test passing struct in variable argument lists.
++   Limitations:	none.
++   PR:			none.
++   Originator: ARM Ltd. */
++
++/* { dg-do run } */
++/* { dg-output "" { xfail avr32*-*-* } } */
++
++#include "ffitest.h"
++#include <stdarg.h>
++
++struct small_tag
++{
++  unsigned char a;
++  long double b;
++};
++
++struct large_tag
++{
++  unsigned a;
++  unsigned b;
++  unsigned c;
++  unsigned d;
++  unsigned e;
++};
++
++static struct small_tag
++test_fn (int n, ...)
++{
++  va_list ap;
++  struct small_tag s1;
++  struct small_tag s2;
++  struct large_tag l;
++
++  va_start (ap, n);
++  s1 = va_arg (ap, struct small_tag);
++  l = va_arg (ap, struct large_tag);
++  s2 = va_arg (ap, struct small_tag);
++  printf ("%u %u %u %u %u %u %u %u %u\n", s1.a, (unsigned) s1.b, l.a, l.b, l.c, l.d, l.e,
++	  s2.a, (unsigned) s2.b);
++  va_end (ap);
++  s1.a += s2.a;
++  s1.b += s2.b;
++  return s1;
++}
++
++int
++main (void)
++{
++  ffi_cif cif;
++  void* args[5];
++  ffi_type* arg_types[5];
++
++  ffi_type s_type;
++  ffi_type *s_type_elements[3];
++
++  ffi_type l_type;
++  ffi_type *l_type_elements[6];
++
++  struct small_tag s1;
++  struct small_tag s2;
++  struct large_tag l1;
++
++  int n;
++  struct small_tag res;
++
++  s_type.size = 0;
++  s_type.alignment = 0;
++  s_type.type = FFI_TYPE_STRUCT;
++  s_type.elements = s_type_elements;
++
++  s_type_elements[0] = &ffi_type_uchar;
++  s_type_elements[1] = &ffi_type_longdouble;
++  s_type_elements[2] = NULL;
++
++  l_type.size = 0;
++  l_type.alignment = 0;
++  l_type.type = FFI_TYPE_STRUCT;
++  l_type.elements = l_type_elements;
++
++  l_type_elements[0] = &ffi_type_uint;
++  l_type_elements[1] = &ffi_type_uint;
++  l_type_elements[2] = &ffi_type_uint;
++  l_type_elements[3] = &ffi_type_uint;
++  l_type_elements[4] = &ffi_type_uint;
++  l_type_elements[5] = NULL;
++
++  arg_types[0] = &ffi_type_sint;
++  arg_types[1] = &s_type;
++  arg_types[2] = &l_type;
++  arg_types[3] = &s_type;
++  arg_types[4] = NULL;
++
++  CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 4, &s_type, arg_types) == FFI_OK);
++
++  s1.a = 5;
++  s1.b = 6;
++
++  l1.a = 10;
++  l1.b = 11;
++  l1.c = 12;
++  l1.d = 13;
++  l1.e = 14;
++
++  s2.a = 7;
++  s2.b = 8;
++
++  n = 41;
++
++  args[0] = &n;
++  args[1] = &s1;
++  args[2] = &l1;
++  args[3] = &s2;
++  args[4] = NULL;
++
++  ffi_call(&cif, FFI_FN(test_fn), &res, args);
++  /* { dg-output "5 6 10 11 12 13 14 7 8" } */
++  printf("res: %d %d\n", res.a, (unsigned) res.b);
++  /* { dg-output "\nres: 12 14" } */
++
++  return 0;
++}
+diff --git a/testsuite/libffi.closures/cls_float_va.c b/testsuite/libffi.closures/cls_float_va.c
+new file mode 100644
+index 0000000..8b6440d
+--- /dev/null
++++ b/testsuite/libffi.closures/cls_float_va.c
+@@ -0,0 +1,61 @@
++/* Area:		ffi_call, closure_call
++   Purpose:		Test floats passed in variable argument lists.
++   Limitations:	none.
++   PR:			none.
++   Originator:	Blake Chaffin 6/6/2007	 */
++
++/* { dg-do run { xfail strongarm*-*-* xscale*-*-* } } */
++/* { dg-output "" { xfail avr32*-*-* } } */
++/* { dg-output "" { xfail mips-sgi-irix6* } } PR libffi/46660 */
++
++#include "ffitest.h"
++
++static void
++cls_float_va_fn(ffi_cif* cif __UNUSED__, void* resp, 
++		 void** args, void* userdata __UNUSED__)
++{
++	char*	format		= *(char**)args[0];
++	float	floatValue	= *(float*)args[1];
++
++	*(ffi_arg*)resp = printf(format, floatValue);
++}
++
++int main (void)
++{
++	ffi_cif cif;
++        void *code;
++	ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
++	void* args[3];
++	ffi_type* arg_types[3];
++
++	char*	format		= "%.1f\n";
++	float	floatArg	= 7;
++	ffi_arg	res			= 0;
++
++	arg_types[0] = &ffi_type_pointer;
++	arg_types[1] = &ffi_type_float;
++	arg_types[2] = NULL;
++
++	/* This printf call is variadic */
++	CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 2, &ffi_type_sint,
++			       arg_types) == FFI_OK);
++
++	args[0] = &format;
++	args[1] = &floatArg;
++	args[2] = NULL;
++
++	ffi_call(&cif, FFI_FN(printf), &res, args);
++	/* { dg-output "7.0" } */
++	printf("res: %d\n", (int) res);
++	/* { dg-output "\nres: 4" } */
++
++	CHECK(ffi_prep_closure_loc(pcl, &cif, cls_float_va_fn, NULL,
++				   code) == FFI_OK);
++
++	res = ((int(*)(char*, ...))(code))(format, floatArg);
++	/* { dg-output "\n7.0" } */
++	printf("res: %d\n", (int) res);
++	/* { dg-output "\nres: 4" } */
++
++	exit(0);
++}
+diff --git a/testsuite/libffi.complex/cls_complex_struct1.inc b/testsuite/libffi.complex/cls_complex_struct1.inc
+new file mode 100644
+index 0000000..309d925
+--- /dev/null
++++ b/testsuite/libffi.complex/cls_complex_struct1.inc
+@@ -0,0 +1,66 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++
++typedef struct Cs {
++  _Complex T_C_TYPE x;
++} Cs;
++
++Cs gc;
++
++void
++closure_test_fn(Cs p)
++{
++  printf("%.1f,%.1f\n",
++	 T_CONV creal (p.x), T_CONV cimag (p.x));
++  gc = p;
++}
++
++void
++closure_test_gn(ffi_cif* cif __UNUSED__, void* resp __UNUSED__,
++		void** args, void* userdata __UNUSED__)
++{
++  closure_test_fn(*(Cs*)args[0]);
++}
++
++int main(int argc __UNUSED__, char** argv __UNUSED__)
++{
++  ffi_cif cif;
++
++  void *code;
++  ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
++  ffi_type *cl_arg_types[1];
++
++  ffi_type ts1_type;
++  ffi_type* ts1_type_elements[4];
++
++  Cs arg = { 1.0 + 11.0 * I};
++
++  ts1_type.size = 0;
++  ts1_type.alignment = 0;
++  ts1_type.type = FFI_TYPE_STRUCT;
++  ts1_type.elements = ts1_type_elements;
++
++  ts1_type_elements[0] = &T_FFI_TYPE;
++  ts1_type_elements[1] = NULL;
++
++  cl_arg_types[0] = &ts1_type;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
++		     &ffi_type_void, cl_arg_types) == FFI_OK);
++
++  CHECK(ffi_prep_closure_loc(pcl, &cif, closure_test_gn, NULL, code) == FFI_OK);
++
++  gc.x = 0.0 + 0.0 * I;
++  ((void*(*)(Cs))(code))(arg);
++  /* { dg-output "1.0,11.0i\n" } */
++  CHECK (gc.x == arg.x);
++
++  gc.x = 0.0 + 0.0 * I;
++  closure_test_fn(arg);
++  /* { dg-output "1.0,11.0i\n" } */
++  CHECK (gc.x == arg.x);
++
++  return 0;
++}
+diff --git a/testsuite/libffi.complex/cls_complex_struct1_double.c b/testsuite/libffi.complex/cls_complex_struct1_double.c
+new file mode 100644
+index 0000000..f7e88fd
+--- /dev/null
++++ b/testsuite/libffi.complex/cls_complex_struct1_double.c
+@@ -0,0 +1,4 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "cls_complex_struct1.inc"
+diff --git a/testsuite/libffi.complex/cls_complex_struct1_float.c b/testsuite/libffi.complex/cls_complex_struct1_float.c
+new file mode 100644
+index 0000000..7d2d2b1
+--- /dev/null
++++ b/testsuite/libffi.complex/cls_complex_struct1_float.c
+@@ -0,0 +1,4 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "cls_complex_struct1.inc"
+diff --git a/testsuite/libffi.complex/cls_complex_struct1_longdouble.c b/testsuite/libffi.complex/cls_complex_struct1_longdouble.c
+new file mode 100644
+index 0000000..5954989
+--- /dev/null
++++ b/testsuite/libffi.complex/cls_complex_struct1_longdouble.c
+@@ -0,0 +1,4 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "cls_complex_struct1.inc"
+diff --git a/testsuite/libffi.complex/return_complex_struct.inc b/testsuite/libffi.complex/return_complex_struct.inc
+new file mode 100644
+index 0000000..6783bfe
+--- /dev/null
++++ b/testsuite/libffi.complex/return_complex_struct.inc
+@@ -0,0 +1,58 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++
++typedef struct Cs {
++  _Complex T_C_TYPE x;
++} Cs;
++
++static Cs return_c(_Complex T_C_TYPE c1, float fl2, unsigned int in3, _Complex T_C_TYPE c4)
++{
++  Cs r = {c1 + fl2 + in3 + c4};
++  return r;
++}
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  Cs rc, rc2;
++  _Complex T_C_TYPE c1, c4;
++  float fl2;
++  unsigned int in3;
++  args[0] = &T_FFI_TYPE;
++  args[1] = &ffi_type_float;
++  args[2] = &ffi_type_uint;
++  args[3] = &T_FFI_TYPE;
++  values[0] = &c1;
++  values[1] = &fl2;
++  values[2] = &in3;
++  values[3] = &c4;
++
++  ffi_type Cs_type;
++  ffi_type* Cs_type_elements[4];
++  Cs_type.size = 0;
++  Cs_type.alignment = 0;
++  Cs_type.type = FFI_TYPE_STRUCT;
++  Cs_type.elements = Cs_type_elements;
++
++  Cs_type_elements[0] = &T_FFI_TYPE;
++  Cs_type_elements[1] = NULL;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 4,
++		     &Cs_type, args) == FFI_OK);
++  c1 = 127.0 + 255.0 * I;
++  fl2 = 128.0;
++  in3 = 255;
++  c4 = 512.7 + 1024.1 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &rc, values);
++  rc2 = return_c(c1, fl2, in3, c4);
++  printf ("%f,%fi vs %f,%fi\n",
++	  T_CONV creal (rc.x), T_CONV cimag (rc.x),
++	  T_CONV creal (rc2.x), T_CONV cimag (rc2.x));
++  CHECK(rc.x == rc2.x);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/return_complex_struct_double.c b/testsuite/libffi.complex/return_complex_struct_double.c
+new file mode 100644
+index 0000000..a8c309f
+--- /dev/null
++++ b/testsuite/libffi.complex/return_complex_struct_double.c
+@@ -0,0 +1,4 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "return_complex_struct.inc"
+diff --git a/testsuite/libffi.complex/return_complex_struct_float.c b/testsuite/libffi.complex/return_complex_struct_float.c
+new file mode 100644
+index 0000000..e24da18
+--- /dev/null
++++ b/testsuite/libffi.complex/return_complex_struct_float.c
+@@ -0,0 +1,4 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "return_complex_struct.inc"
+diff --git a/testsuite/libffi.complex/return_complex_struct_longdouble.c b/testsuite/libffi.complex/return_complex_struct_longdouble.c
+new file mode 100644
+index 0000000..04768d2
+--- /dev/null
++++ b/testsuite/libffi.complex/return_complex_struct_longdouble.c
+@@ -0,0 +1,4 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "return_complex_struct.inc"
+diff --git a/testsuite/libffi.complex/test_complex_non_va.inc b/testsuite/libffi.complex/test_complex_non_va.inc
+new file mode 100644
+index 0000000..70c187c
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va.inc
+@@ -0,0 +1,78 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex long double
++return_c(signed int a1,
++//...
++_Complex long double a2,
++signed int a3,
++_Complex T_C_TYPE a4,
++signed int a5,
++_Complex long double a6
++)
++{
++//  va_list ap;
++//  _Complex long double a2;
++//  signed int a3;
++//  _Complex T_C_TYPE a4;
++//  signed int a5;
++//  _Complex long double a6;
++//  va_start (ap, a1);
++//  a2 = va_arg (ap, _Complex long double);
++//  a3 = va_arg (ap, signed int);
++//  a4 = va_arg (ap, _Complex T_C_TYPE);
++//  a5 = va_arg (ap, signed int);
++//  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a3 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex long double r1, r2;
++
++  signed int a1;
++  _Complex long double a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_longdouble;
++  args[2] = &ffi_type_sint;
++  args[3] = &T_FFI_TYPE;
++  args[4] = &ffi_type_sint;
++  args[5] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 6,
++		     &ffi_type_complex_longdouble, args) == FFI_OK);
++//  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 6,
++//			  &ffi_type_complex_longdouble, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a3 = 6;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a3, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_non_va1.inc b/testsuite/libffi.complex/test_complex_non_va1.inc
+new file mode 100644
+index 0000000..0bfbb31
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va1.inc
+@@ -0,0 +1,71 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex long double
++return_c(signed int a1,
++//...
++_Complex long double a2,
++_Complex T_C_TYPE a4,
++signed int a5,
++_Complex long double a6
++)
++{
++//  va_list ap;
++//  _Complex long double a2;
++//  _Complex T_C_TYPE a4;
++//  signed int a5;
++//  _Complex long double a6;
++//  va_start (ap, a1);
++//  a2 = va_arg (ap, _Complex long double);
++//  a4 = va_arg (ap, _Complex T_C_TYPE);
++//  a5 = va_arg (ap, signed int);
++//  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex long double r1, r2;
++
++  signed int a1;
++  _Complex long double a2;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_longdouble;
++  args[2] = &T_FFI_TYPE;
++  args[3] = &ffi_type_sint;
++  args[4] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a4;
++  values[3] = &a5;
++  values[4] = &a6;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 5,
++		     &ffi_type_complex_longdouble, args) == FFI_OK);
++//  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 5,
++//			  &ffi_type_complex_longdouble, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_non_va1_double.c b/testsuite/libffi.complex/test_complex_non_va1_double.c
+new file mode 100644
+index 0000000..6438809
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va1_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_non_va1.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va1_float.c b/testsuite/libffi.complex/test_complex_non_va1_float.c
+new file mode 100644
+index 0000000..1623703
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va1_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_non_va1.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va1_longdouble.c b/testsuite/libffi.complex/test_complex_non_va1_longdouble.c
+new file mode 100644
+index 0000000..1c531c2
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va1_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_non_va1.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va2.inc b/testsuite/libffi.complex/test_complex_non_va2.inc
+new file mode 100644
+index 0000000..4378cde
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va2.inc
+@@ -0,0 +1,78 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex float
++return_c(signed int a1,
++//...
++_Complex long double a2,
++signed int a3,
++_Complex T_C_TYPE a4,
++signed int a5,
++_Complex long double a6
++)
++{
++//  va_list ap;
++//  _Complex long double a2;
++//  signed int a3;
++//  _Complex T_C_TYPE a4;
++//  signed int a5;
++//  _Complex long double a6;
++//  va_start (ap, a1);
++//  a2 = va_arg (ap, _Complex long double);
++//  a3 = va_arg (ap, signed int);
++//  a4 = va_arg (ap, _Complex T_C_TYPE);
++//  a5 = va_arg (ap, signed int);
++//  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a3 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex float r1, r2;
++
++  signed int a1;
++  _Complex long double a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_longdouble;
++  args[2] = &ffi_type_sint;
++  args[3] = &T_FFI_TYPE;
++  args[4] = &ffi_type_sint;
++  args[5] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 6,
++		     &ffi_type_complex_float, args) == FFI_OK);
++//  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 6,
++//			  &ffi_type_complex_longdouble, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a3 = 6;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a3, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_non_va2_double.c b/testsuite/libffi.complex/test_complex_non_va2_double.c
+new file mode 100644
+index 0000000..4bdfa58
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va2_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_non_va2.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va2_float.c b/testsuite/libffi.complex/test_complex_non_va2_float.c
+new file mode 100644
+index 0000000..9a7ee95
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va2_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_non_va2.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va2_longdouble.c b/testsuite/libffi.complex/test_complex_non_va2_longdouble.c
+new file mode 100644
+index 0000000..4f8c3ba
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va2_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_non_va2.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va3.inc b/testsuite/libffi.complex/test_complex_non_va3.inc
+new file mode 100644
+index 0000000..ef0ceae
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va3.inc
+@@ -0,0 +1,78 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex float
++return_c(signed int a1,
++//...
++_Complex float a2,
++signed int a3,
++_Complex T_C_TYPE a4,
++signed int a5,
++_Complex long double a6
++)
++{
++//  va_list ap;
++//  _Complex long double a2;
++//  signed int a3;
++//  _Complex T_C_TYPE a4;
++//  signed int a5;
++//  _Complex long double a6;
++//  va_start (ap, a1);
++//  a2 = va_arg (ap, _Complex long double);
++//  a3 = va_arg (ap, signed int);
++//  a4 = va_arg (ap, _Complex T_C_TYPE);
++//  a5 = va_arg (ap, signed int);
++//  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a3 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex float r1, r2;
++
++  signed int a1;
++  _Complex float a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_float;
++  args[2] = &ffi_type_sint;
++  args[3] = &T_FFI_TYPE;
++  args[4] = &ffi_type_sint;
++  args[5] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++
++  /* Initialize the cif */
++  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 6,
++		     &ffi_type_complex_float, args) == FFI_OK);
++//  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 6,
++//			  &ffi_type_complex_longdouble, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a3 = 6;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a3, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_non_va3_double.c b/testsuite/libffi.complex/test_complex_non_va3_double.c
+new file mode 100644
+index 0000000..d0e1814
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va3_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_non_va3.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va3_float.c b/testsuite/libffi.complex/test_complex_non_va3_float.c
+new file mode 100644
+index 0000000..222c72a
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va3_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_non_va3.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va3_longdouble.c b/testsuite/libffi.complex/test_complex_non_va3_longdouble.c
+new file mode 100644
+index 0000000..d62d785
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va3_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_non_va3.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va_double.c b/testsuite/libffi.complex/test_complex_non_va_double.c
+new file mode 100644
+index 0000000..b54a2f6
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_non_va.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va_float.c b/testsuite/libffi.complex/test_complex_non_va_float.c
+new file mode 100644
+index 0000000..7127784
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_non_va.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_non_va_longdouble.c b/testsuite/libffi.complex/test_complex_non_va_longdouble.c
+new file mode 100644
+index 0000000..2d967fc
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_non_va_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_non_va.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va.inc b/testsuite/libffi.complex/test_complex_va.inc
+new file mode 100644
+index 0000000..104a16d
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va.inc
+@@ -0,0 +1,78 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex long double
++return_c(signed int a1,
++...
++//_Complex long double a2,
++//signed int a3,
++//_Complex T_C_TYPE a4,
++//signed int a5,
++//_Complex long double a6
++)
++{
++  va_list ap;
++  _Complex long double a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++  va_start (ap, a1);
++  a2 = va_arg (ap, _Complex long double);
++  a3 = va_arg (ap, signed int);
++  a4 = va_arg (ap, _Complex T_C_TYPE);
++  a5 = va_arg (ap, signed int);
++  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a3 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex long double r1, r2;
++
++  signed int a1;
++  _Complex long double a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_longdouble;
++  args[2] = &ffi_type_sint;
++  args[3] = &T_FFI_TYPE;
++  args[4] = &ffi_type_sint;
++  args[5] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++
++  /* Initialize the cif */
++//  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 6,
++//		     &ffi_type_complex_longdouble, args) == FFI_OK);
++  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 6,
++			  &ffi_type_complex_longdouble, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a3 = 6;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a3, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_va1.inc b/testsuite/libffi.complex/test_complex_va1.inc
+new file mode 100644
+index 0000000..3613231
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va1.inc
+@@ -0,0 +1,71 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex long double
++return_c(signed int a1,
++...
++//_Complex long double a2,
++//_Complex T_C_TYPE a4,
++//signed int a5,
++//_Complex long double a6
++)
++{
++  va_list ap;
++  _Complex long double a2;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++  va_start (ap, a1);
++  a2 = va_arg (ap, _Complex long double);
++  a4 = va_arg (ap, _Complex T_C_TYPE);
++  a5 = va_arg (ap, signed int);
++  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex long double r1, r2;
++
++  signed int a1;
++  _Complex long double a2;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_longdouble;
++  args[2] = &T_FFI_TYPE;
++  args[3] = &ffi_type_sint;
++  args[4] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a4;
++  values[3] = &a5;
++  values[4] = &a6;
++
++  /* Initialize the cif */
++//  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 5,
++//		     &ffi_type_complex_longdouble, args) == FFI_OK);
++  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 5,
++			  &ffi_type_complex_longdouble, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_va1_double.c b/testsuite/libffi.complex/test_complex_va1_double.c
+new file mode 100644
+index 0000000..a14b8f3
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va1_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_va1.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va1_float.c b/testsuite/libffi.complex/test_complex_va1_float.c
+new file mode 100644
+index 0000000..b5ad00f
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va1_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_va1.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va1_longdouble.c b/testsuite/libffi.complex/test_complex_va1_longdouble.c
+new file mode 100644
+index 0000000..7e11f9d
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va1_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_va1.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va2.inc b/testsuite/libffi.complex/test_complex_va2.inc
+new file mode 100644
+index 0000000..770b7ba
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va2.inc
+@@ -0,0 +1,78 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex float
++return_c(signed int a1,
++...
++//_Complex long double a2,
++//signed int a3,
++//_Complex T_C_TYPE a4,
++//signed int a5,
++//_Complex long double a6
++)
++{
++  va_list ap;
++  _Complex long double a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++  va_start (ap, a1);
++  a2 = va_arg (ap, _Complex long double);
++  a3 = va_arg (ap, signed int);
++  a4 = va_arg (ap, _Complex T_C_TYPE);
++  a5 = va_arg (ap, signed int);
++  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a3 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex float r1, r2;
++
++  signed int a1;
++  _Complex long double a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_longdouble;
++  args[2] = &ffi_type_sint;
++  args[3] = &T_FFI_TYPE;
++  args[4] = &ffi_type_sint;
++  args[5] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++
++  /* Initialize the cif */
++//  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 6,
++//		     &ffi_type_complex_longdouble, args) == FFI_OK);
++  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 6,
++			  &ffi_type_complex_float, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a3 = 6;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a3, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_va2_double.c b/testsuite/libffi.complex/test_complex_va2_double.c
+new file mode 100644
+index 0000000..95b46c3
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va2_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_va2.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va2_float.c b/testsuite/libffi.complex/test_complex_va2_float.c
+new file mode 100644
+index 0000000..b1153db
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va2_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_va2.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va2_longdouble.c b/testsuite/libffi.complex/test_complex_va2_longdouble.c
+new file mode 100644
+index 0000000..8efb5fb
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va2_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_va2.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va3.inc b/testsuite/libffi.complex/test_complex_va3.inc
+new file mode 100644
+index 0000000..0b91f87
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va3.inc
+@@ -0,0 +1,78 @@
++/* -*-c-*- */
++#include "ffitest.h"
++#include <complex.h>
++#include <stdarg.h>
++
++_Complex float
++return_c(signed int a1,
++...
++//_Complex long double a2,
++//signed int a3,
++//_Complex T_C_TYPE a4,
++//signed int a5,
++//_Complex long double a6
++)
++{
++  va_list ap;
++  _Complex float a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++  va_start (ap, a1);
++  a2 = va_arg (ap, _Complex float);
++  a3 = va_arg (ap, signed int);
++  a4 = va_arg (ap, _Complex T_C_TYPE);
++  a5 = va_arg (ap, signed int);
++  a6 = va_arg (ap, _Complex long double);
++
++  volatile _Complex long double r = a1 + a2 + a3 + a4 + a5 + a6;
++  return r;
++}
++
++int main (void)
++{
++  ffi_cif cif;
++  ffi_type *args[MAX_ARGS];
++  void *values[MAX_ARGS];
++
++  _Complex float r1, r2;
++
++  signed int a1;
++  _Complex float a2;
++  signed int a3;
++  _Complex T_C_TYPE a4;
++  signed int a5;
++  _Complex long double a6;
++
++  args[0] = &ffi_type_sint;
++  args[1] = &ffi_type_complex_float;
++  args[2] = &ffi_type_sint;
++  args[3] = &T_FFI_TYPE;
++  args[4] = &ffi_type_sint;
++  args[5] = &ffi_type_complex_longdouble;
++  values[0] = &a1;
++  values[1] = &a2;
++  values[2] = &a3;
++  values[3] = &a4;
++  values[4] = &a5;
++  values[5] = &a6;
++
++  /* Initialize the cif */
++//  CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 6,
++//		     &ffi_type_complex_longdouble, args) == FFI_OK);
++  CHECK(ffi_prep_cif_var (&cif, FFI_DEFAULT_ABI, 1, 6,
++			  &ffi_type_complex_float, args) == FFI_OK);
++
++  a1 = 5;
++  a2 = 127.0 + 255.0 * I;
++  a3 = 6;
++  a4 = 512.7 + 1024.1 * I;
++  a5 = 7;
++  a6 = 89 + 12 * I;
++
++  ffi_call(&cif, FFI_FN(return_c), &r1, values);
++  r2 = return_c(a1, a2, a3, a4, a5, a6);
++  CHECK(r1 == r2);
++  exit(0);
++}
+diff --git a/testsuite/libffi.complex/test_complex_va3_double.c b/testsuite/libffi.complex/test_complex_va3_double.c
+new file mode 100644
+index 0000000..6f49174
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va3_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_va3.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va3_float.c b/testsuite/libffi.complex/test_complex_va3_float.c
+new file mode 100644
+index 0000000..59d429b
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va3_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_va3.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va3_longdouble.c b/testsuite/libffi.complex/test_complex_va3_longdouble.c
+new file mode 100644
+index 0000000..b59d1f3
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va3_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_va3.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va_double.c b/testsuite/libffi.complex/test_complex_va_double.c
+new file mode 100644
+index 0000000..4a2e176
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va_double.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_double.inc"
++#include "test_complex_va.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va_float.c b/testsuite/libffi.complex/test_complex_va_float.c
+new file mode 100644
+index 0000000..8470275
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va_float.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_float.inc"
++#include "test_complex_va.inc"
++
+diff --git a/testsuite/libffi.complex/test_complex_va_longdouble.c b/testsuite/libffi.complex/test_complex_va_longdouble.c
+new file mode 100644
+index 0000000..a34611d
+--- /dev/null
++++ b/testsuite/libffi.complex/test_complex_va_longdouble.c
+@@ -0,0 +1,5 @@
++/* { dg-do run } */
++
++#include "complex_defs_longdouble.inc"
++#include "test_complex_va.inc"
++
+-- 
+2.18.1
+

@@ -33,6 +33,7 @@
 #include <stdlib.h>
 
 extern void ffi_closure_ASM (void);
+extern void ffi_go_closure_ASM (void);
 
 enum {
   /* The assembly depends on these exact flags.  
@@ -255,7 +256,7 @@ ffi_prep_args (extended_cif *ecif, unsigned long *const stack)
 	case FFI_TYPE_STRUCT:
 	  size_al = (*ptr)->size;
 #if defined(POWERPC_DARWIN64)
-	  next_arg = (unsigned long *)ALIGN((char *)next_arg, (*ptr)->alignment);
+	  next_arg = (unsigned long *)FFI_ALIGN((char *)next_arg, (*ptr)->alignment);
 	  darwin64_pass_struct_by_value (*ptr, (char *) *p_argv, 
 					 (unsigned) size_al,
 					 (unsigned int *) &fparg_count,
@@ -266,7 +267,7 @@ ffi_prep_args (extended_cif *ecif, unsigned long *const stack)
 	  /* If the first member of the struct is a double, then include enough
 	     padding in the struct size to align it to double-word.  */
 	  if ((*ptr)->elements[0]->type == FFI_TYPE_DOUBLE)
-	    size_al = ALIGN((*ptr)->size, 8);
+	    size_al = FFI_ALIGN((*ptr)->size, 8);
 
 #  if defined(POWERPC64) 
 	  FFI_ASSERT (abi != FFI_DARWIN);
@@ -352,7 +353,7 @@ darwin64_struct_size_exceeds_gprs_p (ffi_type *s, char *src, unsigned *nfpr)
       ffi_type *p = s->elements[i];
       /* Find the start of this item (0 for the first one).  */
       if (i > 0)
-        struct_offset = ALIGN(struct_offset, p->alignment);
+        struct_offset = FFI_ALIGN(struct_offset, p->alignment);
 
       item_base = src + struct_offset;
 
@@ -436,7 +437,7 @@ darwin64_pass_struct_floats (ffi_type *s, char *src,
       ffi_type *p = s->elements[i];
       /* Find the start of this item (0 for the first one).  */
       if (i > 0)
-        struct_offset = ALIGN(struct_offset, p->alignment);
+        struct_offset = FFI_ALIGN(struct_offset, p->alignment);
       item_base = src + struct_offset;
 
       switch (p->type)
@@ -527,7 +528,7 @@ darwin64_struct_floats_to_mem (ffi_type *s, char *dest, double *fprs, unsigned *
       ffi_type *p = s->elements[i];
       /* Find the start of this item (0 for the first one).  */
       if (i > 0)
-        struct_offset = ALIGN(struct_offset, p->alignment);
+        struct_offset = FFI_ALIGN(struct_offset, p->alignment);
       item_base = dest + struct_offset;
 
       switch (p->type)
@@ -604,10 +605,10 @@ darwin_adjust_aggregate_sizes (ffi_type *s)
 	align = 4;
 #endif
       /* Pad, if necessary, before adding the current item.  */
-      s->size = ALIGN(s->size, align) + p->size;
+      s->size = FFI_ALIGN(s->size, align) + p->size;
     }
   
-  s->size = ALIGN(s->size, s->alignment);
+  s->size = FFI_ALIGN(s->size, s->alignment);
   
   /* This should not be necessary on m64, but harmless.  */
   if (s->elements[0]->type == FFI_TYPE_UINT64
@@ -640,10 +641,10 @@ aix_adjust_aggregate_sizes (ffi_type *s)
       align = p->alignment;
       if (i != 0 && p->type == FFI_TYPE_DOUBLE)
 	align = 4;
-      s->size = ALIGN(s->size, align) + p->size;
+      s->size = FFI_ALIGN(s->size, align) + p->size;
     }
   
-  s->size = ALIGN(s->size, s->alignment);
+  s->size = FFI_ALIGN(s->size, s->alignment);
   
   if (s->elements[0]->type == FFI_TYPE_UINT64
       || s->elements[0]->type == FFI_TYPE_SINT64
@@ -809,9 +810,9 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 	     16-byte-aligned.  */
 	  if (fparg_count >= NUM_FPR_ARG_REGISTERS)
 #if defined (POWERPC64)
-	    intarg_count = ALIGN(intarg_count, 2);
+	    intarg_count = FFI_ALIGN(intarg_count, 2);
 #else
-	    intarg_count = ALIGN(intarg_count, 4);
+	    intarg_count = FFI_ALIGN(intarg_count, 4);
 #endif
 	  break;
 #endif
@@ -838,7 +839,7 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 #if defined(POWERPC_DARWIN64)
 	  align_words = (*ptr)->alignment >> 3;
 	  if (align_words)
-	    intarg_count = ALIGN(intarg_count, align_words);
+	    intarg_count = FFI_ALIGN(intarg_count, align_words);
 	  /* Base size of the struct.  */
 	  intarg_count += (size_al + 7) / 8;
 	  /* If 16 bytes then don't worry about floats.  */
@@ -848,11 +849,11 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 #else
 	  align_words = (*ptr)->alignment >> 2;
 	  if (align_words)
-	    intarg_count = ALIGN(intarg_count, align_words);
+	    intarg_count = FFI_ALIGN(intarg_count, align_words);
 	  /* If the first member of the struct is a double, then align
 	     the struct to double-word. 
 	  if ((*ptr)->elements[0]->type == FFI_TYPE_DOUBLE)
-	    size_al = ALIGN((*ptr)->size, 8); */
+	    size_al = FFI_ALIGN((*ptr)->size, 8); */
 #  ifdef POWERPC64
 	  intarg_count += (size_al + 7) / 8;
 #  else
@@ -897,7 +898,7 @@ ffi_prep_cif_machdep (ffi_cif *cif)
     bytes += NUM_GPR_ARG_REGISTERS * sizeof(long);
 
   /* The stack space allocated needs to be a multiple of 16 bytes.  */
-  bytes = ALIGN(bytes, 16) ;
+  bytes = FFI_ALIGN(bytes, 16) ;
 
   cif->flags = flags;
   cif->bytes = bytes;
@@ -907,6 +908,9 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 
 extern void ffi_call_AIX(extended_cif *, long, unsigned, unsigned *,
 			 void (*fn)(void), void (*fn2)(void));
+
+extern void ffi_call_go_AIX(extended_cif *, long, unsigned, unsigned *,
+			    void (*fn)(void), void (*fn2)(void), void *closure);
 
 extern void ffi_call_DARWIN(extended_cif *, long, unsigned, unsigned *,
 			    void (*fn)(void), void (*fn2)(void), ffi_type*);
@@ -939,6 +943,38 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
     case FFI_DARWIN:
       ffi_call_DARWIN(&ecif, -(long)cif->bytes, cif->flags, ecif.rvalue, fn,
 		      FFI_FN(ffi_prep_args), cif->rtype);
+      break;
+    default:
+      FFI_ASSERT(0);
+      break;
+    }
+}
+
+void
+ffi_call_go (ffi_cif *cif, void (*fn) (void), void *rvalue, void **avalue,
+	     void *closure)
+{
+  extended_cif ecif;
+
+  ecif.cif = cif;
+  ecif.avalue = avalue;
+
+  /* If the return value is a struct and we don't have a return
+     value address then we need to make one.  */
+
+  if ((rvalue == NULL) &&
+      (cif->rtype->type == FFI_TYPE_STRUCT))
+    {
+      ecif.rvalue = alloca (cif->rtype->size);
+    }
+  else
+    ecif.rvalue = rvalue;
+
+  switch (cif->abi)
+    {
+    case FFI_AIX:
+      ffi_call_go_AIX(&ecif, -(long)cif->bytes, cif->flags, ecif.rvalue, fn,
+		      FFI_FN(ffi_prep_args), closure);
       break;
     default:
       FFI_ASSERT(0);
@@ -1074,6 +1110,30 @@ ffi_prep_closure_loc (ffi_closure* closure,
   return FFI_OK;
 }
 
+ffi_status
+ffi_prep_go_closure (ffi_go_closure* closure,
+		     ffi_cif* cif,
+		     void (*fun)(ffi_cif*, void*, void**, void*))
+{
+  switch (cif->abi)
+    {
+      case FFI_AIX:
+
+        FFI_ASSERT (cif->abi == FFI_AIX);
+
+        closure->tramp = (void *)ffi_go_closure_ASM;
+        closure->cif = cif;
+        closure->fun = fun;
+        return FFI_OK;
+      
+      // For now, ffi_prep_go_closure is only implemented for AIX, not for Darwin
+      default:
+        return FFI_BAD_ABI;
+        break;
+    }
+  return FFI_OK;
+}
+
 static void
 flush_icache(char *addr)
 {
@@ -1108,6 +1168,10 @@ ffi_type *
 ffi_closure_helper_DARWIN (ffi_closure *, void *,
 			   unsigned long *, ffi_dblfl *);
 
+ffi_type *
+ffi_go_closure_helper_DARWIN (ffi_go_closure*, void *,
+			      unsigned long *, ffi_dblfl *);
+
 /* Basically the trampoline invokes ffi_closure_ASM, and on
    entry, r11 holds the address of the closure.
    After storing the registers that could possibly contain
@@ -1115,8 +1179,10 @@ ffi_closure_helper_DARWIN (ffi_closure *, void *,
    up space for a return value, ffi_closure_ASM invokes the
    following helper function to do most of the work.  */
 
-ffi_type *
-ffi_closure_helper_DARWIN (ffi_closure *closure, void *rvalue,
+static ffi_type *
+ffi_closure_helper_common (ffi_cif* cif,
+			   void (*fun)(ffi_cif*, void*, void**, void*),
+			   void *user_data, void *rvalue,
 			   unsigned long *pgr, ffi_dblfl *pfr)
 {
   /* rvalue is the pointer to space for return value in closure assembly
@@ -1134,14 +1200,12 @@ ffi_closure_helper_DARWIN (ffi_closure *closure, void *rvalue,
   void **          avalue;
   ffi_type **      arg_types;
   long             i, avn;
-  ffi_cif *        cif;
   ffi_dblfl *      end_pfr = pfr + NUM_FPR_ARG_REGISTERS;
   unsigned         size_al;
 #if defined(POWERPC_DARWIN64)
   unsigned 	   fpsused = 0;
 #endif
 
-  cif = closure->cif;
   avalue = alloca (cif->nargs * sizeof(void *));
 
   if (cif->rtype->type == FFI_TYPE_STRUCT)
@@ -1208,7 +1272,7 @@ ffi_closure_helper_DARWIN (ffi_closure *closure, void *rvalue,
 	case FFI_TYPE_STRUCT:
 	  size_al = arg_types[i]->size;
 #if defined(POWERPC_DARWIN64)
-	  pgr = (unsigned long *)ALIGN((char *)pgr, arg_types[i]->alignment);
+	  pgr = (unsigned long *)FFI_ALIGN((char *)pgr, arg_types[i]->alignment);
 	  if (size_al < 3 || size_al == 4)
 	    {
 	      avalue[i] = ((char *)pgr)+8-size_al;
@@ -1233,7 +1297,7 @@ ffi_closure_helper_DARWIN (ffi_closure *closure, void *rvalue,
 	  /* If the first member of the struct is a double, then align
 	     the struct to double-word.  */
 	  if (arg_types[i]->elements[0]->type == FFI_TYPE_DOUBLE)
-	    size_al = ALIGN(arg_types[i]->size, 8);
+	    size_al = FFI_ALIGN(arg_types[i]->size, 8);
 #  if defined(POWERPC64)
 	  FFI_ASSERT (cif->abi != FFI_DARWIN);
 	  avalue[i] = pgr;
@@ -1352,8 +1416,25 @@ ffi_closure_helper_DARWIN (ffi_closure *closure, void *rvalue,
       i++;
     }
 
-  (closure->fun) (cif, rvalue, avalue, closure->user_data);
+  (fun) (cif, rvalue, avalue, user_data);
 
   /* Tell ffi_closure_ASM to perform return type promotions.  */
   return cif->rtype;
 }
+
+ffi_type *
+ffi_closure_helper_DARWIN (ffi_closure *closure, void *rvalue,
+			   unsigned long *pgr, ffi_dblfl *pfr)
+{
+  return ffi_closure_helper_common (closure->cif, closure->fun,
+				    closure->user_data, rvalue, pgr, pfr);
+}
+
+ffi_type *
+ffi_go_closure_helper_DARWIN (ffi_go_closure *closure, void *rvalue,
+			      unsigned long *pgr, ffi_dblfl *pfr)
+{
+  return ffi_closure_helper_common (closure->cif, closure->fun,
+				    closure, rvalue, pgr, pfr);
+}
+

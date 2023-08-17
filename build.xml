@@ -489,6 +489,8 @@ com/sun/jna/linux-mips64el/libjnidispatch.so;
 processor=mips64el;osname=linux,
 com/sun/jna/linux-s390x/libjnidispatch.so;
 processor=S390x;osname=linux,
+com/sun/jna/linux-loongarch64/libjnidispatch.so;
+processor=loongarch64;osname=linux,
 
 com/sun/jna/freebsd-x86/libjnidispatch.so;
 processor=x86;osname=freebsd,
@@ -554,6 +556,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/linux-s390x.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-s390x"/>
+      <zipfileset src="${lib.native}/linux-loongarch64.jar"
+	          includes="*jnidispatch*"
+	          prefix="com/sun/jna/linux-loongarch64"/>	  
       <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
@@ -747,6 +752,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-sparcv9.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-mips64el.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-s390x.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-loongarch64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>

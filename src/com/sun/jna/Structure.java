@@ -2049,7 +2049,7 @@ public abstract class Structure {
                 }
                 if( (! Platform.isWindows()) && (
                         (Platform.isIntel() && Platform.is64Bit())
-                        || (Platform.isARM())
+                        || (Platform.isARM() || Platform.isLoongArch() )
                     )) {
                     // System V x86-64 ABI requires, that in a union aggregate,
                     // that contains Integer and Double members, the parameters
@@ -2060,7 +2060,7 @@ public abstract class Structure {
                     // passing method would be used.
                     //
                     // It was observed, that the same behaviour is visible on
-                    // arm/aarch64.
+                    // arm/aarch64/loongarch64.
                     if(hasInteger && isFloatType(unionType)) {
                         unionType = new FFIType(unionType);
                         if(unionType.size.intValue() == 4) {

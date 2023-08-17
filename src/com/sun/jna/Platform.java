@@ -194,11 +194,19 @@ public final class Platform {
             || "ppc64".equals(ARCH) || "ppc64le".equals(ARCH)
             || "sparcv9".equals(ARCH)
             || "mips64".equals(ARCH) || "mips64el".equals(ARCH)
-            || "amd64".equals(ARCH)
+            || "loongarch64".equals(ARCH)
+	    || "amd64".equals(ARCH)
             || "aarch64".equals(ARCH)) {
             return true;
         }
         return Native.POINTER_SIZE == 8;
+    }
+
+    public static final boolean isLoongArch() {
+        if (ARCH.startsWith("loongarch")) {
+            return true;
+        }
+        return false;
     }
 
     public static final boolean isIntel() {

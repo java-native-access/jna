@@ -1,19 +1,32 @@
-This is libffi.info, produced by makeinfo version 5.2 from libffi.texi.
+This is libffi.info, produced by makeinfo version 6.5 from libffi.texi.
 
-This manual is for Libffi, a portable foreign-function interface
+This manual is for libffi, a portable foreign function interface
 library.
 
-   Copyright (C) 2008, 2010, 2011 Red Hat, Inc.
+   Copyright (C) 2008-2019 Anthony Green and Red Hat, Inc.
 
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU General Public License as
-     published by the Free Software Foundation; either version 2, or (at
-     your option) any later version.  A copy of the license is included
-     in the section entitled "GNU General Public License".
+   Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+   The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 INFO-DIR-SECTION Development
 START-INFO-DIR-ENTRY
-* libffi: (libffi).             Portable foreign-function interface library.
+* libffi: (libffi).             Portable foreign function interface library.
 END-INFO-DIR-ENTRY
 
 
@@ -22,16 +35,29 @@ File: libffi.info,  Node: Top,  Next: Introduction,  Up: (dir)
 libffi
 ******
 
-This manual is for Libffi, a portable foreign-function interface
+This manual is for libffi, a portable foreign function interface
 library.
 
-   Copyright (C) 2008, 2010, 2011 Red Hat, Inc.
+   Copyright (C) 2008-2019 Anthony Green and Red Hat, Inc.
 
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU General Public License as
-     published by the Free Software Foundation; either version 2, or (at
-     your option) any later version.  A copy of the license is included
-     in the section entitled "GNU General Public License".
+   Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+   The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 * Menu:
 
@@ -87,6 +113,7 @@ File: libffi.info,  Node: Using libffi,  Next: Missing Features,  Prev: Introduc
 * Multiple ABIs::               Different passing styles on one platform.
 * The Closure API::             Writing a generic function.
 * Closure Example::             A closure example.
+* Thread Safety::               Thread safety.
 
 
 File: libffi.info,  Node: The Basics,  Next: Simple Example,  Up: Using libffi
@@ -127,18 +154,18 @@ prepare a call interface object, use the function 'ffi_prep_cif'.
    If the function being called is variadic (varargs) then
 'ffi_prep_cif_var' must be used instead of 'ffi_prep_cif'.
 
- -- Function: ffi_status ffi_prep_cif_var (ffi_cif *CIF, ffi_abi varabi,
-          unsigned int NFIXEDARGS, unsigned int varntotalargs, ffi_type
+ -- Function: ffi_status ffi_prep_cif_var (ffi_cif *CIF, ffi_abi ABI,
+          unsigned int NFIXEDARGS, unsigned int NTOTALARGS, ffi_type
           *RTYPE, ffi_type **ARGTYPES)
      This initializes CIF according to the given parameters for a call
-     to a variadic function.  In general it's operation is the same as
+     to a variadic function.  In general its operation is the same as
      for 'ffi_prep_cif' except that:
 
      NFIXEDARGS is the number of fixed arguments, prior to any variadic
      arguments.  It must be greater than zero.
 
      NTOTALARGS the total number of arguments, including variadic and
-     fixed arguments.
+     fixed arguments.  ARGTYPES must have this many elements.
 
      Note that, different cif's must be prepped for calls to the same
      function when different numbers of arguments are passed.
@@ -146,6 +173,11 @@ prepare a call interface object, use the function 'ffi_prep_cif'.
      Also note that a call to 'ffi_prep_cif_var' with
      NFIXEDARGS=NOTOTALARGS is NOT equivalent to a call to
      'ffi_prep_cif'.
+
+   Note that the resulting 'ffi_cif' holds pointers to all the
+'ffi_type' objects that were used during initialization.  You must
+ensure that these type objects have a lifetime at least as long as that
+of the 'ffi_cif'.
 
    To call a function using an initialized 'ffi_cif', use the 'ffi_call'
 function:
@@ -162,12 +194,29 @@ function:
      responsibility to ensure this.  If CIF declares that the function
      returns 'void' (using 'ffi_type_void'), then RVALUE is ignored.
 
+     In most situations, 'libffi' will handle promotion according to the
+     ABI. However, for historical reasons, there is a special case with
+     return values that must be handled by your code.  In particular,
+     for integral (not 'struct') types that are narrower than the system
+     register size, the return value will be widened by 'libffi'.
+     'libffi' provides a type, 'ffi_arg', that can be used as the return
+     type.  For example, if the CIF was defined with a return type of
+     'char', 'libffi' will try to store a full 'ffi_arg' into the return
+     value.
+
      AVALUES is a vector of 'void *' pointers that point to the memory
      locations holding the argument values for a call.  If CIF declares
      that the function has no arguments (i.e., NARGS was 0), then
      AVALUES is ignored.  Note that argument values may be modified by
      the callee (for instance, structs passed by value); the burden of
      copying pass-by-value arguments is placed on the caller.
+
+     Note that while the return value must be register-sized, arguments
+     should exactly match their declared type.  For example, if an
+     argument is a 'short', then the entry in AVALUES should point to an
+     object declared as 'short'; but if the return type is 'short', then
+     RVALUE should point to an object declared as a larger type -
+     usually 'ffi_arg'.
 
 
 File: libffi.info,  Node: Simple Example,  Next: Types,  Prev: The Basics,  Up: Using libffi
@@ -220,6 +269,8 @@ File: libffi.info,  Node: Types,  Next: Multiple ABIs,  Prev: Simple Example,  U
 
 * Primitive Types::             Built-in types.
 * Structures::                  Structure types.
+* Size and Alignment::          Size and alignment of types.
+* Arrays Unions Enums::         Arrays, unions, and enumerations.
 * Type Example::                Structure type example.
 * Complex::                     Complex types.
 * Complex Type Example::        Complex type example.
@@ -317,15 +368,14 @@ to describe argument and return types:
 when passing to 'ffi_prep_cif'.
 
 
-File: libffi.info,  Node: Structures,  Next: Type Example,  Prev: Primitive Types,  Up: Types
+File: libffi.info,  Node: Structures,  Next: Size and Alignment,  Prev: Primitive Types,  Up: Types
 
 2.3.2 Structures
 ----------------
 
-Although 'libffi' has no special support for unions or bit-fields, it is
-perfectly happy passing structures back and forth.  You must first
-describe the structure to 'libffi' by creating a new 'ffi_type' object
-for it.
+'libffi' is perfectly happy passing structures back and forth.  You must
+first describe the structure to 'libffi' by creating a new 'ffi_type'
+object for it.
 
  -- Data type: ffi_type
      The 'ffi_type' has the following members:
@@ -342,10 +392,162 @@ for it.
           This is a 'NULL'-terminated array of pointers to 'ffi_type'
           objects.  There is one element per field of the struct.
 
-
-File: libffi.info,  Node: Type Example,  Next: Complex,  Prev: Structures,  Up: Types
+          Note that 'libffi' has no special support for bit-fields.  You
+          must manage these manually.
 
-2.3.3 Type Example
+   The 'size' and 'alignment' fields will be filled in by 'ffi_prep_cif'
+or 'ffi_prep_cif_var', as needed.
+
+
+File: libffi.info,  Node: Size and Alignment,  Next: Arrays Unions Enums,  Prev: Structures,  Up: Types
+
+2.3.3 Size and Alignment
+------------------------
+
+'libffi' will set the 'size' and 'alignment' fields of an 'ffi_type'
+object for you.  It does so using its knowledge of the ABI.
+
+   You might expect that you can simply read these fields for a type
+that has been laid out by 'libffi'.  However, there are some caveats.
+
+   * The size or alignment of some of the built-in types may vary
+     depending on the chosen ABI.
+
+   * The size and alignment of a new structure type will not be set by
+     'libffi' until it has been passed to 'ffi_prep_cif' or
+     'ffi_get_struct_offsets'.
+
+   * A structure type cannot be shared across ABIs.  Instead each ABI
+     needs its own copy of the structure type.
+
+   So, before examining these fields, it is safest to pass the
+'ffi_type' object to 'ffi_prep_cif' or 'ffi_get_struct_offsets' first.
+This function will do all the needed setup.
+
+     ffi_type *desired_type;
+     ffi_abi desired_abi;
+     ...
+     ffi_cif cif;
+     if (ffi_prep_cif (&cif, desired_abi, 0, desired_type, NULL) == FFI_OK)
+       {
+         size_t size = desired_type->size;
+         unsigned short alignment = desired_type->alignment;
+       }
+
+   'libffi' also provides a way to get the offsets of the members of a
+structure.
+
+ -- Function: ffi_status ffi_get_struct_offsets (ffi_abi abi, ffi_type
+          *struct_type, size_t *offsets)
+     Compute the offset of each element of the given structure type.
+     ABI is the ABI to use; this is needed because in some cases the
+     layout depends on the ABI.
+
+     OFFSETS is an out parameter.  The caller is responsible for
+     providing enough space for all the results to be written - one
+     element per element type in STRUCT_TYPE.  If OFFSETS is 'NULL',
+     then the type will be laid out but not otherwise modified.  This
+     can be useful for accessing the type's size or layout, as mentioned
+     above.
+
+     This function returns 'FFI_OK' on success; 'FFI_BAD_ABI' if ABI is
+     invalid; or 'FFI_BAD_TYPEDEF' if STRUCT_TYPE is invalid in some
+     way.  Note that only 'FFI_STRUCT' types are valid here.
+
+
+File: libffi.info,  Node: Arrays Unions Enums,  Next: Type Example,  Prev: Size and Alignment,  Up: Types
+
+2.3.4 Arrays, Unions, and Enumerations
+--------------------------------------
+
+2.3.4.1 Arrays
+..............
+
+'libffi' does not have direct support for arrays or unions.  However,
+they can be emulated using structures.
+
+   To emulate an array, simply create an 'ffi_type' using
+'FFI_TYPE_STRUCT' with as many members as there are elements in the
+array.
+
+     ffi_type array_type;
+     ffi_type **elements
+     int i;
+
+     elements = malloc ((n + 1) * sizeof (ffi_type *));
+     for (i = 0; i < n; ++i)
+       elements[i] = array_element_type;
+     elements[n] = NULL;
+
+     array_type.size = array_type.alignment = 0;
+     array_type.type = FFI_TYPE_STRUCT;
+     array_type.elements = elements;
+
+   Note that arrays cannot be passed or returned by value in C -
+structure types created like this should only be used to refer to
+members of real 'FFI_TYPE_STRUCT' objects.
+
+   However, a phony array type like this will not cause any errors from
+'libffi' if you use it as an argument or return type.  This may be
+confusing.
+
+2.3.4.2 Unions
+..............
+
+A union can also be emulated using 'FFI_TYPE_STRUCT'.  In this case,
+however, you must make sure that the size and alignment match the real
+requirements of the union.
+
+   One simple way to do this is to ensue that each element type is laid
+out.  Then, give the new structure type a single element; the size of
+the largest element; and the largest alignment seen as well.
+
+   This example uses the 'ffi_prep_cif' trick to ensure that each
+element type is laid out.
+
+     ffi_abi desired_abi;
+     ffi_type union_type;
+     ffi_type **union_elements;
+
+     int i;
+     ffi_type element_types[2];
+
+     element_types[1] = NULL;
+
+     union_type.size = union_type.alignment = 0;
+     union_type.type = FFI_TYPE_STRUCT;
+     union_type.elements = element_types;
+
+     for (i = 0; union_elements[i]; ++i)
+       {
+         ffi_cif cif;
+         if (ffi_prep_cif (&cif, desired_abi, 0, union_elements[i], NULL) == FFI_OK)
+           {
+             if (union_elements[i]->size > union_type.size)
+               {
+                 union_type.size = union_elements[i];
+                 size = union_elements[i]->size;
+               }
+             if (union_elements[i]->alignment > union_type.alignment)
+               union_type.alignment = union_elements[i]->alignment;
+           }
+       }
+
+2.3.4.3 Enumerations
+....................
+
+'libffi' does not have any special support for C 'enum's.  Although any
+given 'enum' is implemented using a specific underlying integral type,
+exactly which type will be used cannot be determined by 'libffi' - it
+may depend on the values in the enumeration or on compiler flags such as
+'-fshort-enums'.  *Note (gcc)Structures unions enumerations and
+bit-fields implementation::, for more information about how GCC handles
+enumerations.
+
+
+File: libffi.info,  Node: Type Example,  Next: Complex,  Prev: Arrays Unions Enums,  Up: Types
+
+2.3.5 Type Example
 ------------------
 
 The following example initializes a 'ffi_type' object representing the
@@ -393,7 +595,7 @@ The following example initializes a 'ffi_type' object representing the
 
 File: libffi.info,  Node: Complex,  Next: Complex Type Example,  Prev: Type Example,  Up: Types
 
-2.3.4 Complex Types
+2.3.6 Complex Types
 -------------------
 
 'libffi' supports the complex types defined by the C99 standard
@@ -433,7 +635,7 @@ encounter a complex type.
 
 File: libffi.info,  Node: Complex Type Example,  Prev: Complex,  Up: Types
 
-2.3.5 Complex Type Example
+2.3.7 Complex Type Example
 --------------------------
 
 This example demonstrates how to use complex types:
@@ -566,37 +768,58 @@ closure function:
  -- Function: ffi_status ffi_prep_closure_loc (ffi_closure *CLOSURE,
           ffi_cif *CIF, void (*FUN) (ffi_cif *CIF, void *RET, void
           **ARGS, void *USER_DATA), void *USER_DATA, void *CODELOC)
-     Prepare a closure function.
+     Prepare a closure function.  The arguments to
+     'ffi_prep_closure_loc' are:
 
-     CLOSURE is the address of a 'ffi_closure' object; this is the
-     writable address returned by 'ffi_closure_alloc'.
+     CLOSURE
+          The address of a 'ffi_closure' object; this is the writable
+          address returned by 'ffi_closure_alloc'.
 
-     CIF is the 'ffi_cif' describing the function parameters.
-
-     USER_DATA is an arbitrary datum that is passed, uninterpreted, to
-     your closure function.
-
-     CODELOC is the executable address returned by 'ffi_closure_alloc'.
-
-     FUN is the function which will be called when the closure is
-     invoked.  It is called with the arguments:
      CIF
-          The 'ffi_cif' passed to 'ffi_prep_closure_loc'.
-
-     RET
-          A pointer to the memory used for the function's return value.
-          FUN must fill this, unless the function is declared as
-          returning 'void'.
-
-     ARGS
-          A vector of pointers to memory holding the arguments to the
-          function.
+          The 'ffi_cif' describing the function parameters.  Note that
+          this object, and the types to which it refers, must be kept
+          alive until the closure itself is freed.
 
      USER_DATA
-          The same USER_DATA that was passed to 'ffi_prep_closure_loc'.
+          An arbitrary datum that is passed, uninterpreted, to your
+          closure function.
+
+     CODELOC
+          The executable address returned by 'ffi_closure_alloc'.
+
+     FUN
+          The function which will be called when the closure is invoked.
+          It is called with the arguments:
+
+          CIF
+               The 'ffi_cif' passed to 'ffi_prep_closure_loc'.
+
+          RET
+               A pointer to the memory used for the function's return
+               value.
+
+               If the function is declared as returning 'void', then
+               this value is garbage and should not be used.
+
+               Otherwise, FUN must fill the object to which this points,
+               following the same special promotion behavior as
+               'ffi_call'.  That is, in most cases, RET points to an
+               object of exactly the size of the type specified when CIF
+               was constructed.  However, integral types narrower than
+               the system register size are widened.  In these cases
+               your program may assume that RET points to an 'ffi_arg'
+               object.
+
+          ARGS
+               A vector of pointers to memory holding the arguments to
+               the function.
+
+          USER_DATA
+               The same USER_DATA that was passed to
+               'ffi_prep_closure_loc'.
 
      'ffi_prep_closure_loc' will return 'FFI_OK' if everything went ok,
-     and something else on error.
+     and one of the other 'ffi_status' values on error.
 
      After calling 'ffi_prep_closure_loc', you can cast CODELOC to the
      appropriate pointer-to-function type.
@@ -606,7 +829,7 @@ is deprecated, as it cannot handle the need for separate writable and
 executable addresses.
 
 
-File: libffi.info,  Node: Closure Example,  Prev: The Closure API,  Up: Using libffi
+File: libffi.info,  Node: Closure Example,  Next: Thread Safety,  Prev: The Closure API,  Up: Using libffi
 
 2.6 Closure Example
 ===================
@@ -665,6 +888,28 @@ A trivial example that creates a new 'puts' by binding 'fputs' with
 
 
 
+File: libffi.info,  Node: Thread Safety,  Prev: Closure Example,  Up: Using libffi
+
+2.7 Thread Safety
+=================
+
+'libffi' is not completely thread-safe.  However, many parts are, and if
+you follow some simple rules, you can use it safely in a multi-threaded
+program.
+
+   * 'ffi_prep_cif' may modify the 'ffi_type' objects passed to it.  It
+     is best to ensure that only a single thread prepares a given
+     'ffi_cif' at a time.
+
+   * On some platforms, 'ffi_prep_cif' may modify the size and alignment
+     of some types, depending on the chosen ABI. On these platforms, if
+     you switch between ABIs, you must ensure that there is only one
+     call to 'ffi_prep_cif' at a time.
+
+     Currently the only affected platform is PowerPC and the only
+     affected type is 'long double'.
+
+
 File: libffi.info,  Node: Missing Features,  Next: Index,  Prev: Using libffi,  Up: Top
 
 3 Missing Features
@@ -677,9 +922,9 @@ for these.
 
    * There is no support for bit fields in structures.
 
-   * The closure API is
-
    * The "raw" API is undocumented.
+
+   * The Go API is undocumented.
 
    Note that variadic support is very new and tested on a relatively
 small number of platforms.
@@ -700,18 +945,20 @@ Index
 * closure API:                           The Closure API.      (line 13)
 * closures:                              The Closure API.      (line 13)
 * FFI:                                   Introduction.         (line 31)
-* ffi_call:                              The Basics.           (line 62)
+* ffi_call:                              The Basics.           (line 67)
 * FFI_CLOSURES:                          The Closure API.      (line 13)
 * ffi_closure_alloc:                     The Closure API.      (line 19)
 * ffi_closure_free:                      The Closure API.      (line 26)
+* ffi_get_struct_offsets:                Size and Alignment.   (line 39)
 * ffi_prep_cif:                          The Basics.           (line 16)
 * ffi_prep_cif_var:                      The Basics.           (line 39)
 * ffi_prep_closure_loc:                  The Closure API.      (line 34)
 * ffi_status:                            The Basics.           (line 16)
 * ffi_status <1>:                        The Basics.           (line 39)
-* ffi_status <2>:                        The Closure API.      (line 34)
-* ffi_type:                              Structures.           (line 11)
-* ffi_type <1>:                          Structures.           (line 11)
+* ffi_status <2>:                        Size and Alignment.   (line 39)
+* ffi_status <3>:                        The Closure API.      (line 34)
+* ffi_type:                              Structures.           (line 10)
+* ffi_type <1>:                          Structures.           (line 10)
 * ffi_type <2>:                          Complex.              (line 15)
 * ffi_type <3>:                          Complex.              (line 15)
 * ffi_type_complex_double:               Primitive Types.      (line 82)
@@ -739,28 +986,31 @@ Index
 * ffi_type_ushort:                       Primitive Types.      (line 53)
 * ffi_type_void:                         Primitive Types.      (line 10)
 * Foreign Function Interface:            Introduction.         (line 31)
-* void:                                  The Basics.           (line 62)
+* void:                                  The Basics.           (line 67)
 * void <1>:                              The Closure API.      (line 19)
 * void <2>:                              The Closure API.      (line 26)
 
 
 
 Tag Table:
-Node: Top682
-Node: Introduction1429
-Node: Using libffi3061
-Node: The Basics3547
-Node: Simple Example7198
-Node: Types8229
-Node: Primitive Types8613
-Node: Structures10734
-Node: Type Example11608
-Node: Complex12890
-Node: Complex Type Example14308
-Node: Multiple ABIs17360
-Node: The Closure API17731
-Node: Closure Example20675
-Node: Missing Features22285
-Node: Index22738
+Node: Top1388
+Node: Introduction2841
+Node: Using libffi4473
+Node: The Basics5006
+Node: Simple Example9870
+Node: Types10901
+Node: Primitive Types11412
+Node: Structures13533
+Node: Size and Alignment14572
+Node: Arrays Unions Enums16769
+Node: Type Example19698
+Node: Complex20989
+Node: Complex Type Example22407
+Node: Multiple ABIs25459
+Node: The Closure API25830
+Node: Closure Example29656
+Node: Thread Safety31288
+Node: Missing Features32089
+Node: Index32551
 
 End Tag Table

@@ -1,0 +1,8 @@
+# empty
+no-toolexeclibdir.diff
+powerpc-fix.diff
+powerpc64-fix.diff
+powerpc64-fix-2.diff
+powerpc-fix-2.diff
+0001-port-loongarch.diff
+0001-Remove-execution-permission-of-GNU_STACK-in-libffi.s.diff

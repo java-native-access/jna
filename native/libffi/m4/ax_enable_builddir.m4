@@ -1,5 +1,5 @@
 # ===========================================================================
-#    http://www.gnu.org/software/autoconf-archive/ax_enable_builddir.html
+#    https://www.gnu.org/software/autoconf-archive/ax_enable_builddir.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -24,7 +24,7 @@
 #   toplevel builddir Makefile. It just copies the variables and
 #   rule-targets, each extended with a default rule-execution that recurses
 #   into the build directory of the current "HOST". You can override the
-#   auto-dection through `config.guess` and build-time of course, as in
+#   auto-detection through `config.guess` and build-time of course, as in
 #
 #     make HOST=i386-mingw-cross
 #
@@ -42,7 +42,7 @@
 #   into. Usually, the last one is the only one used. However, almost all
 #   targets have an additional "*-all" rule which makes the script to
 #   recurse into _all_ variants of the current HOST (!!) setting. The "-all"
-#   suffix can be overriden for the macro as well.
+#   suffix can be overridden for the macro as well.
 #
 #   a special rule is only given for things like "dist" that will copy the
 #   tarball from the builddir to the sourcedir (or $(PUB)) for reason of
@@ -64,7 +64,7 @@
 #   Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License along
-#   with this program. If not, see <http://www.gnu.org/licenses/>.
+#   with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 #   As a special exception, the respective Autoconf Macro's copyright owner
 #   gives unlimited permission to copy, distribute and modify the configure
@@ -79,10 +79,11 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 23
+#serial 30
 
 AC_DEFUN([AX_ENABLE_BUILDDIR],[
 AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AC_REQUIRE([AC_CANONICAL_TARGET])[]dnl
 AC_REQUIRE([AX_CONFIGURE_ARGS])[]dnl
 AC_REQUIRE([AM_AUX_DIR_EXPAND])[]dnl
 AC_BEFORE([$0],[AM_INIT_AUTOMAKE])dnl
@@ -121,7 +122,7 @@ if test ".$srcdir" = ".." ; then
       test -f $srcdir/$cache_file  && mv $srcdir/$cache_file  .
       AC_MSG_RESULT(....exec $SHELL $srcdir/[$]0 "--srcdir=$srcdir" "--enable-builddir=$SUB" ${1+"[$]@"})
       case "[$]0" in # restart
-       [[\\/]]* | ?:[[\\/]]*) # Asbolute name
+       [[\\/]]* | ?:[[\\/]]*) # Absolute name
          eval $SHELL "'[$]0'" "'--srcdir=$srcdir'" "'--enable-builddir=$SUB'" $ac_configure_args ;;
        *) eval $SHELL "'$srcdir/[$]0'" "'--srcdir=$srcdir'" "'--enable-builddir=$SUB'" $ac_configure_args ;;
       esac ; exit $?

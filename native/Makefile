@@ -9,9 +9,9 @@
 #
 # Supported platforms (built and tested):
 #
-#   Windows 2000/XP/2003/Vista (x86/amd64)
+#   Windows (x86/amd64/aarch64)
 #   Windows CE/Mobile (arm)
-#   Darwin/OS X (i386/x86_64/ppc)
+#   Darwin/OS X (i386/x86-64/ppc/aarch64)
 #   Linux (i386/amd64/ppc/arm)
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   AIX (ppc/ppc64)
@@ -246,8 +246,21 @@ LIBS=psapi.lib
 ARSFX=.lib
 ifeq ($(ARCH),amd64)
 CC+= -m64
+FFI_TARGET=$(FFI_SRC)/src/x86/ffitarget.h
+else ifeq ($(ARCH),aarch64)
+# Force $(CC) fallback; avoid arch mismatch
+WINDRES=false
+# Disable mingw; no aarch64 support
+MINGW=
+FFI_CONFIG+=--host=aarch64-cygwin
+# Skip building assembly callback functions
+CDEFINES+= -DASMFN_OFF
+DLLCB=
+CC+= -marm64
+FFI_CONFIG+=--host=aarch64-cygwin
 endif
-FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
+FFI_TARGET?=$(FFI_SRC)/src/$(ARCH)/ffitarget.h
+FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_TARGET) include
 FFI_ENV+=LD="$(LD)" CPP="$(CPP)" CXXCPP="$(CPP)"
 EXTRAOBJS+=$(DLLCB)
 
@@ -321,7 +334,7 @@ endif
 endif
 
 # CC_OPTS only applied to objects build for jnidispatch, not for libffi
-# -Wno-unknown-warning-option 
+# -Wno-unknown-warning-option
 #                => Suppress warning for unknown warnings
 # -Werror        => Treat warnings as errors
 # -Wno-clobbered => Silence GCC warning about clobbered automatic variables.
@@ -329,6 +342,12 @@ endif
 #                   that implements "protected" mode. In that case an exception
 #                   is raised and the value of the potentially clobbered
 #                   variables is ignored.
+# -Wno-alloca-larger-than => Silence warnings about unbounded alloca calls in
+#                   the dispatch logic. GCC tries to assert, that the size of
+#                   the allocated memory is bounded and thus a check for the
+#                   variable needs to be inplace. For the JNA case, the size
+#                   comes from the Java side, so checks are not visible on the
+#                   C side and thus can't be checked there.
 #
 # Enable this only on GCC versions, that can work with it. It is assumed, that
 # GCC version 4.X is the lower bound. That version is problematic, as it
@@ -337,7 +356,7 @@ ifeq ($(CC),gcc)
     GCC_MAJOR_VERSION = $(shell gcc -dumpversion | cut -f 1 -d '.')
     ifneq ($(GCC_MAJOR_VERSION),4)
 	ifneq ($(GCC_MAJOR_VERSION),3)
-	    LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable
+	    LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable -Wno-alloca-larger-than
 	endif
     endif
 else
@@ -373,47 +392,61 @@ endif
 
 
 ifeq ($(OS),darwin)
-XCODE_VERSION=$(shell xcodebuild -version | grep Xcode | sed 's/^Xcode \([1-9]\).*/\1/g')
-JAVA_INCLUDES+=-I/System/Library/Frameworks/JavaVM.framework/Headers
-DEFAULT_ARCH=$(shell arch)
-ARCH=$(shell arch)
-HOST_CONFIG=--host $(ARCH)-apple-darwin
-FFI_ENV += CC="$(CC)" CFLAGS="-arch $(ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) -arch $(ARCH)"
-ALT_ARCHS=
-ifneq ($(ARCH),i386)
-ALT_ARCHS+=i386
-endif
-ifneq ($(ARCH),x86_64)
-ALT_ARCHS+=x86_64
-endif
-ifneq ($(ARCH),ppc)
-ifeq ($(XCODE_VERSION),3)
-# Xcode 3 options
-# not supported on XCode 4+
-ALT_ARCHS+=ppc
+
+DARWIN_ARCH=$(ARCH)
+ifeq ($(ARCH),aarch64)
+  DARWIN_ARCH=arm64
+else 
+ifeq ($(ARCH),x86-64)
+  DARWIN_ARCH=x86_64
 else
+ifeq ($(ARCH),x86)
+  DARWIN_ARCH=x86
+else 
+endif
+endif
+endif
+
+XCODE_VERSION=$(shell xcodebuild -version | grep Xcode | sed 's/^Xcode \([1-9][0-9]*\).*/\1/g')
+MACOS_VERSION_MAJOR=$(shell sw_vers -productVersion | cut -d. -f 1)
+MACOS_VERSION_MINOR=$(shell sw_vers -productVersion | cut -d. -f 2)
+JAVA_INCLUDES+=-I/System/Library/Frameworks/JavaVM.framework/Headers
+# Actual deployment target depends on SDK support
+MACOSX_DEPLOYMENT_TARGET=10.3
+DEFAULT_ARCH=$(shell arch)
+HOST_CONFIG=--host $(DARWIN_ARCH)-apple-darwin
+FFI_ENV += CC="$(CC)" CFLAGS="-mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) -arch $(DARWIN_ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) -arch $(DARWIN_ARCH)"
+LIBSFX=.dylib
+JNISFX=-$(ARCH).jnilib
+# JAWT no longer supported on OSX
+CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT -DNO_JAWT
+
+ifneq ($(ARCH),ppc)
+ifneq ($(XCODE_VERSION),3)
 # Xcode 4+ options
 NO_COMPACT_UNWIND=-Wl,-no_compact_unwind
 endif
 endif
-LIBSFX=.dylib
-JNISFX=.jnilib
 ifneq ($(SDKROOT),)
 SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
 ISYSROOT=-isysroot $(SDKROOT)
-ARCHFLAGS=-arch i386 -arch x86_64
-ifeq ($(XCODE_VERSION),3)
-ARCHFLAGS+=-arch ppc
-endif
+ARCHFLAGS+=-arch $(DARWIN_ARCH)
 endif
 
 PCFLAGS+=$(ISYSROOT) -x objective-c
-# JAWT no longer supported on OSX
-CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT -DNO_JAWT
-LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
+
+# MAJOR < 10 || (MAJOR = 10 && MINOR < 7)
+MACOS_LT_10_7 = $(shell [ ${MACOS_VERSION_MAJOR} -lt 10 -o ${MACOS_VERSION_MAJOR} -eq 10 -a ${MACOS_VERSION_MINOR} -lt 7 ] && echo true)
+
+# JavaVM.framwork is "Deprecated in OS X v10.7."
+ifeq ($(MACOS_LT_10_7),true)
+FRAMEWORK=-framework JavaVM
+endif
+
+LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ $(FRAMEWORK) \
   -compatibility_version $(shell echo ${JNA_JNI_VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
   -current_version $(JNA_JNI_VERSION) \
-  -mmacosx-version-min=10.3 \
+  -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) \
   -framework Foundation \
   $(NO_COMPACT_UNWIND) \
   -install_name ${@F} \
@@ -428,11 +461,7 @@ endif
 $(BUILD)/%.o : %.c dispatch.h protect.h $(FFI_LIB)
 	@mkdir -p $(BUILD)
 ifneq ($(SDKROOT),)
-	$(CC) $(LOC_CC_OPTS) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)
-	for arch in $(ALT_ARCHS); do \
-	  $(CC) $(LOC_CC_OPTS) -arch $$arch -I$(BUILD)/libffi.$$arch/include $(CFLAGS) -c $< -o $@.$$arch; \
-	done
-	lipo -create -output $@ $@.*
+	$(CC) $(LOC_CC_OPTS) -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) -arch $(DARWIN_ARCH) $(CFLAGS) -c $< -o $@
 else
 	$(CC) $(CFLAGS) $(LOC_CC_OPTS) -c $< $(COUT)
 endif
@@ -488,25 +517,6 @@ $(FFI_LIB):
 	    && $(FFI_ENV) $(FFI_SRC)/configure $(FFI_CONFIG) $(HOST_CONFIG)); \
 	fi
 	$(MAKE) -C $(FFI_BUILD)
-ifneq ($(SDKROOT),)
-	@for arch in $(ALT_ARCHS); do \
-	  mkdir -p $(BUILD)/libffi.$$arch; \
-	  if [ ! -f $(BUILD)/libffi.$$arch/Makefile ]; then \
-	    echo "Configuring libffi ($$arch)"; \
-	    (cd $(BUILD)/libffi.$$arch \
-	     && CC="$(CC)" CFLAGS="-arch $$arch $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" \
-                LDFLAGS="-arch $$arch" \
-               $(FFI_SRC)/configure $(FFI_CONFIG) --host=$$arch-apple-darwin --disable-dependency-tracking); \
-	  fi; \
-	  $(MAKE) -C $(BUILD)/libffi.$$arch; \
-	done
-ifneq ($(ALT_ARCHS),)
-	/usr/bin/libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F} $(BUILD)/libffi.*/.libs/${@F}
-else
-	/usr/bin/libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F}
-endif
-	mv $@.tmp $@
-endif
 endif
 
 clean:

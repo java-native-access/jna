@@ -1,0 +1,46 @@
+Source: libffi
+Priority: optional
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Uploaders: Matthias Klose <doko@debian.org>
+Build-Depends: debhelper (>= 11),
+  libltdl-dev,
+  dejagnu,
+  texinfo
+Standards-Version: 4.5.0
+Section: libs
+Homepage: https://sourceware.org/libffi/
+
+Package: libffi-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libffi7 (= ${binary:Version}), ${misc:Depends},
+Conflicts: libffi4-dev
+Description: Foreign Function Interface library (development files)
+ This package contains the headers and static library files necessary for
+ building programs which use libffi.
+ .
+ A foreign function interface is the popular name for the interface that
+ allows code written in one language to call code written in another
+ language.
+
+Package: libffi7
+Section: libs
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Foreign Function Interface library runtime
+ A foreign function interface is the popular name for the interface that
+ allows code written in one language to call code written in another
+ language.
+
+Package: libffi7-udeb
+Section: debian-installer
+XC-Package-Type: udeb
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Foreign Function Interface library runtime
+ A foreign function interface is the popular name for the interface that
+ allows code written in one language to call code written in another
+ language.

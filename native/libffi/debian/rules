@@ -1,0 +1,137 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+unexport CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+
+SHELL = /bin/bash
+
+vafilt = $(subst $(2)=,,$(filter $(2)=%,$(1)))
+DPKG_VARS := $(shell dpkg-architecture)
+DEB_HOST_ARCH		?= $(call vafilt,$(DPKG_VARS),DEB_HOST_ARCH)
+DEB_HOST_GNU_CPU	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_GNU_CPU)
+DEB_HOST_GNU_TYPE	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE	?= $(call vafilt,$(DPKG_VARS),DEB_BUILD_GNU_TYPE)
+DEB_HOST_MULTIARCH	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_MULTIARCH)
+
+CC  = $(DEB_HOST_GNU_TYPE)-gcc
+CXX = $(DEB_HOST_GNU_TYPE)-g++
+CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS   = $(shell dpkg-buildflags --get CFLAGS)
+LDFLAGS  = $(shell dpkg-buildflags --get LDFLAGS)
+
+ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
+  with_check = yes
+else
+  # override buildd admins to run the testsuite anyway ...
+  ifneq (,$(filter $(DEB_HOST_ARCH), m68k powerpcspe sh4))
+    with_check = yes
+  endif
+endif
+
+major=7
+p=libffi$(major)
+
+configure: stamp-configure
+stamp-configure:
+	dh_testdir
+	dh_autoreconf
+	rm -rf build
+	mkdir -p build
+	cd build && ../configure \
+		--host=$(DEB_HOST_GNU_TYPE) \
+		--build=$(DEB_BUILD_GNU_TYPE) \
+		--prefix=/usr \
+		--mandir=\$${prefix}/share/man \
+		--infodir=\$${prefix}/share/info \
+		--enable-pax_emutramp \
+		CC="$(CC)" \
+		CXX="$(CXX)" \
+		CPPFLAGS="$(CPPFLAGS)" \
+		CFLAGS="$(CFLAGS)" \
+		CCASFLAGS="$(CFLAGS) -Wa,--gdwarf-2" \
+		LDFLAGS="-Wl,-z,defs $(LDFLAGS)"
+	touch $@
+#		--libdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH) \
+
+build-arch: build
+build-indep: build
+build: stamp-build $(if $(filter yes, $(with_check)), stamp-check)
+stamp-build: stamp-configure
+	dh_testdir
+ifeq ($(DEB_BUILD_PROFILE),stage1)
+	touch doc/libffi.info
+endif
+	$(MAKE) -C build
+ifneq ($(DEB_BUILD_PROFILE),stage1)
+	$(MAKE) -C build html
+endif
+	touch $@
+
+check: stamp-check
+stamp-check: stamp-build
+	dh_testdir
+	$(MAKE) -C build check 2>&1 | tee build/check.log
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f stamp-*
+	rm -rf build*
+	rm -f doc/libffi.info
+	dh_autoreconf_clean
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs -a
+	$(MAKE) -C build DESTDIR=$(CURDIR)/debian/tmp install
+	mkdir -p debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)
+	-mv debian/tmp/usr/lib/* debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/.
+	cp -p build/.libs/libffi_convenience.a \
+		debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/libffi_pic.a
+	mkdir -p debian/libffi-dev/usr/share/doc/$(p)
+	cp README.md debian/libffi-dev/usr/share/doc/$(p)/.
+ifneq ($(DEB_BUILD_PROFILE),stage1)
+	cp -a build/doc/libffi.html debian/libffi-dev/usr/share/doc/$(p)/html
+endif
+	dh_install -a --sourcedir=debian/tmp
+
+	mkdir -p debian/libffi-dev/usr/include/$(DEB_HOST_MULTIARCH)
+	mv debian/libffi-dev/usr/include/*.h \
+		debian/libffi-dev/usr/include/$(DEB_HOST_MULTIARCH)/
+
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs -a
+	rm -f debian/libffi$(major)/usr/share/doc/libffi$(major)/changelog
+	dh_installdocs -a
+	dh_installinfo -plibffi-dev doc/libffi.info
+	rm -f debian/libffi-dev/usr/share/info/dir*
+	rm -rf debian/libffi-dev/usr/share/doc/libffi-dev
+	ln -s libffi$(major) debian/libffi-dev/usr/share/doc/libffi-dev
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+	dh_makeshlibs -plibffi$(major) --add-udeb=libffi$(major)-udeb
+	dh_makeshlibs -a -Nlibffi$(major)
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install 

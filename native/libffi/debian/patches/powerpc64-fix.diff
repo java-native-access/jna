@@ -1,0 +1,16 @@
+diff --git a/src/powerpc/ffi_linux64.c b/src/powerpc/ffi_linux64.c
+index de0d033..7364770 100644
+--- a/src/powerpc/ffi_linux64.c
++++ b/src/powerpc/ffi_linux64.c
+@@ -547,9 +547,9 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
+               if (next_arg.ul == gpr_end.ul)
+                 next_arg.ul = rest.ul;
+               if (vecarg_count < NUM_VEC_ARG_REGISTERS64 && i < nfixedargs)
+-                *vec_base.f128++ = **p_argv.f128;
++		memcpy (vec_base.f128++, *p_argv.f128, sizeof (float128));
+               else
+-                *next_arg.f128 = **p_argv.f128;
++		memcpy (next_arg.f128, *p_argv.f128, sizeof (float128));
+               if (++next_arg.f128 == gpr_end.f128)
+                 next_arg.f128 = rest.f128;
+               vecarg_count++;

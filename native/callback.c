@@ -51,7 +51,7 @@
 extern "C" {
 #endif
 
-#if defined(_WIN32) && !defined(_WIN32_WCE)
+#if defined(_WIN32) && !defined(_WIN32_WCE) && !defined(ASMFN_OFF)
 #include "com_sun_jna_win32_DLLCallback.h"
 #ifdef _WIN64
 #ifdef _MSC_VER
@@ -313,7 +313,6 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 }
 void 
 free_callback(JNIEnv* env, callback *cb) {
-  int i;
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   ffi_closure_free(cb->closure);
   free(cb->arg_types);
@@ -332,6 +331,7 @@ free_callback(JNIEnv* env, callback *cb) {
   }
   free(cb->arg_jtypes);
 #ifdef DLL_FPTRS
+  int i;
   for (i=0;i < DLL_FPTRS;i++) {
     if (fn[i] == cb->saved_x_closure) {
       fn[i] = NULL;
