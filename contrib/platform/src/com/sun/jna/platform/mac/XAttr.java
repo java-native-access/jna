@@ -31,7 +31,7 @@ import com.sun.jna.Pointer;
  * JNA wrapper for &lt;sys/xattr.h&gt;
  *
  */
-interface XAttr extends Library {
+public interface XAttr extends Library {
 
     // load from current image
     XAttr INSTANCE = Native.load(null, XAttr.class);
