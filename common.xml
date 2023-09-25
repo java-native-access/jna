@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JNA-Common" default="default" basedir=".">
+    <property name="name" value="jna"/>
+    <property name="year" value="2018"/>
+    <property name="copyright"
+              value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
+    <property name="vendor" value="JNA Development Team"/>
+    <buildnumber/>
+
+    <!-- JNA library release version - android versionCode is derived from mjar/minor/revision -->
+    <property name="jna.major" value="5"/>
+    <property name="jna.minor" value="14"/>
+    <property name="jna.revision" value="0"/>
+    <property name="jna.build" value="0"/> <!--${build.number}-->
+    <condition property="version.suffix" value="" else="-SNAPSHOT">
+        <or>
+            <isset property="release"/>
+            <isset property="maven-release"/>
+        </or>
+    </condition>
+    <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
+    <property name="osgi.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
+    <!-- jnidispatch library release version -->
+    <property name="jni.major" value="7"/>
+    <property name="jni.minor" value="0"/>
+    <property name="jni.revision" value="0"/>
+    <property name="jni.build" value="0"/> <!--${build.number}-->
+    <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
+    <property name="jni.md5" value="5fb98531302accd485c534c452dd952a"/>
+    <property name="spec.title" value="Java Native Access (JNA)"/>
+    <property name="spec.vendor" value="${vendor}"/>
+    <property name="spec.version" value="${jna.major}"/>
+    <property name="impl.title" value="com.sun.jna"/>
+    <property name="impl.vendor" value="${spec.vendor}"/>
+    <property name="impl.version" value="${jna.version} (b${jna.build})"/>
+    <property name="javac.release" value="8" />
+
+    <property name="build.os.name" value="${os.name}"/>
+    <condition property="build.os.family" value="windows">
+        <contains string="${build.os.name}" substring="windows" casesensitive="false"/>
+    </condition>
+    <condition property="build.os.family" value="mac">
+        <or>
+            <contains string="${build.os.name}" substring="darwin" casesensitive="false"/>
+            <contains string="${build.os.name}" substring="mac" casesensitive="false" />
+        </or>
+    </condition>
+    <property name="build.os.family" value="other"/>
+    <property name="build.os.arch" value="${os.arch}" />
+    <property name="build.os.endianess" value="${sun.cpu.endian}" />
+
+    <!-- Add other supported platforms here -->
+    <condition property="jre.arch" value="x86">
+      <matches pattern="(i[3456]86|pentium)" string="${build.os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="x86-64">
+      <matches pattern="(x86_64|amd64|em64t)" string="${build.os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="ppc">
+      <matches pattern="(powerpc|power)" string="${build.os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="ppc64le">
+      <or>
+	<matches pattern="(powerpc64le|power64le|ppc64le)" string="${build.os.arch}"/>
+	<and>
+	  <matches pattern="(powerpc64|power64|ppc64)" string="${build.os.arch}"/>
+	  <matches pattern="little" string="${build.os.endianess}"/>
+	</and>
+      </or>
+    </condition>
+    <condition property="jre.arch" value="ppc64">
+      <matches pattern="(powerpc64|power64)" string="${build.os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="armel">
+      <and>
+        <matches pattern="arm" string="${build.os.arch}"/>
+        <matches pattern="true" string="${build.isArmSoftFloat}"/>
+      </and>
+    </condition>
+
+    <property name="jre.arch" value="${build.os.arch}"/>
+
+    <condition property="cross-compile" value="true">
+      <isset property="os.prefix"/>
+    </condition>
+
+    <condition property="os.prefix" value="linux-${jre.arch}">
+      <equals arg1="${build.os.name}" arg2="Linux"/>
+    </condition>
+    <condition property="os.prefix" value="aix-${jre.arch}">
+      <equals arg1="${build.os.name}" arg2="AIX"/>
+    </condition>
+    <condition property="os.prefix" value="win32-${jre.arch}">
+      <equals arg1="${build.os.family}" arg2="windows"/>
+    </condition>
+    <condition property="os.prefix" value="darwin-${jre.arch}">
+      <equals arg1="${build.os.family}" arg2="mac"/>
+    </condition>
+    <condition property="os.prefix" value="sunos-${jre.arch}">
+      <equals arg1="${build.os.name}" arg2="SunOS"/>
+    </condition>
+    <condition property="os.prefix" value="freebsd-${jre.arch}">
+      <equals arg1="${build.os.name}" arg2="FreeBSD"/>
+    </condition>
+    <condition property="os.prefix" value="openbsd-${jre.arch}">
+	<equals arg1="${build.os.name}" arg2="OpenBSD"/>
+    </condition>
+    <condition property="os.prefix" value="netbsd-${jre.arch}">
+      <equals arg1="${build.os.name}" arg2="NetBSD"/>
+    </condition>
+    <condition property="os.prefix" value="kfreebsd-${jre.arch}">
+      <equals arg1="${build.os.name}" arg2="GNU/kFreeBSD"/>
+    </condition>
+    <property name="resource.prefix" value="${os.prefix}" description="fallback"/>
+
+    <property name="native.subdir" value="native-${os.prefix}"/>
+</project>

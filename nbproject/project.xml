@@ -41,6 +41,7 @@ auxiliary.show.customizer.message=<message>
             </folders>
             <ide-actions>
                 <action name="build">
+                    <target>compile-tests</target>
                     <target>jar</target>
                 </action>
                 <action name="clean">
@@ -54,6 +55,7 @@ auxiliary.show.customizer.message=<message>
                 </action>
                 <action name="rebuild">
                     <target>clean</target>
+                    <target>compile-tests</target>
                     <target>jar</target>
                 </action>
                 <action name="run.single">
@@ -108,6 +110,32 @@ auxiliary.show.customizer.message=<message>
                         </arity>
                     </context>
                 </action>
+                <action name="test.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>test-single</target>
+                    <context>
+                        <property>tests.include.fullpath</property>
+                        <folder>test</folder>
+                        <pattern>\.java$</pattern>
+                        <format>absolute-path</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="debug.test.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-test-single</target>
+                    <context>
+                        <property>tests.include.fullpath</property>
+                        <folder>test</folder>
+                        <pattern>\.java$</pattern>
+                        <format>absolute-path</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
             <view>
                 <items>
@@ -141,7 +169,7 @@ auxiliary.show.customizer.message=<message>
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="compile">src</classpath>
-                <source-level>1.6</source-level>
+                <source-level>1.8</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>test</package-root>
@@ -152,7 +180,7 @@ auxiliary.show.customizer.message=<message>
             <compilation-unit>
                 <package-root>ant-tools-src</package-root>
                 <classpath mode="compile">src:lib/ant.jar:lib/asm-8.0.1.jar</classpath>
-                <source-level>1.6</source-level>
+                <source-level>1.8</source-level>
             </compilation-unit>
         </java-data>
     </configuration>
