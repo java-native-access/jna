@@ -39,7 +39,7 @@ public class GCWaits {
     }
 
     /** Amount of time to wait for GC, in ms */
-    public static final int GC_WAIT_TIMEOUT = 10000;
+    public static final int GC_WAIT_TIMEOUT = 5000;
     /** How long to sleep between GC */
     public static final int GC_WAIT_INTERVAL = 10;
     /** Number of times to attempt GC */

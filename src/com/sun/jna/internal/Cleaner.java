@@ -66,7 +66,7 @@ public class Cleaner {
      * instances with the Master's reference queue.
      */
 
-    public static final long MASTER_CLEANUP_INTERVAL_MS = 5000;
+    public static final long MASTER_CLEANUP_INTERVAL_MS = 2000;
     public static final long MASTER_MAX_LINGER_MS = 30000;
 
     private static class CleanerImpl {
