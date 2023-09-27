@@ -363,21 +363,19 @@ public class CallbacksTest extends TestCase implements Paths {
 
         cb = null;
         System.gc();
-        for (int i = 0; i < Cleaner.MASTER_CLEANUP_INTERVAL_MS / 10 + 5 && (ref.get() != null || refs.containsValue(ref)); ++i) {
-            Thread.sleep(10); // Give the GC a chance to run
-            System.gc();
+        for (int i = 0; i < GCWaits.GC_WAITS && (ref.get() != null || refs.containsValue(ref)); ++i) {
+            GCWaits.gcRun();
         }
         assertNull("Callback not GC'd", ref.get());
         assertFalse("Callback still in map", refs.containsValue(ref));
 
         ref = null;
         System.gc();
-        for (int i = 0; i < Cleaner.MASTER_CLEANUP_INTERVAL_MS / 10 + 5 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
+        for (int i = 0; i < GCWaits.GC_WAITS && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
             // Flush weak hash map
             refs.size();
-            Thread.sleep(10); // Give the GC a chance to run
             synchronized (CallbacksTest.class) { // the cbstruct.peer cleanup happens in a different thread, make sure we see it here
-                System.gc();
+                GCWaits.gcRun();
             }
         }
         assertEquals("Callback trampoline not freed", 0, cbstruct.peer);
@@ -700,10 +698,9 @@ public class CallbacksTest extends TestCase implements Paths {
         arg = null;
         value = null;
         System.gc();
-        for (int i = 0; i < 100 && (ref.get() != null || m.size() > 0); ++i) {
+        for (int i = 0; i < GCWaits.GC_WAITS && (ref.get() != null || m.size() > 0); ++i) {
             try {
-                Thread.sleep(10); // Give the GC a chance to run
-                System.gc();
+                GCWaits.gcRun();
             } finally {}
         }
         assertNull("NativeString reference not GC'd", ref.get());
@@ -1487,20 +1484,18 @@ public class CallbacksTest extends TestCase implements Paths {
 
         cb = null;
         System.gc();
-        for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
-            Thread.sleep(10); // Give the GC a chance to run
-            System.gc();
+        for (int i = 0; i < GCWaits.GC_WAITS && (ref.get() != null || refs.containsValue(ref)); ++i) {
+            GCWaits.gcRun();
         }
         assertNull("Callback not GC'd", ref.get());
         assertFalse("Callback still in map", refs.containsValue(ref));
 
         ref = null;
         System.gc();
-        for (int i = 0; i < 100 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
+        for (int i = 0; i < GCWaits.GC_WAITS && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
             // Flush weak hash map
             refs.size();
-            Thread.sleep(10); // Give the GC a chance to run
-            System.gc();
+            GCWaits.gcRun();
         }
         assertEquals("Callback trampoline not freed", 0, cbstruct.peer);
 

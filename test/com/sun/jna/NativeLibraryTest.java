@@ -74,8 +74,8 @@ public class NativeLibraryTest extends TestCase {
         System.gc();
         long start = System.currentTimeMillis();
         while (ref.get() != null) {
-            Thread.sleep(10);
-            if ((System.currentTimeMillis() - start) > 5000L)
+            GCWaits.gcRun();
+            if ((System.currentTimeMillis() - start) > GCWaits.GC_WAIT_TIMEOUT)
                 break;
         }
         assertNull("Library not GC'd", ref.get());
@@ -136,8 +136,8 @@ public class NativeLibraryTest extends TestCase {
         System.gc();
         long start = System.currentTimeMillis();
         while (ref.get() != null) {
-            Thread.sleep(10);
-            if ((System.currentTimeMillis() - start) > 5000L) {
+            GCWaits.gcRun();
+            if ((System.currentTimeMillis() - start) > GCWaits.GC_WAIT_TIMEOUT) {
                 fail("Timed out waiting for library to be GC'd");
             }
         }
@@ -175,15 +175,15 @@ public class NativeLibraryTest extends TestCase {
         Function f = lib.getFunction("callCount");
         lib = null;
         System.gc();
-        for (long start = System.currentTimeMillis(); (ref.get() != null) && ((System.currentTimeMillis() - start) < 2000L); ) {
-            Thread.sleep(10);
+        for (long start = System.currentTimeMillis(); (ref.get() != null) && ((System.currentTimeMillis() - start) < GCWaits.GC_WAIT_TIMEOUT); ) {
+            GCWaits.gcRun();
         }
         assertNotNull("Library GC'd when it should not be", ref.get());
         f.invokeInt(new Object[0]);
         f = null;
         System.gc();
-        for (long start = System.currentTimeMillis(); (ref.get() != null) && ((System.currentTimeMillis() - start) < 5000L); ) {
-            Thread.sleep(10);
+        for (long start = System.currentTimeMillis(); (ref.get() != null) && ((System.currentTimeMillis() - start) < GCWaits.GC_WAIT_TIMEOUT); ) {
+            GCWaits.gcRun();
         }
         assertNull("Library not GC'd", ref.get());
     }
