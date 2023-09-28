@@ -45,35 +45,11 @@ public class Cleaner {
     }
 
     private final ReferenceQueue<Object> referenceQueue;
-    private final Thread cleanerThread;
+    private Thread cleanerThread;
     private CleanerRef firstCleanable;
 
     private Cleaner() {
         referenceQueue = new ReferenceQueue<Object>();
-        cleanerThread = new Thread() {
-            @Override
-            public void run() {
-                while(true) {
-                    try {
-                        Reference<? extends Object> ref = referenceQueue.remove();
-                        if(ref instanceof CleanerRef) {
-                            ((CleanerRef) ref).clean();
-                        }
-                    } catch (InterruptedException ex) {
-                        // Can be raised on shutdown. If anyone else messes with
-                        // our reference queue, well, there is no way to separate
-                        // the two cases.
-                        // https://groups.google.com/g/jna-users/c/j0fw96PlOpM/m/vbwNIb2pBQAJ
-                        break;
-                    } catch (Exception ex) {
-                        Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        };
-        cleanerThread.setName("JNA Cleaner");
-        cleanerThread.setDaemon(true);
-        cleanerThread.start();
     }
 
     public synchronized Cleanable register(Object obj, Runnable cleanupTask) {
@@ -83,34 +59,43 @@ public class Cleaner {
     }
 
     private synchronized CleanerRef add(CleanerRef ref) {
-        if(firstCleanable == null) {
-            firstCleanable = ref;
-        } else {
-            ref.setNext(firstCleanable);
-            firstCleanable.setPrevious(ref);
-            firstCleanable = ref;
+        synchronized (referenceQueue) {
+            if (firstCleanable == null) {
+                firstCleanable = ref;
+            } else {
+                ref.setNext(firstCleanable);
+                firstCleanable.setPrevious(ref);
+                firstCleanable = ref;
+            }
+            if (cleanerThread == null) {
+                Logger.getLogger(Cleaner.class.getName()).log(Level.FINE, "Starting CleanerThread");
+                cleanerThread = new CleanerThread();
+                cleanerThread.start();
+            }
+            return ref;
         }
-        return ref;
     }
 
     private synchronized boolean remove(CleanerRef ref) {
-        boolean inChain = false;
-        if(ref == firstCleanable) {
-            firstCleanable = ref.getNext();
-            inChain = true;
+        synchronized (referenceQueue) {
+            boolean inChain = false;
+            if (ref == firstCleanable) {
+                firstCleanable = ref.getNext();
+                inChain = true;
+            }
+            if (ref.getPrevious() != null) {
+                ref.getPrevious().setNext(ref.getNext());
+            }
+            if (ref.getNext() != null) {
+                ref.getNext().setPrevious(ref.getPrevious());
+            }
+            if (ref.getPrevious() != null || ref.getNext() != null) {
+                inChain = true;
+            }
+            ref.setNext(null);
+            ref.setPrevious(null);
+            return inChain;
         }
-        if(ref.getPrevious() != null) {
-            ref.getPrevious().setNext(ref.getNext());
-        }
-        if(ref.getNext() != null) {
-            ref.getNext().setPrevious(ref.getPrevious());
-        }
-        if(ref.getPrevious() != null || ref.getNext() != null) {
-            inChain = true;
-        }
-        ref.setNext(null);
-        ref.setPrevious(null);
-        return inChain;
     }
 
     private static class CleanerRef extends PhantomReference<Object> implements Cleanable {
@@ -125,6 +110,7 @@ public class Cleaner {
             this.cleanupTask = cleanupTask;
         }
 
+        @Override
         public void clean() {
             if(cleaner.remove(this)) {
                 cleanupTask.run();
@@ -150,5 +136,53 @@ public class Cleaner {
 
     public static interface Cleanable {
         public void clean();
+    }
+
+    private class CleanerThread extends Thread {
+
+        private static final long CLEANER_LINGER_TIME = 30000;
+
+        public CleanerThread() {
+            super("JNA Cleaner");
+            setDaemon(true);
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Reference<? extends Object> ref = referenceQueue.remove(CLEANER_LINGER_TIME);
+                    if (ref instanceof CleanerRef) {
+                        ((CleanerRef) ref).clean();
+                    } else if (ref == null) {
+                        synchronized (referenceQueue) {
+                            Logger logger = Logger.getLogger(Cleaner.class.getName());
+                            if (firstCleanable == null) {
+                                cleanerThread = null;
+                                logger.log(Level.FINE, "Shutting down CleanerThread");
+                                break;
+                            } else if (logger.isLoggable(Level.FINER)) {
+                                StringBuilder registeredCleaners = new StringBuilder();
+                                for(CleanerRef cleanerRef = firstCleanable; cleanerRef != null; cleanerRef = cleanerRef.next) {
+                                    if(registeredCleaners.length() != 0) {
+                                        registeredCleaners.append(", ");
+                                    }
+                                    registeredCleaners.append(cleanerRef.cleanupTask.toString());
+                                }
+                                logger.log(Level.FINER, "Registered Cleaners: {0}", registeredCleaners.toString());
+                            }
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    // Can be raised on shutdown. If anyone else messes with
+                    // our reference queue, well, there is no way to separate
+                    // the two cases.
+                    // https://groups.google.com/g/jna-users/c/j0fw96PlOpM/m/vbwNIb2pBQAJ
+                    break;
+                } catch (Exception ex) {
+                    Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 }
