@@ -119,7 +119,7 @@ public class Kernel32Test extends TestCase {
     // see https://github.com/twall/jna/issues/482
     public void testNoDuplicateMethodsNames() {
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(Kernel32.class);
-        if (dupSet.size() > 0) {
+        if (!dupSet.isEmpty()) {
             for (String name : new String[]{
                 // has 2 overloads by design since the API accepts both OSVERSIONINFO and OSVERSIONINFOEX
                 "GetVersionEx",
@@ -648,11 +648,8 @@ public class Kernel32Test extends TestCase {
         File tmp = File.createTempFile("testReadFile", "jna");
         tmp.deleteOnExit();
 
-        FileWriter fw = new FileWriter(tmp);
-        try {
+        try (FileWriter fw = new FileWriter(tmp)) {
             fw.append(expected);
-        } finally {
-            fw.close();
         }
 
         HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
@@ -786,9 +783,7 @@ public class Kernel32Test extends TestCase {
         File delLink = link.toFile();
         delLink.deleteOnExit();
 
-        // Required for FSCTL_SET_REPARSE_POINT
-        Advapi32Util.Privilege restore = new Advapi32Util.Privilege(WinNT.SE_RESTORE_NAME);
-        try {
+        try (Advapi32Util.Privilege restore = new Advapi32Util.Privilege(WinNT.SE_RESTORE_NAME)) { // Required for FSCTL_SET_REPARSE_POINT
             restore.enable();
             HANDLE hFile = Kernel32.INSTANCE.CreateFile(link.toAbsolutePath().toString(),
                     WinNT.GENERIC_READ | WinNT.FILE_WRITE_ATTRIBUTES | WinNT.FILE_WRITE_EA,
@@ -838,9 +833,6 @@ public class Kernel32Test extends TestCase {
             } finally {
                 Kernel32Util.closeHandle(hFile);
             }
-        }
-        finally {
-            restore.close();
         }
     }
 
@@ -908,19 +900,19 @@ public class Kernel32Test extends TestCase {
 
             // Get data and confirm the 1st name is . for the directory itself.
             WIN32_FIND_DATA fd = new WIN32_FIND_DATA(p);
-            String actualFileName = new String(fd.getFileName());
+            String actualFileName = fd.getFileName();
             assertTrue(actualFileName.contentEquals("."));
 
             // Get data and confirm the 2nd name is .. for the directory's parent
             assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
             fd = new WIN32_FIND_DATA(p);
-            actualFileName = new String(fd.getFileName());
+            actualFileName = fd.getFileName();
             assertTrue(actualFileName.contentEquals(".."));
 
             // Get data and confirm the 3rd name is the tmp file name
             assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
             fd = new WIN32_FIND_DATA(p);
-            actualFileName = new String(fd.getFileName());
+            actualFileName = fd.getFileName();
             assertTrue(actualFileName.contentEquals(tmpFile.getName()));
 
             // No more files in directory
@@ -951,19 +943,19 @@ public class Kernel32Test extends TestCase {
 
             // Get data and confirm the 1st name is . for the directory itself.
             WIN32_FIND_DATA fd = new WIN32_FIND_DATA(p);
-            String actualFileName = new String(fd.getFileName());
+            String actualFileName = fd.getFileName();
             assertTrue(actualFileName.contentEquals("."));
 
             // Get data and confirm the 2nd name is .. for the directory's parent
             assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
             fd = new WIN32_FIND_DATA(p);
-            actualFileName = new String(fd.getFileName());
+            actualFileName = fd.getFileName();
             assertTrue(actualFileName.contentEquals(".."));
 
             // Get data and confirm the 3rd name is the tmp file name
             assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
             fd = new WIN32_FIND_DATA(p);
-            actualFileName = new String(fd.getFileName());
+            actualFileName = fd.getFileName();
             assertTrue(actualFileName.contentEquals(tmpFile.getName()));
 
             // No more files in directory
@@ -994,8 +986,7 @@ public class Kernel32Test extends TestCase {
         try {
             // Get data and confirm the 1st name is for the file itself
             WIN32_FIND_DATA fd = new WIN32_FIND_DATA(p);
-            String actualFileName = new String(fd.getFileName());
-            actualFileName = new String(fd.getFileName());
+            String actualFileName = fd.getFileName();
             assertTrue(actualFileName.contentEquals(tmpFile.getName()));
 
             // FindExInfoBasic does not return the short name, so confirm that its empty
@@ -1126,6 +1117,7 @@ public class Kernel32Test extends TestCase {
         assertFalse(Files.exists(Paths.get(tmp.getAbsolutePath())));
     }
 
+    @SuppressWarnings("deprecation")
     public void testGetSetFileTime() throws IOException {
         File tmp = File.createTempFile("testGetSetFileTime", "jna");
         tmp.deleteOnExit();
@@ -1168,7 +1160,7 @@ public class Kernel32Test extends TestCase {
 
             assertTrue(Kernel32.INSTANCE.Process32First(processEnumHandle, processEntry));
 
-            List<Long> processIdList = new ArrayList<Long>();
+            List<Long> processIdList = new ArrayList<>();
             processIdList.add(processEntry.th32ProcessID.longValue());
 
             while (Kernel32.INSTANCE.Process32Next(processEnumHandle, processEntry)) {
@@ -1190,7 +1182,7 @@ public class Kernel32Test extends TestCase {
 
             assertTrue(Kernel32.INSTANCE.Thread32First(threadEnumHandle, threadEntry));
 
-            List<Integer> threadIdList = new ArrayList<Integer>();
+            List<Integer> threadIdList = new ArrayList<>();
             threadIdList.add(threadEntry.th32ThreadID);
 
             while (Kernel32.INSTANCE.Thread32Next(threadEnumHandle, threadEntry)) {
@@ -1206,10 +1198,10 @@ public class Kernel32Test extends TestCase {
     public final void testGetPrivateProfileInt() throws IOException {
         final File tmp = File.createTempFile("testGetPrivateProfileInt", "ini");
         tmp.deleteOnExit();
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        writer.println("[Section]");
-        writer.println("existingKey = 123");
-        writer.close();
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
+            writer.println("[Section]");
+            writer.println("existingKey = 123");
+        }
 
         assertEquals(123, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "existingKey", 456, tmp.getCanonicalPath()));
         assertEquals(456, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "missingKey", 456, tmp.getCanonicalPath()));
@@ -1218,10 +1210,10 @@ public class Kernel32Test extends TestCase {
     public final void testGetPrivateProfileString() throws IOException {
         final File tmp = File.createTempFile("testGetPrivateProfileString", ".ini");
         tmp.deleteOnExit();
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        writer.println("[Section]");
-        writer.println("existingKey = ABC");
-        writer.close();
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
+            writer.println("[Section]");
+            writer.println("existingKey = ABC");
+        }
 
         final char[] buffer = new char[8];
 
@@ -1237,11 +1229,11 @@ public class Kernel32Test extends TestCase {
     public final void testWritePrivateProfileString() throws IOException {
         final File tmp = File.createTempFile("testWritePrivateProfileString", ".ini");
         tmp.deleteOnExit();
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        writer.println("[Section]");
-        writer.println("existingKey = ABC");
-        writer.println("removedKey = JKL");
-        writer.close();
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
+            writer.println("[Section]");
+            writer.println("existingKey = ABC");
+            writer.println("removedKey = JKL");
+        }
 
         assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath()));
         assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "addedKey", "GHI", tmp.getCanonicalPath()));
@@ -1259,13 +1251,10 @@ public class Kernel32Test extends TestCase {
         final File tmp = File.createTempFile("testGetPrivateProfileSection", ".ini");
         tmp.deleteOnExit();
 
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        try {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
             writer.println("[X]");
             writer.println("A=1");
             writer.println("B=X");
-        } finally {
-            writer.close();
         }
 
         final char[] buffer = new char[9];
@@ -1279,12 +1268,9 @@ public class Kernel32Test extends TestCase {
         final File tmp = File.createTempFile("testGetPrivateProfileSectionNames", ".ini");
         tmp.deleteOnExit();
 
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        try {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
             writer.println("[S1]");
             writer.println("[S2]");
-        } finally {
-            writer.close();
         }
 
         final char[] buffer = new char[7];
@@ -1297,23 +1283,20 @@ public class Kernel32Test extends TestCase {
         final File tmp = File.createTempFile("testWritePrivateProfileSection", ".ini");
         tmp.deleteOnExit();
 
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        try {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
             writer.println("[S1]");
             writer.println("A=1");
             writer.println("B=X");
-        } finally {
-            writer.close();
         }
 
         final boolean result = Kernel32.INSTANCE.WritePrivateProfileSection("S1", "A=3\0E=Z\0\0", tmp.getCanonicalPath());
         assertTrue(result);
 
-        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
-        assertEquals(reader.readLine(), "[S1]");
-        assertTrue(reader.readLine().matches("A\\s*=\\s*3"));
-        assertTrue(reader.readLine().matches("E\\s*=\\s*Z"));
-        reader.close();
+        try (BufferedReader reader = new BufferedReader(new FileReader(tmp))) {
+            assertEquals(reader.readLine(), "[S1]");
+            assertTrue(reader.readLine().matches("A\\s*=\\s*3"));
+            assertTrue(reader.readLine().matches("E\\s*=\\s*Z"));
+        }
     }
 
     /**
@@ -1710,7 +1693,7 @@ public class Kernel32Test extends TestCase {
 
 
     public void testEnumResourceTypes() {
-        final List<String> types = new ArrayList<String>();
+        final List<String> types = new ArrayList<>();
         WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
 
             @Override
@@ -1732,7 +1715,7 @@ public class Kernel32Test extends TestCase {
         boolean result = Kernel32.INSTANCE.EnumResourceTypes(null, ertp, null);
         assertTrue("EnumResourceTypes should not have failed.", result);
         assertEquals("GetLastError should be set to 0", WinError.ERROR_SUCCESS, Kernel32.INSTANCE.GetLastError());
-        assertTrue("EnumResourceTypes should return some resource type names", types.size() > 0);
+        assertTrue("EnumResourceTypes should return some resource type names", !types.isEmpty());
     }
 
     public void testModule32FirstW() {
@@ -1976,12 +1959,9 @@ public class Kernel32Test extends TestCase {
         File testFile = File.createTempFile("jna-test", ".txt");
 
         try {
-            OutputStream os = new FileOutputStream(testFile);
-            try {
+            try (OutputStream os = new FileOutputStream(testFile)) {
                 os.write(testString.getBytes("UTF-8"));
                 os.write(0);
-            } finally {
-                os.close();
             }
 
             SYSTEM_INFO lpSystemInfo = new SYSTEM_INFO();

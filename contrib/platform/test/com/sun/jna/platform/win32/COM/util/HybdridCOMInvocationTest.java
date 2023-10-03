@@ -45,7 +45,6 @@ import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
@@ -176,7 +175,7 @@ public class HybdridCOMInvocationTest {
         hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsCombined, pDispParams, result, pExcepInfo, puArgErr);
         assertTrue(COMUtils.SUCCEEDED(hr));
 
-        assertEquals(72.0f, result.floatValue());
+        assertEquals(72.0f, result.floatValue(), 0.1d);
     }
 
     @ComObject(clsId = CLSID_WORD_STRING)
@@ -197,7 +196,7 @@ public class HybdridCOMInvocationTest {
 
         public Float InchesToPoints(Float value) {
             VARIANT.ByReference pvResult = new VARIANT.ByReference();
-            this.oleMethod(OleAuto.DISPATCH_METHOD , pvResult, this.getIDispatch(), "InchesToPoints", new VARIANT[] {new VARIANT(value)});
+            this.oleMethod(OleAuto.DISPATCH_METHOD , pvResult, "InchesToPoints", new VARIANT[] {new VARIANT(value)});
             return pvResult.floatValue();
         }
     }

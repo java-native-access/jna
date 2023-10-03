@@ -23,7 +23,6 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
-import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import java.lang.reflect.InvocationHandler;
@@ -88,6 +87,7 @@ class Convert {
      *
      * @return wrapped VARIANT
      */
+    @SuppressWarnings("deprecation")
     public static VARIANT toVariant(Object value) {
         if (value instanceof VARIANT) {
             return (VARIANT) value;
@@ -298,10 +298,7 @@ class Convert {
                     return t;
                 }
             }
-        } catch (NoSuchMethodException e) {
-        } catch (IllegalAccessException e) {
-        } catch (IllegalArgumentException e) {
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         }
         return null;
     }
