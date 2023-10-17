@@ -25,7 +25,6 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.ObjectFactory;
@@ -61,21 +60,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import org.junit.Before;
 import static com.sun.jna.platform.win32.OaIdlUtil.toPrimitiveArray;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import java.lang.reflect.Field;
-import org.junit.Assume;
 
 public class SAFEARRAYTest {
     static {
@@ -273,6 +272,7 @@ public class SAFEARRAYTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testDataTypes() {
         int idx = 1;
         Pointer dataPointer;
@@ -518,8 +518,8 @@ public class SAFEARRAYTest {
         recordset.Open("SELECT TOP 5 System.ItemPathDisplay, System.ItemName, System.ItemUrl, System.DateCreated FROM SYSTEMINDEX ORDER BY System.ItemUrl", conn, CursorTypeEnum.adOpenUnspecified, LockTypeEnum.adLockUnspecified, -1);
 
         // Save complete list for comparison with subscript list
-        List<String> urls = new ArrayList<String>(5);
-        List<String> names = new ArrayList<String>(5);
+        List<String> urls = new ArrayList<>(5);
+        List<String> names = new ArrayList<>(5);
 
         while (!recordset.getEOF()) {
             WinNT.HRESULT hr;
@@ -774,7 +774,7 @@ public class SAFEARRAYTest {
         private CursorTypeEnum(long value) {
             this.value = value;
         }
-        private long value;
+        private final long value;
 
         @Override
         public long getValue() {
@@ -796,7 +796,7 @@ public class SAFEARRAYTest {
         private LockTypeEnum(long value) {
             this.value = value;
         }
-        private long value;
+        private final long value;
 
         @Override
         public long getValue() {
@@ -831,6 +831,10 @@ public class SAFEARRAYTest {
         /**
          * <p>
          * memberId(10)</p>
+         * @param ConnectionString
+         * @param UserID
+         * @param Password
+         * @param Options
          */
         @ComMethod(name = "Open")
         void Open(String ConnectionString,
@@ -851,6 +855,7 @@ public class SAFEARRAYTest {
         /**
          * <p>
          * memberId(1006)</p>
+         * @return
          */
         @ComProperty(name = "EOF")
         Boolean getEOF();
@@ -858,6 +863,10 @@ public class SAFEARRAYTest {
         /**
          * <p>
          * memberId(1016)</p>
+         * @param Rows
+         * @param Start
+         * @param Fields
+         * @return
          */
         @ComMethod(name = "GetRows")
         SAFEARRAY GetRows(int Rows,
@@ -867,6 +876,8 @@ public class SAFEARRAYTest {
         /**
          * <p>
          * memberId(1016)</p>
+         * @param Rows
+         * @return
          */
         @ComMethod(name = "GetRows")
         SAFEARRAY GetRows(int Rows);
@@ -874,6 +885,7 @@ public class SAFEARRAYTest {
         /**
          * <p>
          * memberId(1016)</p>
+         * @return
          */
         @ComMethod(name = "GetRows")
         SAFEARRAY GetRows();
@@ -888,6 +900,11 @@ public class SAFEARRAYTest {
         /**
          * <p>
          * memberId(1022)</p>
+         * @param Source
+         * @param ActiveConnection
+         * @param CursorType
+         * @param LockType
+         * @param Options
          */
         @ComMethod(name = "Open")
         void Open(Object Source,

@@ -78,6 +78,7 @@ public class Win32ServiceDemo {
         SUFFIXES.add("jna.jar");
         SUFFIXES.add("jna-test.jar");
         SUFFIXES.add("classes");
+        SUFFIXES.add("test-classes");
     }
 
     private final Object waitObject = new Object();

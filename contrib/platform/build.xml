@@ -2,116 +2,118 @@
 <project name="platform"
          default="default"
          basedir="."
-         xmlns:as="antlib:org.codehaus.mojo.animal_sniffer"
          xmlns:if="ant:if"
          xmlns:unless="ant:unless">
     <description>Builds and tests platform-specific code.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
-
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
-
-    (Targets beginning with '-' are not intended to be called on their own.)
-
-    Example of inserting an obfuscator after compilation could look like this:
-
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
-
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
-
-
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
-
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
-
-    An example of overriding the target for project execution could look like this:
-
-        <target name="run" depends="JnaContrib-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
-
-    Notice that the overridden target depends on the jar target and not only on
-    the compile target as the regular run target does. Again, for a list of available
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file.
-
-    -->
+    <import file="../../common.xml" />
+    <property name="build" value="build"/>
+    <property name="classes" location="${build}/classes"/>
+    <property name="debug" value="true"/>
+    <property name="javac.release" value="8"/>
+    <property name="platform.name" value="jna-platform"/>
+    <property name="jar" value="${platform.name}.jar"/>
+    <property name="jar-base" value="${platform.name}-base.jar"/>
+    <property name="jar-jpms" value="${platform.name}-jpms.jar"/>
+    <property name="src" location="src"/>
+    <property name="testjar" value="${platform.name}-test.jar"/>
+    <property name="test.classes" location="${build}/test-classes"/>
+    <property name="test.src" location="test"/>
+    <property name="tests.exclude" value=""/>
+    <property name="tests.exclude-patterns" value=""/>
+    <property name="dist" value="dist" />
+    <path id="src.path">
+        <pathelement location="${src}"/>
+    </path>
+    <path id="compile.path">
+        <fileset dir="../../build">
+            <include name="jna.jar"/>
+        </fileset>
+    </path>
+    <path id="compile-test.path">
+        <path id="test.libs">
+            <fileset dir="../../lib">
+                <include name="junit.jar"/>
+                <include name="hamcrest-core-1.3.jar"/>
+            </fileset>
+            <fileset dir="../../lib/test">
+                <include name="bcpkix-jdk15on-161.jar"/>
+                <include name="bcprov-jdk15on-161.jar"/>
+                <include name="reflections-0.9.11.jar"/>
+                <include name="guava-27.1-jre.jar"/>
+                <include name="javassist-3.12.1.GA.jar"/>
+            </fileset>
+            <fileset dir="../../build">
+                <include name="jna-test.jar"/>
+                <include name="jna.jar"/>
+            </fileset>
+            <pathelement path="../../build/test-classes"/>
+            <pathelement path="${classes}"/>
+        </path>
+    </path>
+    <path id="test.runpath">
+      <pathelement path="../../build/${native.subdir}"/>
+      <pathelement path="${build}/${jar}"/>
+      <pathelement path="${test.classes}"/>
+      <pathelement path="${test.src}"/>
+      <pathelement path="../../lib/clover.jar"/>
+      <path refid="test.libs"/>
+    </path>
 
     <!-- Prepare additional ant task -->
     <path id="maven-ant-tasks.classpath">
-        <pathelement location="../../lib/animal-sniffer-ant-tasks-1.17.jar" />
         <pathelement location="../../lib/maven-ant-tasks-2.1.3.jar" />
     </path>
-    <typedef resource="org/codehaus/mojo/animal_sniffer/antlib.xml"
-             uri="antlib:org.codehaus.mojo.animal_sniffer"
-             classpathref="maven-ant-tasks.classpath" />
 
-    <!-- the -init-macrodef-copylibs target superseeds the target defined in
-    build-impl.xml. The classpath that the base copylibs target adds to the
-    MANIFEST.MF interferes with spring-boot and tomcat   -->
-    <target name="-init-macrodef-copylibs">
-        <macrodef name="copylibs" uri="http://www.netbeans.org/ns/j2se-project/3">
-            <attribute default="${manifest.file}" name="manifest"/>
-            <element name="customize" optional="true"/>
-            <sequential>
-                <property location="${build.classes.dir}" name="build.classes.dir.resolved"/>
-                <pathconvert property="run.classpath.without.build.classes.dir">
-                    <path path="${run.classpath}"/>
-                    <map from="${build.classes.dir.resolved}" to=""/>
-                </pathconvert>
-                <pathconvert pathsep=" " property="jar.classpath">
-                    <path path="${run.classpath.without.build.classes.dir}"/>
-                    <chainedmapper>
-                        <flattenmapper/>
-                        <filtermapper>
-                            <replacestring from=" " to="%20"/>
-                        </filtermapper>
-                        <globmapper from="*" to="lib/*"/>
-                    </chainedmapper>
-                </pathconvert>
-                <taskdef classname="org.netbeans.modules.java.j2seproject.copylibstask.CopyLibs" classpath="${libs.CopyLibs.classpath}" name="copylibs"/>
-                <copylibs compress="${jar.compress}" excludeFromCopy="${copylibs.excludes}" index="${jar.index}" indexMetaInf="${jar.index.metainf}" jarfile="${dist.jar}" manifest="@{manifest}" rebase="${copylibs.rebase}" runtimeclasspath="${run.classpath.without.build.classes.dir}">
-                    <fileset dir="${build.classes.dir}" excludes="${dist.archive.excludes}"/>
-                    <manifest>
-                        <!--<attribute name="Class-Path" value="${jar.classpath}"/>-->
-                        <customize/>
-                    </manifest>
-                </copylibs>
-            </sequential>
-        </macrodef>
+    <target name="clean">
+        <delete failOnError="false" includeEmptyDirs="true">
+            <fileset dir="${build}"/>
+        </delete>
     </target>
+
+    <target name="compile" description="Compile all Java source">
+
+        <mkdir dir="${classes}" />
+
+        <javac release="${javac.release}"
+               destdir="${classes}"
+               includeantruntime="false"
+               deprecation="on"
+               debug="${debug}"
+               encoding="UTF-8"
+               classpathref="compile.path">
+            <src refid="src.path"/>
+        </javac>
+    </target>
+
+    <target name="compile-tests" depends="compile" description="Compile all test code">
+
+        <mkdir dir="${test.classes}" />
+
+        <javac classpathref="compile-test.path"
+               release="${javac.release}"
+               destdir="${test.classes}"
+               includeantruntime="false"
+               excludes="${tests.exclude-patterns}"
+               deprecation="on"
+               debug="${debug}"
+               encoding="UTF-8"
+        >
+            <src path="${test.src}"/>
+            <exclude name="${tests.exclude}"/>
+        </javac>
+        <!-- Create a jar for easy movement of tests, and jar load test -->
+        <jar jarfile="${build}/${testjar}" createUnicodeExtraFields="never" encoding="UTF-8">
+            <fileset dir="${test.classes}">
+                <include name="**/*"/>
+            </fileset>
+            <manifest>
+                <attribute name="permissions" value="all-permissions"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jar" depends="-pre-jar,-build-jar,-post-jar" />
 
     <target name="-prepare-anttools">
         <subant antfile="build-ant-tools.xml" buildpath="${basedir}/../../"></subant>
@@ -178,21 +180,37 @@ com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.s
         </sequential>
     </macrodef>
 
-    <target name="-pre-jar" depends="-prepare-anttools">
-        <delete dir="${build.classes.dir}/META-INF" />
-        <mkdir dir="${build.classes.dir}/META-INF"/>
-        <copy todir="${build.classes.dir}/META-INF">
+    <target name="-pre-jar" depends="-prepare-anttools,compile">
+        <delete dir="${classes}/META-INF" />
+        <mkdir dir="${classes}/META-INF"/>
+        <copy todir="${classes}/META-INF">
             <fileset dir="../../" includes="LICENSE,AL2.0,LGPL2.1"/>
         </copy>
     </target>
 
+    <target name="-build-jar" depends="-pre-jar">
+        <jar jarfile="${build}/${jar-base}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
+            <fileset dir="${classes}" >
+                <patternset>
+                    <include name="**/*"/>
+                </patternset>
+            </fileset>
+            <fileset dir="${src}" >
+                <patternset>
+                    <include name="**/*"/>
+                    <exclude name="**/*.java"/>
+                </patternset>
+            </fileset>
+        </jar>
+    </target>
+
     <target name="-post-jar" depends="-prepare-anttools">
-        <delete dir="${build.dir}/manifest"/>
-        <mkdir dir="${build.dir}/manifest"/>
-        <build-manifest target="${build.dir}/manifest/module.mf" module-info="true"/>
-        <build-manifest target="${build.dir}/manifest/automatic.mf" module-info="false"/>
+        <delete dir="${build}/manifest"/>
+        <mkdir dir="${build}/manifest"/>
+        <build-manifest target="${build}/manifest/module.mf" module-info="true"/>
+        <build-manifest target="${build}/manifest/automatic.mf" module-info="false"/>
         <ModuleGenerator
-            targetFile="${build.dir}/manifest/module-info.class"
+            targetFile="${build}/manifest/module-info.class"
             name="com.sun.jna.platform"
             version="${osgi.version}"
             open="false"
@@ -216,55 +234,61 @@ com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.s
             <requires module="java.datatransfer" transitive="true" />
             <requires module="com.sun.jna" transitive="true" />
         </ModuleGenerator>
-        <move file="dist/jna-platform.jar" tofile="${build.dir}/jna-platform-base.jar" />
-        <jar jarfile="dist/jna-platform.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build.dir}/manifest/automatic.mf">
-            <zipfileset src="${build.dir}/jna-platform-base.jar" excludes="META-INF/MANIFEST.mf"/>
+        <jar jarfile="${dist}/${jar}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build}/manifest/automatic.mf">
+            <zipfileset src="${build}/${jar-base}" excludes="META-INF/MANIFEST.mf"/>
         </jar>
-        <jar jarfile="dist/jna-platform-jpms.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build.dir}/manifest/module.mf">
-            <zipfileset src="${build.dir}/jna-platform-base.jar" excludes="META-INF/MANIFEST.mf"/>
-            <zipfileset dir="${build.dir}/manifest/" includes="module-info.class" prefix="META-INF/versions/9"/>
+        <jar jarfile="${dist}/jna-platform-jpms.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build}/manifest/module.mf">
+            <zipfileset src="${build}/${jar-base}" excludes="META-INF/MANIFEST.mf"/>
+            <zipfileset dir="${build}/manifest/" includes="module-info.class" prefix="META-INF/versions/9"/>
         </jar>
     </target>
 
-    <condition property="compatibility-check" value="true">
-        <equals arg1="${javac.target}" arg2="1.6" />
-    </condition>
-
-    <target name="-check-java6-compatibility" depends="init,compile,compile-test,-pre-test-run" if="compatibility-check">
-      <echo>Checking JDK compatibility 1.6</echo>
-
-      <echo></echo>
-
-      <as:check-signature signature="../../lib/java16-1.1.signature">
-          <path path="${classes}"/>
-      </as:check-signature>
-
-      <echo></echo>
-    </target>
-
-    <target name="-warn-java6-compatiblity" depends="init,compile,compile-test,-pre-test-run" unless="compatibility-check">
-      <echo level="warn">Build is not Java 6 compatible and NOT A PRODUCTION BUILD</echo>
-    </target>
-
-    <target name="test" depends="init,compile,compile-test,-pre-test-run,-check-java6-compatibility,-warn-java6-compatiblity" description="Run platform unit tests.">
-      <echo>Running platform tests: ${test.src.dir}</echo>
+    <target name="test" depends="compile,compile-tests" description="Run platform unit tests.">
+      <echo>Running platform tests: ${test.src}</echo>
+      <condition property="test.jdwp" value="-Xrunjdwp:transport=dt_socket,address=${test.debugport},server=y,suspend=y">
+        <isset property="test.debugport" />
+      </condition>
       <property name="test.fork" value="yes"/>
-      <property name="reports.junit" location="${build.dir}/reports/junit/${os.prefix}"/>
-      <property name="results.junit" location="${build.dir}/junit-results/${os.prefix}"/>
+      <property name="reports.junit" location="${build}/reports/junit/${os.prefix}"/>
+      <property name="results.junit" location="${build}/junit-results/${os.prefix}"/>
       <mkdir dir="${results.junit}"/>
       <echo>Saving test results in ${results.junit}</echo>
       <condition property="tests.platform.mac" value="**/mac/**/*Test.java">
-        <os family="mac"/>
+        <and>
+          <os family="mac"/>
+          <not>
+            <isset property="tests.include" />
+          </not>
+        </and>
       </condition>
       <condition property="tests.platform.windows" value="**/win32/**/*Test.java">
-        <os family="windows"/>
+        <and>
+          <os family="windows"/>
+          <not>
+            <isset property="tests.include" />
+          </not>
+        </and>
       </condition>
       <condition property="tests.platform.linux" value="**/linux/**/*Test.java">
-        <os name="Linux"/>
+        <and>
+          <os name="Linux"/>
+          <not>
+            <isset property="tests.include" />
+          </not>
+        </and>
       </condition>
       <condition property="tests.platform.unix" value="**/unix/**/*Test.java">
-        <and><os family="unix"/><not><os family="mac"/></not></and>
+        <and>
+          <os family="unix"/>
+          <not>
+            <os family="mac"/>
+          </not>
+          <not>
+            <isset property="tests.include" />
+          </not>
+        </and>
       </condition>
+      <property name="tests.include" value="com/sun/jna/platform/*Test.java"/>
       <property name="tests.platform.mac" value=""/>
       <property name="tests.platform.windows" value=""/>
       <property name="tests.platform.linux" value=""/>
@@ -284,6 +308,7 @@ com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.s
       <propertyset id="headless">
         <propertyref prefix="java.awt.headless"/>
       </propertyset>
+      <echo>tests.include=${tests.include}</echo>
       <echo>tests.platform.mac=${tests.platform.mac}</echo>
       <echo>tests.platform.windows=${tests.platform.windows}</echo>
       <echo>tests.platform.linux=${tests.platform.linux}</echo>
@@ -291,7 +316,8 @@ com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.s
       <propertyset id="native.api.windows">
         <propertyref name="w32.ascii"/>
       </propertyset>
-      <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build.dir}">
+      <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
+        <jvmarg if:set="test.jdwp" value="${test.jdwp}" />
         <!-- optionally run headless -->
         <syspropertyset refid="headless"/>
         <!-- avoid VM conflicts with JNA protected mode -->
@@ -301,13 +327,13 @@ com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.s
         <!-- Optionally force native API on Windows -->
         <syspropertyset refid="native.api.windows"/>
         <jvmarg value="${vmopt.arch}"/>
-        <classpath><path path="${run.test.classpath}"/><path path="${file.reference.jna.build}/test-classes"/></classpath>
+        <classpath><path refid="test.runpath"/></classpath>
         <formatter type="brief" usefile="false"/>
         <formatter type="xml"/>
         <batchtest todir="${results.junit}">
-          <fileset dir="${test.src.dir}" excludes="${tests.exclude-patterns}">
+          <fileset dir="${test.src}" excludes="${tests.exclude-patterns}">
             <!-- Until StructureFieldOrderTest gets fixed up a little -->
-            <include name="com/sun/jna/platform/*Test.java" />
+            <include name="${tests.include}" />
             <include name="${tests.platform.mac}"/>
             <include name="${tests.platform.windows}"/>
             <include name="${tests.platform.linux}"/>
@@ -324,13 +350,5 @@ com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.s
       </junitreport>
       <echo message="View test report in file://${reports.junit}/index.html" />
       <fail if="testfailure">One or more tests failed</fail>
-    </target>
-
-    <!-- One-off test to check field order definitions -->
-    <target name="test-field-order" depends="-pre-test-run-single" >
-        <!--<property name="test.includes" value="com/sun/jna/platform/**/*.java"/>-->
-        <property name="test.includes" value="com/sun/jna/platform/StructureFieldOrderTest.java"/>
-        <property name="javac.includes" value="**/*"/>
-        <antcall target="test-single"/>
     </target>
 </project>

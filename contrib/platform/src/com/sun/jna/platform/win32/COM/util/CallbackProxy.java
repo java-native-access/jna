@@ -56,6 +56,7 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.lang.reflect.InvocationTargetException;
 
 public class CallbackProxy implements IDispatchCallback {
     // Helper declarations, initialized to default values by jvm
@@ -85,7 +86,7 @@ public class CallbackProxy implements IDispatchCallback {
     public DispatchListener dispatchListener;
     Map<DISPID, Method> dsipIdMap;
 
-    REFIID createRIID(Class<?> comEventCallbackInterface) {
+    private REFIID createRIID(Class<?> comEventCallbackInterface) {
         ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
         if (null == comInterfaceAnnotation) {
             throw new COMException(
@@ -98,8 +99,9 @@ public class CallbackProxy implements IDispatchCallback {
         return new REFIID(new IID(iidStr).getPointer());
     }
 
-    Map<DISPID, Method> createDispIdMap(Class<?> comEventCallbackInterface) {
-        Map<DISPID, Method> map = new HashMap<DISPID, Method>();
+    @SuppressWarnings("deprecation") // ComEventCallback is used here to be backwards compatible
+    private Map<DISPID, Method> createDispIdMap(Class<?> comEventCallbackInterface) {
+        Map<DISPID, Method> map = new HashMap<>();
 
         for (Method meth : comEventCallbackInterface.getMethods()) {
             ComEventCallback callbackAnnotation = meth.getAnnotation(ComEventCallback.class);
@@ -132,7 +134,7 @@ public class CallbackProxy implements IDispatchCallback {
         return map;
     }
 
-    int fetchDispIdFromName(ComEventCallback annotation) {
+    private int fetchDispIdFromName(ComEventCallback annotation) {
         // TODO
         return -1;
     }
@@ -233,7 +235,7 @@ public class CallbackProxy implements IDispatchCallback {
         try {
             eventMethod.invoke(comEventCallbackListener, params);
         } catch (Exception e) {
-            List<String> decodedClassNames = new ArrayList<String>(params.length);
+            List<String> decodedClassNames = new ArrayList<>(params.length);
             for (Object o : params) {
                 if (o == null) {
                     decodedClassNames.add("NULL");
@@ -299,10 +301,12 @@ public class CallbackProxy implements IDispatchCallback {
         return new HRESULT(WinError.E_NOINTERFACE);
     }
 
+    @Override
     public int AddRef() {
         return 0;
     }
 
+    @Override
     public int Release() {
         return 0;
     }

@@ -270,11 +270,13 @@ public class ConvertTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testConvertDate() {
         testConvertDate(new Date(2015 - 1900, 1, 1, 9, 0, 0));
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testConvertDstOffsetTime() {
         TimeZone timeZone = TimeZone.getDefault();
         try {
@@ -288,6 +290,7 @@ public class ConvertTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testConvertMillisecondTime() {
         testConvertDate(new Date(2015 - 1900, 1, 1, 0, 0, 0), 1);
         testConvertDate(new Date(2015 - 1900, 1, 1, 0, 0, 0), 499);
@@ -375,6 +378,7 @@ enum TestEnum implements IComEnum {
         this.value = val;
     }
 
+    @Override
     public long getValue() {
         return this.value;
     }

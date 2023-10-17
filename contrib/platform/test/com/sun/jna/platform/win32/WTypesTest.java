@@ -69,6 +69,7 @@ public class WTypesTest extends TestCase {
         assertEquals(fromPointer.getValue(), TEST_STRING);
     }
 
+    @SuppressWarnings("deprecation")
     public void testBSTRBasic() {
         String demoString = "input\u00D6\u00E4\u00DC?!";
         // Allocation via system and the "correct" way

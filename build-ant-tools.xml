@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JNA" default="default" basedir=".">
+    <import file="common.xml" />
     <description>Builds and tests JNA</description>
     <property name="build" value="build" />
     <target name="default">
@@ -8,6 +9,7 @@
                destdir="${build}/ant-tools"
                includeantruntime="false"
                encoding="UTF-8"
+               release="${javac.release}"
         >
             <src path="src" />
             <src path="ant-tools-src" />

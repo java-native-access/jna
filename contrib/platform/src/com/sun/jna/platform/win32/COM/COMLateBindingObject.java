@@ -337,6 +337,8 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param methodName
+     * @param dispatch
      * @deprecated Use {@link #invokeNoReply(java.lang.String)}
      */
     @Deprecated
@@ -345,6 +347,8 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param methodName
+     * @param comObject
      * @deprecated Use {@link #invokeNoReply(java.lang.String)}
      */
     @Deprecated
@@ -366,6 +370,9 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param methodName
+     * @param dispatch
+     * @param arg
      * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     @Deprecated
@@ -375,6 +382,10 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param methodName
+     * @param arg2
+     * @param dispatch
+     * @param arg1
      * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])}
      */
     @Deprecated
@@ -385,6 +396,10 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param methodName
+     * @param arg1
+     * @param comObject
+     * @param arg2
      * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])}
      */
     @Deprecated
@@ -395,6 +410,9 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param methodName
+     * @param comObject
+     * @param arg
      * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     @Deprecated
@@ -406,6 +424,9 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
 
     /**
+     * @param methodName
+     * @param dispatch
+     * @param args
      * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])}
      */
     @Deprecated
@@ -526,6 +547,8 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param propertyName
+     * @param value
      * @deprecated Use {@link #setProperty(java.lang.String, com.sun.jna.platform.win32.COM.Dispatch)}
      */
     @Deprecated
@@ -587,6 +610,9 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param propertyName
+     * @param iDispatch
+     * @param value
      * @deprecated Use {@link #setProperty(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     @Deprecated
@@ -597,6 +623,9 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
+     * @param propertyName
+     * @param comObject
+     * @param value
      * @deprecated Use {@link #setProperty(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     @Deprecated
@@ -611,6 +640,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
      *
      * @return the variant
      */
+    @SuppressWarnings("deprecation")
     public VARIANT toVariant() {
         return new VARIANT(this.getIDispatch());
     }

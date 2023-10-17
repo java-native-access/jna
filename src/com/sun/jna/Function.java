@@ -81,7 +81,7 @@ public class Function extends Pointer {
     public static final int USE_VARARGS = 0xFF;
     /** Offset of USE_VARARGS in call flags */
     @java.lang.annotation.Native
-    public static final int USE_VARARGS_SHIFT = 7;
+    private static final int USE_VARARGS_SHIFT = 7;
 
     static final Integer INTEGER_TRUE = Integer.valueOf(-1);
     static final Integer INTEGER_FALSE = Integer.valueOf(0);

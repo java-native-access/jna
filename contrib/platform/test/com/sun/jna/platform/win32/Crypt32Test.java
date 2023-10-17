@@ -34,12 +34,14 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
+
 import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_CONTENT_FLAG_ALL;
 import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_CONTENT_FLAG_PFX_AND_LOAD;
 import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_FORMAT_FLAG_ALL;
 import static com.sun.jna.platform.win32.WinCrypt.CERT_QUERY_OBJECT_FILE;
 import static com.sun.jna.platform.win32.WinCrypt.PKCS_7_ASN_ENCODING;
 import static com.sun.jna.platform.win32.WinCrypt.X509_ASN_ENCODING;
+
 import com.sun.jna.platform.win32.WinCryptUtil.MANAGED_CRYPT_SIGN_MESSAGE_PARA;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -52,6 +54,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +74,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /**
@@ -675,6 +679,7 @@ public class Crypt32Test extends TestCase {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     private Path createTestCrl() {
         try {
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -695,14 +700,8 @@ public class Crypt32Test extends TestCase {
             crlBuilder.addExtension(Extension.cRLNumber, false, new CRLNumber(new BigInteger("2")));
             X509CRLHolder holder = crlBuilder.build(caSigner);
 
-            OutputStream fos = null;
-            try {
-                fos = Files.newOutputStream(tempFile);
+            try (OutputStream fos = Files.newOutputStream(tempFile)) {
                 fos.write(holder.getEncoded());
-            } finally {
-                if (fos != null) {
-                    fos.close();
-                }
             }
 
             return tempFile;

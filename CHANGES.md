@@ -24,6 +24,8 @@ Important Changes
 -----------------
 * The interfaces between Java and native code have changed, so `libjnidispatch`
   must be rebuilt to be compatible with this release.
+* Release drops support for JDKs 6 + 7, so you'll need at least JDK 8 to
+  update to use this version.
 
 Release (5.13.0)
 ================

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JNA" default="default" basedir="." 
          xmlns:artifact="antlib:org.apache.maven.artifact.ant"
-         xmlns:as="antlib:org.codehaus.mojo.animal_sniffer"
          xmlns:if="ant:if"
          xmlns:unless="ant:unless">
   <description>Builds and tests JNA</description>
@@ -13,8 +12,7 @@
        support it).
 
        Cross-compile by specifying -Dos.prefix={name-arch} to ant
-       (cross-compile currently only configured/tested on w32ce-arm and
-       android targets) 
+       (cross-compile currently only configured/tested on android targets)
 
        Use ANT_OPTS=-D-native=true to build native parts, or directly
          invoke the native or test targets
@@ -33,7 +31,7 @@
 
   <!-- global properties -->
   <!-- (all build-related props should go in -dynamic-properties) -->
-  <property name="name" value="jna"/>
+  <import file="common.xml" />
   <property name="jar" value="${name}.jar"/>
   <property name="aar" value="${name}.aar"/>
   <property name="minjar" value="${name}-min.jar"/>
@@ -55,74 +53,7 @@
   <property name="doc" location="doc"/>
   <property name="javadoc" location="${doc}/javadoc"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
-  <property name="vendor" value="JNA Development Team"/>
-  <property name="year" value="2018"/>
-  <property name="copyright"
-            value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
-  <buildnumber/>
 
-  <!-- JNA library release version - android versionCode is derived from mjar/minor/revision -->
-  <property name="jna.major" value="5"/>
-  <property name="jna.minor" value="14"/>
-  <property name="jna.revision" value="0"/>
-  <property name="jna.build" value="0"/> <!--${build.number}-->
-  <condition property="version.suffix" value="" else="-SNAPSHOT">
-    <or>
-      <isset property="release"/>
-      <isset property="maven-release"/>
-    </or>
-  </condition>
-  <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
-  <property name="osgi.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
-  <!-- jnidispatch library release version -->
-  <property name="jni.major" value="7"/>
-  <property name="jni.minor" value="0"/>
-  <property name="jni.revision" value="0"/>
-  <property name="jni.build" value="0"/> <!--${build.number}-->
-  <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="5fb98531302accd485c534c452dd952a"/>
-  <property name="spec.title" value="Java Native Access (JNA)"/>
-  <property name="spec.vendor" value="${vendor}"/>
-  <property name="spec.version" value="${jna.major}"/>
-  <property name="impl.title" value="com.sun.jna"/>
-  <property name="impl.vendor" value="${spec.vendor}"/>
-  <property name="impl.version" value="${jna.version} (b${jna.build})"/>
-
-  <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
-  <condition property="compatibility" value="1.4">
-    <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
-  </condition>
-  <condition property="test.compatibility" value="1.4">
-    <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
-  </condition>
-
-  <!--
-    Default compatibility, 1.6, or whatever version is running
-
-    Release builds of JNA target 1.6 and should be build on JDK 8, as JDK 9
-    introduced changes in the ByteBuffer class, which result in classes, that
-    can't be loaded on Java 6.
-
-    JDK 11 is the last JDK, that supports creation of Java 6 compatible class
-    files.
-  -->
-  <condition property="compatibility" value="1.6" else="9">
-    <matches pattern="^1\.\d+$" string="${ant.java.version}"/>
-  </condition>
-
-  <condition property="compatibility-check" value="true">
-    <equals arg1="${compatibility}" arg2="1.6" />
-  </condition>
-
-  <property name="platform.compatibility" value="${compatibility}" />
-
-  <!-- JNA tests require at least 1.8 compatiblity -->
-  <condition property="test.compatibility" value="1.8" else="${compatibility}">
-    <or>
-        <equals arg1="${compatibility}" arg2="1.6"/>
-        <equals arg1="${compatibility}" arg2="1.7"/>
-    </or>
-  </condition>
   <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java,**/WebStartTest.java">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
@@ -189,19 +120,6 @@
   </target>
 
   <target name="-dynamic-properties" depends="-prepare-anttools">
-    <property name="build.os.name" value="${os.name}"/> 
-    <condition property="build.os.family" value="windows">
-        <contains string="${build.os.name}" substring="windows" casesensitive="false"/>
-    </condition>
-    <condition property="build.os.family" value="mac">
-        <or>
-            <contains string="${build.os.name}" substring="darwin" casesensitive="false"/>
-            <contains string="${build.os.name}" substring="mac" casesensitive="false" />
-        </or>
-    </condition>
-    <property name="build.os.family" value="other"/>
-    <property name="build.os.arch" value="${os.arch}" />
-    <property name="build.os.endianess" value="${sun.cpu.endian}" />
 
     <condition property="-native" value="true">
       <not><isset property="build-native"/></not>
@@ -238,9 +156,6 @@
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
     </condition>
-    <condition property="cross-compile" value="true">
-      <isset property="os.prefix"/>
-    </condition>
 
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
@@ -256,68 +171,8 @@
     />
     <BuildArmSoftFloatDetector targetProperty="build.isArmSoftFloat"/>
 
-    <!-- Add other supported platforms here -->
-    <condition property="jre.arch" value="x86">
-      <matches pattern="(i[3456]86|pentium)" string="${build.os.arch}"/>
-    </condition>
-    <condition property="jre.arch" value="x86-64">
-      <matches pattern="(x86_64|amd64|em64t)" string="${build.os.arch}"/>
-    </condition>
-    <condition property="jre.arch" value="ppc">
-      <matches pattern="(powerpc|power)" string="${build.os.arch}"/>
-    </condition>
-    <condition property="jre.arch" value="ppc64le">
-      <or>
-	<matches pattern="(powerpc64le|power64le|ppc64le)" string="${build.os.arch}"/>
-	<and>
-	  <matches pattern="(powerpc64|power64|ppc64)" string="${build.os.arch}"/>
-	  <matches pattern="little" string="${build.os.endianess}"/>
-	</and>
-      </or>
-    </condition>
-    <condition property="jre.arch" value="ppc64">
-      <matches pattern="(powerpc64|power64)" string="${build.os.arch}"/>
-    </condition>
-    <condition property="jre.arch" value="armel">
-      <and>
-        <matches pattern="arm" string="${build.os.arch}"/>
-        <matches pattern="true" string="${build.isArmSoftFloat}"/>
-      </and>
-    </condition>
-    
-    <property name="jre.arch" value="${build.os.arch}"/>
-    
-    <condition property="os.prefix" value="linux-${jre.arch}">
-      <equals arg1="${build.os.name}" arg2="Linux"/>
-    </condition>
-    <condition property="os.prefix" value="aix-${jre.arch}">
-      <equals arg1="${build.os.name}" arg2="AIX"/>
-    </condition>
-    <condition property="os.prefix" value="win32-${jre.arch}">
-      <equals arg1="${build.os.family}" arg2="windows"/>
-    </condition>
-    <condition property="os.prefix" value="darwin-${jre.arch}">
-      <equals arg1="${build.os.family}" arg2="mac"/>
-    </condition>
-    <condition property="os.prefix" value="sunos-${jre.arch}">
-      <equals arg1="${build.os.name}" arg2="SunOS"/>
-    </condition>
-    <condition property="os.prefix" value="freebsd-${jre.arch}">
-      <equals arg1="${build.os.name}" arg2="FreeBSD"/>
-    </condition>
-    <condition property="os.prefix" value="openbsd-${jre.arch}">
-	<equals arg1="${build.os.name}" arg2="OpenBSD"/>
-    </condition>
-    <condition property="os.prefix" value="netbsd-${jre.arch}">
-      <equals arg1="${build.os.name}" arg2="NetBSD"/>
-    </condition>
-    <condition property="os.prefix" value="kfreebsd-${jre.arch}">
-      <equals arg1="${build.os.name}" arg2="GNU/kFreeBSD"/>
-    </condition>
-    <property name="resource.prefix" value="${os.prefix}" description="fallback"/>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
     <!-- Keep all natives separate -->
-    <property name="native.subdir" value="native-${os.prefix}"/>
     <condition property="jdk.home" value="${java.home}">
       <available file="${java.home}/include"/>
     </condition>
@@ -352,7 +207,7 @@
     <mkdir dir="${doc}"/>
     <mkdir dir="${build.aar}"/>
 
-    <echo>Java version ${java.version}, compatibility: ${compatibility}, ant: ${ant.java.version}</echo>
+    <echo>Java version ${java.version}, compatibility: ${javac.release}, ant: ${ant.java.version}</echo>
     <echo>JNA version ${jna.version}, native ${jni.version}, android ${android.versionCode}</echo>
     <echo>${java.vm.name} (${java.vm.vendor}, ${java.vm.version})</echo>
     <echo>java.home=${java.home}</echo>
@@ -406,8 +261,7 @@
                    replace='VERSION_NATIVE = "${jni.version}";'
                    file="${build}/jna-src/com/sun/jna/Version.java"/>
 
-    <javac source="${compatibility}"
-           target="${compatibility}"
+    <javac release="${javac.release}"
            destdir="${classes}"
            includeantruntime="false"
            deprecation="on"
@@ -416,9 +270,7 @@
            nativeheaderdir="${build.headers}">
       <src location="${build}/jna-src/com/sun/jna" />
     </javac>
-    <javac classpath="${compatibility}"
-           source="${compatibility}"
-           target="${compatibility}"
+    <javac release="${javac.release}"
            destdir="${classes}"
            includeantruntime="false"
            deprecation="on" 
@@ -760,19 +612,6 @@ osname=macosx;processor=aarch64
 
   <target name="platform-jar" depends="jar">
     <subant target="jar" failonerror="true">
-      <property name="file.reference.jna.build" location="${build}"/>
-      <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" refid="test.libs"/>
-      <property name="javac.source" value="${platform.compatibility}"/>
-      <property name="javac.target" value="${platform.compatibility}"/>
-      <!-- OSGi manifest properties -->
-      <property name="vendor" value="${vendor}"/>
-      <property name="impl.title" value="${impl.title}.platform"/>
-      <property name="impl.version" value="${impl.version}"/>
-      <property name="spec.title" value="${spec.title}"/>
-      <property name="spec.vendor" value="${spec.vendor}"/>
-      <property name="spec.version" value="${spec.version}"/>
-      <property name="osgi.version" value="${osgi.version}"/>
       <fileset dir="${contrib}" includes="platform/build.xml" />
     </subant>
     <!-- Sources package as required by maven -->
@@ -786,8 +625,9 @@ osname=macosx;processor=aarch64
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" refid="test.libs"/>
-      <property name="javac.source" value="${compatibility}" />
-      <property name="javac.target" value="${compatibility}" />
+      <property name="javac.source" value="${javac.release}" />
+      <property name="javac.target" value="${javac.release}" />
+      <property name="javac.release" value="${javac.release}" />
       <fileset dir="${contrib}" includes="*/build.xml" excludes="platform/build.xml"/>
     </subant>
   </target>
@@ -1189,11 +1029,10 @@ cd ..
           description="Compile test code which does not have additional native
                        dependencies">
     <javac classpathref="compile-test.path"
-           source="${test.compatibility}"
-           target="${test.compatibility}"
-           destdir="${test.classes}"
+           release="${javac.release}"
            includeantruntime="false"
            includes="**/StructureFieldOrderInspector.java"
+           destdir="${test.classes}"
            deprecation="on" 
            debug="${debug}"
            encoding="UTF-8"
@@ -1205,8 +1044,7 @@ cd ..
   <target name="compile-tests" depends="compile,native,jar"
   	description="Compile all test code">
     <javac classpathref="compile-test.path"
-           source="${test.compatibility}"
-           target="${test.compatibility}"
+           release="${javac.release}"
            destdir="${test.classes}"
            includeantruntime="false"
            excludes="${tests.exclude-patterns}"
@@ -1336,25 +1174,9 @@ cd ..
     <property name="build-native" value="true"/>
   </target>
 
-  <target name="-check-java6-compatibility" depends="-enable-native,jar,compile-tests" if="compatibility-check" unless="clover">
-    <echo>Checking JDK compatibility 1.6</echo>
-
-    <echo></echo>
-
-    <as:check-signature signature="lib/java16-1.1.signature">
-        <path path="${classes}"/>
-    </as:check-signature>
-
-    <echo></echo>
-  </target>
-
-  <target name="-warn-java6-compatiblity" depends="-enable-native,jar,compile-tests" unless="compatibility-check">
-    <echo level="warn">Build is not Java 6 compatible and NOT A PRODUCTION BUILD</echo>
-  </target>
-
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="-enable-native,jar,compile-tests,-check-java6-compatibility,-warn-java6-compatiblity" unless="cross-compile"
+  <target name="test" depends="-enable-native,jar,compile-tests" unless="cross-compile"
           description="Run all unit tests">
 
     <property name="test.fork" value="yes"/>
@@ -1429,12 +1251,8 @@ cd ..
 
   <target name="test-platform" depends="compile-some-tests,platform-jar"
           description="Run platform-specific tests">
-    <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
-      <property name="file.reference.jna.build" location="${build}"/>
-      <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" refid="test.libs"/>
-      <property name="javac.source" value="${test.compatibility}"/>
-      <property name="javac.target" value="${test.compatibility}"/>
+    <subant target="test" failonerror="true">
+      <property name="javac.release" value="${javac.release}"/>
       <fileset dir="${contrib}" includes="platform/build.xml"/>
     </subant>
   </target>
@@ -1492,7 +1310,7 @@ cd ..
       <doctitle>JNA API Documentation</doctitle>
       <header>${header}</header>
       <bottom>${footer}</bottom>
-      <link href="http://download.oracle.com/javase/${compatibility}/docs/api/"/>
+      <link href="http://download.oracle.com/javase/${javac.release}/docs/api/"/>
 
       <packageset dir="${src}" defaultexcludes="yes">
         <patternset>

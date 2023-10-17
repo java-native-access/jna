@@ -89,6 +89,7 @@ public interface OaIdl {
     // The DATE Type is defined in localtime and the java Date type always contains
     // a a timezone offset, so the difference has to be calculated and can't be
     // predetermined
+    @SuppressWarnings("deprecation")
     public static final long DATE_OFFSET = new Date(1899 - 1900, 12 - 1, 30, 0, 0, 0).getTime();
 
     /**
@@ -886,6 +887,7 @@ public interface OaIdl {
         /**
          * Implemented to satisfy Closeable interface, delegates to destroy.
          */
+        @Override
         public void close() {
             destroy();
         }

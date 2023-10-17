@@ -112,6 +112,7 @@ public class VariantTest extends TestCase {
         pvRecord2 = (VARIANT._VARIANT.__VARIANT.BRECORD)variant.getValue();
     }
 
+    @SuppressWarnings("deprecation")
     public void testDATECalculation() {
         // Samples from MSDN to ensure correct implementation
         // Definition is to be found here: https://msdn.microsoft.com/de-de/library/82ab7w69.aspx
@@ -164,6 +165,7 @@ public class VariantTest extends TestCase {
                      testDate, new DATE(testDate).getAsJavaDate());
     }
 
+    @SuppressWarnings("deprecation")
     public void testVariantConstructors() {
         VARIANT variant;
 
