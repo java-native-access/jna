@@ -63,16 +63,6 @@ public interface WinGDI {
     public static class DEVMODE extends Structure {
         public static class ByReference extends DEVMODE implements Structure.ByReference {}
         private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
-        private static boolean XP_OR_HIGHER = false;
-        static {
-            try {
-                String osVersion = String.getString("os.version");
-                if(osVersion != null) {
-                    float osVersion = Float.parseFloat(osVersion);
-                    XP_OR_HIGHER = osVersion >= 5.1f;
-                }
-            } catch(ParseException ignore) {}
-        }
 
         /**
          * A zero-terminated character array that specifies the "friendly" name of the printer or display
@@ -203,7 +193,7 @@ public interface WinGDI {
         public int dmPelsHeight;
         public DUMMYUNIONNAME2 dummyunionname2;
         public POINT dmPosition;
-        public DUMMYSTRUCTNAME2 dummystructname2;
+        public DUMMYUNIONNAME.DUMMYSTRUCTNAME2 dummystructname2;
 
         public static class DUMMYUNIONNAME extends Union {
             public DUMMYSTRUCTNAME dummystructname;
@@ -342,9 +332,7 @@ public interface WinGDI {
                 public int dmDisplayFixedOutput;
 
                 public DUMMYSTRUCTNAME2() {
-                    if(XP_OR_HIGHER) {
-                        super();
-                    }
+                    super();
                 }
             }
         }
@@ -603,7 +591,7 @@ public interface WinGDI {
     /* ICM Intents */
     /** Maximize color saturation **/
     int DMICM_SATURATE = 1;
-    /** Maximize color contrast **/'
+    /** Maximize color contrast **/
     int DMICM_CONTRAST = 2;
     /** Use specific color metric **/
     int DMICM_COLORIMETRIC  = 3;
