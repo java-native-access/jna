@@ -296,6 +296,8 @@ public interface WinGDI {
 
         public static class DUMMYUNIONNAME extends Union {
             public DUMMYSTRUCTNAME dummystructname;
+            public POINT dmPosition;
+            public DUMMYSTRUCTNAME2 dummystructname2;
 
             @FieldOrder({ "dmOrientation", "dmPaperSize", "dmPaperLength", "dmPaperWidth", "dmScale", "dmCopies", "dmDefaultSource",
                     "dmPrintQuality" })
@@ -381,10 +383,6 @@ public interface WinGDI {
                  * For displays: This member is not used for displays.
                  */
                 public short dmPrintQuality;
-
-                public DUMMYSTRUCTNAME() {
-                    super();
-                }
             }
 
             @FieldOrder({ "dmPosition", "dmDisplayOrientation", "dmDisplayFixedOutput" })
@@ -429,10 +427,6 @@ public interface WinGDI {
                  * Note: This member is defined only for Windows XP and later.
                  */
                 public int dmDisplayFixedOutput;
-
-                public DUMMYSTRUCTNAME2() {
-                    super();
-                }
             }
         }
 
