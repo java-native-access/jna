@@ -1475,4 +1475,8 @@ public interface Winspool extends StdCallLibrary {
             super(new Memory(size));
         }
     }
+
+    int DocumentProperties(
+            WinDef.HWND hWnd, HANDLE hPrinter, String pDeviceName,
+            Pointer pDevModeOutput, Pointer pDevModeInput, int fMode);
 }
