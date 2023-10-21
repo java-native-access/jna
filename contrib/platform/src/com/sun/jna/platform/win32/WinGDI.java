@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -30,9 +31,8 @@ import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.Union;
 
-import java.text.ParseException;
-
 import static com.sun.jna.platform.win32.WinDef.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Ported from WinGDI.h.
@@ -276,18 +276,23 @@ public interface WinGDI {
          * Converts dmDeviceName from raw byte[] to String
          */
         public String getDmDeviceName() {
-            int offset = fieldOffset("dmDeviceName");
-            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+            if(CHAR_WIDTH == 1) {
+                return Native.toString(dmFormName);
+            } else {
+                return new String(dmDeviceName, StandardCharsets.UTF_16LE);
+            }
         }
 
         /**
          * Converts dmFormName from raw byte[] to String
          */
         public String getDmFormName() {
-            int offset = fieldOffset("dmFormName");
-            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+            if(CHAR_WIDTH == 1) {
+                return Native.toString(dmFormName);
+            } else {
+                return new String(dmFormName, StandardCharsets.UTF_16LE);
+            }
         }
-
 
         public static class DUMMYUNIONNAME extends Union {
             public DUMMYSTRUCTNAME dummystructname;
