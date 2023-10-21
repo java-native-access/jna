@@ -192,8 +192,6 @@ public interface WinGDI {
          */
         public int dmPelsHeight;
         public DUMMYUNIONNAME2 dummyunionname2;
-        public POINT dmPosition;
-        public DUMMYUNIONNAME.DUMMYSTRUCTNAME2 dummystructname2;
 
         public static class DUMMYUNIONNAME extends Union {
             public DUMMYSTRUCTNAME dummystructname;
