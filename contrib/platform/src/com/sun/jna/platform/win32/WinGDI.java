@@ -191,7 +191,103 @@ public interface WinGDI {
          * For printers: This member is not used for printers.
          */
         public int dmPelsHeight;
+
         public DUMMYUNIONNAME2 dummyunionname2;
+
+        /**
+         * For displays: Specifies the frequency, in hertz (cycles per second), of the display device in a particular
+         * mode. This value is also known as the display device's vertical refresh rate. Display drivers use this
+         * member. It is used, for example, in the <code>ChangeDisplaySettings</code> function.
+         *
+         * When you call the <code>EnumDisplaySettings</code> function, the <code>dmDisplayFrequency</code> member may
+         * return with the value 0 or 1. These values represent the display hardware's default refresh rate. This
+         * default rate is typically set by switches on a display card or computer motherboard, or by a configuration
+         * program that does not use display functions such as <code>ChangeDisplaySettings</code>.
+         *
+         * For printers: This member is not used for printers.
+         */
+        public int dmDisplayFrequency;
+
+        /**
+         * For printers: Specifies how ICM (image color management) is handled. For a non-ICM application, this member determines
+         * if ICM is enabled or disabled. For ICM applications, the system examines this member to determine how to
+         * handle ICM support. This member can be one of the predefined <code>DMICMMETHOD_XXX</code>values, or a driver-defined value
+         * greater than or equal to the value of <code>DMICMMETHOD_USER</code>.
+         *
+         * The printer driver must provide a user interface for setting this member. Most printer drivers support only
+         * the <code>DMICMMETHOD_SYSTEM</code> or <code>DMICMMETHOD_NONE</code> value. Drivers for PostScript printers
+         * support all <code>DCMICMMETHOD_XXX</code>values.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmICMMethod;
+
+        /**
+         * For printers: Specifies which color matching method, or intent, should be used by default. This member is primarily for
+         * non-ICM applications. ICM applications can establish intents by using the ICM functions. This member can be
+         * one of the following predefined values, or a driver defined value greater than or equal to the value of
+         * <code>DMICM_USER</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmICMIntent;
+
+        /**
+         * For printers: Specifies the type of media being printed on. The member can be one of the predefined
+         * <code>DMMEDIA_XXX</code> values, or a driver-defined value greater than or equal to the value of <code>DMMEDIA_USER</code>.
+         *
+         * To retrieve a list of the available media types for a printer, use the <code>DeviceCapabilities</code>
+         * function with the <code>DC_MEDIATYPES</code> flag.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmMediaType;
+
+        /**
+         * For printers: Specifies how dithering is to be done. The member can be one of the predefined
+         * <code>DMDITHER_XXX</code> values, or a driver-defined value greater than or equal to the value of
+         * <code>DMDITHER_USER</code>.
+         *
+         * For displays: This member is not used for displays.
+         */
+        public int dmDitherType;
+
+        /**
+         * Not used; must be zero.
+         */
+        public int dmReserved1;
+
+        /**
+         * Not used; must be zero.
+         */
+        public int dmReserved2;
+
+        /**
+         * This member must be zero.
+         */
+        public int dmPanningWidth;
+
+        /**
+         * This member must be zero.
+         */
+        public int dmPanningHeight;
+
+        /**
+         * Converts dmDeviceName from raw byte[] to String
+         */
+        public String getDmDeviceName() {
+            int offset = fieldOffset("dmDeviceName");
+            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+        }
+
+        /**
+         * Converts dmFormName from raw byte[] to String
+         */
+        public String getDmFormName() {
+            int offset = fieldOffset("dmFormName");
+            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
+        }
+
 
         public static class DUMMYUNIONNAME extends Union {
             public DUMMYSTRUCTNAME dummystructname;
@@ -352,101 +448,6 @@ public interface WinGDI {
              * For displays: This member is not used for displays.
              */
             public int dmNup;
-        }
-
-
-        /**
-         * For displays: Specifies the frequency, in hertz (cycles per second), of the display device in a particular
-         * mode. This value is also known as the display device's vertical refresh rate. Display drivers use this
-         * member. It is used, for example, in the <code>ChangeDisplaySettings</code> function.
-         *
-         * When you call the <code>EnumDisplaySettings</code> function, the <code>dmDisplayFrequency</code> member may
-         * return with the value 0 or 1. These values represent the display hardware's default refresh rate. This
-         * default rate is typically set by switches on a display card or computer motherboard, or by a configuration
-         * program that does not use display functions such as <code>ChangeDisplaySettings</code>.
-         *
-         * For printers: This member is not used for printers.
-         */
-        public int dmDisplayFrequency;
-
-        /**
-         * For printers: Specifies how ICM (image color management) is handled. For a non-ICM application, this member determines
-         * if ICM is enabled or disabled. For ICM applications, the system examines this member to determine how to
-         * handle ICM support. This member can be one of the predefined <code>DMICMMETHOD_XXX</code>values, or a driver-defined value
-         * greater than or equal to the value of <code>DMICMMETHOD_USER</code>.
-         *
-         * The printer driver must provide a user interface for setting this member. Most printer drivers support only
-         * the <code>DMICMMETHOD_SYSTEM</code> or <code>DMICMMETHOD_NONE</code> value. Drivers for PostScript printers
-         * support all <code>DCMICMMETHOD_XXX</code>values.
-         *
-         * For displays: This member is not used for displays.
-         */
-        public int dmICMMethod;
-
-        /**
-         * For printers: Specifies which color matching method, or intent, should be used by default. This member is primarily for
-         * non-ICM applications. ICM applications can establish intents by using the ICM functions. This member can be
-         * one of the following predefined values, or a driver defined value greater than or equal to the value of
-         * <code>DMICM_USER</code>.
-         *
-         * For displays: This member is not used for displays.
-         */
-        public int dmICMIntent;
-
-        /**
-         * For printers: Specifies the type of media being printed on. The member can be one of the predefined
-         * <code>DMMEDIA_XXX</code> values, or a driver-defined value greater than or equal to the value of <code>DMMEDIA_USER</code>.
-         *
-         * To retrieve a list of the available media types for a printer, use the <code>DeviceCapabilities</code>
-         * function with the <code>DC_MEDIATYPES</code> flag.
-         *
-         * For displays: This member is not used for displays.
-         */
-        public int dmMediaType;
-
-        /**
-         * For printers: Specifies how dithering is to be done. The member can be one of the predefined
-         * <code>DMDITHER_XXX</code> values, or a driver-defined value greater than or equal to the value of
-         * <code>DMDITHER_USER</code>.
-         *
-         * For displays: This member is not used for displays.
-         */
-        public int dmDitherType;
-
-        /**
-         * Not used; must be zero.
-         */
-        public int dmReserved1;
-
-        /**
-         * Not used; must be zero.
-         */
-        public int dmReserved2;
-
-        /**
-         * This member must be zero.
-         */
-        public int dmPanningWidth;
-
-        /**
-         * This member must be zero.
-         */
-        public int dmPanningHeight;
-
-        /**
-         * Converts dmDeviceName from raw byte[] to String
-         */
-        public String getDmDeviceName() {
-            int offset = fieldOffset("dmDeviceName");
-            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
-        }
-
-        /**
-         * Converts dmFormName from raw byte[] to String
-         */
-        public String getDmFormName() {
-            int offset = fieldOffset("dmFormName");
-            return CHAR_WIDTH == 1 ? getPointer().getString(offset) : getPointer().getWideString(offset);
         }
     }
 
