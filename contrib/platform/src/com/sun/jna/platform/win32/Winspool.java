@@ -153,12 +153,27 @@ public interface Winspool extends StdCallLibrary {
     public static final int PRINTER_ENUM_ICON8 = 0x00800000;
     public static final int PRINTER_ENUM_HIDE = 0x01000000;
 
+    public static final int PRINTER_CONTROL_PAUSE = 0x01;
+    public static final int PRINTER_CONTROL_PURGE = 0x02;
+    public static final int PRINTER_CONTROL_RESUME = 0x03;
+    public static final int PRINTER_CONTROL_SET_STATUS = 0x04;
+
     public static final int PRINTER_NOTIFY_OPTIONS_REFRESH = 0x01;
 
     public static final int PRINTER_NOTIFY_INFO_DISCARDED = 0x01;
 
     public static final int PRINTER_NOTIFY_TYPE = 0x00;
     public static final int JOB_NOTIFY_TYPE = 0x01;
+
+    public static final int JOB_CONTROL_PAUSE = 0x01;
+    public static final int JOB_CONTROL_RESUME = 0x02;
+    public static final int JOB_CONTROL_CANCEL = 0x03;
+    public static final int JOB_CONTROL_RESTART = 0x04;
+    public static final int JOB_CONTROL_DELETE = 0x05;
+    public static final int JOB_CONTROL_SENT_TO_PRINTER = 0x06;
+    public static final int JOB_CONTROL_LAST_PAGE_EJECTED = 0x07;
+    public static final int JOB_CONTROL_RETAIN = 0x08;
+    public static final int JOB_CONTROL_RELEASE = 0x09;
 
     public static final short PRINTER_NOTIFY_FIELD_SERVER_NAME = 0x00;
     public static final short PRINTER_NOTIFY_FIELD_PRINTER_NAME = 0x01;
@@ -1275,4 +1290,92 @@ public interface Winspool extends StdCallLibrary {
             super(new Memory(size));
         }
     }
+
+    /**
+     * The SetJob function pauses, resumes, cancels, or restarts a print job on a specified printer. You can also use
+     * the SetJob function to set print job parameters, such as the print job priority and the document name.
+     *
+     * You can use the SetJob function to give a command to a print job, or to set print job parameters, or to do both
+     * in the same call. The value of the Command parameter does not affect how the function uses the Level and pJob
+     * parameters. Also, you can use SetJob with JOB_INFO_3 to link together a set of print jobs.
+     *
+     * @param hPrinter
+     *          [in] A handle to the printer object of interest. Use the OpenPrinter, OpenPrinter2, or AddPrinter
+     *          function to retrieve a printer handle.
+     * @param JobId
+     *          [in] Identifier that specifies the print job. You obtain a print job identifier by calling the AddJob
+     *          function or the StartDoc function.  If the Level parameter is set to 3, the JobId parameter must match
+     *          theJobId member of the JOB_INFO_3 structure pointed to by pJob
+     * @param Level
+     *          [in] The type of job information structure pointed to by the pJob parameter.
+     *          All versions of Windows: You can set the Level parameter to 0, 1, or 2. When you set Level to 0, pJob
+     *          be NULL. Use these values when you are not setting any print job parameters. You can also set the Level
+     *          parameter to 3. Starting with Windows Vista: You can also set the Level parameter to 4.
+     * @param pJob
+     *          [in] A pointer to a structure that sets the print job parameters. All versions of Windows: pJob can
+     *          point to a JOB_INFO_1 or JOB_INFO_2 structure. pJob can also point to a JOB_INFO_3 structure. You must
+     *          have JOB_ACCESS_ADMINISTER access permission for the jobs specified by the JobId and NextJobId members
+     *          of the JOB_INFO_3 structure. Starting with Windows Vista: pJob can also point to a JOB_INFO_4 structure.
+     *          If the Level parameter is 0, pJob should be NULL.
+     * @param Command
+     *          [in] The print job operation to perform. This parameter can be one of the JOB_CONTROL_XXX values.
+     *          To cancel a job, do NOT use JOB_CONTROL_CANCEL, intead use JOB_CONTROL_DELETE to delete a job.
+     *
+     * @return If the function succeeds, the return value is a nonzero value. If the function fails, the return value is
+     *         zero.
+     *
+     * @see <a href=
+     *      "https://learn.microsoft.com/en-us/windows/win32/printdocs/setjob">
+     * SetJob function</a>
+     */
+    boolean SetJob(
+            // _In_
+            WinNT.HANDLE hPrinter,
+            // _In_
+            int JobId,
+            // _In_
+            int Level,
+            // _In_
+            Pointer pJob,
+            // _In_
+            int Command);
+
+    /**
+     * The SetPrinter function sets the data for a specified printer or sets the state of the specified printer by
+     * pausing printing, resuming printing, or clearing all print jobs.
+     *
+     * @param hPrinter
+     *          [in] A handle to the printer. Use the OpenPrinter, OpenPrinter2, or AddPrinter function to retrieve a
+     *          printer handle.
+     * @param Level
+     *          [in] The type of data that the function stores into the buffer pointed to by pPrinter. If the Command
+     *          parameter is not equal to zero, the Level parameter must be zero. This value can be 0, 2, 3, 4, 5, 6,
+     *          7, 8, or 9.
+     * @param pPrinter
+     *          A pointer to a buffer containing data to set for the printer, or containing information for the command
+     *          specified by the Command parameter. The type of data in the buffer is determined by the value of Level.
+     * @param Command
+     *          The action to perform. If the Level parameter is nonzero, set the value of this parameter to zero. In
+     *          this case, the printer retains its current state and the function reconfigures the printer data as
+     *          specified by the Level and pPrinter parameters. If the Level parameter is zero, set the value of this
+     *          parameter to one of the PRINTER_CONTROL_XXX values.
+     *
+     * @return If the function succeeds, the return value is a nonzero value.
+     *          If the function fails, the return value is zero. If Level is 7 and the publish action failed, SetPrinter
+     *          returns ERROR_IO_PENDING and attempts to complete the action in the background. If Level is 7 and the
+     *          update action failed, SetPrinter returns ERROR_FILE_NOT_FOUND.
+     *
+     * @see <a href=
+     *      "https://learn.microsoft.com/en-us/windows/win32/printdocs/setprinter">
+     * SetPrinter function</a>
+     */
+    boolean SetPrinter(
+            // _In_
+            WinNT.HANDLE hPrinter,
+            // _In_
+            int Level,
+            // _In_
+            Pointer pPrinter,
+            // _In_
+            int Command);
 }
