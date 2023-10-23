@@ -7,6 +7,7 @@ Next Release (5.14.0)
 
 Features
 --------
+* [#1556](https://github.com/java-native-access/jna/pull/1556): Add `SetJob`, `SetPrinter` to `c.s.j.p.w.Winspool` - [@tresf](https://github.com/tresf).
 * [#1534](https://github.com/java-native-access/jna/pull/1534): Add `GetMethod`, `Put`, `SpawnInstance` to `c.s.j.p.win32.COM.WbemCli#IWbemClassObject` and `ExecMethod` to `c.s.j.p.win32.COM.WbemCli#IWbemServices` - [@faddom](https://github.com/faddom).
 * [#1544](https://github.com/java-native-access/jna/pull/1544): Add `GetPriorityClass`, `SetPriorityClass`, `GetThreadPriority`, `SetThreadPriority` and associated constants to `c.s.j.p.win32.Kernel32` - [@dEajL3kA](https://github.com/dEajL3kA).
 * [#1548](https://github.com/java-native-access/jna/pull/1548): Make interface `c.s.j.p.mac.XAttr public` - [@matthiasblaesing](https://github.com/matthiasblaesing).
