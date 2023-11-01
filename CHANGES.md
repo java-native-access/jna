@@ -14,6 +14,7 @@ Features
 * [#1551](https://github.com/java-native-access/jna/pull/1551): Add `c.s.j.p.bsd.ExtAttr` and `c.s.j.p.bsd.ExtAttrUtil` to wrap BSD [<sys/extattr.h>](https://man.freebsd.org/cgi/man.cgi?query=extattr&sektion=2) system calls. [@rednoah](https://github.com/rednoah).
 * [#1517](https://github.com/java-native-access/jna/pull/1517): Add missing `O_*` (e.g. `O_APPEND`, `O_SYNC`, `O_DIRECT`, ...) to `c.s.j.p.linux.Fcntl` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1521](https://github.com/java-native-access/jna/issues/1521): Shutdown CleanerThread once the last cleanable is removed - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1557](https://github.com/java-native-access/jna/issues/1557): Build linux-riscv64 on Ubuntu focal to improve compatibility with older glibc versions - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
