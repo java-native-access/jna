@@ -102,7 +102,7 @@ public class NativeLibrary implements Closeable {
     private final Map<String, Function> functions = new HashMap<String, Function>();
     private final SymbolProvider symbolProvider;
     final int callFlags;
-    private String encoding;
+    private final String encoding;
     final Map<String, ?> options;
 
     private static final Map<String, Reference<NativeLibrary>> libraries = new HashMap<String, Reference<NativeLibrary>>();
@@ -129,16 +129,17 @@ public class NativeLibrary implements Closeable {
         int callingConvention = option instanceof Number ? ((Number)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
         this.options = options;
-        this.encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
+        String optionEncoding = (String)options.get(Library.OPTION_STRING_ENCODING);
+        if (optionEncoding == null) {
+            this.encoding = Native.getDefaultStringEncoding();
+        } else {
+            this.encoding = optionEncoding;
+        }
         SymbolProvider optionSymbolProvider = (SymbolProvider)options.get(Library.OPTION_SYMBOL_PROVIDER);
         if (optionSymbolProvider == null) {
             this.symbolProvider = NATIVE_SYMBOL_PROVIDER;
         } else {
             this.symbolProvider = optionSymbolProvider;
-        }
-
-        if (this.encoding == null) {
-            this.encoding = Native.getDefaultStringEncoding();
         }
 
         // Special workaround for w32 kernel32.GetLastError
