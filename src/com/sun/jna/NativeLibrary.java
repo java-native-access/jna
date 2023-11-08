@@ -95,7 +95,7 @@ public class NativeLibrary implements Closeable {
         }
     };
 
-    private Cleaner.Cleanable cleanable;
+    private final Cleaner.Cleanable cleanable;
     private long handle;
     private final String libraryName;
     private final String libraryPath;
