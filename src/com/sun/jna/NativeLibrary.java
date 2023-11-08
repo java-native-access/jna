@@ -96,7 +96,7 @@ public class NativeLibrary implements Closeable {
     };
 
     private Cleaner.Cleanable cleanable;
-    private long handle;
+    private volatile long handle;
     private final String libraryName;
     private final String libraryPath;
     private final Map<String, Function> functions = new HashMap<String, Function>();
@@ -1055,7 +1055,7 @@ public class NativeLibrary implements Closeable {
 
     private static final class NativeLibraryDisposer implements Runnable {
 
-        private long handle;
+        private volatile long handle;
 
         public NativeLibraryDisposer(long handle) {
             this.handle = handle;
