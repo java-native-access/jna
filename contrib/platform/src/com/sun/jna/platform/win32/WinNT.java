@@ -3447,26 +3447,23 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * <p>
-         * Upcoming value of this enum added for forward compatibility. Documentation
-         * will be added when available.
+         * The specified logical processors share a single processor die.
          * </p>
          */
         int RelationProcessorDie = 5;
 
         /**
          * <p>
-         * Introduced in TBD - Release Iron. Requests that the full affinity be
-         * returned. Unlike the other relation types, RelationNumaNodeEx is not used on
-         * input. It is simply a request for RelationNumaNode with full group
-         * information.
+         * Introduced in Windows Server 2022 (21H2, build 20348). Requests that the full affinity be returned. Unlike
+         * the other relation types, RelationNumaNodeEx is not used on input. It is simply a request for
+         * RelationNumaNode with full group information.
          * </p>
          */
         int RelationNumaNodeEx = 6;
 
         /**
          * <p>
-         * Upcoming value of this enum added for forward compatibility. Documentation
-         * will be added when available.
+         * The specified logical processors share a single processor module.
          * </p>
          */
         int RelationProcessorModule = 7;
