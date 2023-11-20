@@ -1429,7 +1429,7 @@ public class StructureTest extends TestCase {
             }
         }
         TestStructure s = new TestStructure();
-        final String LS = System.getProperty("line.separator");
+        final String LS = System.lineSeparator();
         System.setProperty("jna.dump_memory", "true");
         final String EXPECTED = "(?m).*" + s.size() + " bytes.*\\{" + LS
             + "  int intField@0x0=0x0000" + LS

@@ -221,7 +221,7 @@ public final class Native implements Version {
         loadNativeDispatchLibrary();
 
         if (! isCompatibleVersion(VERSION_NATIVE, getNativeVersion())) {
-            String LS = System.getProperty("line.separator");
+            String LS = System.lineSeparator();
             throw new Error(LS + LS
                             + "There is an incompatible JNA native library installed on this system" + LS
                             + "Expected: " + VERSION_NATIVE + LS

@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -203,7 +204,7 @@ public class DirectTest extends TestCase implements Paths {
         };
         final TypeMapper mapper = new DefaultTypeMapper();
         final int alignment = Structure.ALIGN_NONE;
-        final String encoding = System.getProperty("file.encoding");
+        final String encoding = Charset.defaultCharset().displayName();
         Map<String, Object> options = new HashMap<>();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         options.put(Library.OPTION_STRUCTURE_ALIGNMENT, alignment);
@@ -224,7 +225,7 @@ public class DirectTest extends TestCase implements Paths {
     public static class DirectMappingStatic {
         final static TypeMapper TEST_MAPPER = new DefaultTypeMapper();
         final static int TEST_ALIGNMENT = Structure.ALIGN_DEFAULT;
-        final static String TEST_ENCODING = System.getProperty("file.encoding");
+        final static String TEST_ENCODING = Charset.defaultCharset().displayName();
         final static Map<String, Object> TEST_OPTIONS = new HashMap<String, Object>() {
             private static final long serialVersionUID = 1L;    // we're not serializing it
 

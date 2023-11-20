@@ -172,7 +172,7 @@ public class MemoryTest extends TestCase {
             m.setByte(i, (byte) i);
         }
 
-        String ls = System.getProperty("line.separator");
+        String ls = System.lineSeparator();
 
         assertEquals("memory dump" + ls +
             "[00010203]" + ls +

@@ -1563,7 +1563,7 @@ public abstract class Structure {
 
     private String toString(int indent, boolean showContents, boolean dumpMemory) {
         ensureAllocated();
-        String LS = System.getProperty("line.separator");
+        String LS = System.lineSeparator();
         String name = format(getClass()) + "(" + getPointer() + ")";
         if (!(getPointer() instanceof Memory)) {
             name += " (" + size() + " bytes)";
