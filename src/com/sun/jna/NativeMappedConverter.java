@@ -32,7 +32,7 @@ import java.util.WeakHashMap;
 /** Provides type conversion for instances of {@link NativeMapped}. */
 public class NativeMappedConverter implements TypeConverter {
     private static final Map<Class<?>, Reference<NativeMappedConverter>> converters =
-            new WeakHashMap<Class<?>, Reference<NativeMappedConverter>>();
+            new WeakHashMap<>();
     private final Class<?> type;
     private final Class<?> nativeType;
     private final NativeMapped instance;
@@ -43,7 +43,7 @@ public class NativeMappedConverter implements TypeConverter {
             NativeMappedConverter nmc = r != null ? r.get() : null;
             if (nmc == null) {
                 nmc = new NativeMappedConverter(cls);
-                converters.put(cls, new SoftReference<NativeMappedConverter>(nmc));
+                converters.put(cls, new SoftReference<>(nmc));
             }
             return nmc;
         }

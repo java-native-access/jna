@@ -145,8 +145,7 @@ public class WebStartTest extends TestCase implements Paths {
         String dir = System.getProperty("jna.builddir", BUILDDIR);
         String codebase = new File(dir, "jws").toURI().toURL().toString();
 
-        ServerSocket s = new ServerSocket(0);
-        try {
+        try (ServerSocket s = new ServerSocket(0)) {
             s.setSoTimeout(SOCKET_TIMEOUT);
             int port = s.getLocalPort();
 
@@ -233,8 +232,6 @@ public class WebStartTest extends TestCase implements Paths {
             finally {
                 jnlp.delete();
             }
-        } finally {
-            s.close();
         }
     }
 
@@ -291,7 +288,7 @@ public class WebStartTest extends TestCase implements Paths {
         String JAVA_HOME = System.getProperty("java.home");
         String BIN = new File(JAVA_HOME, "/bin").getAbsolutePath();
         File javaws = new File(BIN, "javaws" + (Platform.isWindows()?".exe":""));
-        List<File> tried = new ArrayList<File>();
+        List<File> tried = new ArrayList<>();
         tried.add(javaws);
         if (!javaws.exists()) {
             // NOTE: OSX puts javaws somewhere else entirely

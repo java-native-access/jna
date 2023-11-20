@@ -49,7 +49,7 @@ public class Cleaner {
     private CleanerRef firstCleanable;
 
     private Cleaner() {
-        referenceQueue = new ReferenceQueue<Object>();
+        referenceQueue = new ReferenceQueue<>();
     }
 
     public synchronized Cleanable register(Object obj, Runnable cleanupTask) {

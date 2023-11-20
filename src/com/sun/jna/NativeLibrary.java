@@ -99,16 +99,16 @@ public class NativeLibrary implements Closeable {
     private long handle;
     private final String libraryName;
     private final String libraryPath;
-    private final Map<String, Function> functions = new HashMap<String, Function>();
+    private final Map<String, Function> functions = new HashMap<>();
     private final SymbolProvider symbolProvider;
     final int callFlags;
     private String encoding;
     final Map<String, ?> options;
 
-    private static final Map<String, Reference<NativeLibrary>> libraries = new HashMap<String, Reference<NativeLibrary>>();
+    private static final Map<String, Reference<NativeLibrary>> libraries = new HashMap<>();
 
-    private static final Map<String, List<String>> searchPaths = new ConcurrentHashMap<String, List<String>>();
-    private static final LinkedHashSet<String> librarySearchPath = new LinkedHashSet<String>();
+    private static final Map<String, List<String>> searchPaths = new ConcurrentHashMap<>();
+    private static final LinkedHashSet<String> librarySearchPath = new LinkedHashSet<>();
 
     static {
         // Force initialization of native library
@@ -173,9 +173,9 @@ public class NativeLibrary implements Closeable {
     private static NativeLibrary loadLibrary(final String libraryName, final Map<String, ?> options) {
         LOG.log(DEBUG_LOAD_LEVEL, "Looking for library '" + libraryName + "'");
 
-        List<Throwable> exceptions = new ArrayList<Throwable>();
+        List<Throwable> exceptions = new ArrayList<>();
         boolean isAbsolutePath = new File(libraryName).isAbsolute();
-        LinkedHashSet<String> searchPath = new LinkedHashSet<String>();
+        LinkedHashSet<String> searchPath = new LinkedHashSet<>();
         int openFlags = openFlags(options);
 
         //
@@ -350,18 +350,14 @@ public class NativeLibrary implements Closeable {
         }
         try {
             addSuppressedMethod.invoke(target, suppressed);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
-        } catch (InvocationTargetException ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             throw new RuntimeException("Failed to call addSuppressedMethod", ex);
         }
     }
 
     /** Look for a matching framework (OSX) */
     static String[] matchFramework(String libraryName) {
-        Set<String> paths = new LinkedHashSet<String>();
+        Set<String> paths = new LinkedHashSet<>();
         File framework = new File(libraryName);
         if (framework.isAbsolute()) {
             if (libraryName.contains(".framework")) {
@@ -460,7 +456,7 @@ public class NativeLibrary implements Closeable {
      * @param libraryOptions Native library options for the given library (see {@link Library}).
      */
     public static final NativeLibrary getInstance(String libraryName, Map<String, ?> libraryOptions) {
-        Map<String, Object> options = new HashMap<String, Object>(libraryOptions);
+        Map<String, Object> options = new HashMap<>(libraryOptions);
         if (options.get(Library.OPTION_CALLING_CONVENTION) == null) {
             options.put(Library.OPTION_CALLING_CONVENTION, Integer.valueOf(Function.C_CONVENTION));
         }
@@ -482,7 +478,7 @@ public class NativeLibrary implements Closeable {
                 else {
                     library = loadLibrary(libraryName, options);
                 }
-                ref = new WeakReference<NativeLibrary>(library);
+                ref = new WeakReference<>(library);
                 libraries.put(library.getName() + options, ref);
                 File file = library.getFile();
                 if (file != null) {
@@ -675,7 +671,7 @@ public class NativeLibrary implements Closeable {
     static void disposeAll() {
         Set<Reference<NativeLibrary>> values;
         synchronized(libraries) {
-            values = new LinkedHashSet<Reference<NativeLibrary>>(libraries.values());
+            values = new LinkedHashSet<>(libraries.values());
         }
         for (Reference<NativeLibrary> ref : values) {
             NativeLibrary lib = ref.get();
@@ -687,7 +683,7 @@ public class NativeLibrary implements Closeable {
 
     /** Close the native library we're mapped to. */
     public void close() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         synchronized(libraries) {
             for (Map.Entry<String, Reference<NativeLibrary>> e : libraries.entrySet()) {
                 Reference<NativeLibrary> ref = e.getValue();
@@ -720,7 +716,7 @@ public class NativeLibrary implements Closeable {
             return Collections.emptyList();
         }
         StringTokenizer st = new StringTokenizer(value, File.pathSeparator);
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         while (st.hasMoreTokens()) {
             String path = st.nextToken();
             if (!"".equals(path)) {
@@ -852,7 +848,7 @@ public class NativeLibrary implements Closeable {
                 }
             };
 
-        Collection<File> matches = new LinkedList<File>();
+        Collection<File> matches = new LinkedList<>();
         for (String path : searchPath) {
             File[] files = new File(path).listFiles(filter);
             if (files != null && files.length > 0) {
@@ -1018,7 +1014,7 @@ public class NativeLibrary implements Closeable {
      * Get the library paths from ldconfig cache. Tested against ldconfig 2.13.
      */
     private static ArrayList<String> getLinuxLdPaths() {
-        ArrayList<String> ldPaths = new ArrayList<String>();
+        ArrayList<String> ldPaths = new ArrayList<>();
         Process process = null;
         BufferedReader reader = null;
         try {

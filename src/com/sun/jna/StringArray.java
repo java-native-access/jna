@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class StringArray extends Memory implements Function.PostCallRead {
     private String encoding;
-    private List<NativeString> natives = new ArrayList<NativeString>();
+    private List<NativeString> natives = new ArrayList<>();
     private Object[] original;
     /** Create a native array of strings. */
     public StringArray(String[] strings) {

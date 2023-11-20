@@ -128,16 +128,9 @@ public class ELFAnalyserTest {
 
     private static void extractTestFile(File outputFile) throws IOException {
         String inputPath = "/com/sun/jna/data/" + outputFile.getName();
-        InputStream is = ELFAnalyserTest.class.getResourceAsStream(inputPath);
-        try {
-            OutputStream os = new FileOutputStream(outputFile);
-            try {
-                copyStream(is, os);
-            } finally {
-                os.close();
-            }
-        } finally {
-            is.close();
+        try (InputStream is = ELFAnalyserTest.class.getResourceAsStream(inputPath);
+                OutputStream os = new FileOutputStream(outputFile)) {
+            copyStream(is, os);
         }
     }
 

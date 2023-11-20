@@ -52,8 +52,8 @@ public class DefaultTypeMapper implements TypeMapper {
         }
     }
 
-    private List<Entry> toNativeConverters = new ArrayList<Entry>();
-    private List<Entry> fromNativeConverters = new ArrayList<Entry>();
+    private List<Entry> toNativeConverters = new ArrayList<>();
+    private List<Entry> fromNativeConverters = new ArrayList<>();
 
     private Class<?> getAltClass(Class<?> cls) {
         if (cls == Boolean.class) {

@@ -172,7 +172,7 @@ public interface Library {
         // Library invocation options
         private final Map<String, Object> options;
         private final InvocationMapper invocationMapper;
-        private final Map<Method, FunctionInfo> functions = new WeakHashMap<Method, FunctionInfo>();
+        private final Map<Method, FunctionInfo> functions = new WeakHashMap<>();
         public Handler(String libname, Class<?> interfaceClass, Map<String, ?> options) {
 
             if (libname != null && "".equals(libname.trim())) {
@@ -184,7 +184,7 @@ public interface Library {
             }
 
             this.interfaceClass = interfaceClass;
-            this.options = new HashMap<String, Object>(options);
+            this.options = new HashMap<>(options);
             int callingConvention = AltCallingConvention.class.isAssignableFrom(interfaceClass)
                                   ? Function.ALT_CONVENTION
                                   : Function.C_CONVENTION;
@@ -247,7 +247,7 @@ public interface Library {
                                 // Find the function to invoke
                                 function = nativeLibrary.getFunction(method.getName(), method);
                                 parameterTypes = method.getParameterTypes();
-                                options = new HashMap<String, Object>(this.options);
+                                options = new HashMap<>(this.options);
                                 options.put(Function.OPTION_INVOKING_METHOD, method);
                             }
                             f = new FunctionInfo(handler, function, parameterTypes, isVarArgs, options);

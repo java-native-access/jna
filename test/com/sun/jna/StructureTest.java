@@ -1429,7 +1429,7 @@ public class StructureTest extends TestCase {
             }
         }
         TestStructure s = new TestStructure();
-        final String LS = System.getProperty("line.separator");
+        final String LS = System.lineSeparator();
         System.setProperty("jna.dump_memory", "true");
         final String EXPECTED = "(?m).*" + s.size() + " bytes.*\\{" + LS
             + "  int intField@0x0=0x0000" + LS
@@ -1667,7 +1667,7 @@ public class StructureTest extends TestCase {
 
     public static class XTestStructureSub extends XTestStructure {
         public static final List<String> EXTRA_FIELDS = createFieldsOrder("second");
-        private static final AtomicReference<List<String>> fieldsHolder = new AtomicReference<List<String>>(null);
+        private static final AtomicReference<List<String>> fieldsHolder = new AtomicReference<>(null);
         private static List<String> resolveEffectiveFields(List<String> baseFields) {
             List<String> fields;
             synchronized (fieldsHolder) {
@@ -1713,7 +1713,7 @@ public class StructureTest extends TestCase {
             public int four = 4;
             @Override
             protected List<String> getFieldOrder() {
-                List<String> list = new ArrayList<String>(super.getFieldOrder());
+                List<String> list = new ArrayList<>(super.getFieldOrder());
                 list.addAll(Arrays.asList("four", "five"));
                 return list;
             }

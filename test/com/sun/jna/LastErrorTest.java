@@ -69,7 +69,7 @@ public class LastErrorTest extends TestCase {
         final TestLibrary lib = Native.load("testlib", TestLibrary.class);
         final int NTHREADS = 100;
         final int[] errors = new int[NTHREADS];
-        List<Thread> threads = new ArrayList<Thread>(NTHREADS);
+        List<Thread> threads = new ArrayList<>(NTHREADS);
         for (int i=0;i < NTHREADS;i++) {
             final int idx = i;
             Thread t = new Thread("tLastErrorSetter-" + i) {

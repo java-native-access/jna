@@ -74,7 +74,7 @@ public final class StructureFieldOrderInspector {
                                                    final boolean onlyInnerClasses) {
         final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch, onlyInnerClasses);
 
-        final List<Throwable> problems = new ArrayList<Throwable>();
+        final List<Throwable> problems = new ArrayList<>();
 
         for (final Class<? extends Structure> structureSubType : classes) {
             try {
@@ -121,7 +121,7 @@ public final class StructureFieldOrderInspector {
                 .setUrls(ClasspathHelper.forClass(classDeclaredInSourceTreeToSearch))
         );
 
-        Set<Class<? extends Structure>> types = new HashSet<Class<? extends Structure>>(reflections.getSubTypesOf(Structure.class));
+        Set<Class<? extends Structure>> types = new HashSet<>(reflections.getSubTypesOf(Structure.class));
         if(onlyInnerClasses) {
             Iterator<Class<? extends Structure>> it = types.iterator();
             while(it.hasNext()) {
@@ -172,9 +172,7 @@ public final class StructureFieldOrderInspector {
         final Structure structure;
         try {
             structure= structConstructor.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
         } catch (InvocationTargetException e) {
             // this is triggered by checks in Structure.getFields(), and static loadlibrary() failures
@@ -192,7 +190,7 @@ public final class StructureFieldOrderInspector {
         final List<String> methodCallFieldOrder = structure.getFieldOrder();
 
         final List<Field> actualFields = structure.getFieldList();
-        final List<String> actualFieldNames = new ArrayList<String>(actualFields.size());
+        final List<String> actualFieldNames = new ArrayList<>(actualFields.size());
         for (final Field field : actualFields) {
             // ignore static fields
             if (!Modifier.isStatic(field.getModifiers())) {

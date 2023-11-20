@@ -42,7 +42,7 @@ public class MemoryTest extends TestCase {
     public void testAutoFreeMemory() throws Exception {
         Memory core = new Memory(10);
         Pointer shared = core.share(0, 5);
-        Reference<Memory> ref = new WeakReference<Memory>(core);
+        Reference<Memory> ref = new WeakReference<>(core);
 
         core = null;
         System.gc();
@@ -133,8 +133,8 @@ public class MemoryTest extends TestCase {
         m.clear();
 
         ByteBuffer b = m.getByteBuffer(0, m.size());
-        Reference<Memory> ref = new WeakReference<Memory>(m);
-        Reference<ByteBuffer> bref = new WeakReference<ByteBuffer>(b);
+        Reference<Memory> ref = new WeakReference<>(m);
+        Reference<ByteBuffer> bref = new WeakReference<>(b);
 
         // Create a second byte buffer "equal" to the first
         m = new Memory(1024);
@@ -172,7 +172,7 @@ public class MemoryTest extends TestCase {
             m.setByte(i, (byte) i);
         }
 
-        String ls = System.getProperty("line.separator");
+        String ls = System.lineSeparator();
 
         assertEquals("memory dump" + ls +
             "[00010203]" + ls +
