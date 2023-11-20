@@ -85,7 +85,7 @@ public class NativeTest extends TestCase {
     }
 
     public void testCustomStringEncoding() throws Exception {
-        final String ENCODING = Charset.defaultCharset().displayName();
+        final String ENCODING = Charset.defaultCharset().name();
         // Keep stuff within the extended ASCII range so we work with more
         // limited native encodings
         String UNICODE = "Un \u00e9l\u00e9ment gr\u00e2ce \u00e0 l'index";
@@ -477,7 +477,7 @@ public class NativeTest extends TestCase {
     public void testGetBytesBadEncoding() throws Exception {
         byte[] buf = Native.getBytes(getName(), "unsupported");
         assertEquals("Incorrect fallback bytes with bad encoding",
-            getName(), new String(buf, Charset.defaultCharset().displayName()));
+            getName(), new String(buf, Charset.defaultCharset().name()));
     }
 
     public void testFindDirectMappedClassFailure() {
