@@ -230,7 +230,7 @@ class ELFAnalyser {
     }
 
     static class ELFSectionHeaders {
-        private final List<ELFSectionHeaderEntry> entries = new ArrayList<ELFSectionHeaderEntry>();
+        private final List<ELFSectionHeaderEntry> entries = new ArrayList<>();
 
         public ELFSectionHeaders(boolean _64bit, boolean bigEndian, ByteBuffer headerData, RandomAccessFile raf) throws IOException {
             long shoff;
@@ -401,9 +401,9 @@ class ELFAnalyser {
             return true;
         }
 
-        private static final List<ArmAeabiAttributesTag> tags = new LinkedList<ArmAeabiAttributesTag>();
-        private static final Map<Integer, ArmAeabiAttributesTag> valueMap = new HashMap<Integer, ArmAeabiAttributesTag>();
-        private static final Map<String, ArmAeabiAttributesTag> nameMap = new HashMap<String, ArmAeabiAttributesTag>();
+        private static final List<ArmAeabiAttributesTag> tags = new LinkedList<>();
+        private static final Map<Integer, ArmAeabiAttributesTag> valueMap = new HashMap<>();
+        private static final Map<String, ArmAeabiAttributesTag> nameMap = new HashMap<>();
 
         // Enumerated from ARM IHI 0045E, 2.5 Attributes summary and history
         public static final ArmAeabiAttributesTag File = addTag(1, "File", ParameterType.UINT32);
@@ -520,7 +520,7 @@ class ELFAnalyser {
     }
 
     private static Map<Integer, Map<ArmAeabiAttributesTag, Object>> parseAEABI(ByteBuffer buffer) {
-        Map<Integer, Map<ArmAeabiAttributesTag, Object>> data = new HashMap<Integer, Map<ArmAeabiAttributesTag, Object>>();
+        Map<Integer, Map<ArmAeabiAttributesTag, Object>> data = new HashMap<>();
         while (buffer.position() < buffer.limit()) {
             int pos = buffer.position();
             int subsectionTag = readULEB128(buffer).intValue();
@@ -534,7 +534,7 @@ class ELFAnalyser {
     }
 
     private static Map<ArmAeabiAttributesTag, Object> parseFileAttribute(ByteBuffer bb) {
-        Map<ArmAeabiAttributesTag, Object> result = new HashMap<ArmAeabiAttributesTag, Object>();
+        Map<ArmAeabiAttributesTag, Object> result = new HashMap<>();
         while (bb.position() < bb.limit()) {
             int tagValue = readULEB128(bb).intValue();
             ArmAeabiAttributesTag tag = ArmAeabiAttributesTag.getByValue(tagValue);

@@ -54,7 +54,7 @@ import com.sun.jna.internal.Cleaner;
 public class Memory extends Pointer implements Closeable {
     /** Keep track of all allocated memory so we can dispose of it before unloading. */
     private static final Map<Long, Reference<Memory>> allocatedMemory =
-            new ConcurrentHashMap<Long, Reference<Memory>>();
+            new ConcurrentHashMap<>();
 
     private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
@@ -68,7 +68,7 @@ public class Memory extends Pointer implements Closeable {
     /** Dispose of all allocated memory. */
     public static void disposeAll() {
         // use a copy since dispose() modifies the map
-        Collection<Reference<Memory>> refs = new ArrayList<Reference<Memory>>(allocatedMemory.values());
+        Collection<Reference<Memory>> refs = new ArrayList<>(allocatedMemory.values());
         for (Reference<Memory> r : refs) {
             Memory m = r.get();
             if(m != null) {
@@ -118,7 +118,7 @@ public class Memory extends Pointer implements Closeable {
         if (peer == 0)
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
 
-        allocatedMemory.put(peer, new WeakReference<Memory>(this));
+        allocatedMemory.put(peer, new WeakReference<>(this));
         cleanable = Cleaner.getCleaner().register(this, new MemoryDisposer(peer));
     }
 

@@ -155,8 +155,8 @@ public abstract class Structure {
     //public static final int ALIGN_8 = 6;
 
     protected static final int CALCULATE_SIZE = -1;
-    static final Map<Class<?>, LayoutInfo> layoutInfo = new WeakHashMap<Class<?>, LayoutInfo>();
-    static final Map<Class<?>, List<String>> fieldOrder = new WeakHashMap<Class<?>, List<String>>();
+    static final Map<Class<?>, LayoutInfo> layoutInfo = new WeakHashMap<>();
+    static final Map<Class<?>, List<String>> fieldOrder = new WeakHashMap<>();
 
     // This field is accessed by native code
     private Pointer memory;
@@ -168,7 +168,7 @@ public abstract class Structure {
     private Map<String, StructField> structFields;
     // Keep track of native C strings which have been allocated,
     // corresponding to String fields of this Structure
-    private final Map<String, NativeStringTracking> nativeStrings = new HashMap<String, NativeStringTracking>(8);
+    private final Map<String, NativeStringTracking> nativeStrings = new HashMap<>(8);
     private TypeMapper typeMapper;
     // This field is accessed by native code
     private long typeInfo;
@@ -479,7 +479,7 @@ public abstract class Structure {
     private static final ThreadLocal<Map<Pointer, Structure>> reads = new ThreadLocal<Map<Pointer, Structure>>() {
         @Override
         protected synchronized Map<Pointer, Structure> initialValue() {
-            return new HashMap<Pointer, Structure>();
+            return new HashMap<>();
         }
     };
 
@@ -981,7 +981,7 @@ public abstract class Structure {
      */
     // TODO(idosu 28 Apr 2018): Maybe deprecate this method to let users know they should use @FieldOrder
     protected List<String> getFieldOrder() {
-        List<String> fields = new LinkedList<String>();
+        List<String> fields = new LinkedList<>();
         for (Class<?> clazz = getClass(); clazz != Structure.class; clazz = clazz.getSuperclass()) {
             FieldOrder order = clazz.getAnnotation(FieldOrder.class);
             if (order != null) {
@@ -1015,11 +1015,11 @@ public abstract class Structure {
      * this {@link Structure} class.
      */
     protected List<Field> getFieldList() {
-        List<Field> flist = new ArrayList<Field>();
+        List<Field> flist = new ArrayList<>();
         for (Class<?> cls = getClass();
              !cls.equals(Structure.class);
              cls = cls.getSuperclass()) {
-            List<Field> classFields = new ArrayList<Field>();
+            List<Field> classFields = new ArrayList<>();
             Field[] fields = cls.getDeclaredFields();
             for (int i=0;i < fields.length;i++) {
                 int modifiers = fields[i].getModifiers();
@@ -1053,7 +1053,7 @@ public abstract class Structure {
     }
 
     public static List<String> createFieldsOrder(List<String> baseFields, List<String> extraFields) {
-        List<String> fields = new ArrayList<String>(baseFields.size() + extraFields.size());
+        List<String> fields = new ArrayList<>(baseFields.size() + extraFields.size());
         fields.addAll(baseFields);
         fields.addAll(extraFields);
         return Collections.unmodifiableList(fields);
@@ -1076,7 +1076,7 @@ public abstract class Structure {
     }
 
     private static <T extends Comparable<T>> List<T> sort(Collection<? extends T> c) {
-        List<T> list = new ArrayList<T>(c);
+        List<T> list = new ArrayList<>(c);
         Collections.sort(list);
         return list;
     }
@@ -1090,7 +1090,7 @@ public abstract class Structure {
     **/
     protected List<Field> getFields(boolean force) {
         List<Field> flist = getFieldList();
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         for (Field f : flist) {
             names.add(f.getName());
         }
@@ -1113,7 +1113,7 @@ public abstract class Structure {
             return null;
         }
 
-        Set<String> orderedNames = new HashSet<String>(fieldOrder);
+        Set<String> orderedNames = new HashSet<>(fieldOrder);
         if (!orderedNames.equals(names)) {
             throw new Error("Structure.getFieldOrder() on " + getClass()
                             + " returns names ("
@@ -1955,9 +1955,9 @@ public abstract class Structure {
             public size_t(long value) { super(Native.SIZE_T_SIZE, value); }
         }
 
-        private static final Map<Class, Map<Integer,FFIType>> typeInfoMap = new WeakHashMap<Class, Map<Integer,FFIType>>();
-        private static final Map<Class, FFIType> unionHelper = new WeakHashMap<Class, FFIType>();
-        private static final Map<Pointer, FFIType> ffiTypeInfo = new HashMap<Pointer, FFIType>();
+        private static final Map<Class, Map<Integer,FFIType>> typeInfoMap = new WeakHashMap<>();
+        private static final Map<Class, FFIType> unionHelper = new WeakHashMap<>();
+        private static final Map<Pointer, FFIType> ffiTypeInfo = new HashMap<>();
 
         // Native.initIDs initializes these fields to their appropriate
         // pointer values.  These are in a separate class from FFIType so that
@@ -2206,7 +2206,7 @@ public abstract class Structure {
             synchronized (typeInfoMap) {
                 Map<Integer,FFIType> typeMap = typeInfoMap.get(clazz);
                 if(typeMap == null) {
-                    typeMap = new HashMap<Integer,FFIType>();
+                    typeMap = new HashMap<>();
                     typeInfoMap.put(clazz, typeMap);
                 }
                 typeMap.put(elementCount, type);

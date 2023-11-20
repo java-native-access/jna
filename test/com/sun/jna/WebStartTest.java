@@ -291,7 +291,7 @@ public class WebStartTest extends TestCase implements Paths {
         String JAVA_HOME = System.getProperty("java.home");
         String BIN = new File(JAVA_HOME, "/bin").getAbsolutePath();
         File javaws = new File(BIN, "javaws" + (Platform.isWindows()?".exe":""));
-        List<File> tried = new ArrayList<File>();
+        List<File> tried = new ArrayList<>();
         tried.add(javaws);
         if (!javaws.exists()) {
             // NOTE: OSX puts javaws somewhere else entirely

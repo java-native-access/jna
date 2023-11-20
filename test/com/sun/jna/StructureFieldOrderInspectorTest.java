@@ -148,7 +148,7 @@ public class StructureFieldOrderInspectorTest extends TestCase {
     }
 
     public void testCheckMethodGetFieldOrderWithIgnoreCtorError() throws Exception {
-        final List<String> ignoreConstructorError = new ArrayList<String>();
+        final List<String> ignoreConstructorError = new ArrayList<>();
         ignoreConstructorError.add(StructureFieldOrderInspectorTest.class.getName());
         StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructExtraField.class, ignoreConstructorError);
     }

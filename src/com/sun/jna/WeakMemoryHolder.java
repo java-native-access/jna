@@ -38,12 +38,12 @@ import java.util.IdentityHashMap;
  * The references to the memory objects are released on access of WeakMemoryHolder.
  */
 public class WeakMemoryHolder {
-    ReferenceQueue<Object> referenceQueue = new ReferenceQueue<Object>();
-    IdentityHashMap<Reference<Object>, Memory> backingMap = new IdentityHashMap<Reference<Object>, Memory>();
+    ReferenceQueue<Object> referenceQueue = new ReferenceQueue<>();
+    IdentityHashMap<Reference<Object>, Memory> backingMap = new IdentityHashMap<>();
 
     public synchronized void put(Object o, Memory m) {
         clean();
-        Reference<Object> reference = new WeakReference<Object>(o, referenceQueue);
+        Reference<Object> reference = new WeakReference<>(o, referenceQueue);
         backingMap.put(reference, m);
     }
 

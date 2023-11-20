@@ -53,16 +53,16 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
 
     // Access to callbackMap, directCallbackMap, pointerCallbackMap is protected
     // by synchonizing on pointerCallbackMap
-    static final Map<Callback, CallbackReference> callbackMap = new WeakHashMap<Callback, CallbackReference>();
-    static final Map<Callback, CallbackReference> directCallbackMap = new WeakHashMap<Callback, CallbackReference>();
+    static final Map<Callback, CallbackReference> callbackMap = new WeakHashMap<>();
+    static final Map<Callback, CallbackReference> directCallbackMap = new WeakHashMap<>();
     //callbacks with different signatures sharing the same pointer
-    static final Map<Pointer, Reference<Callback>[]> pointerCallbackMap = new WeakHashMap<Pointer, Reference<Callback>[]>();
+    static final Map<Pointer, Reference<Callback>[]> pointerCallbackMap = new WeakHashMap<>();
     // Track memory allocations associated with this closure (usually String args)
     static final Map<Object, Object> allocations =
-            Collections.synchronizedMap(new WeakHashMap<Object, Object>());
+            Collections.synchronizedMap(new WeakHashMap<>());
     // Global map of allocated closures to facilitate centralized cleanup
     private static final Map<Long, Reference<CallbackReference>> allocatedMemory =
-            new ConcurrentHashMap<Long, Reference<CallbackReference>>();
+            new ConcurrentHashMap<>();
     private static final Method PROXY_CALLBACK_METHOD;
 
     static {
@@ -87,7 +87,7 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
         }
     }
 
-    private static final Map<Callback, CallbackThreadInitializer> initializers = new WeakHashMap<Callback, CallbackThreadInitializer>();
+    private static final Map<Callback, CallbackThreadInitializer> initializers = new WeakHashMap<>();
     /**
      * @param cb The {@link Callback} instance
      * @param initializer The {@link CallbackThreadInitializer} - if {@code null} then the
@@ -211,14 +211,14 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
                 }
             }
         }
-        newArray[nidx] = new WeakReference<Callback>(cb);
+        newArray[nidx] = new WeakReference<>(cb);
         return newArray;
     }
 
     private static Callback createCallback(Class<?> type, Pointer p) {
         int ctype = AltCallingConvention.class.isAssignableFrom(type)
                 ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-        Map<String, Object> foptions = new HashMap<String, Object>(Native.getLibraryOptions(type));
+        Map<String, Object> foptions = new HashMap<>(Native.getLibraryOptions(type));
         foptions.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(type));
         NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, foptions);
         return (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
@@ -330,7 +330,7 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
         }
         cbstruct = peer != 0 ? new Pointer(peer) : null;
         if(peer != 0) {
-            allocatedMemory.put(peer, new WeakReference<CallbackReference>(this));
+            allocatedMemory.put(peer, new WeakReference<>(this));
             cleanable = Cleaner.getCleaner().register(this, new CallbackReferenceDisposer(cbstruct));
         }
     }
@@ -401,7 +401,7 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
         // Look at only public methods defined by the Callback class
         Method[] pubMethods = cls.getDeclaredMethods();
         Method[] classMethods = cls.getMethods();
-        Set<Method> pmethods = new HashSet<Method>(Arrays.asList(pubMethods));
+        Set<Method> pmethods = new HashSet<>(Arrays.asList(pubMethods));
         pmethods.retainAll(Arrays.asList(classMethods));
 
         // Remove Object methods disallowed as callback method names
@@ -456,7 +456,7 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
     /** Dispose of all memory allocated for callbacks. */
     static void disposeAll() {
         // use a copy since dispose() modifes the map
-        Collection<Reference<CallbackReference>> refs = new LinkedList<Reference<CallbackReference>>(allocatedMemory.values());
+        Collection<Reference<CallbackReference>> refs = new LinkedList<>(allocatedMemory.values());
         for (Reference<CallbackReference> r : refs) {
             CallbackReference ref = r.get();
             if(ref != null) {

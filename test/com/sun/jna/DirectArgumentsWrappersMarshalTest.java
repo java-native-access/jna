@@ -92,7 +92,7 @@ public class DirectArgumentsWrappersMarshalTest extends ArgumentsWrappersMarshal
                     }
                 }
             }
-            final Map<Class,PrimitiveConverter> converters = new HashMap<Class,PrimitiveConverter>();
+            final Map<Class,PrimitiveConverter> converters = new HashMap<>();
             converters.put(Boolean.class, new PrimitiveConverter(boolean.class));
             converters.put(Byte.class, new PrimitiveConverter(byte.class));
             converters.put(Short.class, new PrimitiveConverter(short.class));

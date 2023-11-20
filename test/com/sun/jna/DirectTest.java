@@ -23,9 +23,8 @@
  */
 package com.sun.jna;
 
-import junit.framework.*;
-import java.lang.reflect.Method;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -34,6 +33,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
 public class DirectTest extends TestCase implements Paths {
@@ -203,7 +204,7 @@ public class DirectTest extends TestCase implements Paths {
         final TypeMapper mapper = new DefaultTypeMapper();
         final int alignment = Structure.ALIGN_NONE;
         final String encoding = System.getProperty("file.encoding");
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         options.put(Library.OPTION_STRUCTURE_ALIGNMENT, alignment);
         options.put(Library.OPTION_STRING_ENCODING, encoding);
