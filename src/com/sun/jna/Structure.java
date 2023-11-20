@@ -2325,9 +2325,7 @@ public abstract class Structure {
         try {
             cls.getConstructor();
             return;
-        }catch(NoSuchMethodException e) {
-        }
-        catch(SecurityException e) {
+        }catch(NoSuchMethodException | SecurityException e) {
         }
         throw new IllegalArgumentException("No suitable constructor found for class: " + cls.getName());
     }

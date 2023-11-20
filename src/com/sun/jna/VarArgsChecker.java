@@ -83,9 +83,7 @@ abstract class VarArgsChecker {
             } else {
                 return new NoVarArgsChecker();
             }
-        } catch (NoSuchMethodException e) {
-            return new NoVarArgsChecker();
-        } catch (SecurityException e) {
+        } catch (NoSuchMethodException | SecurityException e) {
             return new NoVarArgsChecker();
         }
     }

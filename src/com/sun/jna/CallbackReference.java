@@ -584,10 +584,7 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
                 try {
                     result = convertResult(callbackMethod.invoke(cb, callbackArgs));
                 }
-                catch (IllegalArgumentException e) {
-                    Native.getCallbackExceptionHandler().uncaughtException(cb, e);
-                }
-                catch (IllegalAccessException e) {
+                catch (IllegalArgumentException | IllegalAccessException e) {
                     Native.getCallbackExceptionHandler().uncaughtException(cb, e);
                 }
                 catch (InvocationTargetException e) {

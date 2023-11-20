@@ -172,9 +172,7 @@ public final class StructureFieldOrderInspector {
         final Structure structure;
         try {
             structure= structConstructor.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
         } catch (InvocationTargetException e) {
             // this is triggered by checks in Structure.getFields(), and static loadlibrary() failures

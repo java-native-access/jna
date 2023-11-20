@@ -46,23 +46,7 @@ abstract class Klass {
     public static <T> T newInstance(Class<T> klass) {
         try {
             return klass.getDeclaredConstructor().newInstance();
-        } catch (IllegalAccessException e) {
-            String msg = "Can't create an instance of " + klass
-                    + ", requires a public no-arg constructor: " + e;
-            throw new IllegalArgumentException(msg, e);
-        } catch (IllegalArgumentException e) {
-            String msg = "Can't create an instance of " + klass
-                    + ", requires a public no-arg constructor: " + e;
-            throw new IllegalArgumentException(msg, e);
-        } catch (InstantiationException e) {
-            String msg = "Can't create an instance of " + klass
-                    + ", requires a public no-arg constructor: " + e;
-            throw new IllegalArgumentException(msg, e);
-        } catch (NoSuchMethodException e) {
-            String msg = "Can't create an instance of " + klass
-                    + ", requires a public no-arg constructor: " + e;
-            throw new IllegalArgumentException(msg, e);
-        } catch (SecurityException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException e) {
             String msg = "Can't create an instance of " + klass
                     + ", requires a public no-arg constructor: " + e;
             throw new IllegalArgumentException(msg, e);

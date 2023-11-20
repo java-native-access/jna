@@ -350,11 +350,7 @@ public class NativeLibrary implements Closeable {
         }
         try {
             addSuppressedMethod.invoke(target, suppressed);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
-        } catch (InvocationTargetException ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             throw new RuntimeException("Failed to call addSuppressedMethod", ex);
         }
     }

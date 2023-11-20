@@ -397,11 +397,7 @@ public final class Native implements Version {
             try {
                 charset = Charset.forName(encoding);
             }
-            catch(IllegalCharsetNameException e) {
-                LOG.log(Level.WARNING, "JNA Warning: Encoding ''{0}'' is unsupported ({1})",
-                        new Object[]{encoding, e.getMessage()});
-            }
-            catch(UnsupportedCharsetException  e) {
+            catch(IllegalCharsetNameException | UnsupportedCharsetException  e) {
                 LOG.log(Level.WARNING, "JNA Warning: Encoding ''{0}'' is unsupported ({1})",
                         new Object[]{encoding, e.getMessage()});
             }

@@ -136,9 +136,7 @@ public class ReflectionUtils {
         }
         try {
             return (boolean) (Boolean) METHOD_IS_DEFAULT.invoke(method);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
             throw new RuntimeException(ex);
         } catch (InvocationTargetException ex) {
             Throwable cause = ex.getCause();
