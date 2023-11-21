@@ -130,7 +130,7 @@ public class NtDllTest extends TestCase {
         file.createNewFile();
         FileWriter fileWriter = new FileWriter(file);
         for (int i = 0; i < 1000; i++) {
-            fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+            fileWriter.write("Sample text " + i + System.lineSeparator());
         }
         fileWriter.close();
         return file;

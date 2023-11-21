@@ -231,7 +231,7 @@ public class Shell32Test extends TestCase {
         try (FileWriter fileWriter = new FileWriter(file)) {
             for (int i = 0; i < 10; i++) {
                 fileWriter.write("Sample line of text");
-                fileWriter.write(System.getProperty("line.separator"));
+                fileWriter.write(System.lineSeparator());
             }
         }
     }
