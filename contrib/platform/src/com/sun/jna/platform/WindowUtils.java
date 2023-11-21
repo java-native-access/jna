@@ -1043,9 +1043,9 @@ public class WindowUtils {
             int mode = pi.getWindingRule() == PathIterator.WIND_NON_ZERO
                 ? WinGDI.WINDING: WinGDI.ALTERNATE;
             float[] coords = new float[6];
-            List<POINT> points = new ArrayList<POINT>();
+            List<POINT> points = new ArrayList<>();
             int size = 0;
-            List<Integer> sizes = new ArrayList<Integer>();
+            List<Integer> sizes = new ArrayList<>();
             while (!pi.isDone()) {
                 int type = pi.currentSegment(coords);
                 if (type == PathIterator.SEG_MOVETO) {
@@ -1239,7 +1239,7 @@ public class WindowUtils {
 
         @Override
         public List<DesktopWindow> getAllWindows(final boolean onlyVisibleWindows) {
-            final List<DesktopWindow> result = new LinkedList<DesktopWindow>();
+            final List<DesktopWindow> result = new LinkedList<>();
 
             final WNDENUMPROC lpEnumFunc = new WNDENUMPROC() {
                 @Override
@@ -1576,7 +1576,7 @@ public class WindowUtils {
             }
             x11.XSetForeground(dpy, gc, new NativeLong(0));
             x11.XFillRectangle(dpy, pm, gc, 0, 0, width, height);
-            final List<Rectangle> rlist = new ArrayList<Rectangle>();
+            final List<Rectangle> rlist = new ArrayList<>();
             try {
                 RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
                     @Override
@@ -1686,7 +1686,7 @@ public class WindowUtils {
                 IntByReference pcount = new IntByReference();
                 info = x11.XGetVisualInfo(dpy, mask, template, pcount);
                 if (info != null) {
-                    List<X11.VisualID> list = new ArrayList<X11.VisualID>();
+                    List<X11.VisualID> list = new ArrayList<>();
                     XVisualInfo[] infos =
                         (XVisualInfo[])info.toArray(pcount.getValue());
                     for (int i = 0; i < infos.length; i++) {

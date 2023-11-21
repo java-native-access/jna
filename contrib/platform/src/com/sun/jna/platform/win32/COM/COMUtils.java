@@ -222,7 +222,7 @@ public abstract class COMUtils {
         HKEYByReference phkResult = new HKEYByReference();
         HKEYByReference phkResult2 = new HKEYByReference();
         String subKey;
-        ArrayList<COMInfo> comInfos = new ArrayList<COMUtils.COMInfo>();
+        ArrayList<COMInfo> comInfos = new ArrayList<>();
 
         try {
             // open root key

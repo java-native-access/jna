@@ -74,8 +74,8 @@ public abstract class FileMonitor {
         }
     }
 
-    private final Map<File, Integer> watched = new HashMap<File, Integer>();
-    private List<FileListener> listeners = new ArrayList<FileListener>();
+    private final Map<File, Integer> watched = new HashMap<>();
+    private List<FileListener> listeners = new ArrayList<>();
 
     protected abstract void watch(File file, int mask, boolean recursive) throws IOException ;
     protected abstract void unwatch(File file);
@@ -107,13 +107,13 @@ public abstract class FileMonitor {
     }
 
     public synchronized void addFileListener(FileListener listener) {
-        List<FileListener> list = new ArrayList<FileListener>(listeners);
+        List<FileListener> list = new ArrayList<>(listeners);
         list.add(listener);
         listeners = list;
     }
 
     public synchronized void removeFileListener(FileListener x) {
-        List<FileListener> list = new ArrayList<FileListener>(listeners);
+        List<FileListener> list = new ArrayList<>(listeners);
         list.remove(x);
         listeners = list;
     }

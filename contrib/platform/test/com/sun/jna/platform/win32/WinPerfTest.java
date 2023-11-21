@@ -122,7 +122,7 @@ public class WinPerfTest extends AbstractWin32TestSupport {
 
             // PERF_INSTANCE_DEFINITION test
             long perfInstanceOffset = perfObjectOffset + perfObject.DefinitionLength;
-            Set<Integer> pidSet = new HashSet<Integer>();
+            Set<Integer> pidSet = new HashSet<>();
             for (int inst = 0; inst < perfObject.NumInstances; inst++) {
                 PERF_INSTANCE_DEFINITION perfInstance = new PERF_INSTANCE_DEFINITION(
                         pPerfData.share(perfInstanceOffset));

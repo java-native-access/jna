@@ -413,11 +413,11 @@ public class Kernel32UtilTest extends TestCase {
     public void testGetLogicalProcessorInformationEx() {
         SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX[] procInfo = Kernel32Util
                 .getLogicalProcessorInformationEx(WinNT.LOGICAL_PROCESSOR_RELATIONSHIP.RelationAll);
-        List<GROUP_RELATIONSHIP> groups = new ArrayList<GROUP_RELATIONSHIP>();
-        List<PROCESSOR_RELATIONSHIP> packages = new ArrayList<PROCESSOR_RELATIONSHIP>();
-        List<NUMA_NODE_RELATIONSHIP> numaNodes = new ArrayList<NUMA_NODE_RELATIONSHIP>();
-        List<CACHE_RELATIONSHIP> caches = new ArrayList<CACHE_RELATIONSHIP>();
-        List<PROCESSOR_RELATIONSHIP> cores = new ArrayList<PROCESSOR_RELATIONSHIP>();
+        List<GROUP_RELATIONSHIP> groups = new ArrayList<>();
+        List<PROCESSOR_RELATIONSHIP> packages = new ArrayList<>();
+        List<NUMA_NODE_RELATIONSHIP> numaNodes = new ArrayList<>();
+        List<CACHE_RELATIONSHIP> caches = new ArrayList<>();
+        List<PROCESSOR_RELATIONSHIP> cores = new ArrayList<>();
 
         for (int i = 0; i < procInfo.length; i++) {
             // Build list from relationship

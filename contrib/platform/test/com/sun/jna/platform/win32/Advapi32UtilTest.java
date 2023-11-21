@@ -788,7 +788,7 @@ public class Advapi32UtilTest extends TestCase {
             + "\0";
 
         // Order is important to kept checking result simple
-        Map<String, String> mockEnvironment = new TreeMap<String, String>();
+        Map<String, String> mockEnvironment = new TreeMap<>();
         mockEnvironment.put("KEY", "value");
         mockEnvironment.put("KEY_EMPTY", "");
         mockEnvironment.put("KEY_NUMBER", "2");

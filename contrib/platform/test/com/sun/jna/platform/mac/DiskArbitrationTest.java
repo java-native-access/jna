@@ -75,7 +75,7 @@ public class DiskArbitrationTest {
         assertNotNull(session);
 
         // Get IOMedia objects representing whole drives and save the BSD Name
-        List<String> bsdNames = new ArrayList<String>();
+        List<String> bsdNames = new ArrayList<>();
         PointerByReference iterPtr = new PointerByReference();
 
         CFMutableDictionaryRef dict = IOKit.INSTANCE.IOServiceMatching("IOMedia");

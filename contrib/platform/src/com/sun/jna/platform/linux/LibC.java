@@ -73,7 +73,7 @@ public interface LibC extends LibCAPI, Library {
          */
         @Override
         protected List<Field> getFieldList() {
-            List<Field> fields = new ArrayList<Field>(super.getFieldList());
+            List<Field> fields = new ArrayList<>(super.getFieldList());
             if (PADDING_SIZE == 0) {
                 Iterator<Field> fieldIterator = fields.iterator();
                 while (fieldIterator.hasNext()) {
@@ -88,7 +88,7 @@ public interface LibC extends LibCAPI, Library {
 
         @Override
         protected List<String> getFieldOrder() {
-            List<String> fieldOrder = new ArrayList<String>(super.getFieldOrder());
+            List<String> fieldOrder = new ArrayList<>(super.getFieldOrder());
             if (PADDING_SIZE == 0) {
                 fieldOrder.remove("_f");
             }
@@ -122,7 +122,7 @@ public interface LibC extends LibCAPI, Library {
          */
         @Override
         protected List<Field> getFieldList() {
-            List<Field> fields = new ArrayList<Field>(super.getFieldList());
+            List<Field> fields = new ArrayList<>(super.getFieldList());
             if (NativeLong.SIZE > 4) {
                 Iterator<Field> fieldIterator = fields.iterator();
                 while (fieldIterator.hasNext()) {
@@ -137,7 +137,7 @@ public interface LibC extends LibCAPI, Library {
 
         @Override
         protected List<String> getFieldOrder() {
-            List<String> fieldOrder = new ArrayList<String>(super.getFieldOrder());
+            List<String> fieldOrder = new ArrayList<>(super.getFieldOrder());
             if (NativeLong.SIZE > 4) {
                 fieldOrder.remove("_f_unused");
             }

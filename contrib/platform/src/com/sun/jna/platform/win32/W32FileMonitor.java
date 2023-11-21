@@ -62,8 +62,8 @@ public class W32FileMonitor extends FileMonitor {
     }
     private Thread watcher;
     private HANDLE port;
-    private final Map<File, FileInfo> fileMap = new HashMap<File, FileInfo>();
-    private final Map<HANDLE, FileInfo> handleMap = new HashMap<HANDLE, FileInfo>();
+    private final Map<File, FileInfo> fileMap = new HashMap<>();
+    private final Map<HANDLE, FileInfo> handleMap = new HashMap<>();
     private boolean disposing = false;
 
     private void handleChanges(FileInfo finfo) throws IOException {

@@ -657,7 +657,7 @@ public abstract class XAttrUtil {
     private static Collection<String> splitBufferToStrings(byte[] valueMem, String encoding)
         throws IOException {
         final Charset charset = Charset.forName(encoding);
-        final Set<String> attributesList = new LinkedHashSet<String>(1);
+        final Set<String> attributesList = new LinkedHashSet<>(1);
         int offset = 0;
         for(int i = 0; i < valueMem.length; i++) {
             // each entry is terminated by a single \0 byte

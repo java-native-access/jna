@@ -37,7 +37,7 @@ import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 
 public class ComThread {
-    private static ThreadLocal<Boolean> isCOMThread = new ThreadLocal<Boolean>();
+    private static ThreadLocal<Boolean> isCOMThread = new ThreadLocal<>();
 
     ExecutorService executor;
     Runnable firstTask;

@@ -50,7 +50,7 @@ public class GDI32UtilTest extends AbstractWin32TestSupport {
         // by checking for 20 distinct colors.
         // BufferedImages normally start life as one uniform color
         // so if that's not the case then some data was indeed copied over as a result of the getScreenshot() function.
-        List<Integer> distinctPixels = new ArrayList<Integer>();
+        List<Integer> distinctPixels = new ArrayList<>();
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 int pixel = image.getRGB(x, y);

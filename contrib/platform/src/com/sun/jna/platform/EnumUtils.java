@@ -82,7 +82,7 @@ public class EnumUtils
     public static <T extends FlagEnum> Set<T> setFromInteger(int flags, Class<T> clazz)
     {
         T[] vals = clazz.getEnumConstants();
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
 
         for (T val : vals)
         {

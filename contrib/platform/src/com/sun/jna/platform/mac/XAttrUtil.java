@@ -41,7 +41,7 @@ public class XAttrUtil {
             return null;
 
         if (bufferLength == 0)
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
 
         Memory valueBuffer = new Memory(bufferLength);
         long valueLength = XAttr.INSTANCE.listxattr(path, valueBuffer, bufferLength, 0);
@@ -97,7 +97,7 @@ public class XAttrUtil {
     }
 
     protected static List<String> decodeStringSequence(ByteBuffer bb) {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
 
         bb.mark(); // first key starts from here
         while (bb.hasRemaining()) {

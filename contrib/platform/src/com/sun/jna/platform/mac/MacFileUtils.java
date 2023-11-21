@@ -69,7 +69,7 @@ public class MacFileUtils extends FileUtils {
 
     @Override
     public void moveToTrash(File... files) throws IOException {
-        List<String> failed = new ArrayList<String>();
+        List<String> failed = new ArrayList<>();
         for (File src: files) {
             FileManager.FSRef fsref = new FileManager.FSRef();
             int status = FileManager.INSTANCE.FSPathMakeRefWithOptions(src.getAbsolutePath(),

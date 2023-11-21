@@ -99,7 +99,7 @@ public class W32ServiceTest extends TestCase {
         W32Service service = _serviceManager.openService(svcId, Winsvc.SC_MANAGER_ALL_ACCESS);
         SERVICE_FAILURE_ACTIONS prevActions = service.getFailureActions();
 
-        List<SC_ACTION> actions = new LinkedList<SC_ACTION>();
+        List<SC_ACTION> actions = new LinkedList<>();
 
         SC_ACTION action = new SC_ACTION();
         action.type = Winsvc.SC_ACTION_RESTART;

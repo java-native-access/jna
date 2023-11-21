@@ -95,7 +95,7 @@ public class ExtAttrUtil {
     }
 
     private static List<String> decodeStringList(ByteBuffer buffer) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         while (buffer.hasRemaining()) {
             int length = buffer.get() & 0xFF;

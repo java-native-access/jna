@@ -429,7 +429,7 @@ public class WindowUtilsTest extends TestCase {
             WeakReference<Window> ref = null;
             for (int i = 0; i < owned.length; i++) {
                 if (owned[i].getClass().getName().indexOf("Heavy") != -1) {
-                    ref = new WeakReference<Window>(owned[i]);
+                    ref = new WeakReference<>(owned[i]);
                     break;
                 }
             }

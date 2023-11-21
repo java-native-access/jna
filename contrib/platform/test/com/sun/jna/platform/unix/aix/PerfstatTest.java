@@ -147,7 +147,7 @@ public class PerfstatTest extends TestCase {
             assertTrue("Error fetching processes", 0 < ret);
             // due to race condition ret may return fewer processes than asked for
             assertTrue("Fetched too many processes", ret <= procCount);
-            Set<Long> pidSet = new HashSet<Long>();
+            Set<Long> pidSet = new HashSet<>();
             for (int i = 0; i < ret; i++) {
                 assertTrue("Must have nonempty process name", 0 < Native.toString(proct[i].proc_name).length());
                 assertFalse("Pid must be unique", pidSet.contains(proct[i].pid));
@@ -160,7 +160,7 @@ public class PerfstatTest extends TestCase {
     public void testPerfstatProtocols() {
         if (Platform.isAIX()) {
             // Valid protocol names are union field names
-            Set<String> protocolNames = new HashSet<String>();
+            Set<String> protocolNames = new HashSet<>();
             for (Field f : perfstat_protocol_t.AnonymousUnionPayload.class.getDeclaredFields()) {
                 protocolNames.add(f.getName());
             }

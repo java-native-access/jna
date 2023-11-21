@@ -47,14 +47,14 @@ public class WininetUtil {
      *         cookie and history entries)
      */
     public static Map<String, String> getCache() {
-        List<INTERNET_CACHE_ENTRY_INFO> items = new ArrayList<Wininet.INTERNET_CACHE_ENTRY_INFO>();
+        List<INTERNET_CACHE_ENTRY_INFO> items = new ArrayList<>();
 
         HANDLE cacheHandle = null;
         Win32Exception we = null;
         int lastError = 0;
 
         // return
-        Map<String, String> cacheItems = new LinkedHashMap<String, String>();
+        Map<String, String> cacheItems = new LinkedHashMap<>();
 
         try {
             IntByReference size = new IntByReference();

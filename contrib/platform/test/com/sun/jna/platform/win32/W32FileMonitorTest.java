@@ -47,7 +47,7 @@ public class W32FileMonitorTest extends TestCase {
     private File tmpdir;
 
     protected void setUp() throws Exception {
-        events = new HashMap<Integer, FileEvent>();
+        events = new HashMap<>();
         final FileListener listener = new FileListener() {
             public void fileChanged(FileEvent e) {
                 events.put(Integer.valueOf(e.getType()), e);

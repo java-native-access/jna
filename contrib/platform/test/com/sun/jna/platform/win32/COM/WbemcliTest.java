@@ -96,7 +96,7 @@ public class WbemcliTest {
 
     @Test
     public void testWmiExceptions() {
-        WmiQuery<ProcessProperty> processQuery = new WmiQuery<ProcessProperty>("Win32_Process", ProcessProperty.class);
+        WmiQuery<ProcessProperty> processQuery = new WmiQuery<>("Win32_Process", ProcessProperty.class);
         try {
             // This query should take more than 0 ms
             processQuery.execute(0);
@@ -142,7 +142,7 @@ public class WbemcliTest {
 
     @Test
     public void testWmiProcesses() {
-        WmiQuery<ProcessProperty> processQuery = new WmiQuery<ProcessProperty>("Win32_Process", ProcessProperty.class);
+        WmiQuery<ProcessProperty> processQuery = new WmiQuery<>("Win32_Process", ProcessProperty.class);
 
         WmiResult<ProcessProperty> processes = processQuery.execute();
         // There has to be at least one process (this one!)
@@ -199,7 +199,7 @@ public class WbemcliTest {
 
                 for(IWbemClassObject iwco: results) {
                     resultCount++;
-                    Set<String> names = new HashSet<String>(Arrays.asList(iwco.GetNames(null, 0, null)));
+                    Set<String> names = new HashSet<>(Arrays.asList(iwco.GetNames(null, 0, null)));
                     assertTrue(names.contains("CommandLine"));
                     assertTrue(names.contains("ProcessId"));
                     assertTrue(names.contains("WorkingSetSize"));
@@ -276,7 +276,7 @@ public class WbemcliTest {
 
     @Test
     public void testWmiOperatingSystem() {
-        WmiQuery<OperatingSystemProperty> operatingSystemQuery = new WmiQuery<OperatingSystemProperty>("Win32_OperatingSystem",
+        WmiQuery<OperatingSystemProperty> operatingSystemQuery = new WmiQuery<>("Win32_OperatingSystem",
                 OperatingSystemProperty.class);
 
         WmiResult<OperatingSystemProperty> os = operatingSystemQuery.execute();
@@ -306,7 +306,7 @@ public class WbemcliTest {
 
     @Test
     public void testUnsupportedValues() {
-        WmiQuery<Win32_DiskDrive_Values> serialNumberQuery = new WmiQuery<Win32_DiskDrive_Values>("Win32_DiskDrive", Win32_DiskDrive_Values.class);
+        WmiQuery<Win32_DiskDrive_Values> serialNumberQuery = new WmiQuery<>("Win32_DiskDrive", Win32_DiskDrive_Values.class);
         WmiResult<Win32_DiskDrive_Values> result = serialNumberQuery.execute();
         assertTrue(result.getResultCount() > 0);
         for (int i = 0; i < result.getResultCount(); i++) {

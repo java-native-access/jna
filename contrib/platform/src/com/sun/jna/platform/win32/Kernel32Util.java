@@ -471,7 +471,7 @@ public abstract class Kernel32Util implements WinDef {
             return null;
         }
 
-        Map<String,String>  vars=new TreeMap<String,String>();
+        Map<String,String>  vars=new TreeMap<>();
         boolean             asWideChars=isWideCharEnvironmentStringBlock(lpszEnvironmentBlock, offset);
         long                stepFactor=asWideChars ? 2L : 1L;
         for (long    curOffset=offset; ; ) {
@@ -755,7 +755,7 @@ public abstract class Kernel32Util implements WinDef {
             }
         }
         // Array elements have variable size; iterate to populate array
-        List<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX> procInfoList = new ArrayList<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
+        List<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX> procInfoList = new ArrayList<>();
         int offset = 0;
         while (offset < bufferSize.getValue().intValue()) {
             SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX information = SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
@@ -1068,8 +1068,8 @@ public abstract class Kernel32Util implements WinDef {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
-        final List<String> types = new ArrayList<String>();
-        final Map<String, List<String>> result = new LinkedHashMap<String, List<String>>();
+        final List<String> types = new ArrayList<>();
+        final Map<String, List<String>> result = new LinkedHashMap<>();
 
         WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
 
@@ -1180,7 +1180,7 @@ public abstract class Kernel32Util implements WinDef {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-            List<Tlhelp32.MODULEENTRY32W> modules = new ArrayList<Tlhelp32.MODULEENTRY32W>();
+            List<Tlhelp32.MODULEENTRY32W> modules = new ArrayList<>();
             modules.add(first);
 
             Tlhelp32.MODULEENTRY32W next = new Tlhelp32.MODULEENTRY32W();
