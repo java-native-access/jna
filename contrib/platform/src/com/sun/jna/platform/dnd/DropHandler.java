@@ -388,7 +388,7 @@ public abstract class DropHandler implements DropTargetListener {
      * @return whether any of the given flavors are supported
      */
     protected boolean isSupported(DataFlavor[] flavors) {
-        Set<DataFlavor> set = new HashSet<DataFlavor>(Arrays.asList(flavors));
+        Set<DataFlavor> set = new HashSet<>(Arrays.asList(flavors));
         set.retainAll(acceptedFlavors);
         return !set.isEmpty();
     }

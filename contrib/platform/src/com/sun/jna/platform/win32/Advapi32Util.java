@@ -455,7 +455,7 @@ public abstract class Advapi32Util {
                 tokenInformationLength.getValue(), tokenInformationLength)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        ArrayList<Account> userGroups = new ArrayList<Account>();
+        ArrayList<Account> userGroups = new ArrayList<>();
         // make array of names
         for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
             Account group;
@@ -975,7 +975,7 @@ public abstract class Advapi32Util {
      * @return An array of strings corresponding to the strings in the buffer.
      */
     static String[] regMultiSzBufferToStringArray(Memory data) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         int offset = 0;
         while (offset < data.size()) {
             String s;
@@ -1995,7 +1995,7 @@ public abstract class Advapi32Util {
         if (rc != W32Errors.ERROR_SUCCESS) {
             throw new Win32Exception(rc);
         }
-        ArrayList<String> keys = new ArrayList<String>(lpcSubKeys.getValue());
+        ArrayList<String> keys = new ArrayList<>(lpcSubKeys.getValue());
         char[] name = new char[lpcMaxSubKeyLen.getValue() + 1];
         for (int i = 0; i < lpcSubKeys.getValue(); i++) {
             IntByReference lpcchValueName = new IntByReference(
@@ -2129,7 +2129,7 @@ public abstract class Advapi32Util {
         if (rc != W32Errors.ERROR_SUCCESS) {
             throw new Win32Exception(rc);
         }
-        TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
+        TreeMap<String, Object> keyValues = new TreeMap<>();
         char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
         // Allocate enough memory to hold largest value and two
         // terminating WCHARs -- the memory is zeroed so after
@@ -2200,7 +2200,7 @@ public abstract class Advapi32Util {
                     break;
                 }
                 case WinNT.REG_MULTI_SZ: {
-                    ArrayList<String> result = new ArrayList<String>();
+                    ArrayList<String> result = new ArrayList<>();
                     int offset = 0;
                     while (offset < byteData.size()) {
                         String s;
@@ -2529,7 +2529,7 @@ public abstract class Advapi32Util {
             }
             // strings
             if (_record.NumStrings.intValue() > 0) {
-                ArrayList<String> strings = new ArrayList<String>();
+                ArrayList<String> strings = new ArrayList<>();
                 int count = _record.NumStrings.intValue();
                 long offset = _record.StringOffset.intValue();
                 while (count > 0) {
@@ -2700,8 +2700,8 @@ public abstract class Advapi32Util {
         ACE_HEADER[] aceStructures = dacl.getACEs();
 
         if (compact) {
-            List<ACE_HEADER> result = new ArrayList<ACE_HEADER>();
-            Map<String, ACCESS_ACEStructure> aceMap = new HashMap<String, ACCESS_ACEStructure>();
+            List<ACE_HEADER> result = new ArrayList<>();
+            Map<String, ACCESS_ACEStructure> aceMap = new HashMap<>();
             for (ACE_HEADER aceStructure : aceStructures) {
                 if (aceStructure instanceof ACCESS_ACEStructure) {
                     ACCESS_ACEStructure accessACEStructure = (ACCESS_ACEStructure) aceStructure;

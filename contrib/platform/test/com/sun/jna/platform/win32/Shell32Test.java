@@ -228,14 +228,11 @@ public class Shell32Test extends TestCase {
      */
     private void fillTempFile(File file) throws IOException {
         file.createNewFile();
-        FileWriter fileWriter = new FileWriter(file);
-        try {
+        try (FileWriter fileWriter = new FileWriter(file)) {
             for (int i = 0; i < 10; i++) {
                 fileWriter.write("Sample line of text");
-                fileWriter.write(System.getProperty("line.separator"));
+                fileWriter.write(System.lineSeparator());
             }
-        } finally {
-            fileWriter.close();
         }
     }
 

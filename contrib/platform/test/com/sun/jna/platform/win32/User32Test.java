@@ -150,10 +150,7 @@ public class User32Test extends AbstractWin32TestSupport {
             robot.keyRelease(vk);
             msg = waitForMessage(500);
             assertNull(msg);
-        } catch (AWTException e) {
-            e.printStackTrace();
-            fail();
-        } catch (InterruptedException e) {
+        } catch (AWTException | InterruptedException e) {
             e.printStackTrace();
             fail();
         } finally {

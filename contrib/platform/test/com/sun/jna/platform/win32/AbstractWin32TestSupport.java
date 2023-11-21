@@ -62,8 +62,8 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
      */
     public static final Set<String> detectDuplicateMethods(Class<?> ifc) {
         Method[] methods = ifc.getMethods();
-        Set<String> nameSet = new HashSet<String>(methods.length);
-        Set<String> dupSet = new HashSet<String>();
+        Set<String> nameSet = new HashSet<>(methods.length);
+        Set<String> dupSet = new HashSet<>();
         for (Method m : methods) {
             String name = m.getName();
             if (!nameSet.add(name)) {

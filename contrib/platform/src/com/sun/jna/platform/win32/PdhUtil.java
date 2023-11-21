@@ -159,8 +159,8 @@ public abstract class PdhUtil {
      */
     public static PdhEnumObjectItems PdhEnumObjectItems(String szDataSource, String szMachineName, String szObjectName,
             int dwDetailLevel) {
-        List<String> counters = new ArrayList<String>();
-        List<String> instances = new ArrayList<String>();
+        List<String> counters = new ArrayList<>();
+        List<String> instances = new ArrayList<>();
 
         // Call once to get counter and instance string lengths
         // If zero on input and the object exists, the function returns PDH_MORE_DATA
@@ -285,9 +285,9 @@ public abstract class PdhUtil {
 
         private List<String> copyAndEmptyListForNullList (List<String> inputList) {
             if(inputList == null) {
-                return new ArrayList<String>();
+                return new ArrayList<>();
             } else {
-                return new ArrayList<String>(inputList);
+                return new ArrayList<>(inputList);
             }
         }
 

@@ -180,11 +180,11 @@ public class ObjectFactory {
     // environment and can't be used anymore. registeredObjects is used
     // to dispose interfaces even if garbadge collection has not yet collected
     // the proxy objects.
-    private final List<WeakReference<ProxyObject>> registeredObjects = new LinkedList<WeakReference<ProxyObject>>();
+    private final List<WeakReference<ProxyObject>> registeredObjects = new LinkedList<>();
 
     public void register(ProxyObject proxyObject) {
         synchronized (this.registeredObjects) {
-            this.registeredObjects.add(new WeakReference<ProxyObject>(proxyObject));
+            this.registeredObjects.add(new WeakReference<>(proxyObject));
         }
     }
 
@@ -203,7 +203,7 @@ public class ObjectFactory {
 
     public void disposeAll() {
         synchronized (this.registeredObjects) {
-            List<WeakReference<ProxyObject>> s = new ArrayList<WeakReference<ProxyObject>>(this.registeredObjects);
+            List<WeakReference<ProxyObject>> s = new ArrayList<>(this.registeredObjects);
             for (WeakReference<ProxyObject> weakRef : s) {
                 ProxyObject po = weakRef.get();
                 if (po != null) {

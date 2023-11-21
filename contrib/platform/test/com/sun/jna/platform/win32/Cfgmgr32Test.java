@@ -124,7 +124,7 @@ public class Cfgmgr32Test {
         int node = outputNode.getValue();
 
         // Navigate the device tree using BFS
-        Queue<Integer> deviceQueue = new ArrayDeque<Integer>();
+        Queue<Integer> deviceQueue = new ArrayDeque<>();
         IntByReference child = new IntByReference();
         IntByReference sibling = new IntByReference();
         // Initialize queue with root node

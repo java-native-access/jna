@@ -284,12 +284,12 @@ public class WbemcliUtil {
          */
         private static <T extends Enum<T>> WmiResult<T> enumerateProperties(IEnumWbemClassObject enumerator,
                 Class<T> propertyEnum, int timeout) throws TimeoutException {
-            WmiResult<T> values = INSTANCE.new WmiResult<T>(propertyEnum);
+            WmiResult<T> values = INSTANCE.new WmiResult<>(propertyEnum);
             // Step 7: -------------------------------------------------
             // Get the data from the query in step 6 -------------------
             Pointer[] pclsObj = new Pointer[1];
             IntByReference uReturn = new IntByReference(0);
-            Map<T, WString> wstrMap = new HashMap<T, WString>();
+            Map<T, WString> wstrMap = new HashMap<>();
             HRESULT hres = null;
             for (T property : propertyEnum.getEnumConstants()) {
                 wstrMap.put(property, new WString(property.name()));
@@ -381,11 +381,11 @@ public class WbemcliUtil {
          *            The enum associated with this map
          */
         public WmiResult(Class<T> propertyEnum) {
-            propertyMap = new EnumMap<T, List<Object>>(propertyEnum);
-            vtTypeMap = new EnumMap<T, Integer>(propertyEnum);
-            cimTypeMap = new EnumMap<T, Integer>(propertyEnum);
+            propertyMap = new EnumMap<>(propertyEnum);
+            vtTypeMap = new EnumMap<>(propertyEnum);
+            cimTypeMap = new EnumMap<>(propertyEnum);
             for (T prop : propertyEnum.getEnumConstants()) {
-                propertyMap.put(prop, new ArrayList<Object>());
+                propertyMap.put(prop, new ArrayList<>());
                 vtTypeMap.put(prop, Variant.VT_NULL);
                 cimTypeMap.put(prop, Wbemcli.CIM_EMPTY);
             }
@@ -486,7 +486,7 @@ public class WbemcliUtil {
             ns = namespace.substring(5);
         }
         // Test
-        WmiQuery<NamespaceProperty> namespaceQuery = new WmiQuery<NamespaceProperty>("ROOT", "__NAMESPACE", NamespaceProperty.class);
+        WmiQuery<NamespaceProperty> namespaceQuery = new WmiQuery<>("ROOT", "__NAMESPACE", NamespaceProperty.class);
         WmiResult<NamespaceProperty> namespaces = namespaceQuery.execute();
         for (int i = 0; i < namespaces.getResultCount(); i++) {
             if (ns.equalsIgnoreCase((String) namespaces.getValue(NamespaceProperty.NAME, i))) {

@@ -213,7 +213,7 @@ public final class User32Util {
                     Logger.getLogger(MessageLoopThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            FutureTask<V> futureTask = new FutureTask<V>(command);
+            FutureTask<V> futureTask = new FutureTask<>(command);
             workQueue.add(futureTask);
             User32.INSTANCE.PostThreadMessage(nativeThreadId, WinUser.WM_USER, null, null);
             return futureTask;

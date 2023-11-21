@@ -54,10 +54,10 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
         {
             put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper() {
                 {
-                    addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<MC_POSITION_TYPE>(MC_POSITION_TYPE.class));
-                    addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<MC_SIZE_TYPE>(MC_SIZE_TYPE.class));
-                    addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<MC_GAIN_TYPE>(MC_GAIN_TYPE.class));
-                    addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<MC_DRIVE_TYPE>(MC_DRIVE_TYPE.class));
+                    addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<>(MC_POSITION_TYPE.class));
+                    addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<>(MC_SIZE_TYPE.class));
+                    addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<>(MC_GAIN_TYPE.class));
+                    addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<>(MC_DRIVE_TYPE.class));
                 }
             });
         }

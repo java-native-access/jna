@@ -104,7 +104,7 @@ public abstract class FileUtils {
             if (!trash.exists()) {
                 throw new IOException("No trash location found (define fileutils.trash to be the path to the trash)");
             }
-            List<File> failed = new ArrayList<File>();
+            List<File> failed = new ArrayList<>();
             for (int i=0;i < files.length;i++) {
                 File src = files[i];
                 File target = new File(trash, src.getName());

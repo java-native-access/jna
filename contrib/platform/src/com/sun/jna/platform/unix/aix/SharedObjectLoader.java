@@ -55,7 +55,7 @@ final class SharedObjectLoader {
         int RTLD_MEMBER = 0x40000; // allows "lib.a(obj.o)" syntax
         int RTLD_GLOBAL = 0x10000;
         int RTLD_LAZY = 0x4;
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
         options.put(Library.OPTION_OPEN_FLAGS, RTLD_MEMBER | RTLD_GLOBAL | RTLD_LAZY);
         return Collections.unmodifiableMap(options);
     }

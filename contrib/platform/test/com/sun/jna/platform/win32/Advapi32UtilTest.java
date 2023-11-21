@@ -788,7 +788,7 @@ public class Advapi32UtilTest extends TestCase {
             + "\0";
 
         // Order is important to kept checking result simple
-        Map<String, String> mockEnvironment = new TreeMap<String, String>();
+        Map<String, String> mockEnvironment = new TreeMap<>();
         mockEnvironment.put("KEY", "value");
         mockEnvironment.put("KEY_EMPTY", "");
         mockEnvironment.put("KEY_NUMBER", "2");
@@ -934,7 +934,7 @@ public class Advapi32UtilTest extends TestCase {
         file.createNewFile();
         FileWriter fileWriter = new FileWriter(file);
         for (int i = 0; i < 1000; i++) {
-            fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+            fileWriter.write("Sample text " + i + System.lineSeparator());
         }
         fileWriter.close();
         return file;

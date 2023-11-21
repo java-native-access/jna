@@ -65,7 +65,7 @@ public class W32ServiceManagerTest extends TestCase {
         W32ServiceManager manager = new W32ServiceManager();
 
         // It is expected, that these services are present
-        List<String> expectedServices = new ArrayList<String>(4);
+        List<String> expectedServices = new ArrayList<>(4);
         expectedServices.add("Schedule");
         if (VersionHelpers.IsWindows8OrGreater()) {
             expectedServices.add("SystemEventsBroker");

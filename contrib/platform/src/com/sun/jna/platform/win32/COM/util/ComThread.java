@@ -37,7 +37,7 @@ import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 
 public class ComThread {
-    private static ThreadLocal<Boolean> isCOMThread = new ThreadLocal<Boolean>();
+    private static ThreadLocal<Boolean> isCOMThread = new ThreadLocal<>();
 
     ExecutorService executor;
     Runnable firstTask;
@@ -116,9 +116,7 @@ public class ComThread {
 
             executor.shutdown();
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
             executor.shutdownNow();

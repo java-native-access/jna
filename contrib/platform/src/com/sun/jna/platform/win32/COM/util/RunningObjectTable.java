@@ -60,7 +60,7 @@ public class RunningObjectTable implements IRunningObjectTable {
     public <T> List<T> getActiveObjectsByInterface(Class<T> comInterface) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
 
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
 
         for (IDispatch obj : this.enumRunning()) {
             try {

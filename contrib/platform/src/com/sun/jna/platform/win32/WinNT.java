@@ -3208,7 +3208,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         @Override
         protected List<Field> getFieldList() {
-            List<Field> fields = new ArrayList<Field>(super.getFieldList());
+            List<Field> fields = new ArrayList<>(super.getFieldList());
             Iterator<Field> fieldIterator = fields.iterator();
             while (fieldIterator.hasNext()) {
                 Field field = fieldIterator.next();

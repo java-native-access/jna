@@ -1640,7 +1640,7 @@ public abstract class DdemlUtil {
             return new WinDef.PVOID();
         };
 
-        private final List<AdvstartHandler> advstartHandler = new CopyOnWriteArrayList<AdvstartHandler>();
+        private final List<AdvstartHandler> advstartHandler = new CopyOnWriteArrayList<>();
 
         public void registerAdvstartHandler(AdvstartHandler handler) {
             advstartHandler.add(handler);
@@ -1660,7 +1660,7 @@ public abstract class DdemlUtil {
             return oneHandlerTrue;
         }
 
-        private final List<AdvstopHandler> advstopHandler = new CopyOnWriteArrayList<AdvstopHandler>();
+        private final List<AdvstopHandler> advstopHandler = new CopyOnWriteArrayList<>();
 
         public void registerAdvstopHandler(AdvstopHandler handler) {
             advstopHandler.add(handler);
@@ -1676,7 +1676,7 @@ public abstract class DdemlUtil {
             }
         }
 
-        private final List<ConnectHandler> connectHandler = new CopyOnWriteArrayList<ConnectHandler>();
+        private final List<ConnectHandler> connectHandler = new CopyOnWriteArrayList<>();
 
         public void registerConnectHandler(ConnectHandler handler) {
             connectHandler.add(handler);
@@ -1696,7 +1696,7 @@ public abstract class DdemlUtil {
             return oneHandlerTrue;
         }
 
-        private final List<AdvreqHandler> advReqHandler = new CopyOnWriteArrayList<AdvreqHandler>();
+        private final List<AdvreqHandler> advReqHandler = new CopyOnWriteArrayList<>();
 
         public void registerAdvReqHandler(AdvreqHandler handler) {
             advReqHandler.add(handler);
@@ -1716,7 +1716,7 @@ public abstract class DdemlUtil {
             return null;
         }
 
-        private final List<RequestHandler> requestHandler = new CopyOnWriteArrayList<RequestHandler>();
+        private final List<RequestHandler> requestHandler = new CopyOnWriteArrayList<>();
 
         public void registerRequestHandler(RequestHandler handler) {
             requestHandler.add(handler);
@@ -1736,7 +1736,7 @@ public abstract class DdemlUtil {
             return null;
         }
 
-        private final List<WildconnectHandler> wildconnectHandler = new CopyOnWriteArrayList<WildconnectHandler>();
+        private final List<WildconnectHandler> wildconnectHandler = new CopyOnWriteArrayList<>();
 
         public void registerWildconnectHandler(WildconnectHandler handler) {
             wildconnectHandler.add(handler);
@@ -1747,7 +1747,7 @@ public abstract class DdemlUtil {
         }
 
         private Ddeml.HSZPAIR[] onWildconnect(int transactionType, HSZ topic, HSZ service, CONVCONTEXT convcontext, boolean sameInstance) {
-            List<HSZPAIR> hszpairs = new ArrayList<HSZPAIR>(1);
+            List<HSZPAIR> hszpairs = new ArrayList<>(1);
             for(WildconnectHandler handler: wildconnectHandler) {
                 hszpairs.addAll(handler.onWildconnect(transactionType, topic, service, convcontext, sameInstance));
             }
@@ -1755,7 +1755,7 @@ public abstract class DdemlUtil {
         }
 
 
-        private final List<AdvdataHandler> advdataHandler = new CopyOnWriteArrayList<AdvdataHandler>();
+        private final List<AdvdataHandler> advdataHandler = new CopyOnWriteArrayList<>();
 
         public void registerAdvdataHandler(AdvdataHandler handler) {
             advdataHandler.add(handler);
@@ -1775,7 +1775,7 @@ public abstract class DdemlUtil {
             return Ddeml.DDE_FNOTPROCESSED;
         }
 
-        private final List<ExecuteHandler> executeHandler = new CopyOnWriteArrayList<ExecuteHandler>();
+        private final List<ExecuteHandler> executeHandler = new CopyOnWriteArrayList<>();
 
         public void registerExecuteHandler(ExecuteHandler handler) {
             executeHandler.add(handler);
@@ -1795,7 +1795,7 @@ public abstract class DdemlUtil {
             return Ddeml.DDE_FNOTPROCESSED;
         }
 
-        private final List<PokeHandler> pokeHandler = new CopyOnWriteArrayList<PokeHandler>();
+        private final List<PokeHandler> pokeHandler = new CopyOnWriteArrayList<>();
 
         public void registerPokeHandler(PokeHandler handler) {
             pokeHandler.add(handler);
@@ -1815,7 +1815,7 @@ public abstract class DdemlUtil {
             return Ddeml.DDE_FNOTPROCESSED;
         }
 
-        private final List<ConnectConfirmHandler> connectConfirmHandler = new CopyOnWriteArrayList<ConnectConfirmHandler>();
+        private final List<ConnectConfirmHandler> connectConfirmHandler = new CopyOnWriteArrayList<>();
 
         public void registerConnectConfirmHandler(ConnectConfirmHandler handler) {
             connectConfirmHandler.add(handler);
@@ -1831,7 +1831,7 @@ public abstract class DdemlUtil {
             }
         }
 
-        private final List<DisconnectHandler> disconnectHandler = new CopyOnWriteArrayList<DisconnectHandler>();
+        private final List<DisconnectHandler> disconnectHandler = new CopyOnWriteArrayList<>();
 
         public void registerDisconnectHandler(DisconnectHandler handler) {
             disconnectHandler.add(handler);
@@ -1847,7 +1847,7 @@ public abstract class DdemlUtil {
             }
         }
 
-        private final List<ErrorHandler> errorHandler = new CopyOnWriteArrayList<ErrorHandler>();
+        private final List<ErrorHandler> errorHandler = new CopyOnWriteArrayList<>();
 
         public void registerErrorHandler(ErrorHandler handler) {
             errorHandler.add(handler);
@@ -1863,7 +1863,7 @@ public abstract class DdemlUtil {
             }
         }
 
-        private final List<RegisterHandler> registerHandler = new CopyOnWriteArrayList<RegisterHandler>();
+        private final List<RegisterHandler> registerHandler = new CopyOnWriteArrayList<>();
 
         public void registerRegisterHandler(RegisterHandler handler) {
             registerHandler.add(handler);
@@ -1879,7 +1879,7 @@ public abstract class DdemlUtil {
             }
         }
 
-        private final List<XactCompleteHandler> xactCompleteHandler = new CopyOnWriteArrayList<XactCompleteHandler>();
+        private final List<XactCompleteHandler> xactCompleteHandler = new CopyOnWriteArrayList<>();
 
         public void registerXactCompleteHandler(XactCompleteHandler handler) {
             xactCompleteHandler.add(handler);
@@ -1895,7 +1895,7 @@ public abstract class DdemlUtil {
             }
         }
 
-        private final List<UnregisterHandler> unregisterHandler = new CopyOnWriteArrayList<UnregisterHandler>();
+        private final List<UnregisterHandler> unregisterHandler = new CopyOnWriteArrayList<>();
 
         public void registerUnregisterHandler(UnregisterHandler handler) {
             unregisterHandler.add(handler);
@@ -1911,7 +1911,7 @@ public abstract class DdemlUtil {
             }
         }
 
-        private final List<MonitorHandler> monitorHandler = new CopyOnWriteArrayList<MonitorHandler>();
+        private final List<MonitorHandler> monitorHandler = new CopyOnWriteArrayList<>();
 
         public void registerMonitorHandler(MonitorHandler handler) {
             monitorHandler.add(handler);
@@ -1936,15 +1936,13 @@ public abstract class DdemlUtil {
         private static final Map<Integer,String> ERROR_CODE_MAP;
 
         static {
-            Map<Integer, String> errorCodeMapBuilder = new HashMap<Integer, String>();
+            Map<Integer, String> errorCodeMapBuilder = new HashMap<>();
             for (Field f : Ddeml.class.getFields()) {
                 String name = f.getName();
                 if (name.startsWith("DMLERR_") && (!name.equals("DMLERR_FIRST")) && (!name.equals("DMLERR_LAST"))) {
                     try {
                         errorCodeMapBuilder.put(f.getInt(null), name);
-                    } catch (IllegalArgumentException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (IllegalAccessException ex) {
+                    } catch (IllegalArgumentException | IllegalAccessException ex) {
                         throw new RuntimeException(ex);
                     }
                 }

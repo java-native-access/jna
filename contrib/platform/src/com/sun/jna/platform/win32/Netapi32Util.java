@@ -212,7 +212,7 @@ public abstract class Netapi32Util {
                 throw new Win32Exception(rc);
             }
 
-            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>();
+            ArrayList<LocalGroup> result = new ArrayList<>();
 
             if (entriesRead.getValue() > 0) {
                 LMAccess.LOCALGROUP_INFO_1 group = new LMAccess.LOCALGROUP_INFO_1(bufptr.getValue());
@@ -261,7 +261,7 @@ public abstract class Netapi32Util {
                 throw new Win32Exception(rc);
             }
 
-            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>();
+            ArrayList<LocalGroup> result = new ArrayList<>();
 
             if (entriesRead.getValue() > 0) {
                 LMAccess.GROUP_INFO_1 group = new LMAccess.GROUP_INFO_1(bufptr.getValue());
@@ -311,7 +311,7 @@ public abstract class Netapi32Util {
                 throw new Win32Exception(rc);
             }
 
-            ArrayList<User> result = new ArrayList<User>();
+            ArrayList<User> result = new ArrayList<>();
 
             if (entriesRead.getValue() > 0) {
                 LMAccess.USER_INFO_1 user = new LMAccess.USER_INFO_1(bufptr.getValue());
@@ -370,7 +370,7 @@ public abstract class Netapi32Util {
             if (rc != LMErr.NERR_Success) {
                 throw new Win32Exception(rc);
             }
-            ArrayList<Group> result = new ArrayList<Group>();
+            ArrayList<Group> result = new ArrayList<>();
             if (entriesread.getValue() > 0) {
                 LOCALGROUP_USERS_INFO_0 lgroup = new LOCALGROUP_USERS_INFO_0(bufptr.getValue());
                 LOCALGROUP_USERS_INFO_0[] lgroups = (LOCALGROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
@@ -420,7 +420,7 @@ public abstract class Netapi32Util {
                 throw new Win32Exception(rc);
             }
 
-            ArrayList<Group> result = new ArrayList<Group>();
+            ArrayList<Group> result = new ArrayList<>();
 
             if (entriesread.getValue() > 0) {
                 GROUP_USERS_INFO_0 lgroup = new GROUP_USERS_INFO_0(bufptr.getValue());
@@ -637,7 +637,7 @@ public abstract class Netapi32Util {
             throw new Win32Exception(rc);
         }
         try {
-            ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainTrustCount.getValue());
+            ArrayList<DomainTrust> trusts = new ArrayList<>(domainTrustCount.getValue());
 
             if(domainTrustCount.getValue() > 0) {
                 DS_DOMAIN_TRUSTS domainTrustRefs = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());

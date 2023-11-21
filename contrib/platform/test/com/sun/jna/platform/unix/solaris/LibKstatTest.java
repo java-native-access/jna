@@ -254,7 +254,7 @@ public class LibKstatTest extends TestCase {
      *         empty list otherwise
      */
     private static List<Kstat> kstatLookupAll(KstatCtl kc, String module, int instance, String name) {
-        List<Kstat> kstats = new ArrayList<Kstat>();
+        List<Kstat> kstats = new ArrayList<>();
         int ret = LibKstat.INSTANCE.kstat_chain_update(kc);
         if (ret < 0) {
             fail(String.format("Failed to update kstat chain"));

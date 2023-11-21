@@ -31,15 +31,16 @@ import java.awt.image.Raster;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import com.sun.jna.platform.RasterRangesUtils.RangesOutput;
+
+import junit.framework.TestCase;
 
 public class RasterRangesUtilsTest extends TestCase {
 
-    Set<Rectangle> rects = new HashSet<Rectangle>();
+    Set<Rectangle> rects = new HashSet<>();
 
     RangesOutput out = new RangesOutput() {
+        @Override
         public boolean outputRange(int x, int y, int w, int h) {
             rects.add(new Rectangle(x, y, w, h));
             return true;

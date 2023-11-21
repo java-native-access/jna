@@ -81,7 +81,7 @@ public class Wtsapi32Test extends TestCase {
         WTS_PROCESS_INFO_EX processInfoRef = new WTS_PROCESS_INFO_EX(pProcessInfo);
         WTS_PROCESS_INFO_EX[] processInfo = (WTS_PROCESS_INFO_EX[]) processInfoRef.toArray(pCount.getValue());
 
-        Set<Integer> pidSet = new HashSet<Integer>();
+        Set<Integer> pidSet = new HashSet<>();
         for (WTS_PROCESS_INFO_EX procInfo : processInfo) {
             // PIDs should be unique
             if (procInfo.ProcessId != 0) {

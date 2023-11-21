@@ -97,7 +97,7 @@ public abstract class Secur32Util {
             throw new Win32Exception(rc);
         }
         SecPkgInfo[] packagesInfo = pPackageInfo.toArray(pcPackages.getValue());
-        ArrayList<SecurityPackage> packages = new ArrayList<SecurityPackage>(pcPackages.getValue());
+        ArrayList<SecurityPackage> packages = new ArrayList<>(pcPackages.getValue());
         for (SecPkgInfo packageInfo : packagesInfo) {
             SecurityPackage securityPackage = new SecurityPackage();
             securityPackage.name = packageInfo.Name.toString();

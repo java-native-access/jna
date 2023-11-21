@@ -133,7 +133,7 @@ public class PsapiTest {
             me = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_ALL_ACCESS, false, Kernel32.INSTANCE.GetCurrentProcessId());
             assertTrue("Handle to my process should not be null", me != null);
 
-            List<HMODULE> list = new LinkedList<HMODULE>();
+            List<HMODULE> list = new LinkedList<>();
 
             HMODULE[] lphModule = new HMODULE[100 * 4];
             IntByReference lpcbNeeded = new IntByReference();
@@ -175,7 +175,7 @@ public class PsapiTest {
             me = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_ALL_ACCESS, false, Kernel32.INSTANCE.GetCurrentProcessId());
             assertTrue("Handle to my process should not be null", me != null);
 
-            List<HMODULE> list = new LinkedList<HMODULE>();
+            List<HMODULE> list = new LinkedList<>();
 
             HMODULE[] lphModule = new HMODULE[100 * 4];
             IntByReference lpcbNeeded = new IntByReference();
