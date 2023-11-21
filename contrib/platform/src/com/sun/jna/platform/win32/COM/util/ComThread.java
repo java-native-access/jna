@@ -116,9 +116,7 @@ public class ComThread {
 
             executor.shutdown();
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
             executor.shutdownNow();

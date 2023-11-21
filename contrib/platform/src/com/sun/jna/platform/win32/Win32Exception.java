@@ -92,11 +92,7 @@ public class Win32Exception extends LastErrorException {
         }
         try {
             addSuppressedMethod.invoke(this, exception);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
-        } catch (InvocationTargetException ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             throw new RuntimeException("Failed to call addSuppressedMethod", ex);
         }
     }

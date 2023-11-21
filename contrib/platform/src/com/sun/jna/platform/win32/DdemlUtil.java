@@ -1942,9 +1942,7 @@ public abstract class DdemlUtil {
                 if (name.startsWith("DMLERR_") && (!name.equals("DMLERR_FIRST")) && (!name.equals("DMLERR_LAST"))) {
                     try {
                         errorCodeMapBuilder.put(f.getInt(null), name);
-                    } catch (IllegalArgumentException ex) {
-                        throw new RuntimeException(ex);
-                    } catch (IllegalAccessException ex) {
+                    } catch (IllegalArgumentException | IllegalAccessException ex) {
                         throw new RuntimeException(ex);
                     }
                 }

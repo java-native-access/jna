@@ -170,9 +170,7 @@ public class Factory extends ObjectFactory {
     private <T> T runInComThread(Callable<T> callable) {
         try {
             return comThread.execute(callable);
-        } catch (TimeoutException ex) {
-            throw new RuntimeException(ex);
-        } catch (InterruptedException ex) {
+        } catch (TimeoutException | InterruptedException ex) {
             throw new RuntimeException(ex);
         } catch (ExecutionException ex) {
             Throwable cause = ex.getCause();
