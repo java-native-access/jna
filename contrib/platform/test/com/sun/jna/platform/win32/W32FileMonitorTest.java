@@ -115,11 +115,8 @@ public class W32FileMonitorTest extends TestCase {
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.deleteOnExit();
-        final FileOutputStream os = new FileOutputStream(file);
-        try {
+        try (FileOutputStream os = new FileOutputStream(file)) {
             os.write(getName().getBytes());
-        } finally {
-            os.close();
         }
         final FileEvent event = waitForFileEvent(FileMonitor.FILE_MODIFIED);
         assertNotNull("No file modified event: " + events, event);

@@ -211,10 +211,10 @@ public class Kernel32UtilTest extends TestCase {
     public final void testGetPrivateProfileInt() throws IOException {
         final File tmp = File.createTempFile("testGetPrivateProfileInt", "ini");
         tmp.deleteOnExit();
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        writer.println("[Section]");
-        writer.println("existingKey = 123");
-        writer.close();
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
+            writer.println("[Section]");
+            writer.println("existingKey = 123");
+        }
 
         assertEquals(123, Kernel32Util.getPrivateProfileInt("Section", "existingKey", 456, tmp.getCanonicalPath()));
         assertEquals(456, Kernel32Util.getPrivateProfileInt("Section", "missingKey", 456, tmp.getCanonicalPath()));
@@ -223,10 +223,10 @@ public class Kernel32UtilTest extends TestCase {
     public final void testGetPrivateProfileString() throws IOException {
         final File tmp = File.createTempFile("testGetPrivateProfileString", "ini");
         tmp.deleteOnExit();
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        writer.println("[Section]");
-        writer.println("existingKey = ABC");
-        writer.close();
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
+            writer.println("[Section]");
+            writer.println("existingKey = ABC");
+        }
 
         assertEquals("ABC", Kernel32Util.getPrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath()));
         assertEquals("DEF", Kernel32Util.getPrivateProfileString("Section", "missingKey", "DEF", tmp.getCanonicalPath()));
@@ -235,44 +235,38 @@ public class Kernel32UtilTest extends TestCase {
     public final void testWritePrivateProfileString() throws IOException {
         final File tmp = File.createTempFile("testWritePrivateProfileString", "ini");
         tmp.deleteOnExit();
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        writer.println("[Section]");
-        writer.println("existingKey = ABC");
-        writer.println("removedKey = JKL");
-        writer.close();
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
+            writer.println("[Section]");
+            writer.println("existingKey = ABC");
+            writer.println("removedKey = JKL");
+        }
 
         Kernel32Util.writePrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath());
         Kernel32Util.writePrivateProfileString("Section", "addedKey", "GHI", tmp.getCanonicalPath());
         Kernel32Util.writePrivateProfileString("Section", "removedKey", null, tmp.getCanonicalPath());
 
-        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
-        assertEquals(reader.readLine(), "[Section]");
-        assertTrue(reader.readLine().matches("existingKey\\s*=\\s*DEF"));
-        assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
-        assertEquals(reader.readLine(), null);
-        reader.close();
+        try (BufferedReader reader = new BufferedReader(new FileReader(tmp))) {
+            assertEquals(reader.readLine(), "[Section]");
+            assertTrue(reader.readLine().matches("existingKey\\s*=\\s*DEF"));
+            assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
+            assertEquals(reader.readLine(), null);
+        }
     }
 
     public final void testGetPrivateProfileSection() throws IOException {
         final File tmp = File.createTempFile("testGetPrivateProfileSection", ".ini");
         tmp.deleteOnExit();
 
-        final PrintWriter writer0 = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        try {
+        try (PrintWriter writer0 = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
             writer0.println("[X]");
-        } finally {
-            writer0.close();
         }
 
         final String[] lines0 = Kernel32Util.getPrivateProfileSection("X", tmp.getCanonicalPath());
         assertEquals(lines0.length, 0);
 
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp, true)));
-        try {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp, true)))) {
             writer.println("A=1");
             writer.println("foo=bar");
-        } finally {
-            writer.close();
         }
 
         final String[] lines = Kernel32Util.getPrivateProfileSection("X", tmp.getCanonicalPath());
@@ -285,16 +279,13 @@ public class Kernel32UtilTest extends TestCase {
         final File tmp = File.createTempFile("testGetPrivateProfileSectionNames", "ini");
         tmp.deleteOnExit();
 
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        try {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
             writer.println("[S1]");
             writer.println("A=1");
             writer.println("B=X");
             writer.println("[S2]");
             writer.println("C=2");
             writer.println("D=Y");
-        } finally {
-            writer.close();
         }
 
         String[] sectionNames = Kernel32Util.getPrivateProfileSectionNames(tmp.getCanonicalPath());
@@ -307,30 +298,24 @@ public class Kernel32UtilTest extends TestCase {
         final File tmp = File.createTempFile("testWritePrivateProfileSecion", "ini");
         tmp.deleteOnExit();
 
-        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-        try {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)))) {
             writer.println("[S1]");
             writer.println("A=1");
             writer.println("B=X");
             writer.println("[S2]");
             writer.println("C=2");
             writer.println("foo=bar");
-        } finally {
-            writer.close();
         }
 
         Kernel32Util.writePrivateProfileSection("S1", new String[] { "A=3", "E=Z" }, tmp.getCanonicalPath());
 
-        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
-        try {
+        try (BufferedReader reader = new BufferedReader(new FileReader(tmp))) {
             assertEquals(reader.readLine(), "[S1]");
             assertEquals(reader.readLine(), "A=3");
             assertEquals(reader.readLine(), "E=Z");
             assertEquals(reader.readLine(), "[S2]");
             assertEquals(reader.readLine(), "C=2");
             assertEquals(reader.readLine(), "foo=bar");
-        } finally {
-            reader.close();
         }
     }
 
