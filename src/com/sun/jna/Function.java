@@ -418,7 +418,7 @@ public class Function extends Pointer {
             Native.invokeVoid(this, this.peer, callFlags, args);
             result = null;
         } else if (returnType==boolean.class || returnType==Boolean.class) {
-            result = valueOf(Native.invokeInt(this, this.peer, callFlags, args) != 0);
+            result = valueOf((byte)Native.invokeInt(this, this.peer, callFlags, args) != 0);
         } else if (returnType==byte.class || returnType==Byte.class) {
             result = Byte.valueOf((byte)Native.invokeInt(this, this.peer, callFlags, args));
         } else if (returnType==short.class || returnType==Short.class) {
