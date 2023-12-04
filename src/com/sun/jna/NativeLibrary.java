@@ -101,9 +101,9 @@ public class NativeLibrary implements Closeable {
     private final String libraryPath;
     private final Map<String, Function> functions = new HashMap<>();
     private final SymbolProvider symbolProvider;
-    final int callFlags;
-    private String encoding;
-    final Map<String, ?> options;
+    private final int callFlags;
+    private final String encoding;
+    private final Map<String, ?> options;
 
     private static final Map<String, Reference<NativeLibrary>> libraries = new HashMap<>();
 
@@ -120,6 +120,7 @@ public class NativeLibrary implements Closeable {
         return name + "|" + flags + "|" + encoding;
     }
 
+    @SuppressWarnings("LeakingThisInConstructor")
     private NativeLibrary(String libraryName, String libraryPath, long handle, Map<String, ?> options) {
         this.libraryName = getLibraryName(libraryName);
         this.libraryPath = libraryPath;
@@ -129,7 +130,6 @@ public class NativeLibrary implements Closeable {
         int callingConvention = option instanceof Number ? ((Number)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
         this.options = options;
-        this.encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
         SymbolProvider optionSymbolProvider = (SymbolProvider)options.get(Library.OPTION_SYMBOL_PROVIDER);
         if (optionSymbolProvider == null) {
             this.symbolProvider = NATIVE_SYMBOL_PROVIDER;
@@ -137,9 +137,11 @@ public class NativeLibrary implements Closeable {
             this.symbolProvider = optionSymbolProvider;
         }
 
-        if (this.encoding == null) {
-            this.encoding = Native.getDefaultStringEncoding();
+        String encodingValue = (String) options.get(Library.OPTION_STRING_ENCODING);
+        if (encodingValue == null) {
+            encodingValue = Native.getDefaultStringEncoding();
         }
+        this.encoding = encodingValue;
 
         // Special workaround for w32 kernel32.GetLastError
         // Short-circuit the function to use built-in GetLastError access
