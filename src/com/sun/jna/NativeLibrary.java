@@ -95,8 +95,8 @@ public class NativeLibrary implements Closeable {
         }
     };
 
-    private Cleaner.Cleanable cleanable;
-    private long handle;
+    private final Cleaner.Cleanable cleanable;
+    private volatile long handle;
     private final String libraryName;
     private final String libraryPath;
     private final Map<String, Function> functions = new HashMap<>();
@@ -701,8 +701,8 @@ public class NativeLibrary implements Closeable {
 
         synchronized(this) {
             if (handle != 0) {
-                cleanable.clean();
                 handle = 0;
+                cleanable.clean();
             }
         }
     }
