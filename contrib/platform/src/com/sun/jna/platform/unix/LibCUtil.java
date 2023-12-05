@@ -38,23 +38,32 @@ public class LibCUtil {
 
     private static final NativeLibrary LIBC = NativeLibrary.getInstance("c");
 
-    private static Function mmap = null;
-    private static boolean mmap64 = false;
-    private static Function ftruncate = null;
-    private static boolean ftruncate64 = false;
+    private static final Function mmap;
+    private static final boolean mmap64;
+    private static final Function ftruncate;
+    private static final boolean ftruncate64;
     static {
+        Function tmpfunc;
+        boolean tmpbool;
         try {
-            mmap = LIBC.getFunction("mmap64", Function.THROW_LAST_ERROR);
-            mmap64 = true;
+            tmpfunc = LIBC.getFunction("mmap64", Function.THROW_LAST_ERROR);
+            tmpbool = true;
         } catch (UnsatisfiedLinkError ex) {
-            mmap = LIBC.getFunction("mmap", Function.THROW_LAST_ERROR);
+            tmpfunc = LIBC.getFunction("mmap", Function.THROW_LAST_ERROR);
+            tmpbool = false;
         }
+        mmap = tmpfunc;
+        mmap64 = tmpbool;
+    
         try {
-            ftruncate = LIBC.getFunction("ftruncate64", Function.THROW_LAST_ERROR);
-            ftruncate64 = true;
+            tmpfunc = LIBC.getFunction("ftruncate64", Function.THROW_LAST_ERROR);
+            tmpbool = true;
         } catch (UnsatisfiedLinkError ex) {
-            ftruncate = LIBC.getFunction("ftruncate", Function.THROW_LAST_ERROR);
+            tmpfunc = LIBC.getFunction("ftruncate", Function.THROW_LAST_ERROR);
+            tmpbool = false;
         }
+        ftruncate = tmpfunc;
+        ftruncate64 = tmpbool;
     }
 
     private LibCUtil() {

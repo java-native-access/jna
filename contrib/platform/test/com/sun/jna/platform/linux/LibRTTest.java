@@ -49,8 +49,8 @@ import junit.framework.TestCase;
 
 public class LibRTTest extends TestCase {
 
-    public static LibC LIBC = LibC.INSTANCE;
-    public static LibRT LIBRT = LibRT.INSTANCE;
+    public static final LibC LIBC = LibC.INSTANCE;
+    public static final LibRT LIBRT = LibRT.INSTANCE;
 
     @Test
     public void testMmapToShm() throws IOException {

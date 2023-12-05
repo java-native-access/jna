@@ -44,7 +44,7 @@ import com.sun.jna.ptr.IntByReference;
 public abstract class Rasapi32Util {
     private static final int RASP_PppIp = 0x8021;
 
-    private static Object phoneBookMutex = new Object();
+    private static final Object phoneBookMutex = new Object();
     @SuppressWarnings("rawtypes")
     public static final Map CONNECTION_STATE_TEXT = new HashMap();
 

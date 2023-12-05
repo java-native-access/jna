@@ -2530,7 +2530,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * Maximum size chosen based on technet article:
          * https://technet.microsoft.com/en-us/library/cc781716.aspx
          */
-        public static int MAX_ACL_SIZE = 64 * 1024;
+        public static final int MAX_ACL_SIZE = 64 * 1024;
 
         public byte AclRevision;
         public byte Sbz1;
@@ -3520,22 +3520,22 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * The cache is unified.
          */
-        public static int CacheUnified = 0;
+        public static final int CacheUnified = 0;
 
         /**
          * The cache is for processor instructions.
          */
-        public static int CacheInstruction = 1;
+        public static final int CacheInstruction = 1;
 
         /**
          * The cache is for data.
          */
-        public static int CacheData = 2;
+        public static final int CacheData = 2;
 
         /**
          * The cache is for traces.
          */
-        public static int CacheTrace = 3;
+        public static final int CacheTrace = 3;
     }
 
     /**

@@ -368,8 +368,8 @@ public abstract class Winnetwk {
     //
     // Universal Naming.
     //
-    public static int UNIVERSAL_NAME_INFO_LEVEL = 0x00000001;
-    public static int REMOTE_NAME_INFO_LEVEL = 0x00000002;
+    public static final int UNIVERSAL_NAME_INFO_LEVEL = 0x00000001;
+    public static final int REMOTE_NAME_INFO_LEVEL = 0x00000002;
 
     /**
      * The UNIVERSAL_NAME_INFO structure contains a pointer to a Universal
