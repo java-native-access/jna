@@ -2,8 +2,8 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Next Release (5.14.0)
-=====================
+Release 5.14.0
+==============
 
 Features
 --------
@@ -29,8 +29,8 @@ Important Changes
 * Release drops support for JDKs 6 + 7, so you'll need at least JDK 8 to
   update to use this version.
 
-Release (5.13.0)
-================
+Release 5.13.0
+==============
 
 Features
 --------
