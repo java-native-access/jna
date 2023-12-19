@@ -205,7 +205,7 @@ public interface WinGDI {
 
         /**
          * For printers: Specifies the name of the form to use; such as "Letter" or "Legal". This must be a name that
-         * can be obtain by calling the Win32 <code>EnumForms</code> function (described in the Microsoft Window SDK
+         * can be obtained by calling the Win32 <code>EnumForms</code> function (described in the Microsoft Window SDK
          * documentation).
          *
          * For displays: This member is not used for displays.
