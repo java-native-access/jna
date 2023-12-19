@@ -94,6 +94,24 @@ public interface WinGDI {
     public static class DEVMODE extends Structure {
         public static class ByReference extends DEVMODE implements Structure.ByReference {}
         private static final int CHAR_WIDTH = Boolean.getBoolean("w32.ascii") ? 1 : 2;
+        private static final int DUMMYSTRUCTNAME_MASK = DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH
+                | DM_SCALE | DM_COPIES | DM_DEFAULTSOURCE | DM_PRINTQUALITY;
+        private static final int DUMMYSTRUCTNAME2_MASK = DM_POSITION | DM_DISPLAYORIENTATION | DM_DISPLAYFIXEDOUTPUT;
+
+        @Override
+        public void read() {
+            super.read();
+            if ((dmFields & DUMMYSTRUCTNAME_MASK) > 0) {
+                dmUnion1.setType(DUMMYUNIONNAME.DUMMYSTRUCTNAME.class);
+                dmUnion1.read();
+            } else if ((dmFields & DUMMYSTRUCTNAME2_MASK) > 0) {
+                dmUnion1.setType(DUMMYUNIONNAME.DUMMYSTRUCTNAME2.class);
+                dmUnion1.read();
+            } else if ((dmFields & DM_POSITION) > 0) {
+                dmUnion1.setType(POINT.class);
+                dmUnion1.read();
+            }
+        }
 
         /**
          * A zero-terminated character array that specifies the "friendly" name of the printer or display
@@ -307,22 +325,31 @@ public interface WinGDI {
          * Converts dmDeviceName from raw byte[] to String
          */
         public String getDmDeviceName() {
+            String rawString;
             if(CHAR_WIDTH == 1) {
-                return Native.toString(dmFormName);
+                rawString = Native.toString(dmDeviceName);
             } else {
-                return new String(dmDeviceName, StandardCharsets.UTF_16LE);
+                rawString = new String(dmDeviceName, StandardCharsets.UTF_16LE);
             }
+            int stringLength = rawString.indexOf("\0");
+            if (stringLength == -1) return rawString;
+            return rawString.substring(0, stringLength);
         }
 
         /**
          * Converts dmFormName from raw byte[] to String
          */
         public String getDmFormName() {
+            // todo: code duplicated, is there already a util to do this?
+            String rawString;
             if(CHAR_WIDTH == 1) {
-                return Native.toString(dmFormName);
+                rawString = Native.toString(dmFormName);
             } else {
-                return new String(dmFormName, StandardCharsets.UTF_16LE);
+                rawString = new String(dmFormName, StandardCharsets.UTF_16LE);
             }
+            int stringLength = rawString.indexOf("\0");
+            if (stringLength == -1) return rawString;
+            return rawString.substring(0, stringLength);
         }
 
         public static class DUMMYUNIONNAME extends Union {
@@ -551,10 +578,10 @@ public interface WinGDI {
     int DC_PERSONALITY = 25;
     int DC_PRINTRATE = 26;
     int DC_PRINTRATEUNIT = 27;
-    int  PRINTRATEUNIT_PPM = 1;
-    int  PRINTRATEUNIT_CPS = 2;
-    int  PRINTRATEUNIT_LPM = 3;
-    int  PRINTRATEUNIT_IPM = 4;
+    int PRINTRATEUNIT_PPM = 1;
+    int PRINTRATEUNIT_CPS = 2;
+    int PRINTRATEUNIT_LPM = 3;
+    int PRINTRATEUNIT_IPM = 4;
     int DC_PRINTERMEM = 28;
     int DC_MEDIAREADY = 29;
     int DC_STAPLE = 30;
