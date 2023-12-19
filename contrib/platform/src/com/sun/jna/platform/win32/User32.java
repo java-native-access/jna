@@ -1858,6 +1858,35 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     BOOL EnumDisplayMonitors(HDC hdc, RECT lprcClip, MONITORENUMPROC lpfnEnum, LPARAM dwData);
 
     /**
+     * retrieves information about one of the graphics modes for a display device. To retrieve information for
+     * all the graphics modes of a display device, make a series of calls to this function.
+     *
+     * @param lpszDeviceName A pointer to a null-terminated string that specifies the display device about
+     *        whose graphics mode the function will obtain information. This parameter is either NULL or a
+     *        DISPLAY_DEVICE.DeviceName returned from EnumDisplayDevices. A NULL value specifies the current
+     *        display device on the computer on which the calling thread is running.
+     *
+     * @param iModeNum Graphics mode indexes start at zero. To obtain information for all of a display device's
+     *        graphics modes, make a series of calls to EnumDisplaySettings, as follows: Set iModeNum to zero
+     *        for the first call, and increment iModeNum by one for each subsequent call. Continue calling the
+     *        function until the return value is zero.
+     *        When you call EnumDisplaySettings with iModeNum set to zero, the operating system initializes and
+     *        caches information about the display device. When you call EnumDisplaySettings with iModeNum set
+     *        to a nonzero value, the function returns the information that was cached the last time the function
+     *        was called with iModeNum set to zero.
+     *
+     * @param lpDevMode A pointer to a DEVMODE structure into which the function stores information about the
+     *        specified graphics mode. Before calling EnumDisplaySettings, set the dmSize member to
+     *        sizeof(DEVMODE), and set the dmDriverExtra member to indicate the size, in bytes, of the additional
+     *        space available to receive private driver data.
+     *
+     * @return If the function succeeds, the return value is nonzero. If the function fails, the return value
+     *        is zero.
+     * @see <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdisplaysettingsa">MSDN</a>
+     */
+    BOOL EnumDisplaySettings(String lpszDeviceName, int iModeNum, Pointer lpDevMode);
+
+    /**
      * Retrieves the show state and the restored, minimized, and maximized
      * positions of the specified window.
      *
@@ -2437,7 +2466,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         duplicate icon. <br>
      *         If the function fails, the return value is NULL. To get extended
      *         error information, call GetLastError.
-     * @see <a href="https://msdn.microsoft.com/en-us/library/ms648058(S.85).aspx">MSDN</a>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms648058(S.85).aspx">MSDN</a>*
      */
     HICON CopyIcon(HICON hIcon);
 
