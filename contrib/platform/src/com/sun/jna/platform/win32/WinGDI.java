@@ -23,13 +23,9 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
+import com.sun.jna.*;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.Union;
 
 import static com.sun.jna.platform.win32.WinDef.*;
 import java.nio.charset.StandardCharsets;
@@ -325,31 +321,25 @@ public interface WinGDI {
          * Converts dmDeviceName from raw byte[] to String
          */
         public String getDmDeviceName() {
-            String rawString;
+            long offset = fieldOffset("dmDeviceName");
             if(CHAR_WIDTH == 1) {
-                rawString = Native.toString(dmDeviceName);
+                //todo: this can overrun if there is no null, perhaps we should add overrun protection to getString
+                return this.getPointer().getString(offset);
             } else {
-                rawString = new String(dmDeviceName, StandardCharsets.UTF_16LE);
+                return this.getPointer().getWideString(offset);
             }
-            int stringLength = rawString.indexOf("\0");
-            if (stringLength == -1) return rawString;
-            return rawString.substring(0, stringLength);
         }
 
         /**
          * Converts dmFormName from raw byte[] to String
          */
         public String getDmFormName() {
-            // todo: code duplicated, is there already a util to do this?
-            String rawString;
+            long offset = fieldOffset("dmFormName");
             if(CHAR_WIDTH == 1) {
-                rawString = Native.toString(dmFormName);
+                return this.getPointer().getString(offset);
             } else {
-                rawString = new String(dmFormName, StandardCharsets.UTF_16LE);
+                return this.getPointer().getWideString(offset);
             }
-            int stringLength = rawString.indexOf("\0");
-            if (stringLength == -1) return rawString;
-            return rawString.substring(0, stringLength);
         }
 
         public static class DUMMYUNIONNAME extends Union {
