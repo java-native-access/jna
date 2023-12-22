@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1579](https://github.com/java-native-access/jna/issues/1579): Fix analysis of ELF binary on arm systems running with a java ELF binary without section table headers (java8 on armv7 NAS) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.14.0
 ==============

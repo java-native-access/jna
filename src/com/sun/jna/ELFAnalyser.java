@@ -62,6 +62,18 @@ class ELFAnalyser {
     private static final int EI_DATA_BIG_ENDIAN = 2;
     private static final int E_MACHINE_ARM = 0x28;
     private static final int EI_CLASS_64BIT = 2;
+    /**
+     * An undefined, missing, irrelevant, or otherwise meaningless section
+     * reference. For example, a symbol defined relative to section number
+     * SHN_UNDEF is an undefined symbol.
+     */
+    private static final int SHN_UNDEF = 0;
+    /**
+     * An escape value indicating that the actual section header index is too
+     * large to fit in the containing field. The header section index is found
+     * in another location specific to the structure where it appears.
+     */
+    private static final int SHN_XINDEX = 0xffff;
 
     public static ELFAnalyser analyse(String filename) throws IOException {
         ELFAnalyser res = new ELFAnalyser(filename);
@@ -203,7 +215,7 @@ class ELFAnalyser {
 
         for (ELFSectionHeaderEntry eshe : sectionHeaders.getEntries()) {
             if(".ARM.attributes".equals(eshe.getName())) {
-                ByteBuffer armAttributesBuffer = ByteBuffer.allocate(eshe.getSize());
+                ByteBuffer armAttributesBuffer = ByteBuffer.allocate((int) eshe.getSize());
                 armAttributesBuffer.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
                 raf.getChannel().read(armAttributesBuffer, eshe.getOffset());
                 armAttributesBuffer.rewind();
@@ -236,7 +248,8 @@ class ELFAnalyser {
             long shoff;
             int shentsize;
             int shnum;
-            short shstrndx;
+            int shstrndx;
+            int sectionCount;
             if (_64bit) {
                 shoff = headerData.getLong(0x28);
                 shentsize = headerData.getShort(0x3A);
@@ -249,7 +262,27 @@ class ELFAnalyser {
                 shstrndx = headerData.getShort(0x32);
             }
 
-            int tableLength = shnum * shentsize;
+            ByteBuffer sectionBuffer = ByteBuffer.allocate(shentsize);
+            raf.getChannel().read(sectionBuffer, shoff);
+            ELFSectionHeaderEntry section0 = new ELFSectionHeaderEntry(_64bit, sectionBuffer);
+
+            if (shnum == 0 && shoff != 0) {
+                sectionCount = (int) section0.getSize();
+            } else {
+                sectionCount = shnum;
+            }
+
+            if (shstrndx == SHN_XINDEX) {
+                shstrndx = section0.getLink();
+            }
+
+            int tableLength = sectionCount * shentsize;
+
+            if (tableLength == 0 || shstrndx == SHN_UNDEF) {
+                // There is either no section header table or no section name
+                // string table.
+                return;
+            }
 
             ByteBuffer data = ByteBuffer.allocate(tableLength);
             data.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
@@ -264,7 +297,7 @@ class ELFAnalyser {
             }
 
             ELFSectionHeaderEntry stringTable = entries.get(shstrndx);
-            ByteBuffer stringBuffer = ByteBuffer.allocate(stringTable.getSize());
+            ByteBuffer stringBuffer = ByteBuffer.allocate((int) stringTable.getSize());
             stringBuffer.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
             raf.getChannel().read(stringBuffer, stringTable.getOffset());
             stringBuffer.rewind();
@@ -297,16 +330,20 @@ class ELFAnalyser {
         private final int nameOffset;
         private String name;
         private final int type;
-        private final int flags;
-        private final int offset;
-        private final int size;
+        private final long flags;
+        private final long addr;
+        private final long offset;
+        private final long size;
+        private final int link;
 
         public ELFSectionHeaderEntry(boolean _64bit, ByteBuffer sectionHeaderData) {
-            this.nameOffset = sectionHeaderData.getInt(0x0);
-            this.type = sectionHeaderData.getInt(0x4);
-            this.flags = (int) (_64bit ? sectionHeaderData.getLong(0x8) : sectionHeaderData.getInt(0x8));
-            this.offset = (int) (_64bit ? sectionHeaderData.getLong(0x18) : sectionHeaderData.getInt(0x10));
-            this.size = (int) (_64bit ? sectionHeaderData.getLong(0x20) : sectionHeaderData.getInt(0x14));
+            this.nameOffset = sectionHeaderData.getInt(0);
+            this.type = sectionHeaderData.getInt(4);
+            this.flags = _64bit ? sectionHeaderData.getLong(8) : sectionHeaderData.getInt(8);
+            this.addr = _64bit ? sectionHeaderData.getLong(16) : sectionHeaderData.getInt(12);
+            this.offset = _64bit ? sectionHeaderData.getLong(24) : sectionHeaderData.getInt(16);
+            this.size = _64bit ? sectionHeaderData.getLong(32) : sectionHeaderData.getInt(20);
+            this.link = sectionHeaderData.getInt(_64bit ? 40 : 24);
         }
 
         public String getName() {
@@ -325,21 +362,46 @@ class ELFAnalyser {
             return type;
         }
 
-        public int getFlags() {
+        public long getFlags() {
             return flags;
         }
 
-        public int getOffset() {
+        public long getOffset() {
             return offset;
         }
 
-        public int getSize() {
+        public long getSize() {
             return size;
+        }
+
+        public long getAddr() {
+            return addr;
+        }
+
+        public int getLink() {
+            return link;
         }
 
         @Override
         public String toString() {
-            return "ELFSectionHeaderEntry{" + "nameIdx=" + nameOffset + ", name=" + name + ", type=" + type + ", flags=" + flags + ", offset=" + offset + ", size=" + size + '}';
+            return String.format("ELFSectionHeaderEntry{"
+                    + "nameOffset=%1$d (0x%1$x)"
+                    + ", name=%2$s"
+                    + ", type=%3$d (0x%3$x)"
+                    + ", flags=%4$d (0x%4$x)"
+                    + ", addr=%5$d (0x%5$x)"
+                    + ", offset=%6$d (0x%6$x)"
+                    + ", size=%7$d (0x%7$x)"
+                    + ", link=%8$d (0x%8$x)}",
+                    nameOffset,
+                    name,
+                    type,
+                    flags,
+                    addr,
+                    offset,
+                    size,
+                    link
+            );
         }
     }
 
