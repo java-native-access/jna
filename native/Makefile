@@ -15,7 +15,8 @@
 #   Linux (i386/amd64/ppc/arm)
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   AIX (ppc/ppc64)
-#   FreeBSD/OpenBSD/NetBSD (i386/amd64)
+#   FreeBSD (i386/amd64/aarch64)
+#   OpenBSD/NetBSD (i386/amd64)
 #   Android (arm/armv7/aarch64/x86/x86-64/mipsel/mips64el)
 #
 # Built, but with outstanding bugs (not necessarily within JNA):

@@ -7,6 +7,7 @@ Next Release (5.15.0)
 
 Features
 --------
+* [#1578](https://github.com/java-native-access/jna/pull/1578): Add support for FreeBSD aarch64 - [@alexdupre](https://github.com/alexdupre).
 
 Bug Fixes
 ---------
