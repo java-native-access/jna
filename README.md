@@ -32,7 +32,8 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [VLCJ](https://github.com/caprica/vlcj): Java bindings for libVLC.
 - [SVNKit](http://svnkit.com): Pure Java Subversion client library.
 - [OmegaT Computer-Aided Translation](https://omegat.org/).
-- [IntelliJ IDEA](https://www.jetbrains.com/) by JetBrains.
+- [IntelliJ IDEA](https://www.jetbrains.com/idea) by JetBrains.
+- [Jetbrains Toolbox](https://www.jetbrains.com/toolbox-app/) by JetBrains.
 - [Apache NetBeans IDE](https://netbeans.apache.org/) by Apache Software Foundation.
 - [FileBot Media Renamer](http://www.filebot.net) by Reinhard Pointner.
 - [USB for Java](https://launchpad.net/libusb4j) by Mario Boikov.
