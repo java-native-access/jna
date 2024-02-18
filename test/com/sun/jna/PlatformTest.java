@@ -83,6 +83,9 @@ public class PlatformTest extends TestCase {
                     Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
                             "arm", "Linux/Gnu"));
         }
+        assertEquals("Wrong resource path DragonFlyBSD/x86-64", "dragonflybsd-x86-64",
+                     Platform.getNativeLibraryResourcePrefix(Platform.DRAGONFLYBSD,
+                                                             "x86-64", "DragonFlyBSD"));
         assertEquals("Wrong resource path OpenBSD/x86", "openbsd-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.OPENBSD,
                                                              "x86", "OpenBSD"));

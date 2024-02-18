@@ -99,6 +99,9 @@
     <condition property="os.prefix" value="sunos-${jre.arch}">
       <equals arg1="${build.os.name}" arg2="SunOS"/>
     </condition>
+    <condition property="os.prefix" value="dragonflybsd-${jre.arch}">
+      <equals arg1="${build.os.name}" arg2="DragonFlyBSD"/>
+    </condition>
     <condition property="os.prefix" value="freebsd-${jre.arch}">
       <equals arg1="${build.os.name}" arg2="FreeBSD"/>
     </condition>
