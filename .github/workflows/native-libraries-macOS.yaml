@@ -1,0 +1,42 @@
+# Build native library for mac OS
+name: mac OS native libraries
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-native-darwin:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        java: [21]
+        os: [macos-latest]
+    name: Build native libraries for mac OS / darwin
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'zulu'
+      - name: macOS requirements
+        if: contains(matrix.os, 'macos')
+        run: |
+          brew update
+          brew install automake --force
+          brew install libtool --force
+      - name: Build native code
+        run: |
+          ant -Dos.prefix=darwin-aarch64
+          ant -Dos.prefix=darwin-x86-64
+      - name: Upload mac OS binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: darwin-native
+          path: |
+            lib/native/darwin-aarch64.jar
+            lib/native/darwin-x86-64.jar
