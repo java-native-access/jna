@@ -103,7 +103,8 @@ public class IOKitTest {
         String serialNumberViaUtil = platformExpert.getStringProperty("IOPlatformSerialNumber");
         assertEquals(serialNumber, serialNumberViaUtil);
 
-        assertEquals(12, serialNumber.length());
+        assertTrue("Known serial number lengths are 10 and 12, was: " + serialNumber.length(),
+                serialNumber.length() == 12 || serialNumber.length() == 10);
         // Get all the keys
         dict = platformExpert.createCFProperties();
         assertNotEquals(0, dict.getValueIfPresent(serialKey, null));
@@ -214,7 +215,7 @@ public class IOKitTest {
         int masterPort = IOKitUtil.getMasterPort();
 
         IOService smcService = IOKitUtil.getMatchingService("AppleSMC");
-        assertNotNull(smcService);
+        assumeTrue(smcService != null); // Service is not available on github M1 runners
 
         PointerByReference connPtr = new PointerByReference();
         int taskSelf = SYS.mach_task_self();
