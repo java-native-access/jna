@@ -88,7 +88,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
         abstract boolean evaluate(T t);
     }
-    protected static void waitForGc(Condition<?> condition) throws Exception {
+    public static void waitForGc(Condition<?> condition) throws Exception {
         for (int i = 0; i < 2 * Cleaner.MASTER_CLEANUP_INTERVAL_MS / 10 + 5 && condition.evaluate(); ++i) {
             synchronized (CallbacksTest.class) { // cleanups happen in a different thread, make sure we see it here
                 System.gc();

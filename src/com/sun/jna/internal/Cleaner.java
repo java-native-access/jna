@@ -121,8 +121,8 @@ public class Cleaner {
         }
     }
 
-    private static class MasterCleaner extends Cleaner {
-        private static MasterCleaner INSTANCE;
+    static class MasterCleaner extends Cleaner {
+        static MasterCleaner INSTANCE;
 
         public static synchronized void add(Cleaner cleaner) {
             if (INSTANCE == null) {
@@ -146,7 +146,7 @@ public class Cleaner {
             return false;
         }
 
-        private final Map<CleanerImpl,Boolean> cleanerImpls = new ConcurrentHashMap<CleanerImpl,Boolean>();
+        final Map<CleanerImpl,Boolean> cleanerImpls = new ConcurrentHashMap<CleanerImpl,Boolean>();
         private long lastNonEmpty = System.currentTimeMillis();
 
         private MasterCleaner() {
