@@ -154,7 +154,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   for (i=0;i < argc;i++) {
     int jtype;
     jclass cls = (*env)->GetObjectArrayElement(env, arg_classes, i);
-    if ((cb->conversion_flags[i] = get_conversion_flag(env, cls)) != CVT_DEFAULT) {
+    if (direct && ((cb->conversion_flags[i] = get_conversion_flag(env, cls)) != CVT_DEFAULT)) {
       cb->arg_classes[i] = (*env)->NewWeakGlobalRef(env, cls);
       cvt = 1;
     }
