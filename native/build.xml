@@ -23,6 +23,9 @@
     <condition property="os.prefix" value="sunos-${jre.arch}">
         <os name="SunOS"/>
     </condition>
+    <condition property="os.prefix" value="dragonflybsd-${jre.arch}">
+        <os name="DragonFlyBSD"/>
+    </condition>
     <condition property="os.prefix" value="freebsd-${jre.arch}">
         <os name="FreeBSD"/>
     </condition>
@@ -347,6 +350,7 @@
         </condition>
         <condition property="make" value="gmake">
             <or>
+                <os name="DragonFlyBSD"/>
                 <os name="FreeBSD"/>
                 <os name="OpenBSD"/>
                 <os name="NetBSD"/>

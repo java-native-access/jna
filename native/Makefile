@@ -15,6 +15,7 @@
 #   Linux (i386/amd64/ppc/arm)
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   AIX (ppc/ppc64)
+#   DragonFly (x86-64)
 #   FreeBSD (i386/amd64/aarch64)
 #   OpenBSD/NetBSD (i386/amd64)
 #   Android (arm/armv7/aarch64/x86/x86-64/mipsel/mips64el)
@@ -46,6 +47,7 @@ OS=$(shell uname | sed -e 's/CYGWIN.*/win32/g' \
                         -e 's/NetBSD/netbsd/g' \
                         -e 's/GNU\/kFreeBSD/kfreebsd/g' \
                         -e 's/FreeBSD/freebsd/g' \
+                        -e 's/DragonFly/dragonfly/g' \
                         -e 's/OpenBSD/openbsd/g' \
                         -e 's/Darwin.*/darwin/g' \
                         -e 's/AIX.*/aix/g' \
@@ -289,10 +291,14 @@ LDFLAGS+=-Wl,-soname,$@,-Bsymbolic
 endif
 endif
 
-ifneq (,$(findstring bsd,$(OS)))
+ifneq (,$(or $(findstring bsd,$(OS)),$(findstring dragonfly,$(OS))))
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
-CINCLUDES+=-I/usr/X11R6/include
+# This is a mess: X11 headers locate in /usr/local/include on FreeBSD and
+# DragonFly, in /usr/X11R7/include on NetBSD, and in /usr/X11R6/include on
+# OpenBSD.
+CINCLUDES+=-I/usr/local/include -I/usr/X11R7/include -I/usr/X11R6/include
+CINCLUDES+=$(X11INC)  # Allow extra X11 include path if necessary.
 LDFLAGS=-o $@ -shared
 CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT -DUSE_DEAFULT_LIBNAME_ENCODING
 endif

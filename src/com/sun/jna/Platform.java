@@ -42,6 +42,7 @@ public final class Platform {
     public static final int GNU = 9;
     public static final int KFREEBSD = 10;
     public static final int NETBSD = 11;
+    public static final int DRAGONFLYBSD = 12;
 
     /** Whether read-only (final) fields within Structures are supported. */
     public static final boolean RO_FIELDS;
@@ -110,6 +111,9 @@ public final class Platform {
         else if (osName.equalsIgnoreCase("netbsd")) {
             osType = NETBSD;
         }
+        else if (osName.equalsIgnoreCase("dragonflybsd")) {
+            osType = DRAGONFLYBSD;
+        }
         else {
             osType = UNSPECIFIED;
         }
@@ -159,6 +163,9 @@ public final class Platform {
     }
     public static final boolean isSolaris() {
         return osType == SOLARIS;
+    }
+    public static final boolean isDragonFlyBSD() {
+        return osType == DRAGONFLYBSD;
     }
     public static final boolean isFreeBSD() {
         return osType == FREEBSD;
@@ -328,6 +335,9 @@ public final class Platform {
                 break;
             case Platform.SOLARIS:
                 osPrefix = "sunos-" + arch;
+                break;
+            case Platform.DRAGONFLYBSD:
+                osPrefix = "dragonflybsd-" + arch;
                 break;
             case Platform.FREEBSD:
                 osPrefix = "freebsd-" + arch;

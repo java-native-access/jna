@@ -397,6 +397,9 @@ processor=S390x;osname=linux,
 com/sun/jna/linux-loongarch64/libjnidispatch.so;
 processor=loongarch64;osname=linux,
 
+com/sun/jna/dragonflybsd-x86-64/libjnidispatch.so;
+processor=x86-64;osname=dragonflybsd,
+
 com/sun/jna/freebsd-x86/libjnidispatch.so;
 processor=x86;osname=freebsd,
 com/sun/jna/freebsd-x86-64/libjnidispatch.so;
@@ -528,6 +531,9 @@ osname=macosx;processor=aarch64
       <zipfileset src="${lib.native}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
+      <zipfileset src="${lib.native}/dragonflybsd-x86-64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/dragonflybsd-x86-64"/>
       <zipfileset src="${lib.native}/freebsd-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-x86"/>
@@ -723,6 +729,7 @@ osname=macosx;processor=aarch64
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-loongarch64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-s390x.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-riscv64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/dragonflybsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-aarch64.jar" overwrite="true"/>
@@ -909,6 +916,7 @@ osname=macosx;processor=aarch64
     </condition>
     <condition property="make" value="gmake">
       <or>
+        <equals arg1="${build.os.name}" arg2="DragonFlyBSD"/>
         <equals arg1="${build.os.name}" arg2="FreeBSD"/>
         <equals arg1="${build.os.name}" arg2="OpenBSD"/>
         <equals arg1="${build.os.name}" arg2="NetBSD"/>

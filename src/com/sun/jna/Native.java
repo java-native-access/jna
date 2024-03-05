@@ -1326,7 +1326,7 @@ public final class Native implements Version {
             if(Platform.isMac()) {
                 // https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/MacOSXDirectories/MacOSXDirectories.html
                 jnatmp = new File(System.getProperty("user.home"), "Library/Caches/JNA/temp");
-            } else if (Platform.isLinux() || Platform.isSolaris() || Platform.isAIX() || Platform.isFreeBSD() || Platform.isNetBSD() || Platform.isOpenBSD() || Platform.iskFreeBSD()) {
+            } else if (Platform.isLinux() || Platform.isSolaris() || Platform.isAIX() || Platform.isDragonFlyBSD() || Platform.isFreeBSD() || Platform.isNetBSD() || Platform.isOpenBSD() || Platform.iskFreeBSD()) {
                 // https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
                 // The XDG_CACHE_DIR is expected to be per user
                 String xdgCacheEnvironment = System.getenv("XDG_CACHE_HOME");

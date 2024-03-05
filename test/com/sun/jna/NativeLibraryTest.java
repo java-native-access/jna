@@ -48,6 +48,7 @@ public class NativeLibraryTest extends TestCase {
             { Platform.LINUX, "lib", ".so" },
             { Platform.WINDOWS, "", ".dll" },
             { Platform.SOLARIS, "lib", ".so" },
+            { Platform.DRAGONFLYBSD, "lib", ".so" },
             { Platform.FREEBSD, "lib", ".so" },
             { Platform.OPENBSD, "lib", ".so" },
             { Platform.WINDOWSCE, "", ".dll" },
