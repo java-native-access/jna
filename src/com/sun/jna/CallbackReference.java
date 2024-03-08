@@ -508,7 +508,7 @@ public class CallbackReference extends WeakReference<Callback> implements Closea
         Map<Callback, CallbackReference> map = direct ? directCallbackMap : callbackMap;
         synchronized(pointerCallbackMap) {
             CallbackReference cbref = map.get(cb);
-            if (cbref == null) {
+            if (cbref == null || cbref.cbstruct == null) {
                 cbref = new CallbackReference(cb, callingConvention, direct);
                 map.put(cb, cbref);
                 pointerCallbackMap.put(cbref.getTrampoline(),
