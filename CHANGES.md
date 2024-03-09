@@ -8,10 +8,13 @@ Next Release (5.15.0)
 Features
 --------
 * [#1578](https://github.com/java-native-access/jna/pull/1578): Add support for FreeBSD aarch64 - [@alexdupre](https://github.com/alexdupre).
+* [#1593](https://github.com/java-native-access/jna/pull/1593): Add support for DragonFly BSD x86-64 - [@liweitianux](https://github.com/liweitianux).
 
 Bug Fixes
 ---------
 * [#1579](https://github.com/java-native-access/jna/issues/1579): Fix analysis of ELF binary on arm systems running with a java ELF binary without section table headers (java8 on armv7 NAS) - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1586](https://github.com/java-native-access/jna/issues/1586): Fix free_callback JNI weak reference leak - [@xiezhaokun](https://github.com/xiezhaokun).
+* [6486c90d913a413f247eef84742ce3c474738933](https://github.com/java-native-access/jna/commit/6486c90d913a413f247eef84742ce3c474738933): Check CallbackReference#cbstruct for null when checking existing Reference - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.14.0
 ==============
