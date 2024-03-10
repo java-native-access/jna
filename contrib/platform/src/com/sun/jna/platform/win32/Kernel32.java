@@ -107,6 +107,54 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     int THREAD_PRIORITY_ERROR_RETURN = 0x7FFFFFFF;
 
     /**
+     * Processor Feature flags
+     */
+    int PF_FLOATING_POINT_PRECISION_ERRATA = 0;
+    int PF_FLOATING_POINT_EMULATED = 1;
+    int PF_COMPARE_EXCHANGE_DOUBLE = 2;
+    int PF_MMX_INSTRUCTIONS_AVAILABLE = 3;
+    int PF_PPC_MOVEMEM_64BIT_OK = 4;
+    int PF_ALPHA_BYTE_INSTRUCTIONS = 5;
+    int PF_XMMI_INSTRUCTIONS_AVAILABLE = 6;
+    int PF_3DNOW_INSTRUCTIONS_AVAILABLE = 7;
+    int PF_RDTSC_INSTRUCTION_AVAILABLE = 8;
+    int PF_PAE_ENABLED = 9;
+    int PF_XMMI64_INSTRUCTIONS_AVAILABLE = 10;
+    int PF_SSE_DAZ_MODE_AVAILABLE = 11;
+    int PF_NX_ENABLED = 12;
+    int PF_SSE3_INSTRUCTIONS_AVAILABLE = 13;
+    int PF_COMPARE_EXCHANGE128 = 14;
+    int PF_COMPARE64_EXCHANGE128 = 15;
+    int PF_CHANNELS_ENABLED = 16;
+    int PF_XSAVE_ENABLED = 17;
+    int PF_ARM_VFP_32_REGISTERS_AVAILABLE = 18;
+    int PF_ARM_NEON_INSTRUCTIONS_AVAILABLE = 19;
+    int PF_SECOND_LEVEL_ADDRESS_TRANSLATION = 20;
+    int PF_VIRT_FIRMWARE_ENABLED = 21;
+    int PF_RDWRFSGSBASE_AVAILABLE = 22;
+    int PF_FASTFAIL_AVAILABLE = 23;
+    int PF_ARM_DIVIDE_INSTRUCTION_AVAILABLE = 24;
+    int PF_ARM_64BIT_LOADSTORE_ATOMIC = 25;
+    int PF_ARM_EXTERNAL_CACHE_AVAILABLE = 26;
+    int PF_ARM_FMAC_INSTRUCTIONS_AVAILABLE = 27;
+    int PF_RDRAND_INSTRUCTION_AVAILABLE = 28;
+    int PF_ARM_V8_INSTRUCTIONS_AVAILABLE = 29;
+    int PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE = 30;
+    int PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE = 31;
+    int PF_RDTSCP_INSTRUCTION_AVAILABLE = 32;
+    int PF_RDPID_INSTRUCTION_AVAILABLE = 33;
+    int PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE = 34;
+    int PF_SSSE3_INSTRUCTIONS_AVAILABLE = 36;
+    int PF_SSE4_1_INSTRUCTIONS_AVAILABLE = 37;
+    int PF_SSE4_2_INSTRUCTIONS_AVAILABLE = 38;
+    int PF_AVX_INSTRUCTIONS_AVAILABLE = 39;
+    int PF_AVX2_INSTRUCTIONS_AVAILABLE = 40;
+    int PF_AVX512F_INSTRUCTIONS_AVAILABLE = 41;
+    int PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE = 43;
+    int PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE = 44;
+    int PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE = 45;
+
+    /**
      * Reads data from the specified file or input/output (I/O) device. Reads
      * occur at the position specified by the file pointer if supported by the
      * device.
@@ -4464,4 +4512,14 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * </p>
      */
     boolean VirtualUnlock(Pointer lpAddress, SIZE_T dwSize);
+
+    /**
+     * Determines whether the specified processor feature is supported by the current computer.
+     *
+     * @param ProcessorFeature The processor feature to be tested.
+     * @return If the feature is supported, the return value is true. If the feature is not supported, the return value
+     *         is false. If the HAL does not support detection of the feature, whether or not the hardware supports the
+     *         feature, the return value is also false.
+     */
+    boolean IsProcessorFeaturePresent(int ProcessorFeature);
 }

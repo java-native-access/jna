@@ -9,6 +9,7 @@ Features
 --------
 * [#1578](https://github.com/java-native-access/jna/pull/1578): Add support for FreeBSD aarch64 - [@alexdupre](https://github.com/alexdupre).
 * [#1593](https://github.com/java-native-access/jna/pull/1593): Add support for DragonFly BSD x86-64 - [@liweitianux](https://github.com/liweitianux).
+* [#1595](https://github.com/java-native-access/jna/pull/1595): Add `IsProcessorFeaturePresent` to `c.s.j.p.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
