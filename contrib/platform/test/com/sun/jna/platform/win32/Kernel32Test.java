@@ -2099,4 +2099,13 @@ public class Kernel32Test extends TestCase {
         final HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentThread();
         assertTrue(Kernel32.INSTANCE.SetThreadPriority(selfHandle, Kernel32.THREAD_PRIORITY_ABOVE_NORMAL));
     }
+
+    public void testIsProcessorFeaturePresent() {
+        // Always returns false for Windows 7 or later
+        assertFalse(Kernel32.INSTANCE.IsProcessorFeaturePresent(Kernel32.PF_FLOATING_POINT_PRECISION_ERRATA));
+        // Always true in 64 bit, requirement to run Windows
+        assertTrue(Kernel32.INSTANCE.IsProcessorFeaturePresent(Kernel32.PF_MMX_INSTRUCTIONS_AVAILABLE));
+        // Invalid values always return false
+        assertFalse(Kernel32.INSTANCE.IsProcessorFeaturePresent(-1));
+    }
 }
