@@ -40,6 +40,7 @@ for:
       only:
         - TARGET_ARCH: x86_64
     before_build:
+        - cmd: set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
         - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64'
     before_test:
         - cmd: net start spooler
@@ -52,6 +53,7 @@ for:
       only:
         - TARGET_ARCH: x86
     before_build:
+        - cmd: set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
         - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86'
     before_test:
         - cmd: net start spooler
@@ -64,6 +66,7 @@ for:
       only:
         - TARGET_ARCH: aarch64
     before_build:
+        - cmd: set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
         - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64_arm64'
     test_script:
         - cmd: echo Skipping tests
