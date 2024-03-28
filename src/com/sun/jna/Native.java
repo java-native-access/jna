@@ -1315,11 +1315,17 @@ public final class Native implements Version {
         Override with <code>jna.tmpdir</code>
     */
     static File getTempDir() throws IOException {
+        return getTempDir(true);
+    }
+
+    private static File getTempDir(boolean create) throws IOException {
         File jnatmp;
         String prop = System.getProperty("jna.tmpdir");
         if (prop != null) {
             jnatmp = new File(prop);
-            jnatmp.mkdirs();
+            if (create) {
+                jnatmp.mkdirs();
+            }
         }
         else {
             File tmp = new File(System.getProperty("java.io.tmpdir"));
@@ -1344,23 +1350,29 @@ public final class Native implements Version {
                 jnatmp = new File(tmp, "jna-" + System.getProperty("user.name").hashCode());
             }
 
-            jnatmp.mkdirs();
-            if (!jnatmp.exists() || !jnatmp.canWrite()) {
-                jnatmp = tmp;
+            if (create) {
+                jnatmp.mkdirs();
+                if (!jnatmp.exists() || !jnatmp.canWrite()) {
+                    jnatmp = tmp;
+                }
             }
         }
-        if (!jnatmp.exists()) {
-            throw new IOException("JNA temporary directory '" + jnatmp + "' does not exist");
+
+        if (create) {
+            if (!jnatmp.exists()) {
+                throw new IOException("JNA temporary directory '" + jnatmp + "' does not exist");
+            }
+            if (!jnatmp.canWrite()) {
+                throw new IOException("JNA temporary directory '" + jnatmp + "' is not writable");
+            }
         }
-        if (!jnatmp.canWrite()) {
-            throw new IOException("JNA temporary directory '" + jnatmp + "' is not writable");
-        }
+
         return jnatmp;
     }
 
     /** Remove all marked temporary files in the given directory. */
     static void removeTemporaryFiles() throws IOException {
-        File dir = getTempDir();
+        File dir = getTempDir(false);
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
