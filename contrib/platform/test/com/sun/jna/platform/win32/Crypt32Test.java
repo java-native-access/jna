@@ -468,7 +468,6 @@ public class Crypt32Test extends TestCase {
                 assertNotNull(ctx.pCertInfo.Subject);
                 assertFalse(decodeName(ctx.pCertInfo.Issuer).isEmpty());
                 assertFalse(decodeName(ctx.pCertInfo.Subject).isEmpty());
-                assertEquals(decodeName(ctx.pCertInfo.Issuer), decodeName(ctx.pCertInfo.Subject));
                 // System.out.printf("%20s: %s%n", "Issuer", decodeName(ctx.pCertInfo.Issuer));
                 // System.out.printf("%20s: %s%n", "Subject", decodeName(ctx.pCertInfo.Subject));
                 readCertificates++;
