@@ -23,6 +23,12 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.COM.COMLateBindingObject;
+import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.Dispatch;
+import com.sun.jna.platform.win32.COM.IDispatch;
+import com.sun.jna.ptr.PointerByReference;
 import java.util.Map;
 
 import org.junit.After;
@@ -37,13 +43,41 @@ public class WininetUtilTest extends AbstractWin32TestSupport {
         jUnitCore.run(WininetUtilTest.class);
     }
 
+    private static final Guid.CLSID CLSID_InternetExplorer = new Guid.CLSID("{0002DF01-0000-0000-C000-000000000046}");
+
+    private PointerByReference ieApp;
+    private Dispatch ieDispatch;
+
     @Before
     public void setUp() throws Exception {
         // Launch IE in a manner that should ensure it opens even if the system
         // default browser is Chrome, Firefox, or something else.
         // Launching IE to a page ensures there will be content in the WinInet
         // cache.
-        Runtime.getRuntime().exec("cmd /c start iexplore.exe -nomerge -nohome \"http://www.google.com\"");
+        WinNT.HRESULT hr;
+
+        hr = Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        COMUtils.checkRC(hr);
+
+        // IE can not be launched directly anymore - so load it via COM
+
+        ieApp = new PointerByReference();
+        hr = Ole32.INSTANCE
+                .CoCreateInstance(CLSID_InternetExplorer, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ieApp);
+        COMUtils.checkRC(hr);
+
+        ieDispatch = new Dispatch(ieApp.getValue());
+        LocalLateBinding ie = new LocalLateBinding(ieDispatch);
+
+        ie.setProperty("Visible", true);
+
+        Variant.VARIANT url = new Variant.VARIANT("http://www.google.com");
+        Variant.VARIANT result = ie.invoke("Navigate", url);
+        OleAuto.INSTANCE.VariantClear(url);
+        OleAuto.INSTANCE.VariantClear(result);
+
+        ieDispatch.Release();
+        Ole32.INSTANCE.CoUninitialize();
 
         // There's no easy way to monitor IE and see when it's done loading
         // google.com, so just give it 10 seconds.
@@ -77,6 +111,24 @@ public class WininetUtilTest extends AbstractWin32TestSupport {
     @After
     public void tearDown() throws Exception {
         // only kill the freshly opened Google window, unless someone has two IE windows open to Google.
-        Runtime.getRuntime().exec("taskkill.exe /f /im iexplore.exe /fi \"windowtitle eq Google*\"");
+        Runtime.getRuntime().exec("taskkill.exe /f /im iexplore.exe");
+    }
+
+    private static class LocalLateBinding extends COMLateBindingObject {
+
+        public LocalLateBinding(IDispatch iDispatch) {
+            super(iDispatch);
+        }
+
+        @Override
+        public void setProperty(String propertyName, boolean value) {
+            super.setProperty(propertyName, value);
+        }
+
+        @Override
+        public Variant.VARIANT invoke(String methodName, Variant.VARIANT arg) {
+            return super.invoke(methodName, arg);
+        }
+
     }
 }
