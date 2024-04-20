@@ -122,7 +122,7 @@ public class Win32ServiceDemo {
             }
         }
 
-        String JAVA_HOME = System.getenv("JAVA_HOME");
+        String JAVA_HOME = System.getProperty("java.home", System.getenv("JAVA_HOME"));
         String javaBinary = "java.exe";
         if(JAVA_HOME != null) {
             javaBinary = "\"" + new File(JAVA_HOME, "\\bin\\java.exe").getAbsolutePath() + "\"";
