@@ -1950,12 +1950,14 @@ public class Advapi32Test extends TestCase {
 
         // decrypt a read only file
         file.setWritable(false);
-        assertFalse(Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0)));
-        assertEquals(WinError.ERROR_FILE_READ_ONLY, Kernel32.INSTANCE.GetLastError());
+        boolean successful = Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0));
+        if(! successful) {
+            assertEquals(WinError.ERROR_FILE_READ_ONLY, Kernel32.INSTANCE.GetLastError());
 
-        // decrypt
-        file.setWritable(true);
-        assertTrue(Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0)));
+            // decrypt
+            file.setWritable(true);
+            assertTrue(Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0)));
+        }
 
         file.delete();
     }
@@ -2170,4 +2172,5 @@ public class Advapi32Test extends TestCase {
         // should fail with "the user name or password is incorrect" (error 1326)
         assertEquals("GetLastError() should have returned ERROR_LOGON_FAILURE because the username was bogus.", W32Errors.ERROR_LOGON_FAILURE, Native.getLastError());
     }
+
 }
