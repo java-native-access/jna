@@ -133,19 +133,19 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   }
   argc = (*env)->GetArrayLength(env, arg_classes);
 
-  cb = (callback *)malloc(sizeof(callback));
+  cb = (callback *)calloc(1, sizeof(callback));
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
   cb->saved_x_closure = cb->x_closure;
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
 
   cb->vm = vm;
-  cb->arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
-  cb->java_arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * (argc + 3));
-  cb->arg_jtypes = (char*)malloc(sizeof(char) * argc);
-  cb->conversion_flags = (int *)malloc(sizeof(int) * argc);
+  cb->arg_types = (ffi_type**)calloc(argc, sizeof(ffi_type*));
+  cb->java_arg_types = (ffi_type**)calloc(argc + 3, sizeof(ffi_type*));
+  cb->arg_jtypes = (char*)calloc(argc, sizeof(char));
+  cb->conversion_flags = (int *)calloc(argc, sizeof(int));
   cb->rflag = CVT_DEFAULT;
-  cb->arg_classes = (jobject*)malloc(sizeof(jobject) * argc);
+  cb->arg_classes = (jobject*)calloc(argc, sizeof(jobject));
  
   cb->direct = direct;
   cb->java_arg_types[0] = cb->java_arg_types[1] = cb->java_arg_types[2] = &ffi_type_pointer;
@@ -163,6 +163,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
 
     jtype = get_java_type(env, cls);
+    if((*env)->ExceptionCheck(env)) {
+      goto failure_cleanup;
+    }
     if (jtype == -1) {
       snprintf(msg, sizeof(msg), "Unsupported callback argument at index %d", i);
       throw_type = EIllegalArgument;
@@ -179,7 +182,13 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
         || cb->conversion_flags[i] == CVT_INTEGER_TYPE) {
       jclass ncls;
       ncls = getNativeType(env, cls);
+      if((*env)->ExceptionCheck(env)) {
+        goto failure_cleanup;
+      }
       jtype = get_java_type(env, ncls);
+      if((*env)->ExceptionCheck(env)) {
+        goto failure_cleanup;
+      }
       if (jtype == -1) {
         snprintf(msg, sizeof(msg), "Unsupported NativeMapped callback argument native type at argument %d", i);
         throw_type = EIllegalArgument;
@@ -560,7 +569,7 @@ static TLS_KEY_T tls_thread_data_key;
 static thread_storage* get_thread_storage(JNIEnv* env) {
   thread_storage* tls = (thread_storage *)TLS_GET(tls_thread_data_key);
   if (tls == NULL) {
-    tls = (thread_storage*)malloc(sizeof(thread_storage));
+    tls = (thread_storage*)calloc(1, sizeof(thread_storage));
     if (!tls) {
       throwByName(env, EOutOfMemory, "JNA: Can't allocate thread storage");
     }

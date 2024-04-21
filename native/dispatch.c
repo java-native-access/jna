@@ -3497,7 +3497,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   const char* sig = newCStringUTF8(env, signature);
   void *code;
   void *closure;
-  method_data* data = malloc(sizeof(method_data));
+  method_data* data = calloc(1, sizeof(method_data));
   ffi_cif* closure_cif = &data->closure_cif;
   int status;
   int i;
@@ -3519,12 +3519,12 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   }
 
   data->throw_last_error = throw_last_error;
-  data->arg_types = malloc(sizeof(ffi_type*) * argc);
-  data->closure_arg_types = malloc(sizeof(ffi_type*) * (argc + 2));
+  data->arg_types = calloc(argc, sizeof(ffi_type*));
+  data->closure_arg_types = calloc(argc + 2, sizeof(ffi_type*));
   data->closure_arg_types[0] = &ffi_type_pointer;
   data->closure_arg_types[1] = &ffi_type_pointer;
   data->closure_method = NULL;
-  data->flags = cvts ? malloc(sizeof(jint)*argc) : NULL;
+  data->flags = cvts ? calloc(argc, sizeof(jint)) : NULL;
   data->rflag = rconversion;
   data->to_native = NULL;
   data->from_native = from_native ? (*env)->NewWeakGlobalRef(env, from_native) : NULL;
@@ -3612,7 +3612,7 @@ Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_ffi_1prep_1closure(JNIEnv *env, jclass UNUSED(cls), jlong cif, jobject obj)
 {
-  callback* cb = (callback *)malloc(sizeof(callback));
+  callback* cb = (callback *)calloc(1, sizeof(callback));
   ffi_status s;
 
   if ((*env)->GetJavaVM(env, &cb->vm) != JNI_OK) {
