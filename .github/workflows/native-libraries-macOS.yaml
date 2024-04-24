@@ -29,6 +29,7 @@ jobs:
           brew update
           brew install automake --force
           brew install libtool --force
+          brew install texinfo --force
       - name: Build native code
         run: |
           ant -Dos.prefix=darwin-aarch64
