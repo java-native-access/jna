@@ -900,6 +900,12 @@ public interface X11 extends Library {
     boolean XTranslateCoordinates(Display display, Window src_w, Window dest_w, int src_x, int src_y,
                                   IntByReference dest_x_return, IntByReference dest_y_return, WindowByReference child_return);
 
+    int XMoveWindow(Display display, Window w, int x, int y);
+    int XResizeWindow(Display display, Window w, int width, int height);
+    int XMoveResizeWindow(Display display, Window w, int x, int y, int width, int height);
+    int XRaiseWindow(Display display, Window w);
+    int XLowerWindow(Display display, Window w);
+
     /*****************************************************************
      * RESERVED RESOURCE AND CONSTANT DEFINITIONS
      *****************************************************************/
