@@ -53,14 +53,14 @@ unzip apache-ant-1.10.14-bin.zip
 
 # Transfer JNA source code to build environment
 rsync -av --exclude=.git USER@BUILD_HOST:src/jnalib/ jnalib/
-chmod +x native/libffi/configure native/libffi/install-sh
 
 # Build JNA and run unittests
 cd jnalib
+chmod +x native/libffi/configure native/libffi/install-sh
 /root/apache-ant-1.10.14/bin/ant
 
 # Copy jna native library back to host system
-
+scp lib/native/freebsd-aarch64.jar USER@BUILD_HOST:src/jnalib/lib/native
 ```
 
 x86
@@ -107,13 +107,14 @@ unzip apache-ant-1.10.14-bin.zip
 
 # Transfer JNA source code to build environment
 rsync -av --exclude=.git USER@BUILD_HOST:src/jnalib/ jnalib/
-chmod +x jnalib/native/libffi/configure jnalib/native/libffi/install-sh
 
 # Build JNA and run unittests
 cd jnalib
+chmod +x native/libffi/configure native/libffi/install-sh
 /root/apache-ant-1.10.14/bin/ant
 
 # Copy jna native library back to host system
+scp lib/native/freebsd-x86.jar USER@BUILD_HOST:src/jnalib/lib/native
 ```
 
 x86-64
@@ -160,11 +161,12 @@ unzip apache-ant-1.10.14-bin.zip
 
 # Transfer JNA source code to build environment
 rsync -av --exclude=.git USER@BUILD_HOST:src/jnalib/ jnalib/
-chmod +x jnalib/native/libffi/configure jnalib/native/libffi/install-sh
 
 # Build JNA and run unittests
 cd jnalib
+chmod +x native/libffi/configure native/libffi/install-sh
 /root/apache-ant-1.10.14/bin/ant
 
 # Copy jna native library back to host system
+scp lib/native/freebsd-x86-64.jar USER@BUILD_HOST:src/jnalib/lib/native
 ```
