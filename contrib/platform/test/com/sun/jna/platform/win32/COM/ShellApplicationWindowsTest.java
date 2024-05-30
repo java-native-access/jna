@@ -23,13 +23,18 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Ole32;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
+import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.ptr.PointerByReference;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -39,16 +44,41 @@ import static org.junit.Assert.*;
 
 public class ShellApplicationWindowsTest {
 
+    private static final Guid.CLSID CLSID_InternetExplorer = new Guid.CLSID("{0002DF01-0000-0000-C000-000000000046}");
+
     static {
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
 
+    private PointerByReference ieApp;
+    private Dispatch ieDispatch;
+
     @Before
     public void setUp() throws Exception {
-        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        WinNT.HRESULT hr;
 
-        // Launch IE in a manner that should ensure it opens even if the system default browser is Chrome, Firefox, or something else.
-        Runtime.getRuntime().exec("cmd /c start iexplore.exe -nohome \"about:blank\"");
+        hr = Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        COMUtils.checkRC(hr);
+
+        // IE can not be launched directly anymore - so load it via COM
+
+        ieApp = new PointerByReference();
+        hr = Ole32.INSTANCE
+                .CoCreateInstance(CLSID_InternetExplorer, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ieApp);
+        COMUtils.checkRC(hr);
+
+        ieDispatch = new Dispatch(ieApp.getValue());
+        InternetExplorer ie = new InternetExplorer(ieDispatch);
+
+        ie.setProperty("Visible", true);
+        COMUtils.checkRC(hr);
+
+        VARIANT url = new VARIANT("about:blank");
+        VARIANT result = ie.invoke("Navigate", url);
+        OleAuto.INSTANCE.VariantClear(url);
+        OleAuto.INSTANCE.VariantClear(result);
+
+        ieDispatch.Release();
 
         // Even when going to "about:blank", IE still needs a few seconds to start up and add itself to Shell.Application.Windows
         // Removing this delay will cause the test to fail even on the fastest boxes I can find.
@@ -85,6 +115,7 @@ public class ShellApplicationWindowsTest {
     @After
     public void tearDown() throws Exception
     {
+        Ole32.INSTANCE.CoUninitialize();
         Runtime.getRuntime().exec("taskkill.exe /f /im iexplore.exe");
     }
 

@@ -51,7 +51,7 @@ folder.
    # Reference the 32bit JKD 6
    export JAVA_HOME=/usr/java6
    # Build
-   cd build-package-aix-ppc-7.0.1
+   cd build-package-aix-ppc-7.0.2
    bash build.sh
    # Copy result
    cp aix-ppc.jar ../
@@ -59,18 +59,18 @@ folder.
    ```
 6. Build 64bit:
    ```bash
-   # Reference the 64bit JKD 6
+   # Reference the 64bit JKD 7
    export JAVA_HOME=/usr/java7_64
    # Build
-   cd build-package-aix-ppc64-7.0.1
+   cd build-package-aix-ppc64-7.0.2
    bash build.sh
    # Copy result
    cp aix-ppc64.jar ../
    cd ..
    ```
-7. Cleanup: `rm -r build-package-aix-ppc-7.0.1 build-package-aix-ppc-7.0.1.zip build-package-aix-ppc64-7.0.1 build-package-aix-ppc64-7.0.1.zip`
+7. Cleanup: `rm -r build-package-aix-ppc-7.0.2 build-package-aix-ppc-7.0.2.zip build-package-aix-ppc64-7.0.2 build-package-aix-ppc64-7.0.2.zip`
 8. Exit build system: `exit`
-9. Copy binaries to local system `scp "user@cfarm111.cfarm.net:*.jar lib/native`
+9. Copy binaries to local system `scp "user@cfarm111.cfarm.net:*.jar" lib/native`
 
 ### Darwin / mac OS
 
@@ -111,7 +111,7 @@ Build on the opencsw buildfarm https://www.opencsw.org/.
    # Reference the 32bit JKD 7
    export JAVA_HOME=/opt/csw/java/jdk1.7.0_80
    # Build
-   cd build-package-sunos-sparc-7.0.1/native/libffi
+   cd build-package-sunos-sparc-7.0.2/native/libffi
    bash autogen.sh
    ./configure
    cd ../..
@@ -122,10 +122,10 @@ Build on the opencsw buildfarm https://www.opencsw.org/.
    ```
 7. Build 64bit:
    ```bash
-   # Reference the 64bit JKD 7
+   # Reference the 64bit JKD 8
    export JAVA_HOME=/opt/csw/java/jdk1.8.0_201
    # Build
-   cd build-package-sunos-sparcv9-7.0.1/native/libffi
+   cd build-package-sunos-sparcv9-7.0.2/native/libffi
    bash autogen.sh
    ./configure
    cd ../..
@@ -150,7 +150,7 @@ Build on the opencsw buildfarm https://www.opencsw.org/.
     # Reference the 32bit JKD 7
     export JAVA_HOME=/opt/csw/java/jdk1.7.0_80
     # Build
-    cd build-package-sunos-x86-7.0.1/native/libffi
+    cd build-package-sunos-x86-7.0.2/native/libffi
     bash autogen.sh
     ./configure
     cd ../..
@@ -161,10 +161,10 @@ Build on the opencsw buildfarm https://www.opencsw.org/.
     ```
 11. Build 64bit:
     ```bash
-    # Reference the 64bit JKD 7
+    # Reference the 64bit JKD 8
     export JAVA_HOME=/opt/csw/java/jdk1.8.0_201
     # Build
-    cd build-package-sunos-x86-64-7.0.1/native/libffi
+    cd build-package-sunos-x86-64-7.0.2/native/libffi
     bash autogen.sh
     ./configure
     cd ../..
@@ -174,7 +174,7 @@ Build on the opencsw buildfarm https://www.opencsw.org/.
     cd ..
     ```
 12. Return to login system `logout`
-13. Cleanup: `rm -r build-package-sunos-sparc-7.0.1 build-package-sunos-sparc-7.0.1.zip build-package-sunos-sparcv9-7.0.1 build-package-sunos-sparcv9-7.0.1.zip build-package-sunos-x86-64-7.0.1 build-package-sunos-x86-64-7.0.1.zip build-package-sunos-x86-7.0.1 build-package-sunos-x86-7.0.1.zip`
+13. Cleanup: `rm -r build-package-sunos-sparc-7.0.2 build-package-sunos-sparc-7.0.2.zip build-package-sunos-sparcv9-7.0.2 build-package-sunos-sparcv9-7.0.2.zip build-package-sunos-x86-64-7.0.2 build-package-sunos-x86-64-7.0.2.zip build-package-sunos-x86-7.0.2 build-package-sunos-x86-7.0.2.zip`
 14. Exit build system: `exit`
 14. Copy binaries to local system: `scp "user@login.opencsw.org:*.jar" lib/native/`
 
@@ -218,11 +218,21 @@ Binaries are build in VMs for
 They are build using the build-packages generated as part of the Linux build
 
 ```
-scp user@BUILD_HOST:src/jnalib/build/build-package-openbsd-x86-7.0.1.zip .
-unzip build-package-openbsd-x86-7.0.1.zip
-cd build-package-openbsd-x86-7.0.1
+scp user@BUILD_HOST:src/jnalib/build/build-package-openbsd-x86-7.0.2.zip .
+unzip build-package-openbsd-x86-7.0.2.zip
+cd build-package-openbsd-x86-7.0.2
 export JAVA_HOME=/usr/local/jdk-1.8.0
 export MAKE=gmake
 sh build.sh
-scp opensbd-x86.jar user@BUILD_HOST:src/jnalib/lib/native
+scp openbsd-x86.jar user@BUILD_HOST:src/jnalib/lib/native
+```
+
+```
+scp user@BUILD_HOST:src/jnalib/build/build-package-openbsd-x86-64-7.0.2.zip .
+unzip build-package-openbsd-x86-7.0.2.zip
+cd build-package-openbsd-x86-7.0.2
+export JAVA_HOME=/usr/local/jdk-1.8.0
+export MAKE=gmake
+sh build.sh
+scp openbsd-x86-64.jar user@BUILD_HOST:src/jnalib/lib/native
 ```

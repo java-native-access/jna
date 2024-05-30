@@ -38,6 +38,7 @@ jobs:
           brew update
           brew install automake --force
           brew install libtool --force
+          brew install texinfo --force
       - name: Checkstyle
         if: contains(matrix.os, 'ubuntu') && contains(matrix.java, '8')
         run: |
