@@ -16,8 +16,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        java: [8, 11, 17, 21]
-        os: [ubuntu-latest, macos-latest]
+        java: [8, 11, 17, 21, 23-ea]
+        os: [ubuntu-latest, macos-13, macos-latest]
+        exclude:
+          # 23-ea is not available for mac OS
+          - java: 23-ea
+            os: macos-latest
       # Run all tests even if one fails
       fail-fast: false
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
@@ -45,40 +49,6 @@ jobs:
           ant checkstyle
           ant dist
       - name: Build with Ant
-        run: |
-          ant test
-          ant test-platform
-
-  test-m1:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        java: [21]
-        # macos-14 is documented to run on m1
-        # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
-        os: [macos-14]
-      # Run all tests even if one fails
-      fail-fast: true
-    name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ matrix.java }}
-          distribution: 'zulu'
-      - name: Linux requirements
-        if: contains(matrix.os, 'ubuntu')
-        run: sudo apt-get -y install texinfo
-      - name: macOS requirements
-        if: contains(matrix.os, 'macos')
-        run: |
-          brew update
-          brew install automake --force
-          brew install libtool --force
-          brew install texinfo --force
-      - name: Run test
         run: |
           ant test
           ant test-platform
