@@ -39,6 +39,7 @@
   <property name="testjar2" value="${name}-test2.jar"/>
   <property name="testjar3" value="${name}-test3.jar"/>
   <property name="jar-jpms" value="${name}-jpms.jar"/>
+  <property name="jar-graalvm" value="${name}-graalvm.jar"/>
   <property name="debug" value="true"/>
   <property name="debug.native" value="false"/>
   <property name="cflags_extra.native" value=""/>
@@ -60,6 +61,7 @@
   <property name="dist-jar" value="${dist}/${jar}"/>
   <property name="dist-aar" value="${dist}/${aar}"/>
   <property name="dist-jar-jpms" value="${dist}/${jar-jpms}"/>
+  <property name="dist-jar-graalvm" value="${dist}/${jar-graalvm}" />
 
   <!-- Maven -->
   <!-- define Maven coordinates -->
@@ -88,10 +90,12 @@
   <property name="pom-platform-base" value="pom-jna-platform.xml" />
   <property name="pom-jpms-base" value="pom-jna-jpms.xml" />
   <property name="pom-platform-jpms-base" value="pom-jna-platform-jpms.xml" />
+  <property name="pom-graalvm-base" value="pom-jna-graalvm.xml" />
 
   <property name="pom" value="${build}/pom-jna.xml" />
   <property name="pom-platform" value="${build}/pom-jna-platform.xml" />
   <property name="pom-jpms" value="${build}/pom-jna-jpms.xml" />
+  <property name="pom-graalvm" value="${build}/pom-jna-graalvm.xml" />
   <property name="pom-platform-jpms" value="${build}/pom-jna-platform-jpms.xml" />
 
   <target name="default" depends="test" description="Build and Test."/>
@@ -131,6 +135,7 @@
     <copy file="${pom-base}" tofile="${pom}" />
     <copy file="${pom-platform-base}" tofile="${pom-platform}" />
     <copy file="${pom-jpms-base}" tofile="${pom-jpms}" />
+    <copy file="${pom-graalvm-base}" tofile="${pom-graalvm}" />
     <copy file="${pom-platform-jpms-base}" tofile="${pom-platform-jpms}" />
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
@@ -148,6 +153,16 @@
                    flags="g"
                    file="${pom-jpms}"/>
 
+    <replaceregexp match="(&lt;version&gt;)TEMPLATE(&lt;/version&gt;)"
+                   replace="\1${jna.version}\2"
+                   flags="g"
+                   file="${pom-graalvm}"/>
+
+    <replaceregexp match="(&lt;version&gt;)GRAALVM_VERSION(&lt;/version&gt;)"
+                   replace="\1${graalvm.version}\2"
+                   flags="g"
+                   file="${pom-graalvm}"/>
+
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                  replace="\1${jna.version}\2"
                  flags="g"
@@ -158,6 +173,7 @@
     </condition>
 
     <property name="classes" location="${build}/classes"/>
+    <property name="classes-graalvm" location="${build}/classes-graalvm"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
     <property name="reports" value="${build}/reports"/>
@@ -192,6 +208,7 @@
       <not><equals arg1="${libjsig}" arg2=""/></not>
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
+    <property name="native-static.jar" value="${os.prefix}-static.jar"/>
     <property name="build.native" location="${build}/${native.subdir}"/>
     <property name="build.headers" location="${build}/headers"/>
     <property name="build.aar" location="${build}/aar"/>
@@ -248,11 +265,28 @@
 
   <target name="compile" depends="-setup"
           description="Compile all Java source">
+    <!-- Need GraalVM SVM artifact to build features for `jna-graalvm.jar` -->
+    <path id="graalvm.classpath" />
+    <artifact:remoteRepository id="central" url="https://repo1.maven.org/maven2/" />
+    <artifact:dependencies pathId="graalvm.classpath">
+      <remoteRepository refid="central" />
+      <dependency groupId="org.graalvm.nativeimage" artifactId="svm" version="${graalvm.version}"/>
+      <dependency groupId="org.graalvm.sdk" artifactId="nativeimage" version="${graalvm.version}"/>
+      <dependency groupId="org.graalvm.sdk" artifactId="jniutils" version="${graalvm.version}"/>
+    </artifact:dependencies>
 
     <delete dir="${build}/jna-src" />
     <mkdir dir="${build}/jna-src/com/sun/jna" />
 
+    <delete dir="${classes-graalvm}" />
+    <mkdir dir="${classes-graalvm}" />
+    <delete dir="${build}/gvm-src" />
+    <mkdir dir="${build}/gvm-src/com/sun/jna" />
+
     <copy file="src/com/sun/jna/Version.java" todir="${build}/jna-src/com/sun/jna" />
+    <copy file="lib/gvm/AbstractJNAFeature.java" todir="${build}/gvm-src/com/sun/jna" />
+    <copy file="lib/gvm/JavaNativeAccess.java" todir="${build}/gvm-src/com/sun/jna" />
+    <copy file="lib/gvm/SubstrateStaticJNA.java" todir="${build}/gvm-src/com/sun/jna" />
 
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
@@ -279,6 +313,19 @@
            nativeheaderdir="${build.headers}">
       <src refid="src.path"/>
       <exclude name="com/sun/jna/Version.java" />
+    </javac>
+    <javac release="11"
+           destdir="${classes-graalvm}"
+           includeantruntime="false"
+           deprecation="on"
+           debug="${debug}"
+           encoding="UTF-8"
+           nativeheaderdir="${build.headers}">
+      <src location="${build}/gvm-src/com/sun/jna" />
+      <classpath>
+        <path refid="graalvm.classpath"/>
+        <pathelement location="${classes}" />
+      </classpath>
     </javac>
   </target>
 
@@ -562,12 +609,26 @@ osname=macosx;processor=aarch64
                   includes="LICENSE,LGPL2.1,AL2.0"
                   prefix="META-INF"/>
     </jar>
+    <jar jarfile="${build}/${jar-graalvm}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
+      <fileset dir="${classes-graalvm}">
+        <patternset refid="jar-compiled"/>
+      </fileset>
+      <zipfileset dir="lib/gvm"
+               includes="native-image.properties"
+               prefix="META-INF/native-image/com.sun.jna"/>
+      <zipfileset dir="."
+                  includes="LICENSE,LGPL2.1,AL2.0"
+                  prefix="META-INF"/>
+    </jar>
     <zip zipfile="${build}/${minjar}">
       <zipfileset src="${build}/${jar}" excludes="**/*jnidispatch*"/>
     </zip>
     <jar jarfile="${build}/jna-jpms.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build}/manifest/module.mf">
       <zipfileset src="${build}/${jar}" excludes="META-INF/MANIFEST.mf"/>
       <zipfileset dir="${build}/manifest/" includes="module-info.class" prefix="META-INF/versions/9"/>
+    </jar>
+    <jar jarfile="${build}/jna-graalvm.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
+      <zipfileset src="${build}/${jar-graalvm}" excludes="META-INF/MANIFEST.mf"/>
     </jar>
   </target>
 
@@ -1014,21 +1075,37 @@ cd ..
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
+    <!-- Include only dynamic library variants for JVM JAR targets. -->
     <mkdir dir="${classes}/${native.path}"/>
     <copy todir="${classes}/${native.path}">
       <fileset dir="${build.native}"
-               includes="jnidispatch.dll,libjnidispatch.*"/>
+               includes="jnidispatch.dll,libjnidispatch.*"
+                excludes="*.lib,*.a"/>
     </copy>
     <mkdir dir="${eclipse.classes}/${native.path}"/>
     <copy todir="${eclipse.classes}/${native.path}"
           failonerror="false">
+      <fileset dir="${build.native}"
+               includes="jnidispatch.dll,libjnidispatch.*"
+               excludes="*.lib,*.a"/>
+    </copy>
+    <!-- Include both dynamic and static library variants for all operating systems in the GraalVM JAR. -->
+    <mkdir dir="${classes-graalvm}/${native.path}"/>
+    <copy todir="${classes-graalvm}/${native.path}">
       <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
     <!-- For web start, native libraries may be provided in the root of -->
     <!-- an included jar file -->
     <jar jarfile="${build}/${native.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
-      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
+      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*" excludes="*.a,*.lib"/>
+      <manifest>
+        <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
+        <attribute name="Specification-Version" value="${jni.version}"/>
+      </manifest>
+    </jar>
+    <jar jarfile="${build}/${native-static.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
+      <fileset dir="${build.native}" includes="jnidispatch.lib,libjnidispatch.a"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
@@ -1036,6 +1113,7 @@ cd ..
     </jar>
     <copy todir="${lib.native}">
       <fileset dir="${build}" includes="${native.jar}"/>
+      <fileset dir="${build}" includes="${native-static.jar}"/>
     </copy>
   </target>
 
@@ -1351,7 +1429,7 @@ cd ..
   <target name="dist" depends="jar,aar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}" force="true" overwrite="true">
-      <fileset dir="${build}" includes="${jar},${minjar},${aar},${jar-jpms}"/>
+      <fileset dir="${build}" includes="${jar},${minjar},${aar},${jar-jpms},${jar-graalvm}"/>
       <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar,jna-platform-jpms.jar"/>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
@@ -1433,6 +1511,12 @@ cd ..
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
+      <arg value="-DpomFile=${pom-graalvm}"/>
+      <arg value="-Dfile=${dist-jar-graalvm}"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
       <arg value="-Dsources=${platform-sources-jar}"/>
@@ -1478,6 +1562,17 @@ cd ..
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom-jpms}"/>
       <arg value="-Dfile=${dist-jar-jpms}"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom-graalvm}"/>
+      <arg value="-Dfile=${dist-jar-graalvm}"/>
       <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
@@ -1538,6 +1633,19 @@ cd ..
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
+    <!-- sign and deploy the graalvm artifact -->
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=${pom-graalvm}"/>
+      <arg value="-Dfile=${dist-jar-graalvm}"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+      <arg value="-Dgpg.useagent=true"/>
+    </artifact:mvn>
+
     <!-- sign and deploy the platform artifact -->
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
@@ -1553,6 +1661,7 @@ cd ..
   </target>
 
   <target name="-bootstrap-maven">
+      <artifact:remoteRepository id="central" url="https://repo1.maven.org/maven2/" />
       <artifact:remoteRepository id="remote.mavenCentral" url="https://repo1.maven.org/maven2/" />
       <artifact:dependencies pathId="dependency.dummy">
           <remoteRepository refid="remote.mavenCentral" />
