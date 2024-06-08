@@ -58,6 +58,22 @@
         <role>Developer</role>
       </roles>
     </developer>
+    <developer>
+      <email>sam@elide.dev</email>
+      <name>Sam Gammon</name>
+      <url>https://github.com/sgammon/</url>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <email>dario@elide.dev</email>
+      <name>Dario Valdespino</name>
+      <url>https://github.com/darvld/</url>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
   </developers>
 
   <dependencies>
