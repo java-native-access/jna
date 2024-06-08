@@ -1,0 +1,41 @@
+# GraalVM build and native test.
+name: GraalVM CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Native ${{ matrix.java }}, ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '22'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Linux requirements
+        if: contains(matrix.os, 'ubuntu')
+        run: sudo apt-get -y install texinfo
+      - name: macOS requirements
+        if: contains(matrix.os, 'macos')
+        run: |
+          brew update
+          brew install automake --force
+          brew install libtool --force
+          brew install texinfo --force
+      - name: "Build: JNA"
+        run: ant dist && ant install
+      - uses: gradle/actions/setup-gradle@v3
+      - name: "Build: Native Image"
+        working-directory: samples/graalvm-native-jna
+        run: ./gradlew build run nativeCompile nativeRun
