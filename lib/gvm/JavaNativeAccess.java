@@ -61,13 +61,17 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
         registerJniClass(Callback.class);
         registerJniClass(CallbackReference.class);
         registerJniMethods(
-                method(Callback.class, "getCallback", Class.class, Pointer.class, Boolean.class));
+                method(CallbackReference.class, "getCallback", Class.class, Pointer.class));
         registerJniMethods(
-                method(Callback.class, "getFunctionPointer", Callback.class, Boolean.class));
+                method(CallbackReference.class, "getCallback", Class.class, Pointer.class, boolean.class));
         registerJniMethods(
-                method(Callback.class, "getNativeString", Object.class, Boolean.class));
+                method(CallbackReference.class, "getFunctionPointer", Callback.class));
         registerJniMethods(
-                method(Callback.class, "initializeThread", Callback.class, CallbackReference.AttachOptions.class));
+                method(CallbackReference.class, "getFunctionPointer", Callback.class, boolean.class));
+        registerJniMethods(
+                method(CallbackReference.class, "getNativeString", Object.class, boolean.class));
+        registerJniMethods(
+                method(CallbackReference.class, "initializeThread", Callback.class, CallbackReference.AttachOptions.class));
 
         registerJniClass(com.sun.jna.CallbackReference.AttachOptions.class);
 
@@ -81,17 +85,17 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
 
         registerJniClass(Native.class);
         registerJniMethods(
-                method(Callback.class, "dispose"),
-                method(Callback.class, "fromNative", FromNativeConverter.class, Object.class, Method.class),
-                method(Callback.class, "fromNative", Class.class, Object.class),
-                method(Callback.class, "nativeType", Class.class),
-                method(Callback.class, "toNative", ToNativeConverter.class, Object.class),
-                method(Callback.class, "open", String.class, Integer.class),
-                method(Callback.class, "close", Long.class),
-                method(Callback.class, "findSymbol", Long.class, String.class));
+                method(Native.class, "dispose"),
+                method(Native.class, "fromNative", FromNativeConverter.class, Object.class, Method.class),
+                method(Native.class, "fromNative", Class.class, Object.class),
+                method(Native.class, "nativeType", Class.class),
+                method(Native.class, "toNative", ToNativeConverter.class, Object.class),
+                method(Native.class, "open", String.class, int.class),
+                method(Native.class, "close", long.class),
+                method(Native.class, "findSymbol", long.class, String.class));
 
         registerJniClass(Native.ffi_callback.class);
-        registerJniMethods(method(Native.ffi_callback.class, "invoke", Long.class, Long.class, Long.class));
+        registerJniMethods(method(Native.ffi_callback.class, "invoke", long.class, long.class, long.class));
 
         registerJniClass(NativeLong.class);
 
@@ -100,7 +104,8 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
 
         registerJniClass(Pointer.class);
         registerJniFields(fields(Pointer.class, "peer"));
-        registerJniMethods(method(Pointer.class, "<init>", Long.class));
+        // @TODO: how do we register constructors?
+        // registerJniMethods(method(Pointer.class, "<init>", long.class));
 
         registerJniClass(PointerType.class);
         registerJniFields(fields(PointerType.class, "pointer"));
@@ -108,13 +113,13 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
         registerJniClass(Structure.class);
         registerJniFields(fields(Structure.class, "memory", "typeInfo"));
         registerJniMethods(
-                method(Callback.class, "autoRead"),
-                method(Callback.class, "autoWrite"),
-                method(Callback.class, "getTypeInfo"),
-                method(Callback.class, "getTypeInfo", Object.class),
-                method(Callback.class, "newInstance", Class.class),
-                method(Callback.class, "newInstance", Class.class, Long.class),
-                method(Callback.class, "newInstance", Class.class, Pointer.class));
+                method(Structure.class, "autoRead"),
+                method(Structure.class, "autoWrite"),
+                method(Structure.class, "getTypeInfo"),
+                method(Structure.class, "getTypeInfo", Object.class),
+                method(Structure.class, "newInstance", Class.class),
+                method(Structure.class, "newInstance", Class.class, long.class),
+                method(Structure.class, "newInstance", Class.class, Pointer.class));
 
         registerJniClass(Structure.ByValue.class);
         registerJniClass(Structure.FFIType.class);
