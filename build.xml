@@ -288,9 +288,7 @@
     <artifact:remoteRepository id="central" url="https://repo1.maven.org/maven2/" />
     <artifact:dependencies pathId="graalvm.classpath">
       <remoteRepository refid="central" />
-      <dependency groupId="org.graalvm.nativeimage" artifactId="svm" version="${graalvm.version}"/>
       <dependency groupId="org.graalvm.sdk" artifactId="nativeimage" version="${graalvm.version}"/>
-      <dependency groupId="org.graalvm.sdk" artifactId="jniutils" version="${graalvm.version}"/>
     </artifact:dependencies>
 
     <delete dir="${classes-graalvm}" />
@@ -1715,5 +1713,21 @@ cd ..
       <checkstyle config="checkstyle.xml">
           <fileset dir="." includes="**/*.java"/>
       </checkstyle>
+  </target>
+
+  <target name="nativeImage">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna">
+      <arg value="${basedir}/samples/graalvm-native-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
+  <target name="nativeRun" depends="nativeImage">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna">
+      <arg value="${basedir}/samples/graalvm-native-jna/build/native/nativeCompile/graalvm-native-jna"/>
+    </exec>
   </target>
 </project>

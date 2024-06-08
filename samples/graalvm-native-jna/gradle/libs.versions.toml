@@ -1,0 +1,34 @@
+[versions]
+jna = "5.15.0-SNAPSHOT"
+graalvm = "24.0.1"
+graalvm-plugin = "0.10.2"
+
+[plugins]
+graalvm = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-plugin" }
+
+[libraries]
+jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
+jna-graalvm = { group = "net.java.dev.jna", name = "jna-graalvm", version.ref = "jna" }
+jna-jpms = { group = "net.java.dev.jna", name = "jna-jpms", version.ref = "jna" }
+jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
+jna-platform-jpms = { group = "net.java.dev.jna", name = "jna-platform-jpms", version.ref = "jna" }
+graalvm-nativeimage-svm = { group = "org.graalvm.nativeimage", name = "svm", version.ref = "graalvm" }
+graalvm-sdk-nativeimage = { group = "org.graalvm.sdk", name = "nativeimage", version.ref = "graalvm" }
+graalvm-sdk-jniutils = { group = "org.graalvm.sdk", name = "jniutils", version.ref = "graalvm" }
+
+[bundles]
+
+jna = [
+  "jna",
+  "jna-platform"
+]
+
+jna-jpms = [
+  "jna-jpms",
+  "jna-platform-jpms"
+]
+
+graalvm-api = [
+  "graalvm-sdk-nativeimage",
+  "graalvm-sdk-jniutils"
+]
