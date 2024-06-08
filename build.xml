@@ -1728,6 +1728,7 @@ cd ..
   <target name="nativeRun" depends="nativeImage">
     <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna">
       <arg value="${basedir}/samples/graalvm-native-jna/build/native/nativeCompile/graalvm-native-jna"/>
+      <arg value="testing-123"/>
     </exec>
   </target>
 </project>
