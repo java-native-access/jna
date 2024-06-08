@@ -1716,7 +1716,7 @@ cd ..
   </target>
 
   <target name="nativeImage">
-    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
       <arg value="${basedir}/samples/graalvm-native-jna/gradlew"/>
       <arg value="-PjnaVersion=${jna.version}"/>
       <arg value="-PgraalvmVersion=${graalvm.version}"/>
@@ -1726,7 +1726,7 @@ cd ..
   </target>
 
   <target name="nativeRun" depends="nativeImage">
-    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
       <arg value="${basedir}/samples/graalvm-native-jna/build/native/nativeCompile/graalvm-native-jna"/>
       <arg value="testing-123"/>
     </exec>
