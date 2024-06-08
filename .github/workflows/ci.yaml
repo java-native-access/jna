@@ -55,7 +55,7 @@ jobs:
         java: [21]
         os: [ubuntu-latest]
       fail-fast: true
-    name: Test GVM ${{ matrix.java }}, ${{ matrix.os }}
+    name: GraalVM Native
     uses: ./.github/workflows/graalvm.yaml
     with:
       runner: ${{ matrix.os }}
