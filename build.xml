@@ -116,6 +116,23 @@
            uri="antlib:org.codehaus.mojo.animal_sniffer"
            classpathref="maven-ant-tasks.classpath" />
 
+  <!-- Condition describing whether we are building on JDK9+ -->
+  <target name="-jdk11plus-only">
+    <condition property="jdk11plus">
+      <and>
+        <not>
+          <equals arg1="1.8" arg2="${ant.java.version}"/>
+        </not>
+        <not>
+          <equals arg1="1.9" arg2="${ant.java.version}"/>
+        </not>
+        <not>
+          <equals arg1="10" arg2="${ant.java.version}"/>
+        </not>
+      </and>
+    </condition>
+  </target>
+
   <target name="-prepare-anttools">
       <subant antfile="build-ant-tools.xml" buildpath="${basedir}"></subant>
       <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${build}/ant-tools:$lib/asm-8.0.1.jar" />
@@ -263,8 +280,8 @@
     </path>
   </target>
 
-  <target name="compile" depends="-setup"
-          description="Compile all Java source">
+  <target name="compile-graalvm" depends="-setup,-jdk11plus-only"
+          description="Compile GraalVM Java sources">
     <!-- Need GraalVM SVM artifact to build features for `jna-graalvm.jar` -->
     <path id="graalvm.classpath" />
     <artifact:remoteRepository id="central" url="https://repo1.maven.org/maven2/" />
@@ -275,18 +292,36 @@
       <dependency groupId="org.graalvm.sdk" artifactId="jniutils" version="${graalvm.version}"/>
     </artifact:dependencies>
 
-    <delete dir="${build}/jna-src" />
-    <mkdir dir="${build}/jna-src/com/sun/jna" />
-
     <delete dir="${classes-graalvm}" />
     <mkdir dir="${classes-graalvm}" />
     <delete dir="${build}/gvm-src" />
     <mkdir dir="${build}/gvm-src/com/sun/jna" />
 
-    <copy file="src/com/sun/jna/Version.java" todir="${build}/jna-src/com/sun/jna" />
     <copy file="lib/gvm/AbstractJNAFeature.java" todir="${build}/gvm-src/com/sun/jna" />
     <copy file="lib/gvm/JavaNativeAccess.java" todir="${build}/gvm-src/com/sun/jna" />
     <copy file="lib/gvm/SubstrateStaticJNA.java" todir="${build}/gvm-src/com/sun/jna" />
+
+    <javac release="11"
+           destdir="${classes-graalvm}"
+           includeantruntime="false"
+           deprecation="on"
+           debug="${debug}"
+           encoding="UTF-8"
+           nativeheaderdir="${build.headers}">
+      <src location="${build}/gvm-src/com/sun/jna" />
+      <classpath>
+        <path refid="graalvm.classpath"/>
+        <pathelement location="${classes}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="compile" depends="-setup"
+          description="Compile all Java source">
+    <delete dir="${build}/jna-src" />
+    <mkdir dir="${build}/jna-src/com/sun/jna" />
+
+    <copy file="src/com/sun/jna/Version.java" todir="${build}/jna-src/com/sun/jna" />
 
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
@@ -313,19 +348,6 @@
            nativeheaderdir="${build.headers}">
       <src refid="src.path"/>
       <exclude name="com/sun/jna/Version.java" />
-    </javac>
-    <javac release="11"
-           destdir="${classes-graalvm}"
-           includeantruntime="false"
-           deprecation="on"
-           debug="${debug}"
-           encoding="UTF-8"
-           nativeheaderdir="${build.headers}">
-      <src location="${build}/gvm-src/com/sun/jna" />
-      <classpath>
-        <path refid="graalvm.classpath"/>
-        <pathelement location="${classes}" />
-      </classpath>
     </javac>
   </target>
 
@@ -710,7 +732,7 @@ osname=macosx;processor=aarch64
     </jar>
   </target>
 
-  <target name="javah" depends="compile" unless="-native">
+  <target name="javah" depends="compile,compile-graalvm" unless="-native">
     <condition property="grep" value="/usr/sfw/bin/ggrep">
       <os name="SunOS"/>
     </condition>
