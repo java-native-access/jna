@@ -322,6 +322,9 @@
     <delete dir="${build}/jna-src" />
     <mkdir dir="${build}/jna-src/com/sun/jna" />
 
+    <!-- We need to repeat this mkdir so that the GraalVM classes exist unconditionally, even on JDK8. -->
+    <mkdir dir="${classes-graalvm}" />
+
     <copy file="src/com/sun/jna/Version.java" todir="${build}/jna-src/com/sun/jna" />
 
     <replaceregexp match='VERSION = ".*";'
