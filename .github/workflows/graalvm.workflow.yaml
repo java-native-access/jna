@@ -1,0 +1,59 @@
+# GraalVM build and native test.
+name: GraalVM CI (Reusable)
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'The operating system to run the tests on'
+        default: 'ubuntu-latest'
+        type: string
+      java:
+        description: 'The Java version to run the tests with'
+        default: 21
+        type: number
+  workflow_call:
+    inputs:
+      runner:
+        description: 'The operating system to run the tests on'
+        default: 'ubuntu-latest'
+        type: string
+      java:
+        description: 'The Java version to run the tests with'
+        default: 21
+        type: number
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+env:
+  ANT_OPTS: -Djava.security.manager=allow
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runner }}
+    name: Test GVM ${{ inputs.java }}, ${{ inputs.runner }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '${{ inputs.java }}'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Linux requirements
+        if: contains(inputs.runner, 'ubuntu')
+        run: sudo apt-get -y install texinfo
+      - name: macOS requirements
+        if: contains(inputs.runner, 'macos')
+        run: |
+          brew update
+          brew install automake --force
+          brew install libtool --force
+          brew install texinfo --force
+      - uses: gradle/actions/setup-gradle@v3
+      - name: "Build: Native Image"
+        run: ant dist && ant install && ant nativeImage && ant nativeRun
