@@ -281,6 +281,7 @@
   </target>
 
   <target name="compile-graalvm" depends="-setup,-jdk11plus-only"
+          if="${jdk11plus}"
           description="Compile GraalVM Java sources">
     <!-- Need GraalVM SVM artifact to build features for `jna-graalvm.jar` -->
     <path id="graalvm.classpath" />
