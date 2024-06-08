@@ -19,6 +19,7 @@
         </or>
     </condition>
     <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
+    <property name="graalvm.version" value="24.0.1" />
     <property name="osgi.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
     <!-- jnidispatch library release version -->
     <property name="jni.major" value="7"/>

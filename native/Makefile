@@ -73,6 +73,7 @@ FFI_ENV=CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) -DFFI_STATIC_BUILD" CPPFLAGS="$(CDE
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes
 endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
+LIBRARY_STATIC=$(BUILD)/$(LIBPFX)jnidispatch$(ARSFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
 TESTLIB_JAR=$(BUILD)/$(LIBPFX)testlib-jar$(LIBSFX)
 TESTLIB_PATH=$(BUILD)/$(LIBPFX)testlib-path$(LIBSFX)
@@ -85,6 +86,7 @@ LIBSFX=.so
 ARSFX=.a
 JNISFX=$(LIBSFX)
 CC=gcc
+AR=ar
 LD=$(CC)
 LIBS=
 # Default to Sun recommendations for JNI compilation
@@ -473,7 +475,7 @@ else
 	$(CC) $(CFLAGS) $(LOC_CC_OPTS) -c $< $(COUT)
 endif
 
-all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC)
+all: $(LIBRARY) $(LIBRARY_STATIC) $(TESTLIB) $(TESTLIB2) $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC)
 
 install:
 	mkdir $(INSTALLDIR)
@@ -494,6 +496,9 @@ $(BUILD)/$(JNA_JNI_VERSION).stamp:
 $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
 	$(STRIP) $@
+
+$(LIBRARY_STATIC): $(JNIDISPATCH_OBJS) $(FFI_LIB)
+	$(AR) rcs $@ $(JNIDISPATCH_OBJS)
 
 $(TESTLIB): $(BUILD)/testlib.o
 	$(LD) $(LDFLAGS) $< $(LIBS)
