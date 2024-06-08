@@ -149,5 +149,13 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
         registerCommonTypes();
         registerCommonProxies();
         registerReflectiveAccess();
+
+        // extending `com.sun.jna.Library` should add interfaces as proxies
+        access.registerSubtypeReachabilityHandler((duringAnalysisAccess, aClass) -> {
+            assert aClass.isInterface();
+            if (Library.class.isAssignableFrom(aClass)) {
+                registerProxyInterfaces(aClass);
+            }
+        }, Library.class);
     }
 }
