@@ -324,6 +324,7 @@
 
   <target name="compile" depends="-setup"
           description="Compile all Java source">
+
     <delete dir="${build}/jna-src" />
     <mkdir dir="${build}/jna-src/com/sun/jna" />
 
@@ -1430,26 +1431,19 @@ cd ..
              additionalparam="${javadoc.graalvm.opts}"
              destdir="${javadoc-graalvm}">
       <!-- stylesheetfile="${stylesheet}" -->
-      <doctitle>JNA API Documentation</doctitle>
+      <doctitle>JNA GraalVM Integration</doctitle>
       <header>${header}</header>
       <bottom>${footer}</bottom>
       <link href="http://download.oracle.com/javase/${javac.release}/docs/api/"/>
+      <link href="https://java-native-access.github.io/jna/${jni.version}/" />
 
       <packageset dir="${src}" defaultexcludes="yes">
         <patternset>
           <include name="com/sun/jna/**/*"/>
         </patternset>
       </packageset>
-      <packageset dir="${platform.src}" defaultexcludes="yes">
-        <patternset>
-          <include name="com/sun/jna/platform/**/*"/>
-        </patternset>
-      </packageset>
 
-      <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.win32"/>
-      <group title="Platform Utilities" packages="com.sun.jna.platform,com.sun.jna.platform.dnd"/>
-      <group title="Platform Specific" packages="com.sun.jna.platform.*"/>
-
+      <group title="Java Native Access" packages="com.sun.jna"/>
       <arg value="-notimestamp"/>
     </javadoc>
     <jar jarfile="${maven-graalvm-javadoc-jar}" createUnicodeExtraFields="never" encoding="UTF-8">
