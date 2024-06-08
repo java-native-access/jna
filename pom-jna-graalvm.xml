@@ -62,24 +62,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.graalvm.nativeimage</groupId>
-      <artifactId>svm</artifactId>
-      <version>GRAALVM_VERSION</version>
-    </dependency>
-  </dependencies>
-
-  <dependencies>
-    <dependency>
       <groupId>org.graalvm.sdk</groupId>
       <artifactId>nativeimage</artifactId>
-      <version>GRAALVM_VERSION</version>
-    </dependency>
-  </dependencies>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.graalvm.sdk</groupId>
-      <artifactId>jniutils</artifactId>
       <version>GRAALVM_VERSION</version>
     </dependency>
   </dependencies>
