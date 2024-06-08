@@ -327,8 +327,9 @@
     <delete dir="${build}/jna-src" />
     <mkdir dir="${build}/jna-src/com/sun/jna" />
 
-    <!-- We need to repeat this mkdir so that the GraalVM classes exist unconditionally, even on JDK8. -->
+    <!-- We need to repeat these mkdirs so that the GraalVM classes exist unconditionally, even on JDK8. -->
     <mkdir dir="${classes-graalvm}" />
+    <mkdir dir="${javadoc-graalvm}" />
 
     <copy file="src/com/sun/jna/Version.java" todir="${build}/jna-src/com/sun/jna" />
 
