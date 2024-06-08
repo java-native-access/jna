@@ -3,7 +3,25 @@ name: GraalVM CI
 
 on:
   workflow_dispatch:
-  pull_request:
+    inputs:
+      runner:
+        description: 'The operating system to run the tests on'
+        default: 'ubuntu-latest'
+        type: string
+      java:
+        description: 'The Java version to run the tests with'
+        default: 21
+        type: number
+  workflow_call:
+    inputs:
+      runner:
+        description: 'The operating system to run the tests on'
+        default: 'ubuntu-latest'
+        type: string
+      java:
+        description: 'The Java version to run the tests with'
+        default: 21
+        type: number
   push:
     branches:
       - master
@@ -11,22 +29,26 @@ on:
 permissions:
   contents: read
 
+env:
+  ANT_OPTS: -Djava.security.manager=allow
+
 jobs:
   build:
-    runs-on: ubuntu-latest
-    name: Native (JDK 21, ubuntu-latest)
+    runs-on: ${{ inputs.runner }}
+    name: Test GVM ${{ inputs.java }}, ${{ inputs.runner }}
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: 21
-          distribution: 'zulu'
+          java-version: '${{ inputs.java }}'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Linux requirements
+        if: contains(inputs.runner, 'ubuntu')
         run: sudo apt-get -y install texinfo
       - name: macOS requirements
-        if: false
+        if: contains(inputs.runner, 'macos')
         run: |
           brew update
           brew install automake --force

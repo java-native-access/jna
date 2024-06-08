@@ -49,6 +49,18 @@ jobs:
           ant test
           ant test-platform
 
+  test-graalvm:
+    strategy:
+      matrix:
+        java: [21]
+        os: [ubuntu-latest]
+      fail-fast: true
+    name: Test GVM ${{ matrix.java }}, ${{ matrix.os }}
+    uses: ./.github/workflows/graalvm.yaml
+    with:
+      runner: ${{ matrix.os }}
+      java: ${{ matrix.java }}
+
   test-m1:
     runs-on: ${{ matrix.os }}
     strategy:
