@@ -23,7 +23,9 @@
  */
 package com.sun.jna;
 
-import org.graalvm.nativeimage.hosted.Feature;
+import com.oracle.svm.core.jdk.NativeLibrarySupport;
+import com.oracle.svm.core.jdk.PlatformNativeLibrarySupport;
+import com.oracle.svm.hosted.FeatureImpl.BeforeAnalysisAccessImpl;
 
 /**
  * Feature for use at build time on GraalVM, which enables static JNI support for JNA.
@@ -38,6 +40,10 @@ import org.graalvm.nativeimage.hosted.Feature;
  * so that no library unpacking step needs to take place.
  */
 public final class SubstrateStaticJNA extends AbstractJNAFeature {
+    private static final String JNA_LIB_NAME = "jnidispatch";
+    private static final String JNA_LINK_NAME = "jnidispatch";
+    private static final String JNA_NATIVE_LAYOUT = "com_sun_jna_Native";
+
     @Override
     public String getDescription() {
         return "Enables optimized static access to JNA at runtime";
@@ -50,6 +56,16 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
 
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
-        //
+        var nativeLibraries = NativeLibrarySupport.singleton();
+        var platformLibraries = PlatformNativeLibrarySupport.singleton();
+
+        nativeLibraries.preregisterUninitializedBuiltinLibrary(JNA_LINK_NAME);
+        platformLibraries.addBuiltinPkgNativePrefix(JNA_NATIVE_LAYOUT);
+
+        var accessImpl = (BeforeAnalysisAccessImpl) access;
+        accessImpl.getNativeLibraries().addStaticJniLibrary(JNA_LIB_NAME);
+
+        var jniDispatch = NativeLibrary.getInstance(JNA_LIB_BASE_NAME);
+        nativeLibraries.loadLibraryAbsolute(jniDispatch.getFile());
     }
 }
