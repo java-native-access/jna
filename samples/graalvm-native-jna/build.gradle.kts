@@ -54,6 +54,10 @@ graalvmNative {
         "-H:+UnlockExperimentalVMOptions",
         "-H:+ReportExceptionStackTraces",
         "-H:+JNIEnhancedErrorCodes",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.hosted=ALL-UNNAMED",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.hosted.c=ALL-UNNAMED",
+        "--features=com.sun.jna.SubstrateStaticJNA",
       ))
     }
   }

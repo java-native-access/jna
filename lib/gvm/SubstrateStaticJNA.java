@@ -27,6 +27,9 @@ import com.oracle.svm.core.jdk.NativeLibrarySupport;
 import com.oracle.svm.core.jdk.PlatformNativeLibrarySupport;
 import com.oracle.svm.hosted.FeatureImpl.BeforeAnalysisAccessImpl;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Feature for use at build time on GraalVM, which enables static JNI support for JNA.
  *
@@ -65,7 +68,15 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
         var accessImpl = (BeforeAnalysisAccessImpl) access;
         accessImpl.getNativeLibraries().addStaticJniLibrary(JNA_LIB_NAME);
 
-        var jniDispatch = NativeLibrary.getInstance(JNA_LIB_NAME);
-        nativeLibraries.loadLibraryAbsolute(jniDispatch.getFile());
+        // determine the embedded resource path for the jnidispatch binary
+        String mappedName = System.mapLibraryName(JNA_LIB_NAME).replace(".dylib", ".jnilib");
+        String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + mappedName;
+
+        try {
+            File extractedLib = Native.extractFromResourcePath(libName, Native.class.getClassLoader());
+            nativeLibraries.loadLibraryAbsolute(extractedLib);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to extract native dispatch library from resources", e);
+        }
     }
 }
