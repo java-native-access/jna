@@ -65,7 +65,7 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
         var accessImpl = (BeforeAnalysisAccessImpl) access;
         accessImpl.getNativeLibraries().addStaticJniLibrary(JNA_LIB_NAME);
 
-        var jniDispatch = NativeLibrary.getInstance(JNA_LIB_BASE_NAME);
+        var jniDispatch = NativeLibrary.getInstance(JNA_LIB_NAME);
         nativeLibraries.loadLibraryAbsolute(jniDispatch.getFile());
     }
 }

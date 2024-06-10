@@ -296,6 +296,7 @@
     <artifact:dependencies pathId="graalvm.classpath">
       <remoteRepository refid="central" />
       <dependency groupId="org.graalvm.sdk" artifactId="nativeimage" version="${graalvm.version}"/>
+      <dependency groupId="org.graalvm.nativeimage" artifactId="svm" version="${graalvm.version}"/>
     </artifact:dependencies>
 
     <delete dir="${classes-graalvm}" />
