@@ -26,6 +26,7 @@ package com.sun.jna;
 import com.oracle.svm.core.jdk.NativeLibrarySupport;
 import com.oracle.svm.core.jdk.PlatformNativeLibrarySupport;
 import com.oracle.svm.hosted.FeatureImpl.BeforeAnalysisAccessImpl;
+import org.graalvm.nativeimage.Platform;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,9 +44,56 @@ import java.io.IOException;
  * so that no library unpacking step needs to take place.
  */
 public final class SubstrateStaticJNA extends AbstractJNAFeature {
+    /**
+     * Name for the JNI Dispatch native library used for registration with Native Image.
+     */
     private static final String JNA_LIB_NAME = "jnidispatch";
+
+    /**
+     * Name for the JNI Dispatch native library used during static linking by Native Image.
+     */
     private static final String JNA_LINK_NAME = "jnidispatch";
+
+    /**
+     * Name prefix used by native functions from the JNI Dispatch library.
+     */
     private static final String JNA_NATIVE_LAYOUT = "com_sun_jna_Native";
+
+    /**
+     * Name of the JNI Dispatch static library on UNIX-based platforms.
+     */
+    private static final String JNI_DISPATCH_UNIX_NAME = "libjnidispatch.a";
+
+    /**
+     * Name of the JNI Dispatch static library on Windows.
+     */
+    private static final String JNI_DISPATCH_WINDOWS_NAME = "jnidispatch.lib";
+
+    /**
+     * Returns the name of the static JNI Dispatch library for the current platform. On UNIX-based systems,
+     * {@link #JNI_DISPATCH_UNIX_NAME} is used; on Windows, {@link #JNI_DISPATCH_WINDOWS_NAME} is returned instead.
+     *
+     * @see #getStaticLibraryResource
+     */
+    private static String getStaticLibraryFileName() {
+        if (Platform.includedIn(Platform.WINDOWS.class)) return JNI_DISPATCH_WINDOWS_NAME;
+        if (Platform.includedIn(Platform.LINUX.class)) return JNI_DISPATCH_UNIX_NAME;
+        if (Platform.includedIn(Platform.LINUX.class)) return JNI_DISPATCH_UNIX_NAME;
+
+        // If the current platform is not in the Platform class, this code would not run at all
+        throw new UnsupportedOperationException("Current platform does not support static linking");
+    }
+
+    /**
+     * Returns the full path to the static JNI Dispatch library embedded in the JAR, accounting for platform-specific
+     * library names.
+     *
+     * @see #getStaticLibraryFileName()
+     */
+    private static String getStaticLibraryResource() {
+        //
+        return "/com/sun/jna/" + com.sun.jna.Platform.RESOURCE_PREFIX + "/" + getStaticLibraryFileName();
+    }
 
     @Override
     public String getDescription() {
@@ -62,21 +110,26 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
         var nativeLibraries = NativeLibrarySupport.singleton();
         var platformLibraries = PlatformNativeLibrarySupport.singleton();
 
+        // Register as a built-in library with Native Image and set the name prefix used by native symbols
         nativeLibraries.preregisterUninitializedBuiltinLibrary(JNA_LINK_NAME);
         platformLibraries.addBuiltinPkgNativePrefix(JNA_NATIVE_LAYOUT);
 
+        // WARNING: the static JNI linking feature is unstable and may be removed in the future;
+        // this code uses the access implementation directly in order to register the static library
         var accessImpl = (BeforeAnalysisAccessImpl) access;
         accessImpl.getNativeLibraries().addStaticJniLibrary(JNA_LIB_NAME);
 
-        // determine the embedded resource path for the jnidispatch binary
-        String mappedName = System.mapLibraryName(JNA_LIB_NAME).replace(".dylib", ".jnilib");
-        String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + mappedName;
-
+        // Unpack the static library from resources so Native Image can use it
+        File extractedLib;
         try {
-            File extractedLib = Native.extractFromResourcePath(libName, Native.class.getClassLoader());
-            nativeLibraries.loadLibraryAbsolute(extractedLib);
+            extractedLib = Native.extractFromResourcePath(getStaticLibraryResource(), Native.class.getClassLoader());
         } catch (IOException e) {
             throw new RuntimeException("Failed to extract native dispatch library from resources", e);
         }
+
+        // TODO(@sgammon): this does not seem like the correct method to call here, consider updating
+        //                 the Native Image library path to include the extracted library instead
+        //                 (see `accessImpl.getNativeLibraries().getLibraryPaths()`)
+        // nativeLibraries.loadLibraryAbsolute(extractedLib);
     }
 }
