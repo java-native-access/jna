@@ -299,7 +299,6 @@
       <dependency groupId="org.graalvm.nativeimage" artifactId="svm" version="${graalvm.version}"/>
     </artifact:dependencies>
 
-    <delete dir="${classes-graalvm}" />
     <mkdir dir="${classes-graalvm}" />
     <delete dir="${build}/gvm-src" />
     <mkdir dir="${build}/gvm-src/com/sun/jna" />
