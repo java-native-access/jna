@@ -30,6 +30,7 @@ import org.graalvm.nativeimage.Platform;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * Feature for use at build time on GraalVM, which enables static JNI support for JNA.
@@ -123,13 +124,18 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
         File extractedLib;
         try {
             extractedLib = Native.extractFromResourcePath(getStaticLibraryResource(), Native.class.getClassLoader());
+
+            // The library is extracted into a file with a `.tmp` name, which will not be picked up by the linker
+            // We need to rename it first using the platform-specific convention or the build will fail
+            File platformLib = new File(extractedLib.getParentFile(), getStaticLibraryFileName());
+            if (!extractedLib.renameTo(platformLib)) throw new IllegalStateException("Renaming extract file failed");
+
+            extractedLib = platformLib;
         } catch (IOException e) {
             throw new RuntimeException("Failed to extract native dispatch library from resources", e);
         }
 
-        // TODO(@sgammon): this does not seem like the correct method to call here, consider updating
-        //                 the Native Image library path to include the extracted library instead
-        //                 (see `accessImpl.getNativeLibraries().getLibraryPaths()`)
-        // nativeLibraries.loadLibraryAbsolute(extractedLib);
+        // Enhance the Native Image lib paths so the static JNI Dispatch library is available to the linker
+        accessImpl.getNativeLibraries().getLibraryPaths().add(extractedLib.getParentFile().getAbsolutePath());
     }
 }
