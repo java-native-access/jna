@@ -46,9 +46,9 @@ import java.nio.file.Files;
  */
 public final class SubstrateStaticJNA extends AbstractJNAFeature {
     /**
-     * Name for the JNI Dispatch native library used for registration with Native Image.
+     * Name for the FFI native library used during static linking by Native Image.
      */
-    private static final String JNA_LIB_NAME = "jnidispatch";
+    private static final String FFI_LINK_NAME = "ffi";
 
     /**
      * Name for the JNI Dispatch native library used during static linking by Native Image.
@@ -71,14 +71,24 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
     private static final String JNI_DISPATCH_WINDOWS_NAME = "jnidispatch.lib";
 
     /**
+     * Name of the FFI static library on UNIX-based platforms.
+     */
+    private static final String FFI_UNIX_NAME = "libffi.a";
+
+    /**
+     * Name of the FFI static library on Windows.
+     */
+    private static final String FFI_WINDOWS_NAME = "ffi.lib";
+
+    /**
      * Returns the name of the static JNI Dispatch library for the current platform. On UNIX-based systems,
      * {@link #JNI_DISPATCH_UNIX_NAME} is used; on Windows, {@link #JNI_DISPATCH_WINDOWS_NAME} is returned instead.
      *
      * @see #getStaticLibraryResource
+     * @return The JNI Dispatch library name for the current platform.
      */
     private static String getStaticLibraryFileName() {
         if (Platform.includedIn(Platform.WINDOWS.class)) return JNI_DISPATCH_WINDOWS_NAME;
-        if (Platform.includedIn(Platform.LINUX.class)) return JNI_DISPATCH_UNIX_NAME;
         if (Platform.includedIn(Platform.LINUX.class)) return JNI_DISPATCH_UNIX_NAME;
 
         // If the current platform is not in the Platform class, this code would not run at all
@@ -86,14 +96,64 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
     }
 
     /**
+     * Returns the name of the static FFI library for the current platform. On UNIX-based systems,
+     * {@link #FFI_UNIX_NAME} is used; on Windows, {@link #FFI_WINDOWS_NAME} is returned instead.
+     *
+     * @see #getStaticLibraryResource
+     * @return The FFI library name for the current platform.
+     */
+    private static String getFFILibraryFileName() {
+        if (Platform.includedIn(Platform.WINDOWS.class)) return FFI_WINDOWS_NAME;
+        if (Platform.includedIn(Platform.LINUX.class)) return FFI_UNIX_NAME;
+
+        // If the current platform is not in the Platform class, this code would not run at all
+        throw new UnsupportedOperationException("Current platform does not support static FFI");
+    }
+
+    /**
      * Returns the full path to the static JNI Dispatch library embedded in the JAR, accounting for platform-specific
      * library names.
      *
      * @see #getStaticLibraryFileName()
+     * @return The JNI Dispatch library resource path for the current platform.
      */
     private static String getStaticLibraryResource() {
-        //
         return "/com/sun/jna/" + com.sun.jna.Platform.RESOURCE_PREFIX + "/" + getStaticLibraryFileName();
+    }
+
+    /**
+     * Returns the full path to the static FFI library which JNA depends on, accounting for platform-specific
+     * library names.
+     *
+     * @see #getFFILibraryFileName()
+     * @return The FFI library resource path for the current platform.
+     */
+    private static String getFFILibraryResource() {
+        return "/com/sun/jna/" + com.sun.jna.Platform.RESOURCE_PREFIX + "/" + getFFILibraryFileName();
+    }
+
+    /**
+     * Extracts a library resource and returns the file it was extracted to.
+     *
+     * @param resource Resource path for the library to extract.
+     * @param filename Expected filename for the library.
+     * @return The extracted library file.
+     */
+    private static File unpackLibrary(String resource, String filename) {
+        // Unpack the static library from resources so Native Image can use it
+        File extractedLib;
+        try {
+            extractedLib = Native.extractFromResourcePath(resource, Native.class.getClassLoader());
+
+            // The library is extracted into a file with a `.tmp` name, which will not be picked up by the linker
+            // We need to rename it first using the platform-specific convention or the build will fail
+            File platformLib = new File(extractedLib.getParentFile(), filename);
+            if (!extractedLib.renameTo(platformLib)) throw new IllegalStateException("Renaming extract file failed");
+            extractedLib = platformLib;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to extract native dispatch library from resources", e);
+        }
+        return extractedLib;
     }
 
     @Override
@@ -111,31 +171,29 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
         var nativeLibraries = NativeLibrarySupport.singleton();
         var platformLibraries = PlatformNativeLibrarySupport.singleton();
 
+        // Perform registration steps for `libffi` first, which is a dependency of static JNA. we do not
+        // add it as a package prefix, because it is not a JNI library; it is merely used by JNA's JNI
+        // dispatch layer.
+        nativeLibraries.preregisterUninitializedBuiltinLibrary(FFI_LINK_NAME);
+
         // Register as a built-in library with Native Image and set the name prefix used by native symbols
         nativeLibraries.preregisterUninitializedBuiltinLibrary(JNA_LINK_NAME);
         platformLibraries.addBuiltinPkgNativePrefix(JNA_NATIVE_LAYOUT);
 
+        // Extract the main JNA library from the platform-specific resource path; next, extract the FFI
+        // library it depends on
+        unpackLibrary(getFFILibraryResource(), getFFILibraryFileName());
+        var extractedLib = unpackLibrary(getStaticLibraryResource(), getStaticLibraryFileName());
+
         // WARNING: the static JNI linking feature is unstable and may be removed in the future;
-        // this code uses the access implementation directly in order to register the static library
-        var accessImpl = (BeforeAnalysisAccessImpl) access;
-        accessImpl.getNativeLibraries().addStaticJniLibrary(JNA_LIB_NAME);
+        // this code uses the access implementation directly in order to register the static library. We
+        // inform the Native Image compiler that JNA depends on `ffi`, so that it forces it to load first
+        // when JNA is initialized at image runtime.
+        var nativeLibsImpl = ((BeforeAnalysisAccessImpl) access).getNativeLibraries();
+        nativeLibsImpl.addStaticNonJniLibrary(FFI_LINK_NAME);
+        nativeLibsImpl.addStaticJniLibrary(JNA_LINK_NAME, "ffi");
 
-        // Unpack the static library from resources so Native Image can use it
-        File extractedLib;
-        try {
-            extractedLib = Native.extractFromResourcePath(getStaticLibraryResource(), Native.class.getClassLoader());
-
-            // The library is extracted into a file with a `.tmp` name, which will not be picked up by the linker
-            // We need to rename it first using the platform-specific convention or the build will fail
-            File platformLib = new File(extractedLib.getParentFile(), getStaticLibraryFileName());
-            if (!extractedLib.renameTo(platformLib)) throw new IllegalStateException("Renaming extract file failed");
-
-            extractedLib = platformLib;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to extract native dispatch library from resources", e);
-        }
-
-        // Enhance the Native Image lib paths so the static JNI Dispatch library is available to the linker
-        accessImpl.getNativeLibraries().getLibraryPaths().add(extractedLib.getParentFile().getAbsolutePath());
+        // Enhance the Native Image lib paths so the injected static libraries are available to the linker
+        nativeLibsImpl.getLibraryPaths().add(extractedLib.getParentFile().getAbsolutePath());
     }
 }

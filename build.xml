@@ -660,9 +660,6 @@ osname=macosx;processor=aarch64
       <zipfileset src="${build}/${jar}" excludes="META-INF/MANIFEST.mf"/>
       <zipfileset dir="${build}/manifest/" includes="module-info.class" prefix="META-INF/versions/9"/>
     </jar>
-    <jar jarfile="${build}/jna-graalvm.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
-      <zipfileset src="${build}/${jar-graalvm}" excludes="META-INF/MANIFEST.mf"/>
-    </jar>
   </target>
 
   <target name="aar" depends="jar" description="Build Android Archive">
@@ -1089,6 +1086,49 @@ cd ..
     </zip>
   </target>
 
+  <target name="native-static" depends="-enable-native,javah,-native-api-check,-prepare-native" unless="-native"
+          description="Build native libraries for static use.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
+    <mkdir dir="${basedir}/build/native-static"/>
+    <exec executable="${make}" dir="${native}" failonerror="true">
+      <arg value="JAVA_HOME=${jdk.home}"/>
+      <arg value="JAVAH=${build.headers}"/>
+      <arg value="DEBUG=${debug.native}"/>
+      <arg value="BUILD=${basedir}/build/native-static" />
+      <arg value="CFLAGS_EXTRA=${cflags_extra.native}"/>
+      <arg value="DYNAMIC_LIBFFI=false"/> <!-- Here we force static mode for use in GraalVM static JNI -->
+      <arg value="${make.CC}"/>
+      <arg value="${make.USE_MSVC}"/>
+      <!-- <arg value="${make.BUILD}"/> -->
+      <arg value="${make.SDKROOT}"/>
+      <arg value="${make.ARCH}"/>
+      <arg value="${make.PATH}"/>
+      <arg value="${make.OS}"/>
+      <arg line="${make.OPTS}"/>
+      <arg value="JNA_JNI_VERSION=${jni.version}"/>
+      <arg value="CHECKSUM=${jni.md5}"/>
+    </exec>
+    <!-- Include both dynamic and static library variants for all operating systems in the GraalVM JAR. -->
+    <mkdir dir="${classes-graalvm}/${native.path}"/>
+    <copy todir="${classes-graalvm}/${native.path}">
+      <fileset dir="${build.native}"
+               includes="jnidispatch.dll,libjnidispatch.*"/>
+      <fileset dir="${build.native}/libffi/.libs"
+               includes="ffi.lib,libffi.a"/>
+    </copy>
+    <jar jarfile="${build}/${native-static.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
+      <fileset dir="${build.native}" includes="jnidispatch.lib,libjnidispatch.a"/>
+      <fileset dir="${build.native}/libffi/.libs" includes="libffi.a"/>
+      <manifest>
+        <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
+        <attribute name="Specification-Version" value="${jni.version}"/>
+      </manifest>
+    </jar>
+    <copy todir="${lib.native}">
+      <fileset dir="${build}" includes="${native.jar}"/>
+      <fileset dir="${build}" includes="${native-static.jar}"/>
+    </copy>
+  </target>
+
   <target name="native" depends="-enable-native,javah,-native-api-check,-prepare-native" unless="-native"
           description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
     <exec executable="${make}" dir="${native}" failonerror="true">
@@ -1127,6 +1167,8 @@ cd ..
     <copy todir="${classes-graalvm}/${native.path}">
       <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
+      <fileset dir="${build.native}/libffi/.libs"
+               includes="ffi.lib,libffi.a"/>
     </copy>
     <!-- For web start, native libraries may be provided in the root of -->
     <!-- an included jar file -->
@@ -1139,6 +1181,7 @@ cd ..
     </jar>
     <jar jarfile="${build}/${native-static.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${build.native}" includes="jnidispatch.lib,libjnidispatch.a"/>
+      <fileset dir="${build.native}/libffi/.libs" includes="libffi.a"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
@@ -1785,8 +1828,24 @@ cd ..
     </exec>
   </target>
 
+  <target name="nativeImageStatic">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-static-jna" failonerror="true">
+      <arg value="${basedir}/samples/graalvm-native-static-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
   <target name="nativeRun" depends="nativeImage">
     <exec executable="${basedir}/samples/graalvm-native-jna/build/native/nativeCompile/graalvm-native-jna" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
+      <arg value="testing-123"/>
+    </exec>
+  </target>
+
+  <target name="nativeRunStatic" depends="nativeImage">
+    <exec executable="${basedir}/samples/graalvm-native-static-jna/build/native/nativeCompile/graalvm-native-static-jna" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
       <arg value="testing-123"/>
     </exec>
   </target>

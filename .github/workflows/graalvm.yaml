@@ -31,4 +31,4 @@ jobs:
         run: sudo apt-get -y install texinfo
       - uses: gradle/actions/setup-gradle@v3
       - name: "Build: Native Image"
-        run: ant dist && ant install && ant nativeImage && ant nativeRun
+        run: ant && ant install && ant nativeImage && ant nativeRun
