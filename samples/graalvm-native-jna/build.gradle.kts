@@ -44,6 +44,8 @@ dependencies {
   nativeImageClasspath(libs.jna.graalvm)
 }
 
+val nativeImageDebug: String by properties
+
 graalvmNative {
   testSupport = true
   toolchainDetection = false
@@ -53,11 +55,15 @@ graalvmNative {
       buildArgs.addAll(listOf(
         "-H:+UnlockExperimentalVMOptions",
         "-H:+ReportExceptionStackTraces",
+      ).plus(if (nativeImageDebug != "true") emptyList() else listOf(
+        "--verbose",
+        "--debug-attach",
         "-H:+JNIEnhancedErrorCodes",
-        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED",
-        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.hosted=ALL-UNNAMED",
-        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.hosted.c=ALL-UNNAMED",
-      ))
+        "-H:+SourceLevelDebug",
+        "-H:-DeleteLocalSymbols",
+        "-H:-RemoveUnusedSymbols",
+        "-H:+PreserveFramePointer",
+      )))
     }
   }
 }

@@ -2213,33 +2213,33 @@ public final class Native implements Version {
      */
     static native long indexOf(Pointer pointer, long baseaddr, long offset, byte value);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
+    static native void readBytes(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
+    static native void readShorts(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
+    static native void readChars(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
+    static native void readInts(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
+    static native void readLongs(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
+    static native void readFloats(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
+    static native void readDoubles(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
+    static native void writeBytes(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
+    static native void writeShorts(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
+    static native void writeChars(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
+    static native void writeInts(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
+    static native void writeLongs(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
+    static native void writeFloats(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
+    static native void writeDoubles(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
 
     static native byte getByte(Pointer pointer, long baseaddr, long offset);
 

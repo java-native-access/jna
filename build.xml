@@ -1613,7 +1613,7 @@ cd ..
   </target>
 
   <target name="install" depends="dist,-bootstrap-maven" description="Install jna and jna-platform artifacts into local maven repository">
-    <artifact:mvn failonerror="true">
+    <artifact:mvn>
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
@@ -1833,6 +1833,17 @@ cd ..
       <arg value="${basedir}/samples/graalvm-native-static-jna/gradlew"/>
       <arg value="-PjnaVersion=${jna.version}"/>
       <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
+  <target name="nativeImageStaticDebug">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-static-jna" failonerror="true">
+      <arg value="${basedir}/samples/graalvm-native-static-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="-PnativeImageDebug=true"/>
       <arg value="build"/>
       <arg value="nativeCompile"/>
     </exec>
