@@ -30,6 +30,7 @@ import org.graalvm.nativeimage.hosted.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
 
 /**
@@ -152,8 +153,9 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
 
         // extending `com.sun.jna.Library` should add interfaces as proxies
         access.registerSubtypeReachabilityHandler((duringAnalysisAccess, aClass) -> {
+            // must extend `Library`, be an interface, and not already be a proxy
             assert aClass.isInterface();
-            if (Library.class.isAssignableFrom(aClass)) {
+            if (Library.class.isAssignableFrom(aClass) && !Proxy.isProxyClass(aClass)) {
                 registerProxyInterfaces(aClass);
             }
         }, Library.class);
