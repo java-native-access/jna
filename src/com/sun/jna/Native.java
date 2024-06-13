@@ -33,6 +33,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.System;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
@@ -947,6 +948,23 @@ public final class Native implements Version {
         }
 
         String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
+
+        // if in static init mode, load the library by name and force-run the initializer
+        if (!Boolean.getBoolean("jna.skipStatic")) {
+            System.err.println("Trying to load JNA statically");
+            try {
+                System.loadLibrary(libName);
+                System.err.println("JNA lib loaded statically");
+                assert isStaticEnabled();
+                System.err.println("JNA lib indicated it is static");
+                assert initializeStatic() == 0x00010004;
+                System.err.println("JNA lib finished init");
+                return;
+            } catch (UnsatisfiedLinkError err) {
+                // continue
+                System.err.println("Static JNA init failed; falling back");
+            }
+        }
         String bootPath = System.getProperty("jna.boot.library.path");
         if (bootPath != null) {
             // String.split not available in 1.4
@@ -1198,6 +1216,8 @@ public final class Native implements Version {
      **/
     private static native int sizeof(int type);
 
+    private static synchronized native boolean isStaticEnabled();
+    private static synchronized native int initializeStatic();
     private static native String getNativeVersion();
     private static native String getAPIChecksum();
 
@@ -2020,6 +2040,7 @@ public final class Native implements Version {
             ? pkg.getImplementationVersion() : DEFAULT_BUILD;
         if (version == null) version = DEFAULT_BUILD;
         System.out.println("Version: " + version);
+        System.out.println(" Static: " + isStaticEnabled());
         System.out.println(" Native: " + getNativeVersion() + " ("
                            + getAPIChecksum() + ")");
         System.out.println(" Prefix: " + Platform.RESOURCE_PREFIX);

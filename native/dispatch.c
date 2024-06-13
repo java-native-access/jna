@@ -3335,6 +3335,10 @@ Java_com_sun_jna_Native_getNativeVersion(JNIEnv *env, jclass UNUSED(classp)) {
 #ifndef JNA_JNI_VERSION
 #define JNA_JNI_VERSION "undefined"
 #endif
+  // sanity check initialization
+  if (classString == NULL) {
+    initializeJnaStatics(env);
+  }
   return newJavaString(env, JNA_JNI_VERSION, CHARSET_UTF8);
 }
 
@@ -3346,20 +3350,9 @@ Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass UNUSED(classp)) {
   return newJavaString(env, CHECKSUM, CHARSET_UTF8);
 }
 
-JNIEXPORT jint JNICALL
-JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
-  JNIEnv* env;
+jint initializeJnaStatics(JNIEnv *env) {
   int result = JNI_VERSION_1_4;
-  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
   const char* err;
-
-  if (!attached) {
-    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach native thread to VM on load\n");
-      return 0;
-    }
-  }
-
   if ((err = JNA_init(env)) != NULL) {
     fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
     result = 0;
@@ -3368,17 +3361,46 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
     fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
     result = 0;
   }
+  return result;
+}
+
+JNIEXPORT jboolean JNICALL Java_com_sun_jna_Native_isStaticEnabled(JNIEnv * UNUSED(env), jclass UNUSED(classp)) {
+    return JNI_TRUE;
+}
+
+JNIEXPORT jint JNICALL Java_com_sun_jna_Native_initializeStatic(JNIEnv *env, jclass UNUSED(classp)) {
+    return initializeJnaStatics(env);
+}
+
+jint setupJna(JavaVM *jvm) {
+  JNIEnv* env;
+  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
+  if (!attached) {
+    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach native thread to VM on load\n");
+      return 0;
+    }
+  }
+  int result = initializeJnaStatics(env);
   if (!attached) {
     if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       fprintf(stderr, "JNA: could not detach thread on initial load\n");
     }
   }
-
   return result;
 }
 
-JNIEXPORT void JNICALL
-JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
+JNIEXPORT jint JNICALL
+JNI_OnLoad_jnidispatch(JavaVM *jvm, void *UNUSED(reserved)) {
+  return setupJna(jvm);
+}
+
+JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
+  return setupJna(jvm);
+}
+
+void unloadJna(JavaVM *vm) {
   jobject* refs[] = {
     &classObject, &classClass, &classMethod,
     &classString,
@@ -3441,6 +3463,17 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
       fprintf(stderr, "JNA: could not detach thread on unload\n");
     }
   }
+}
+
+JNIEXPORT void JNICALL
+JNI_OnUnload(JavaVM *jvm, void *UNUSED(reserved)) {
+  unloadJna(jvm);
+}
+
+
+JNIEXPORT void JNICALL
+JNI_OnUnload_jnidispatch(JavaVM *jvm, void *UNUSED(reserved)) {
+  unloadJna(jvm);
 }
 
 JNIEXPORT void JNICALL
