@@ -30,5 +30,7 @@ jobs:
       - name: Linux requirements
         run: sudo apt-get -y install texinfo
       - uses: gradle/actions/setup-gradle@v3
-      - name: "Build: Native Image"
+      - name: "Build: Native Image (Dynamic JNI)"
         run: ant && ant install && ant nativeImage && ant nativeRun
+      - name: "Build: Native Image (Static JNI)"
+        run: ant && ant install && ant nativeImageStatic && ant nativeRunStatic
