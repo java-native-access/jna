@@ -52,17 +52,16 @@ graalvmNative {
 
   binaries {
     named("main") {
-      buildArgs.addAll(listOf(
-        "-H:+UnlockExperimentalVMOptions",
-        "-H:+ReportExceptionStackTraces",
-      ).plus(if (nativeImageDebug != "true") emptyList() else listOf(
+      buildArgs.addAll(if (nativeImageDebug != "true") emptyList() else listOf(
         "--verbose",
         "--debug-attach",
+        "-H:+UnlockExperimentalVMOptions",
         "-H:+JNIEnhancedErrorCodes",
         "-H:+SourceLevelDebug",
         "-H:-DeleteLocalSymbols",
         "-H:-RemoveUnusedSymbols",
         "-H:+PreserveFramePointer",
+        "-H:+ReportExceptionStackTraces",
       )))
     }
   }

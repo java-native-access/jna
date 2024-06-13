@@ -951,18 +951,13 @@ public final class Native implements Version {
 
         // if in static init mode, load the library by name and force-run the initializer
         if (!Boolean.getBoolean("jna.skipStatic")) {
-            System.err.println("Trying to load JNA statically");
             try {
                 System.loadLibrary(libName);
-                System.err.println("JNA lib loaded statically");
                 assert isStaticEnabled();
-                System.err.println("JNA lib indicated it is static");
                 assert initializeStatic() == 0x00010004;
-                System.err.println("JNA lib finished init");
                 return;
             } catch (UnsatisfiedLinkError err) {
                 // continue
-                System.err.println("Static JNA init failed; falling back");
             }
         }
         String bootPath = System.getProperty("jna.boot.library.path");

@@ -53,13 +53,25 @@ graalvmNative {
   binaries {
     named("main") {
       buildArgs.addAll(listOf(
-        "-H:+UnlockExperimentalVMOptions",
-        "-H:+ReportExceptionStackTraces",
         "--features=com.sun.jna.SubstrateStaticJNA",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.hosted.jni=ALL-UNNAMED",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jni=ALL-UNNAMED",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.hosted=ALL-UNNAMED",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.hosted.c=ALL-UNNAMED",
+        "-J--add-exports=org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk=ALL-UNNAMED",
       ).plus(if (nativeImageDebug != "true") emptyList() else listOf(
         "--verbose",
         "--debug-attach",
+        "-J-Xlog:library=info",
+        "-H:+UnlockExperimentalVMOptions",
         "-H:+JNIEnhancedErrorCodes",
+        "-H:+SourceLevelDebug",
+        "-H:-DeleteLocalSymbols",
+        "-H:-RemoveUnusedSymbols",
+        "-H:+PreserveFramePointer",
+        "-H:+ReportExceptionStackTraces",
+        "-H:CCompilerOption=-v",
+        "-H:NativeLinkerOption=-v",
       )))
     }
   }
