@@ -90,6 +90,7 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
     private static String getStaticLibraryFileName() {
         if (Platform.includedIn(Platform.WINDOWS.class)) return JNI_DISPATCH_WINDOWS_NAME;
         if (Platform.includedIn(Platform.LINUX.class)) return JNI_DISPATCH_UNIX_NAME;
+        if (Platform.includedIn(Platform.DARWIN.class)) return JNI_DISPATCH_UNIX_NAME;
 
         // If the current platform is not in the Platform class, this code would not run at all
         throw new UnsupportedOperationException("Current platform does not support static linking");
@@ -105,6 +106,7 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
     private static String getFFILibraryFileName() {
         if (Platform.includedIn(Platform.WINDOWS.class)) return FFI_WINDOWS_NAME;
         if (Platform.includedIn(Platform.LINUX.class)) return FFI_UNIX_NAME;
+        if (Platform.includedIn(Platform.DARWIN.class)) return FFI_UNIX_NAME;
 
         // If the current platform is not in the Platform class, this code would not run at all
         throw new UnsupportedOperationException("Current platform does not support static FFI");
@@ -171,11 +173,6 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
         var nativeLibraries = NativeLibrarySupport.singleton();
         var platformLibraries = PlatformNativeLibrarySupport.singleton();
 
-        // Perform registration steps for `libffi` first, which is a dependency of static JNA. we do not
-        // add it as a package prefix, because it is not a JNI library; it is merely used by JNA's JNI
-        // dispatch layer.
-        nativeLibraries.preregisterUninitializedBuiltinLibrary(FFI_LINK_NAME);
-
         // Register as a built-in library with Native Image and set the name prefix used by native symbols
         nativeLibraries.preregisterUninitializedBuiltinLibrary(JNA_LINK_NAME);
         platformLibraries.addBuiltinPkgNativePrefix(JNA_NATIVE_LAYOUT);
@@ -191,7 +188,7 @@ public final class SubstrateStaticJNA extends AbstractJNAFeature {
         // when JNA is initialized at image runtime.
         var nativeLibsImpl = ((BeforeAnalysisAccessImpl) access).getNativeLibraries();
         nativeLibsImpl.addStaticNonJniLibrary(FFI_LINK_NAME);
-        nativeLibsImpl.addStaticJniLibrary(JNA_LINK_NAME, "ffi");
+        nativeLibsImpl.addStaticJniLibrary(JNA_LINK_NAME);
 
         // Enhance the Native Image lib paths so the injected static libraries are available to the linker
         nativeLibsImpl.getLibraryPaths().add(extractedLib.getParentFile().getAbsolutePath());

@@ -82,8 +82,6 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
         registerJniClass(IntegerType.class);
         registerJniFields(fields(IntegerType.class, "value"));
 
-        registerJniClass(JNIEnv.class);
-
         registerJniClass(Native.class);
         registerJniMethods(
                 method(Native.class, "dispose"),
@@ -138,7 +136,6 @@ public final class JavaNativeAccess extends AbstractJNAFeature implements Featur
                 CallbackProxy.class,
                 CallbackReference.class,
                 Klass.class,
-                Native.class,
                 NativeLong.class,
                 Structure.class,
                 IntByReference.class,
