@@ -498,13 +498,7 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 	$(STRIP) $@
 
 $(LIBRARY_STATIC): $(JNIDISPATCH_OBJS) $(FFI_LIB)
-	@# the inert mkdir has to be here for spacing
-	@mkdir -p $(BUILD)
-ifeq ($(OS),linux)
 	$(AR) rcs $@ $(JNIDISPATCH_OBJS)
-else
-	$(LD) $(subst -shared,-static,$(LDFLAGS)) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
-endif
 
 $(TESTLIB): $(BUILD)/testlib.o
 	$(LD) $(LDFLAGS) $< $(LIBS)
