@@ -1855,7 +1855,7 @@ cd ..
     </exec>
   </target>
 
-  <target name="nativeRunStatic" depends="nativeImage">
+  <target name="nativeRunStatic" depends="nativeImageStatic">
     <exec executable="${basedir}/samples/graalvm-native-static-jna/build/native/nativeCompile/graalvm-native-static-jna" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
       <arg value="testing-123"/>
     </exec>
