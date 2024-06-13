@@ -3314,6 +3314,20 @@ is_protected() {
   return JNI_FALSE;
 }
 
+jint initializeJnaStatics(JNIEnv *env) {
+  int result = JNI_VERSION_1_4;
+  const char* err;
+  if ((err = JNA_init(env)) != NULL) {
+    fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
+    result = 0;
+  }
+  else if ((err = JNA_callback_init(env)) != NULL) {
+    fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
+    result = 0;
+  }
+  return result;
+}
+
 JNIEXPORT jboolean JNICALL
 Java_com_sun_jna_Native_isProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp)) {
   return is_protected();
@@ -3348,20 +3362,6 @@ Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass UNUSED(classp)) {
 #define CHECKSUM "undefined"
 #endif
   return newJavaString(env, CHECKSUM, CHARSET_UTF8);
-}
-
-jint initializeJnaStatics(JNIEnv *env) {
-  int result = JNI_VERSION_1_4;
-  const char* err;
-  if ((err = JNA_init(env)) != NULL) {
-    fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
-    result = 0;
-  }
-  else if ((err = JNA_callback_init(env)) != NULL) {
-    fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
-    result = 0;
-  }
-  return result;
 }
 
 JNIEXPORT jboolean JNICALL Java_com_sun_jna_Native_isStaticEnabled(JNIEnv * UNUSED(env), jclass UNUSED(classp)) {

@@ -28,18 +28,20 @@ import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
 public final class JnaNative {
+    static {
+        System.loadLibrary("jnidispatch");
+    }
+
     public interface CLibrary extends Library {
         CLibrary INSTANCE = (CLibrary)
             Native.load((Platform.isWindows() ? "msvcrt" : "c"),
                                 CLibrary.class);
 
-        void printf(String format, Object... args);
+        void puts(String value);
     }
 
     public static void main(String[] args) {
         System.out.println("Hello, JNA!");
-        for (int i=0;i < args.length;i++) {
-            CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
-        }
+        CLibrary.INSTANCE.puts("Hello from C!");
     }
 }
