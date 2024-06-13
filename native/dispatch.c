@@ -2334,10 +2334,10 @@ Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    write
+ * Method:    writeBytes
  * Signature: (Lcom/sun/jna/Pointer;JJ[BII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3BII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_writeBytes
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jbyteArray arr, jint off, jint n)
 {
   PSTART();
@@ -2347,10 +2347,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    write
+ * Method:    writeChars
  * Signature: (Lcom/sun/jna/Pointer;JJ[CII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3CII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_writeChars
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jcharArray arr, jint off, jint n)
 {
   getChars(env, (wchar_t*)L2A(addr + offset), arr, off, n);
@@ -2358,10 +2358,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    write
+ * Method:    writeDoubles
  * Signature: (Lcom/sun/jna/Pointer;JJ[DII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3DII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_writeDoubles
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jdoubleArray arr, jint off, jint n)
 {
   PSTART();
@@ -2371,10 +2371,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    write
+ * Method:    writeFloats
  * Signature: (Lcom/sun/jna/Pointer;JJ[FII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3FII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_writeFloats
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jfloatArray arr, jint off, jint n)
 {
   PSTART();
@@ -2384,10 +2384,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    write
+ * Method:    writeInts
  * Signature: (Lcom/sun/jna/Pointer;JJ[III)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3III
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_writeInts
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jintArray arr, jint off, jint n)
 {
   PSTART();
@@ -2397,10 +2397,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    write
+ * Method:    writeLongs
  * Signature: (Lcom/sun/jna/Pointer;JJ[JII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3JII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_writeLongs
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlongArray arr, jint off, jint n)
 {
   PSTART();
@@ -2410,10 +2410,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    write
+ * Method:    writeShorts
  * Signature: (Lcom/sun/jna/Pointer;JJ[SII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3SII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_writeShorts
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jshortArray arr, jint off, jint n)
 {
   PSTART();
@@ -2445,10 +2445,10 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_indexOf
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    read
+ * Method:    readBytes
  * Signature: (Lcom/sun/jna/Pointer;JJ[BII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3BII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_readBytes
 (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jbyteArray arr, jint off, jint n)
 {
   PSTART();
@@ -2458,10 +2458,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3B
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    read
+ * Method:    readChars
  * Signature: (Lcom/sun/jna/Pointer;JJ[CII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3CII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_readChars
     (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jcharArray arr, jint off, jint n)
 {
   setChars(env, (wchar_t*)L2A(addr + offset), arr, off, n);
@@ -2469,10 +2469,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3C
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    read
+ * Method:    readDoubles
  * Signature: (Lcom/sun/jna/Pointer;JJ[DII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3DII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_readDoubles
     (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jdoubleArray arr, jint off, jint n)
 {
   PSTART();
@@ -2482,10 +2482,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3D
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    read
+ * Method:    readFloats
  * Signature: (Lcom/sun/jna/Pointer;JJ[FII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3FII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_readFloats
     (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jfloatArray arr, jint off, jint n)
 {
   PSTART();
@@ -2495,10 +2495,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3F
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    read
+ * Method:    readInts
  * Signature: (Lcom/sun/jna/Pointer;JJ[III)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3III
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_readInts
     (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jintArray arr, jint off, jint n)
 {
   PSTART();
@@ -2508,10 +2508,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3I
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    read
+ * Method:    readLongs
  * Signature: (Lcom/sun/jna/Pointer;JJ[JII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3JII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_readLongs
     (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlongArray arr, jint off, jint n)
 {
   PSTART();
@@ -2521,10 +2521,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3J
 
 /*
  * Class:     com_sun_jna_Native
- * Method:    read
+ * Method:    readShorts
  * Signature: (Lcom/sun/jna/Pointer;JJ[SII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3SII
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_readShorts
     (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jshortArray arr, jint off, jint n)
 {
   PSTART();
@@ -2576,7 +2576,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
  * Method:    getDirectByteBuffer
  * Signature: (Lcom/sun/jna/Pointer;JJJ)Ljava/nio/ByteBuffer;
  */
-JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer__Lcom_sun_jna_Pointer_2JJJ
+JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer
     (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlong length)
 {
 #ifdef NO_NIO_BUFFERS
@@ -3314,6 +3314,20 @@ is_protected() {
   return JNI_FALSE;
 }
 
+jint initializeJnaStatics(JNIEnv *env) {
+  int result = JNI_VERSION_1_4;
+  const char* err;
+  if ((err = JNA_init(env)) != NULL) {
+    fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
+    result = 0;
+  }
+  else if ((err = JNA_callback_init(env)) != NULL) {
+    fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
+    result = 0;
+  }
+  return result;
+}
+
 JNIEXPORT jboolean JNICALL
 Java_com_sun_jna_Native_isProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp)) {
   return is_protected();
@@ -3335,6 +3349,10 @@ Java_com_sun_jna_Native_getNativeVersion(JNIEnv *env, jclass UNUSED(classp)) {
 #ifndef JNA_JNI_VERSION
 #define JNA_JNI_VERSION "undefined"
 #endif
+  // sanity check initialization
+  if (classString == NULL) {
+    initializeJnaStatics(env);
+  }
   return newJavaString(env, JNA_JNI_VERSION, CHARSET_UTF8);
 }
 
@@ -3346,39 +3364,50 @@ Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass UNUSED(classp)) {
   return newJavaString(env, CHECKSUM, CHARSET_UTF8);
 }
 
-JNIEXPORT jint JNICALL
-JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
-  JNIEnv* env;
-  int result = JNI_VERSION_1_4;
-  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
-  const char* err;
+JNIEXPORT jboolean JNICALL Java_com_sun_jna_Native_isStaticEnabled(JNIEnv * UNUSED(env), jclass UNUSED(classp)) {
+#ifdef JNA_STATIC
+    return JNI_TRUE;
+#else
+    return JNI_FALSE;
+#endif
+}
 
+JNIEXPORT jint JNICALL Java_com_sun_jna_Native_initializeStatic(JNIEnv *env, jclass UNUSED(classp)) {
+    return initializeJnaStatics(env);
+}
+
+jint setupJna(JavaVM *jvm) {
+  JNIEnv* env;
+  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
   if (!attached) {
     if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach native thread to VM on load\n");
       return 0;
     }
   }
-
-  if ((err = JNA_init(env)) != NULL) {
-    fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
-    result = 0;
-  }
-  else if ((err = JNA_callback_init(env)) != NULL) {
-    fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
-    result = 0;
-  }
+  int result = initializeJnaStatics(env);
   if (!attached) {
     if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       fprintf(stderr, "JNA: could not detach thread on initial load\n");
     }
   }
-
   return result;
 }
 
-JNIEXPORT void JNICALL
-JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
+#ifdef JNA_STATIC
+JNIEXPORT jint JNICALL
+JNI_OnLoad_jnidispatch(JavaVM *jvm, void *UNUSED(reserved)) {
+  setupJna(jvm);
+  return JNI_VERSION_1_8;  // upgrade to JNI_VERSION_1_8; required for static JNI
+}
+#else
+JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
+  return setupJna(jvm);
+}
+#endif
+
+void unloadJna(JavaVM *vm) {
   jobject* refs[] = {
     &classObject, &classClass, &classMethod,
     &classString,
@@ -3442,6 +3471,16 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     }
   }
 }
+
+#ifdef JNA_STATIC
+JNIEXPORT void JNICALL JNI_OnUnload_jnidispatch(JavaVM *jvm, void *UNUSED(reserved)) {
+  unloadJna(jvm);
+}
+#else
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *jvm, void *UNUSED(reserved)) {
+  unloadJna(jvm);
+}
+#endif
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass UNUSED(ncls), jclass cls, jlongArray handles) {

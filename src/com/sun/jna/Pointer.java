@@ -137,7 +137,7 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, byte[] buf, int index, int length) {
-        Native.read(this, this.peer, offset, buf, index, length);
+        Native.readBytes(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -150,7 +150,7 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, short[] buf, int index, int length) {
-        Native.read(this, this.peer, offset, buf, index, length);
+        Native.readShorts(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -163,7 +163,7 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, char[] buf, int index, int length) {
-        Native.read(this, this.peer, offset, buf, index, length);
+        Native.readChars(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -176,7 +176,7 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, int[] buf, int index, int length) {
-        Native.read(this, this.peer, offset, buf, index, length);
+        Native.readInts(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -189,7 +189,7 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, long[] buf, int index, int length) {
-        Native.read(this, this.peer, offset, buf, index, length);
+        Native.readLongs(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -202,7 +202,7 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, float[] buf, int index, int length) {
-        Native.read(this, this.peer, offset, buf, index, length);
+        Native.readFloats(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -215,7 +215,7 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, double[] buf, int index, int length) {
-        Native.read(this, this.peer, offset, buf, index, length);
+        Native.readDoubles(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -254,7 +254,7 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, byte[] buf, int index, int length) {
-        Native.write(this, this.peer, offset, buf, index, length);
+        Native.writeBytes(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -268,7 +268,7 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, short[] buf, int index, int length) {
-        Native.write(this, this.peer, offset, buf, index, length);
+        Native.writeShorts(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -282,7 +282,7 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, char[] buf, int index, int length) {
-        Native.write(this, this.peer, offset, buf, index, length);
+        Native.writeChars(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -296,7 +296,7 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, int[] buf, int index, int length) {
-        Native.write(this, this.peer, offset, buf, index, length);
+        Native.writeInts(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -310,7 +310,7 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, long[] buf, int index, int length) {
-        Native.write(this, this.peer, offset, buf, index, length);
+        Native.writeLongs(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -324,7 +324,7 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, float[] buf, int index, int length) {
-        Native.write(this, this.peer, offset, buf, index, length);
+        Native.writeFloats(this, this.peer, offset, buf, index, length);
     }
 
     /**
@@ -338,7 +338,7 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, double[] buf, int index, int length) {
-        Native.write(this, this.peer, offset, buf, index, length);
+        Native.writeDoubles(this, this.peer, offset, buf, index, length);
     }
 
     /** Write the given array of Pointer to native memory.

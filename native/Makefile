@@ -62,6 +62,7 @@ JAVA_INCLUDES=-I"$(JAVA_HOME)/include" \
 BUILD=../build/native
 JAVAH=$(BUILD)
 INSTALLDIR=../build/$(OS)
+JNA_STATIC=no
 JNIDISPATCH_OBJS=$(BUILD)/dispatch.o $(BUILD)/callback.o $(EXTRAOBJS)
 RSRC=$(BUILD)/rsrc.o
 DLLCB=$(BUILD)/dll-callback.o
@@ -73,6 +74,7 @@ FFI_ENV=CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) -DFFI_STATIC_BUILD" CPPFLAGS="$(CDE
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes
 endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
+LIBRARY_STATIC=$(BUILD)/$(LIBPFX)jnidispatch$(ARSFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
 TESTLIB_JAR=$(BUILD)/$(LIBPFX)testlib-jar$(LIBSFX)
 TESTLIB_PATH=$(BUILD)/$(LIBPFX)testlib-path$(LIBSFX)
@@ -85,6 +87,7 @@ LIBSFX=.so
 ARSFX=.a
 JNISFX=$(LIBSFX)
 CC=gcc
+AR=ar
 LD=$(CC)
 LIBS=
 # Default to Sun recommendations for JNI compilation
@@ -340,6 +343,10 @@ ifeq ($(ARCH),ppc)
 endif
 endif
 
+ifeq ($(JNA_STATIC),yes)
+COPT+=-DJNA_STATIC=1
+endif
+
 # CC_OPTS only applied to objects build for jnidispatch, not for libffi
 # -Wno-unknown-warning-option
 #                => Suppress warning for unknown warnings
@@ -473,7 +480,7 @@ else
 	$(CC) $(CFLAGS) $(LOC_CC_OPTS) -c $< $(COUT)
 endif
 
-all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC)
+all: $(LIBRARY) $(LIBRARY_STATIC) $(TESTLIB) $(TESTLIB2) $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC)
 
 install:
 	mkdir $(INSTALLDIR)
@@ -494,6 +501,24 @@ $(BUILD)/$(JNA_JNI_VERSION).stamp:
 $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
 	$(STRIP) $@
+
+static-objs: $(FFI_LIB) $(JNIDISPATCH_OBJS)
+	@# the rebuild enters here
+
+$(LIBRARY_STATIC): $(LIBRARY) $(JNIDISPATCH_OBJS) $(FFI_LIB)
+	@# we force a rebuild of the JNI dispatch objects, but in static mode. this is safe
+	@# because they are cleaned afterward, and `$(LIBRARY)` is guaranteed to have finished
+	@# by now, along with `$(JNIDISPATCH_OBJS)`. we replace the objects again once we are
+	@# finished, to avoid poisoning the shared library on the next build.
+	@#
+	@# this looks like it may be trickery, but it really isn't. see `dispatch.c` for how the
+	@# macro is used; it causes `JNI_OnLoad` to be exported as `JNI_OnLoad_jnidispatch` etc
+	@# instead, so that it can safely be loaded for static JNI.
+	rm -f $(JNIDISPATCH_OBJS)
+	$(MAKE) JNA_STATIC=yes static-objs
+	$(AR) rcs $@ $(JNIDISPATCH_OBJS)
+	rm -f $(JNIDISPATCH_OBJS)
+	$(MAKE) STATIC=no static-objs
 
 $(TESTLIB): $(BUILD)/testlib.o
 	$(LD) $(LDFLAGS) $< $(LIBS)

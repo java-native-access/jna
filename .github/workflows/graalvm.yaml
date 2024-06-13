@@ -1,0 +1,38 @@
+# GraalVM build and native test.
+name: GraalVM CI
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+env:
+  ANT_OPTS: -Djava.security.manager=allow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test GVM 22, ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '22'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Linux requirements
+        run: sudo apt-get -y install texinfo
+      - uses: gradle/actions/setup-gradle@v3
+      - name: "Build: Compile & Install JNA"
+        run: ant && ant install
+      - name: "Build: Native Images (Dynamic JNI)"
+        run: ant nativeImage && ant nativeRun
+      - name: "Build: Native Image (Static JNI)"
+        run: ant nativeImageStatic && ant nativeRunStatic
