@@ -62,7 +62,7 @@ graalvmNative {
         "-H:-RemoveUnusedSymbols",
         "-H:+PreserveFramePointer",
         "-H:+ReportExceptionStackTraces",
-      )))
+      ))
     }
   }
 }
