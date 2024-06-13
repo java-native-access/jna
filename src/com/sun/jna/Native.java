@@ -106,6 +106,13 @@ import java.util.logging.Logger;
  * <h2>Native Library Loading</h2>
  * Native libraries loaded via {@link #load(Class)} may be found in
  * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
+ * <h2>Static Linkage under GraalVM Native Image</h2>
+ * <p>When using Static JNI under GraalVM, JNA's native library must be
+ * loaded statically; this call happens before all others. For platforms
+ * that want to force this check to be skipped (for instance, if it is known
+ * that the library will never ship to Substrate), the property
+ * <code>jna.skipStatic=true</code> can be set; in this case, the static
+ * load step is skipped.</p>
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net

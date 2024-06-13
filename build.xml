@@ -292,9 +292,9 @@
     <artifact:dependencies pathId="graalvm.classpath">
       <remoteRepository refid="central" />
       <dependency groupId="org.graalvm.sdk" artifactId="nativeimage" version="${graalvm.version}"/>
+      <dependency groupId="org.graalvm.nativeimage" artifactId="svm" version="${graalvm.version}"/>
     </artifact:dependencies>
 
-    <delete dir="${classes-graalvm}" />
     <mkdir dir="${classes-graalvm}" />
     <delete dir="${build}/gvm-src" />
     <mkdir dir="${build}/gvm-src/com/sun/jna" />
@@ -655,9 +655,6 @@ osname=macosx;processor=aarch64
     <jar jarfile="${build}/jna-jpms.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build}/manifest/module.mf">
       <zipfileset src="${build}/${jar}" excludes="META-INF/MANIFEST.mf"/>
       <zipfileset dir="${build}/manifest/" includes="module-info.class" prefix="META-INF/versions/9"/>
-    </jar>
-    <jar jarfile="${build}/jna-graalvm.jar" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
-      <zipfileset src="${build}/${jar-graalvm}" excludes="META-INF/MANIFEST.mf"/>
     </jar>
   </target>
 
@@ -1123,6 +1120,8 @@ cd ..
     <copy todir="${classes-graalvm}/${native.path}">
       <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
+      <fileset dir="${build.native}/libffi/.libs"
+               includes="ffi.lib,libffi.a"/>
     </copy>
     <!-- For web start, native libraries may be provided in the root of -->
     <!-- an included jar file -->
@@ -1135,6 +1134,7 @@ cd ..
     </jar>
     <jar jarfile="${build}/${native-static.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${build.native}" includes="jnidispatch.lib,libjnidispatch.a"/>
+      <fileset dir="${build.native}/libffi/.libs" includes="libffi.a"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
@@ -1781,8 +1781,35 @@ cd ..
     </exec>
   </target>
 
+  <target name="nativeImageStatic">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-static-jna" failonerror="true">
+      <arg value="${basedir}/samples/graalvm-native-static-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
+  <target name="nativeImageStaticDebug">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-static-jna" failonerror="true">
+      <arg value="${basedir}/samples/graalvm-native-static-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="-PnativeImageDebug=true"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
   <target name="nativeRun" depends="nativeImage">
     <exec executable="${basedir}/samples/graalvm-native-jna/build/native/nativeCompile/graalvm-native-jna" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
+      <arg value="testing-123"/>
+    </exec>
+  </target>
+
+  <target name="nativeRunStatic" depends="nativeImageStatic">
+    <exec executable="${basedir}/samples/graalvm-native-static-jna/build/native/nativeCompile/graalvm-native-static-jna" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
       <arg value="testing-123"/>
     </exec>
   </target>
