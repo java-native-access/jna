@@ -27,8 +27,7 @@ package com.sun.jna.internal;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -60,10 +59,11 @@ public class Cleaner {
      *    cleared, the ThreadLocal instance is lost, and so are the pending
      *    objects.
      *
-     * The Master Cleaner handles the first issue by regularly handling the
-     * queues of the Cleaners registered with it.
-     * The seconds issue is handled by registering the per-thread Cleaner
-     * instances with the Master's reference queue.
+     * The Master Cleaner handles the first issue by regularly checking the
+     * activity of the Cleaners registered with it, and taking over the queues
+     * of any cleaners appearing to be idle.
+     * Similarly, the second issue is handled by taking over the queues of threads
+     * that have terminated.
      */
 
     public static final long MASTER_CLEANUP_INTERVAL_MS = 5000;
@@ -116,28 +116,28 @@ public class Cleaner {
             if (INSTANCE == null) {
                 INSTANCE = new MasterCleaner();
             }
-            final CleanerImpl impl = cleaner.impl;
-            INSTANCE.cleanerImpls.put(impl, true);
-            INSTANCE.register(cleaner, () -> INSTANCE.cleanerImpls.put(impl, false));
+            INSTANCE.cleaners.add(cleaner);
         }
 
+        /** @return true if the caller thread can terminate */
         private static synchronized boolean deleteIfEmpty(MasterCleaner caller) {
-            if (INSTANCE == caller && INSTANCE.cleanerImpls.isEmpty()) {
+            if (INSTANCE == caller && INSTANCE.cleaners.isEmpty()) {
                 INSTANCE = null;
             }
-            return caller.cleanerImpls.isEmpty();
+            return caller.cleaners.isEmpty();
         }
 
-        final Map<CleanerImpl,Boolean> cleanerImpls = new ConcurrentHashMap<CleanerImpl,Boolean>();
-        private long lastNonEmpty = System.currentTimeMillis();
+        final Set<Cleaner> cleaners = Collections.synchronizedSet(new HashSet<>());
+        final Set<CleanerImpl> referencedCleaners = new HashSet<>();
+        final Set<CleanerImpl> watchedCleaners = new HashSet<>();
 
         private MasterCleaner() {
-            super(true);
             Thread cleanerThread = new Thread(() -> {
+                    long lastNonEmpty = System.currentTimeMillis();
                     long now;
                     long lastMasterRun = 0;
                     while ((now = System.currentTimeMillis()) < lastNonEmpty + MASTER_MAX_LINGER_MS || !deleteIfEmpty(MasterCleaner.this)) {
-                        if (!cleanerImpls.isEmpty()) { lastNonEmpty = now; }
+                        if (!cleaners.isEmpty()) { lastNonEmpty = now; }
                         try {
                             Reference<?> ref = impl.referenceQueue.remove(MASTER_CLEANUP_INTERVAL_MS);
                             if(ref instanceof CleanerRef) {
@@ -164,33 +164,59 @@ public class Cleaner {
         }
 
         private void masterCleanup() {
-            Iterator<Map.Entry<CleanerImpl,Boolean>> it = cleanerImpls.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<CleanerImpl,Boolean> entry = it.next();
-                entry.getKey().cleanQueue();
-                if (!entry.getValue() && entry.getKey().cleanables.isEmpty()) {
+            for (Iterator<Map.Entry<Thread,Cleaner>> it = Cleaner.INSTANCES.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<Thread,Cleaner> entry = it.next();
+                if (!cleaners.contains(entry.getValue())) { continue; }
+                Cleaner cleaner = entry.getValue();
+                long currentCount = cleaner.counter.get();
+                if (currentCount == cleaner.lastCount // no new cleanables registered since last master cleanup interval -> assume it is no longer in use
+                        || !entry.getKey().isAlive()) { // owning thread died -> assume it is no longer in use
                     it.remove();
+                    CleanerImpl impl = cleaner.impl;
+                    referencedCleaners.add(impl);
+                    watchedCleaners.add(impl);
+                    register(cleaner, () -> referencedCleaners.remove(impl));
+                    cleaners.remove(cleaner);
+                } else {
+                    cleaner.lastCount = currentCount;
+                }
+            }
+
+            for (Iterator<CleanerImpl> it = watchedCleaners.iterator(); it.hasNext(); ) {
+                CleanerImpl impl = it.next();
+                impl.cleanQueue();
+                if (!referencedCleaners.contains(impl)) {
+                    if (impl.cleanables.isEmpty()) { it.remove(); }
                 }
             }
         }
     }
 
-    private static final ThreadLocal<Cleaner> MY_INSTANCE = ThreadLocal.withInitial(() -> new Cleaner(false));
+    private static final Map<Thread,Cleaner> INSTANCES = new ConcurrentHashMap<>();
 
     public static Cleaner getCleaner() {
-        return MY_INSTANCE.get();
+        return INSTANCES.computeIfAbsent(Thread.currentThread(), Cleaner::new);
     }
 
     protected final CleanerImpl impl;
+    protected final Thread owner;
+    protected final AtomicLong counter = new AtomicLong(Long.MIN_VALUE);
+    protected long lastCount; // used by MasterCleaner only
 
-    private Cleaner(boolean master) {
+    private Cleaner() {
+        this(null);
+    }
+
+    private Cleaner(Thread owner) {
         impl = new CleanerImpl();
-        if (!master) {
+        this.owner = owner;
+        if (owner != null) {
             MasterCleaner.add(this);
         }
     }
 
     public Cleanable register(Object obj, Runnable cleanupTask) {
+        counter.incrementAndGet();
         return impl.register(obj, cleanupTask);
     }
 
