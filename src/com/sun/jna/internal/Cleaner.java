@@ -109,18 +109,6 @@ public class Cleaner {
         }
     }
 
-    private static class MasterCleanerImpl extends CleanerImpl {
-        @Override
-        protected synchronized void put(long n, CleanerRef ref) {
-            super.put(n, ref);
-        }
-
-        @Override
-        protected synchronized boolean remove(long n) {
-            return super.remove(n);
-        }
-    }
-
     static class MasterCleaner extends Cleaner {
         static MasterCleaner INSTANCE;
 
@@ -130,20 +118,14 @@ public class Cleaner {
             }
             final CleanerImpl impl = cleaner.impl;
             INSTANCE.cleanerImpls.put(impl, true);
-            INSTANCE.register(cleaner, new Runnable() {
-                @Override
-                public void run() {
-                    INSTANCE.cleanerImpls.put(impl, false);
-                }
-            });
+            INSTANCE.register(cleaner, () -> INSTANCE.cleanerImpls.put(impl, false));
         }
 
-        private static synchronized boolean deleteIfEmpty() {
-            if (INSTANCE != null && INSTANCE.cleanerImpls.isEmpty()) {
+        private static synchronized boolean deleteIfEmpty(MasterCleaner caller) {
+            if (INSTANCE == caller && INSTANCE.cleanerImpls.isEmpty()) {
                 INSTANCE = null;
-                return true;
             }
-            return false;
+            return caller.cleanerImpls.isEmpty();
         }
 
         final Map<CleanerImpl,Boolean> cleanerImpls = new ConcurrentHashMap<CleanerImpl,Boolean>();
@@ -151,12 +133,10 @@ public class Cleaner {
 
         private MasterCleaner() {
             super(true);
-            Thread cleanerThread = new Thread() {
-                @Override
-                public void run() {
+            Thread cleanerThread = new Thread(() -> {
                     long now;
                     long lastMasterRun = 0;
-                    while ((now = System.currentTimeMillis()) < lastNonEmpty + MASTER_MAX_LINGER_MS || !deleteIfEmpty()) {
+                    while ((now = System.currentTimeMillis()) < lastNonEmpty + MASTER_MAX_LINGER_MS || !deleteIfEmpty(MasterCleaner.this)) {
                         if (!cleanerImpls.isEmpty()) { lastNonEmpty = now; }
                         try {
                             Reference<?> ref = impl.referenceQueue.remove(MASTER_CLEANUP_INTERVAL_MS);
@@ -178,9 +158,7 @@ public class Cleaner {
                             Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                }
-            };
-            cleanerThread.setName("JNA Cleaner");
+                }, "JNA Cleaner");
             cleanerThread.setDaemon(true);
             cleanerThread.start();
         }
@@ -197,12 +175,7 @@ public class Cleaner {
         }
     }
 
-    private static final ThreadLocal<Cleaner> MY_INSTANCE = new ThreadLocal<Cleaner>() {
-        @Override
-        protected Cleaner initialValue() {
-            return new Cleaner(false);
-        }
-    };
+    private static final ThreadLocal<Cleaner> MY_INSTANCE = ThreadLocal.withInitial(() -> new Cleaner(false));
 
     public static Cleaner getCleaner() {
         return MY_INSTANCE.get();
@@ -211,10 +184,8 @@ public class Cleaner {
     protected final CleanerImpl impl;
 
     private Cleaner(boolean master) {
-        if (master) {
-            impl = new MasterCleanerImpl();
-        } else {
-            impl = new CleanerImpl();
+        impl = new CleanerImpl();
+        if (!master) {
             MasterCleaner.add(this);
         }
     }
@@ -246,7 +217,7 @@ public class Cleaner {
         }
     }
 
-    public static interface Cleanable {
-        public void clean();
+    public interface Cleanable {
+        void clean();
     }
 }
