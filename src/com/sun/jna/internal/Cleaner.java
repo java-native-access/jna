@@ -42,6 +42,8 @@ import java.util.logging.Logger;
  * <p><strong>This class is intended to be used only be JNA itself.</strong></p>
  */
 public class Cleaner {
+    private static final Logger LOG = Logger.getLogger(Cleaner.class.getName());
+
     /* General idea:
      *
      * There's one Cleaner per thread, kept in a ThreadLocal static variable.
@@ -158,7 +160,9 @@ public class Cleaner {
                             Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    LOG.log(Level.FINE, "MasterCleaner thread {0} exiting", Thread.currentThread());
                 }, "JNA Cleaner");
+            LOG.log(Level.FINE, "Starting new MasterCleaner thread {0}", cleanerThread);
             cleanerThread.setDaemon(true);
             cleanerThread.start();
         }
@@ -173,9 +177,13 @@ public class Cleaner {
                         || !entry.getKey().isAlive()) { // owning thread died -> assume it is no longer in use
                     it.remove();
                     CleanerImpl impl = cleaner.impl;
+                    LOG.log(Level.FINE, () -> "MasterCleaner stealing cleaner " + impl + " from thread " + entry.getKey());
                     referencedCleaners.add(impl);
                     watchedCleaners.add(impl);
-                    register(cleaner, () -> referencedCleaners.remove(impl));
+                    register(cleaner, () -> {
+                        referencedCleaners.remove(impl);
+                        LOG.log(Level.FINE, "Cleaner {0} no longer referenced", impl);
+                    });
                     cleaners.remove(cleaner);
                 } else {
                     cleaner.lastCount = currentCount;
@@ -186,7 +194,10 @@ public class Cleaner {
                 CleanerImpl impl = it.next();
                 impl.cleanQueue();
                 if (!referencedCleaners.contains(impl)) {
-                    if (impl.cleanables.isEmpty()) { it.remove(); }
+                    if (impl.cleanables.isEmpty()) {
+                        it.remove();
+                        LOG.log(Level.FINE, "Discarding empty Cleaner {0}", impl);
+                    }
                 }
             }
         }
@@ -213,6 +224,8 @@ public class Cleaner {
         if (owner != null) {
             MasterCleaner.add(this);
         }
+        LOG.log(Level.FINE, () -> owner == null ? "Created new MasterCleaner"
+                                                : "Created new Cleaner " + impl + " for thread " + owner);
     }
 
     public Cleanable register(Object obj, Runnable cleanupTask) {
@@ -229,6 +242,7 @@ public class Cleaner {
 
         public CleanerRef(CleanerImpl impl, Object referent, ReferenceQueue<Object> q, Runnable cleanupTask) {
             super(referent, q);
+            LOG.log(Level.FINER, () -> "Registering " + referent + " with " + impl + " as " + this);
             this.cleaner = impl;
             this.cleanupTask = cleanupTask;
             cleaner.put(number, this);
@@ -237,6 +251,7 @@ public class Cleaner {
         @Override
         public void clean() {
             if(cleaner.remove(this.number) && cleanupTask != null) {
+                LOG.log(Level.FINER, "Cleaning up {0}", this);
                 cleanupTask.run();
                 cleanupTask = null;
             }
