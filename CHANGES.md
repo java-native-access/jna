@@ -11,6 +11,7 @@ Features
 * [#1593](https://github.com/java-native-access/jna/pull/1593): Add support for DragonFly BSD x86-64 - [@liweitianux](https://github.com/liweitianux).
 * [#1595](https://github.com/java-native-access/jna/pull/1595): Add `IsProcessorFeaturePresent` to `c.s.j.p.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1602](https://github.com/java-native-access/jna/pull/1602): Add `XMoveWindow`, `XResizeWindow`, `XMoveResizeWindow`, `XRaiseWindow`, `XLowerWindow` X11 calls to `c.s.j.p.unix.X11` - [@vinceh121](https://github.com/vinceh121).
+* [#1612](https://github.com/java-native-access/jna/pull/1612): Added static helper methods for getting the underlying NativeLibrary instance from a Library interface instance or from a "registered" class.
 
 Bug Fixes
 ---------
