@@ -1918,6 +1918,23 @@ public final class Native implements Version {
         }
     }
 
+    /**
+     * Get the {@link NativeLibrary} instance to which the given "registered" class is bound.
+     * @param cls the "registered" class, which was previously registered via the {@link Native#register register()} method
+     * @return the {@link NativeLibrary} instance to which the "registered" class is bound
+     */
+    public static NativeLibrary getNativeLibrary(final Class<?> cls) {
+        final Class<?> mappedClass = findDirectMappedClass(cls);
+        synchronized(registeredClasses) {
+            final NativeLibrary nativeLibrary = registeredLibraries.get(mappedClass);
+            if (nativeLibrary == null) {
+                throw new IllegalArgumentException("Class " + cls.getName() + " is not currently registered");
+            } else {
+                return nativeLibrary;
+            }
+        }
+    }
+
     /* Take note of options used for a given library mapping, to facilitate
      * looking them up later.
      */

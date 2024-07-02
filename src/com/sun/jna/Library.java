@@ -271,4 +271,17 @@ public interface Library {
             }
         }
     }
+
+    /**
+     * Get the {@link NativeLibrary} instance that is wrapped by the given {@link Library} interface instance.
+     * @param library the {@link Library} interface instance, which was created by the {@link Native#load Native.load()} method
+     * @return the wrapped {@link NativeLibrary} instance
+     */
+    static NativeLibrary getNativeLibrary(final Library library) {
+        final InvocationHandler handler = Proxy.getInvocationHandler(library);
+        if (!(handler instanceof Handler)) {
+            throw new IllegalArgumentException("Object is not a properly initialized Library interface instance");
+        }
+        return ((Handler)handler).getNativeLibrary();
+    }
 }
