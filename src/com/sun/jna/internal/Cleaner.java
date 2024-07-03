@@ -129,6 +129,17 @@ public class Cleaner {
             return caller.cleaners.isEmpty();
         }
 
+        /* The lifecycle of a Cleaner instance consists of four phases:
+         * 1. New instances are contained in Cleaner.INSTANCES and added to a MasterCleaner.cleaners set.
+         * 2. At some point, the master cleaner takes control of the instance by removing it
+         *    from Cleaner.INSTANCES and MasterCleaner.cleaners, and then adding it to its
+         *    referencedCleaners and watchedCleaners sets. Note that while it is no longer
+         *    in Cleaner.INSTANCES, a thread may still be holding a reference to it.
+         * 3. Possibly some time later, the last reference to the cleaner instance is dropped and
+         *    it is GC'd. It is then also removed from referencedCleaners but remains in watchedCleaners.
+         * 4. The master cleaner continues to monitor the watchedCleaners until they are empty and no
+         *    longer referenced. At that point they are also removed from watchedCleaners.
+         */
         final Set<Cleaner> cleaners = Collections.synchronizedSet(new HashSet<>());
         final Set<CleanerImpl> referencedCleaners = new HashSet<>();
         final Set<CleanerImpl> watchedCleaners = new HashSet<>();
