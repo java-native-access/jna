@@ -135,33 +135,33 @@ public class Cleaner {
 
         private MasterCleaner() {
             Thread cleanerThread = new Thread(() -> {
-                    long lastNonEmpty = System.currentTimeMillis();
-                    long now;
-                    long lastMasterRun = 0;
-                    while ((now = System.currentTimeMillis()) < lastNonEmpty + MASTER_MAX_LINGER_MS || !deleteIfEmpty(MasterCleaner.this)) {
-                        if (!cleaners.isEmpty()) { lastNonEmpty = now; }
-                        try {
-                            Reference<?> ref = impl.referenceQueue.remove(MASTER_CLEANUP_INTERVAL_MS);
-                            if(ref instanceof CleanerRef) {
-                                ((CleanerRef) ref).clean();
-                            }
-                            // "now" is not really *now* at this point, but off by no more than MASTER_CLEANUP_INTERVAL_MS
-                            if (lastMasterRun + MASTER_CLEANUP_INTERVAL_MS <= now) {
-                                masterCleanup();
-                                lastMasterRun = now;
-                            }
-                        } catch (InterruptedException ex) {
-                            // Can be raised on shutdown. If anyone else messes with
-                            // our reference queue, well, there is no way to separate
-                            // the two cases.
-                            // https://groups.google.com/g/jna-users/c/j0fw96PlOpM/m/vbwNIb2pBQAJ
-                            break;
-                        } catch (Exception ex) {
-                            Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
+                long lastNonEmpty = System.currentTimeMillis();
+                long now;
+                long lastMasterRun = 0;
+                while ((now = System.currentTimeMillis()) < lastNonEmpty + MASTER_MAX_LINGER_MS || !deleteIfEmpty(MasterCleaner.this)) {
+                    if (!cleaners.isEmpty()) { lastNonEmpty = now; }
+                    try {
+                        Reference<?> ref = impl.referenceQueue.remove(MASTER_CLEANUP_INTERVAL_MS);
+                        if(ref instanceof CleanerRef) {
+                            ((CleanerRef) ref).clean();
                         }
+                        // "now" is not really *now* at this point, but off by no more than MASTER_CLEANUP_INTERVAL_MS
+                        if (lastMasterRun + MASTER_CLEANUP_INTERVAL_MS <= now) {
+                            masterCleanup();
+                            lastMasterRun = now;
+                        }
+                    } catch (InterruptedException ex) {
+                        // Can be raised on shutdown. If anyone else messes with
+                        // our reference queue, well, there is no way to separate
+                        // the two cases.
+                        // https://groups.google.com/g/jna-users/c/j0fw96PlOpM/m/vbwNIb2pBQAJ
+                        break;
+                    } catch (Exception ex) {
+                        Logger.getLogger(Cleaner.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    LOG.log(Level.FINE, "MasterCleaner thread {0} exiting", Thread.currentThread());
-                }, "JNA Cleaner");
+                }
+                LOG.log(Level.FINE, "MasterCleaner thread {0} exiting", Thread.currentThread());
+            }, "JNA Cleaner");
             LOG.log(Level.FINE, "Starting new MasterCleaner thread {0}", cleanerThread);
             cleanerThread.setDaemon(true);
             cleanerThread.start();
