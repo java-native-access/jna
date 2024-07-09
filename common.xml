@@ -19,6 +19,7 @@
         </or>
     </condition>
     <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
+    <property name="graalvm.version" value="24.0.1" />
     <property name="osgi.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
     <!-- jnidispatch library release version -->
     <property name="jni.major" value="7"/>
@@ -26,7 +27,7 @@
     <property name="jni.revision" value="2"/>
     <property name="jni.build" value="0"/> <!--${build.number}-->
     <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-    <property name="jni.md5" value="5fb98531302accd485c534c452dd952a"/>
+    <property name="jni.md5" value="2758dad3ef270c95b39b70ca30de3941"/>
     <property name="spec.title" value="Java Native Access (JNA)"/>
     <property name="spec.vendor" value="${vendor}"/>
     <property name="spec.version" value="${jna.major}"/>

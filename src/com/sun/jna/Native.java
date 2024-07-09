@@ -33,6 +33,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.System;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
@@ -105,6 +106,13 @@ import java.util.logging.Logger;
  * <h2>Native Library Loading</h2>
  * Native libraries loaded via {@link #load(Class)} may be found in
  * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
+ * <h2>Static Linkage under GraalVM Native Image</h2>
+ * <p>When using Static JNI under GraalVM, JNA's native library must be
+ * loaded statically; this call happens before all others. For platforms
+ * that want to force this check to be skipped (for instance, if it is known
+ * that the library will never ship to Substrate), the property
+ * <code>jna.skipStatic=true</code> can be set; in this case, the static
+ * load step is skipped.</p>
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
@@ -947,6 +955,20 @@ public final class Native implements Version {
         }
 
         String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
+
+        // if in static init mode, load the library by name and force-run the initializer
+        if (!Boolean.getBoolean("jna.skipStatic")) {
+            try {
+                System.loadLibrary(libName);
+                if (isStaticEnabled()) {
+                    int jniApiVersion = initializeStatic();
+                    assert jniApiVersion == 0x00010008;  // `JNI_VERSION_1_8`
+                }
+                return;
+            } catch (UnsatisfiedLinkError err) {
+                // continue
+            }
+        }
         String bootPath = System.getProperty("jna.boot.library.path");
         if (bootPath != null) {
             // String.split not available in 1.4
@@ -1198,6 +1220,8 @@ public final class Native implements Version {
      **/
     private static native int sizeof(int type);
 
+    private static synchronized native boolean isStaticEnabled();
+    private static synchronized native int initializeStatic();
     private static native String getNativeVersion();
     private static native String getAPIChecksum();
 
@@ -2066,6 +2090,7 @@ public final class Native implements Version {
             ? pkg.getImplementationVersion() : DEFAULT_BUILD;
         if (version == null) version = DEFAULT_BUILD;
         System.out.println("Version: " + version);
+        System.out.println(" Static: " + isStaticEnabled());
         System.out.println(" Native: " + getNativeVersion() + " ("
                            + getAPIChecksum() + ")");
         System.out.println(" Prefix: " + Platform.RESOURCE_PREFIX);
@@ -2259,33 +2284,33 @@ public final class Native implements Version {
      */
     static native long indexOf(Pointer pointer, long baseaddr, long offset, byte value);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
+    static native void readBytes(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
+    static native void readShorts(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
+    static native void readChars(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
+    static native void readInts(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
+    static native void readLongs(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
+    static native void readFloats(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
 
-    static native void read(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
+    static native void readDoubles(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
+    static native void writeBytes(Pointer pointer, long baseaddr, long offset, byte[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
+    static native void writeShorts(Pointer pointer, long baseaddr, long offset, short[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
+    static native void writeChars(Pointer pointer, long baseaddr, long offset, char[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
+    static native void writeInts(Pointer pointer, long baseaddr, long offset, int[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
+    static native void writeLongs(Pointer pointer, long baseaddr, long offset, long[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
+    static native void writeFloats(Pointer pointer, long baseaddr, long offset, float[] buf, int index, int length);
 
-    static native void write(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
+    static native void writeDoubles(Pointer pointer, long baseaddr, long offset, double[] buf, int index, int length);
 
     static native byte getByte(Pointer pointer, long baseaddr, long offset);
 
