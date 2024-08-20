@@ -1918,6 +1918,52 @@ public final class Native implements Version {
         }
     }
 
+    /**
+     * Get the {@link NativeLibrary} instance that is wrapped by the given
+     * {@link Library} interface instance.
+     *
+     * @param library the {@link Library} interface instance, which was created
+     * by the {@link Native#load Native.load()} method
+     * @return the wrapped {@link NativeLibrary} instance
+     */
+    public static NativeLibrary getNativeLibrary(final Library library) {
+        if(library == null) {
+            throw new IllegalArgumentException("null passed to getNativeLibrary");
+        }
+        if(! Proxy.isProxyClass(library.getClass())) {
+            throw new IllegalArgumentException("library object passed to getNativeLibrary in not a proxy");
+        }
+        final InvocationHandler handler = Proxy.getInvocationHandler(library);
+        if (!(handler instanceof Library.Handler)) {
+            throw new IllegalArgumentException("Object is not a properly initialized Library interface instance");
+        }
+        return ((Library.Handler) handler).getNativeLibrary();
+    }
+
+    /**
+     * Get the {@link NativeLibrary} instance to which the given "registered"
+     * class is bound.
+     *
+     * @param cls the "registered" class, which was previously registered via
+     * the {@link Native#register register()} method
+     * @return the {@link NativeLibrary} instance to which the "registered"
+     * class is bound
+     */
+    public static NativeLibrary getNativeLibrary(final Class<?> cls) {
+        if(cls == null) {
+            throw new IllegalArgumentException("null passed to getNativeLibrary");
+        }
+        final Class<?> mappedClass = findDirectMappedClass(cls);
+        synchronized(registeredClasses) {
+            final NativeLibrary nativeLibrary = registeredLibraries.get(mappedClass);
+            if (nativeLibrary == null) {
+                throw new IllegalArgumentException("Class " + cls.getName() + " is not currently registered");
+            } else {
+                return nativeLibrary;
+            }
+        }
+    }
+
     /* Take note of options used for a given library mapping, to facilitate
      * looking them up later.
      */
