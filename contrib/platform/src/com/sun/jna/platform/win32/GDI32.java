@@ -322,7 +322,7 @@ public interface GDI32 extends StdCallLibrary {
      */
     int GetDeviceCaps(HDC hdc, int nIndex);
 
-    /** The GetDIBits function retrieves the bits fo the specified compatible
+    /** The GetDIBits function retrieves the bits of the specified compatible
      * bitmap and copies them into a buffer as a DIB using the specified
      * format.
      * @param hdc A handle to the device context.
