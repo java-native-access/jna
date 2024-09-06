@@ -396,6 +396,8 @@ com/sun/jna/linux-s390x/libjnidispatch.so;
 processor=S390x;osname=linux,
 com/sun/jna/linux-loongarch64/libjnidispatch.so;
 processor=loongarch64;osname=linux,
+com/sun/jna/linux-riscv64/libjnidispatch.so;
+processor=riscv64;osname=linux,
 
 com/sun/jna/dragonflybsd-x86-64/libjnidispatch.so;
 processor=x86-64;osname=dragonflybsd,
