@@ -85,6 +85,7 @@ public class Cleaner {
     }
 
     private CleanerRef add(CleanerRef ref) {
+        runCleanup();
         map.put(ref, ref);
         cleanerThreadLock.readLock().lock();
         try {
@@ -107,6 +108,16 @@ public class Cleaner {
             cleanerThreadLock.readLock().unlock();
         }
         return ref;
+    }
+
+    private void runCleanup() {
+        if (Boolean.valueOf(System.getProperty("jna.inlinecleanup", "false"))) {
+            for (Reference<? extends Object> cref = referenceQueue.poll(); cref != null; cref = referenceQueue.poll()) {
+                if (cref instanceof CleanerRef) {
+                    ((CleanerRef) cref).clean();
+                }
+            }
+        }
     }
 
     private void remove(CleanerRef ref) {
