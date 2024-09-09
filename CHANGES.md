@@ -12,6 +12,7 @@ Features
 * [#1595](https://github.com/java-native-access/jna/pull/1595): Add `IsProcessorFeaturePresent` to `c.s.j.p.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1602](https://github.com/java-native-access/jna/pull/1602): Add `XMoveWindow`, `XResizeWindow`, `XMoveResizeWindow`, `XRaiseWindow`, `XLowerWindow` X11 calls to `c.s.j.p.unix.X11` - [@vinceh121](https://github.com/vinceh121).
 * [#1613](https://github.com/java-native-access/jna/issues/1613): Added static helper method `Native#getNativeLibrary' for getting the underlying NativeLibrary instance from a Library interface instance or from a "registered" class - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1624](https://github.com/java-native-access/jna/pull/1624): Enable linker build-id for android builds - [@mstyura](https://github.com/mstyura).
 
 Bug Fixes
 ---------
