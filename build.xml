@@ -101,16 +101,6 @@
   <target name="compile-single" depends="compile"/>
 
   <!-- Prepare additional ant task -->
-  <path id="maven-ant-tasks.classpath">
-      <pathelement location="lib/animal-sniffer-ant-tasks-1.17.jar" />
-      <pathelement location="lib/maven-ant-tasks-2.1.3.jar" />
-  </path>
-  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-           uri="antlib:org.apache.maven.artifact.ant"
-           classpathref="maven-ant-tasks.classpath" />
-  <typedef resource="org/codehaus/mojo/animal_sniffer/antlib.xml"
-           uri="antlib:org.codehaus.mojo.animal_sniffer"
-           classpathref="maven-ant-tasks.classpath" />
 
   <target name="-prepare-anttools">
       <subant antfile="build-ant-tools.xml" buildpath="${basedir}"></subant>
@@ -1409,50 +1399,50 @@ cd ..
     </subant>
   </target>
 
-  <target name="install" depends="dist,-bootstrap-maven" description="Install jna and jna-platform artifacts into local maven repository">
-    <artifact:mvn failonerror="true">
+  <target name="install" depends="dist" description="Install jna and jna-platform artifacts into local maven repository">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
       <arg value="-Dsources=${maven-sources-jar}"/>
       <arg value="-Djavadoc=${maven-javadoc-jar}"/>
-    </artifact:mvn>
+    </exec>
 
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-aar}"/>
       <arg value="-Dpackaging=aar"/>
-    </artifact:mvn>
+    </exec>
 
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom-jpms}"/>
       <arg value="-Dfile=${dist-jar-jpms}"/>
       <arg value="-Dsources=${maven-sources-jar}"/>
       <arg value="-Djavadoc=${maven-javadoc-jar}"/>
-    </artifact:mvn>
+    </exec>
 
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
       <arg value="-Dsources=${platform-sources-jar}"/>
       <arg value="-Djavadoc=${platform-javadoc-jar}"/>
-    </artifact:mvn>
+    </exec>
 
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom-platform-jpms}"/>
       <arg value="-Dfile=${platform-jpms-jar}"/>
       <arg value="-Dsources=${platform-sources-jar}"/>
       <arg value="-Djavadoc=${platform-javadoc-jar}"/>
-    </artifact:mvn>
+    </exec>
   </target>
 
   <!-- NOTE: The 'deploy' target works only if the version (jna.version in build.xml) ends in '-SNAPSHOT'. -->
-  <target name="deploy" depends="dist,-bootstrap-maven" description="deploy snapshot version to Maven snapshot repository">
-    <artifact:mvn failonerror="true">
+  <target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
@@ -1461,9 +1451,9 @@ cd ..
       <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-aar}"/>
       <arg value="-Dtypes=jar,jar,aar"/>
       <arg value="-Dclassifiers=sources,javadoc,"/>
-    </artifact:mvn>
+    </exec>
 
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
@@ -1472,9 +1462,9 @@ cd ..
       <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
-    </artifact:mvn>
+    </exec>
 
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
@@ -1483,9 +1473,9 @@ cd ..
       <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
-    </artifact:mvn>
+    </exec>
 
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
@@ -1494,15 +1484,15 @@ cd ..
       <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
-    </artifact:mvn>
+    </exec>
   </target>
 
 
   <property name="version-maven-gpg-plugin" value="1.4"/>
 
-  <target name="stage" depends="dist,-bootstrap-maven" description="deploy release version to Maven staging repository">
+  <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the jna,  artifact -->
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -1512,10 +1502,10 @@ cd ..
       <arg value="-Dclassifiers=sources,javadoc,"/>
       <arg value="-Dtypes=jar,jar,aar"/>
       <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
+    </exec>
 
     <!-- sign and deploy the platform artifact -->
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -1525,10 +1515,10 @@ cd ..
       <arg value="-Dclassifiers=sources,javadoc"/>
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
+    </exec>
 
     <!-- sign and deploy the jna,  artifact -->
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -1538,10 +1528,10 @@ cd ..
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
       <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
+    </exec>
 
     <!-- sign and deploy the platform artifact -->
-    <artifact:mvn failonerror="true">
+    <exec executable="mvn" searchpath="true" failonerror="true" failifexecutionfails="true" logError="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -1551,29 +1541,7 @@ cd ..
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
       <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
-  </target>
-
-  <target name="-bootstrap-maven">
-      <artifact:remoteRepository id="remote.mavenCentral" url="https://repo1.maven.org/maven2/" />
-      <artifact:dependencies pathId="dependency.dummy">
-          <remoteRepository refid="remote.mavenCentral" />
-          <dependency groupId="org.apache.maven.plugins" artifactId="maven-gpg-plugin" version="1.4" type="maven-plugin"/>
-          <dependency groupId="org.apache.maven.plugins" artifactId="maven-deploy-plugin" version="2.7" type="maven-plugin"/>
-          <dependency groupId="org.apache.maven.plugins" artifactId="maven-install-plugin" version="2.5" type="maven-plugin"/>
-          <dependency groupId="org.apache.maven" artifactId="apache-maven" version="2.0.10" />
-          <dependency groupId="org.apache.maven" artifactId="maven-model" version="2.0.10" />
-          <dependency groupId="org.apache.maven" artifactId="maven-artifact" version="2.0.10" />
-          <dependency groupId="org.apache.maven" artifactId="maven-project" version="2.0.10" />
-          <dependency groupId="org.apache.maven" artifactId="maven-artifact-manager" version="2.0.10" />
-          <dependency groupId="org.apache.maven" artifactId="maven-plugin-registry" version="2.0.10" />
-          <dependency groupId="org.apache.maven" artifactId="maven-plugin-api" version="2.0.10" />
-          <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils" version="3.0.15" />
-      </artifact:dependencies>
-      <artifact:dependencies pathId="dependency.dummy2">
-          <remoteRepository refid="remote.mavenCentral" />
-          <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils" version="1.5.5" />
-      </artifact:dependencies>
+    </exec>
   </target>
 
   <target name="checkstyle">
