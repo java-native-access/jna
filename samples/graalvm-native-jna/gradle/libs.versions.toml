@@ -1,0 +1,57 @@
+# Copyright (c) 2015 Adam Marcionek, All Rights Reserved
+#
+# The contents of this file is dual-licensed under 2
+# alternative Open Source/Free licenses: LGPL 2.1 or later and
+# Apache License 2.0. (starting with JNA version 4.0.0).
+#
+# You can freely decide which license you want to apply to
+# the project.
+#
+# You may obtain a copy of the LGPL License at:
+#
+# http://www.gnu.org/licenses/licenses.html
+#
+# A copy is also included in the downloadable source code package
+# containing JNA, in file "LGPL2.1".
+#
+# You may obtain a copy of the Apache License at:
+#
+# http://www.apache.org/licenses/
+#
+# A copy is also included in the downloadable source code package
+# containing JNA, in file "AL2.0".
+
+[versions]
+jna = "5.15.0-SNAPSHOT"
+graalvm = "24.0.1"
+graalvm-plugin = "0.10.2"
+
+[plugins]
+graalvm = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-plugin" }
+
+[libraries]
+jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
+jna-graalvm = { group = "net.java.dev.jna", name = "jna-graalvm", version.ref = "jna" }
+jna-jpms = { group = "net.java.dev.jna", name = "jna-jpms", version.ref = "jna" }
+jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
+jna-platform-jpms = { group = "net.java.dev.jna", name = "jna-platform-jpms", version.ref = "jna" }
+graalvm-nativeimage-svm = { group = "org.graalvm.nativeimage", name = "svm", version.ref = "graalvm" }
+graalvm-sdk-nativeimage = { group = "org.graalvm.sdk", name = "nativeimage", version.ref = "graalvm" }
+graalvm-sdk-jniutils = { group = "org.graalvm.sdk", name = "jniutils", version.ref = "graalvm" }
+
+[bundles]
+
+jna = [
+  "jna",
+  "jna-platform"
+]
+
+jna-jpms = [
+  "jna-jpms",
+  "jna-platform-jpms"
+]
+
+graalvm-api = [
+  "graalvm-sdk-nativeimage",
+  "graalvm-sdk-jniutils"
+]

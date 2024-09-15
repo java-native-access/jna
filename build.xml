@@ -39,6 +39,7 @@
   <property name="testjar2" value="${name}-test2.jar"/>
   <property name="testjar3" value="${name}-test3.jar"/>
   <property name="jar-jpms" value="${name}-jpms.jar"/>
+  <property name="jar-graalvm" value="${name}-graalvm.jar"/>
   <property name="debug" value="true"/>
   <property name="debug.native" value="false"/>
   <property name="cflags_extra.native" value=""/>
@@ -52,6 +53,7 @@
   <property name="test.src" location="test"/>
   <property name="doc" location="doc"/>
   <property name="javadoc" location="${doc}/javadoc"/>
+  <property name="javadoc-graalvm" location="${doc}/javadoc-graalvm"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
 
   <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java,**/WebStartTest.java">
@@ -60,6 +62,7 @@
   <property name="dist-jar" value="${dist}/${jar}"/>
   <property name="dist-aar" value="${dist}/${aar}"/>
   <property name="dist-jar-jpms" value="${dist}/${jar-jpms}"/>
+  <property name="dist-jar-graalvm" value="${dist}/${jar-graalvm}" />
 
   <!-- Maven -->
   <!-- define Maven coordinates -->
@@ -68,6 +71,9 @@
 
   <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${jna.version}-javadoc.jar" />
   <property name="maven-sources-jar" value="${dist}/${artifactId}-${jna.version}-sources.jar" />
+
+  <property name="maven-graalvm-javadoc-jar" value="${dist}/jna-graalvm-${jna.version}-javadoc.jar" />
+  <property name="maven-graalvm-sources-jar" value="${dist}/jna-graalvm-${jna.version}-sources.jar" />
 
   <property name="platform-jar" value="${dist}/jna-platform.jar"/>
   <property name="platform-javadoc-jar" value="${dist}/platform-${jna.version}-javadoc.jar" />
@@ -88,10 +94,12 @@
   <property name="pom-platform-base" value="pom-jna-platform.xml" />
   <property name="pom-jpms-base" value="pom-jna-jpms.xml" />
   <property name="pom-platform-jpms-base" value="pom-jna-platform-jpms.xml" />
+  <property name="pom-graalvm-base" value="pom-jna-graalvm.xml" />
 
   <property name="pom" value="${build}/pom-jna.xml" />
   <property name="pom-platform" value="${build}/pom-jna-platform.xml" />
   <property name="pom-jpms" value="${build}/pom-jna-jpms.xml" />
+  <property name="pom-graalvm" value="${build}/pom-jna-graalvm.xml" />
   <property name="pom-platform-jpms" value="${build}/pom-jna-platform-jpms.xml" />
 
   <target name="default" depends="test" description="Build and Test."/>
@@ -112,6 +120,19 @@
            uri="antlib:org.codehaus.mojo.animal_sniffer"
            classpathref="maven-ant-tasks.classpath" />
 
+  <!-- Condition describing whether we are building on JDK21+ -->
+  <target name="-jdk21plus-only">
+    <condition property="jdk21plus">
+      <or>
+        <equals arg1="21" arg2="${ant.java.version}"/>
+        <equals arg1="22" arg2="${ant.java.version}"/>
+        <equals arg1="23" arg2="${ant.java.version}"/>
+        <equals arg1="24" arg2="${ant.java.version}"/>
+        <equals arg1="25" arg2="${ant.java.version}"/>
+      </or>
+    </condition>
+  </target>
+
   <target name="-prepare-anttools">
       <subant antfile="build-ant-tools.xml" buildpath="${basedir}"></subant>
       <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${build}/ant-tools:$lib/asm-8.0.1.jar" />
@@ -131,6 +152,7 @@
     <copy file="${pom-base}" tofile="${pom}" />
     <copy file="${pom-platform-base}" tofile="${pom-platform}" />
     <copy file="${pom-jpms-base}" tofile="${pom-jpms}" />
+    <copy file="${pom-graalvm-base}" tofile="${pom-graalvm}" />
     <copy file="${pom-platform-jpms-base}" tofile="${pom-platform-jpms}" />
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
@@ -148,6 +170,16 @@
                    flags="g"
                    file="${pom-jpms}"/>
 
+    <replaceregexp match="(&lt;version&gt;)TEMPLATE(&lt;/version&gt;)"
+                   replace="\1${jna.version}\2"
+                   flags="g"
+                   file="${pom-graalvm}"/>
+
+    <replaceregexp match="(&lt;version&gt;)GRAALVM_VERSION(&lt;/version&gt;)"
+                   replace="\1${graalvm.version}\2"
+                   flags="g"
+                   file="${pom-graalvm}"/>
+
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                  replace="\1${jna.version}\2"
                  flags="g"
@@ -158,6 +190,7 @@
     </condition>
 
     <property name="classes" location="${build}/classes"/>
+    <property name="classes-graalvm" location="${build}/classes-graalvm"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
     <property name="reports" value="${build}/reports"/>
@@ -192,6 +225,7 @@
       <not><equals arg1="${libjsig}" arg2=""/></not>
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
+    <property name="native-static.jar" value="${os.prefix}-static.jar"/>
     <property name="build.native" location="${build}/${native.subdir}"/>
     <property name="build.headers" location="${build}/headers"/>
     <property name="build.aar" location="${build}/aar"/>
@@ -237,6 +271,9 @@
     <path id="src.path">
       <pathelement location="${src}"/>
     </path>
+    <path id="src.graalvm">
+      <pathelement location="lib/gvm"/>
+    </path>
     <path id="test.runpath">
       <pathelement path="${build}/${jar}"/>
       <pathelement path="${test.classes}"/>
@@ -246,11 +283,50 @@
     </path>
   </target>
 
+  <target name="compile-graalvm" depends="-setup,-jdk21plus-only"
+          if="${jdk21plus}"
+          description="Compile GraalVM Java sources">
+    <!-- Need GraalVM SVM artifact to build features for `jna-graalvm.jar` -->
+    <path id="graalvm.classpath" />
+    <artifact:remoteRepository id="central" url="https://repo1.maven.org/maven2/" />
+    <artifact:dependencies pathId="graalvm.classpath">
+      <remoteRepository refid="central" />
+      <dependency groupId="org.graalvm.sdk" artifactId="nativeimage" version="${graalvm.version}"/>
+      <dependency groupId="org.graalvm.nativeimage" artifactId="svm" version="${graalvm.version}"/>
+    </artifact:dependencies>
+
+    <mkdir dir="${classes-graalvm}" />
+    <delete dir="${build}/gvm-src" />
+    <mkdir dir="${build}/gvm-src/com/sun/jna" />
+
+    <copy file="lib/gvm/AbstractJNAFeature.java" todir="${build}/gvm-src/com/sun/jna" />
+    <copy file="lib/gvm/JavaNativeAccess.java" todir="${build}/gvm-src/com/sun/jna" />
+    <copy file="lib/gvm/SubstrateStaticJNA.java" todir="${build}/gvm-src/com/sun/jna" />
+
+    <javac release="21"
+           destdir="${classes-graalvm}"
+           includeantruntime="false"
+           deprecation="on"
+           debug="${debug}"
+           encoding="UTF-8"
+           nativeheaderdir="${build.headers}">
+      <src location="${build}/gvm-src/com/sun/jna" />
+      <classpath>
+        <path refid="graalvm.classpath"/>
+        <pathelement location="${classes}" />
+      </classpath>
+    </javac>
+  </target>
+
   <target name="compile" depends="-setup"
           description="Compile all Java source">
 
     <delete dir="${build}/jna-src" />
     <mkdir dir="${build}/jna-src/com/sun/jna" />
+
+    <!-- We need to repeat these mkdirs so that the GraalVM classes exist unconditionally, even on JDK8. -->
+    <mkdir dir="${classes-graalvm}" />
+    <mkdir dir="${javadoc-graalvm}" />
 
     <copy file="src/com/sun/jna/Version.java" todir="${build}/jna-src/com/sun/jna" />
 
@@ -564,6 +640,17 @@ osname=macosx;processor=aarch64
                   includes="LICENSE,LGPL2.1,AL2.0"
                   prefix="META-INF"/>
     </jar>
+    <jar jarfile="${build}/${jar-graalvm}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8">
+      <fileset dir="${classes-graalvm}">
+        <patternset refid="jar-compiled"/>
+      </fileset>
+      <zipfileset dir="lib/gvm"
+               includes="native-image.properties"
+               prefix="META-INF/native-image/com.sun.jna"/>
+      <zipfileset dir="."
+                  includes="LICENSE,LGPL2.1,AL2.0"
+                  prefix="META-INF"/>
+    </jar>
     <zip zipfile="${build}/${minjar}">
       <zipfileset src="${build}/${jar}" excludes="**/*jnidispatch*"/>
     </zip>
@@ -651,7 +738,7 @@ osname=macosx;processor=aarch64
     </jar>
   </target>
 
-  <target name="javah" depends="compile" unless="-native">
+  <target name="javah" depends="compile,compile-graalvm" unless="-native">
     <condition property="grep" value="/usr/sfw/bin/ggrep">
       <os name="SunOS"/>
     </condition>
@@ -1016,21 +1103,40 @@ cd ..
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
+    <!-- Include only dynamic library variants for JVM JAR targets. -->
     <mkdir dir="${classes}/${native.path}"/>
     <copy todir="${classes}/${native.path}">
       <fileset dir="${build.native}"
-               includes="jnidispatch.dll,libjnidispatch.*"/>
+               includes="jnidispatch.dll,libjnidispatch.*"
+                excludes="*.lib,*.a"/>
     </copy>
     <mkdir dir="${eclipse.classes}/${native.path}"/>
     <copy todir="${eclipse.classes}/${native.path}"
           failonerror="false">
       <fileset dir="${build.native}"
+               includes="jnidispatch.dll,libjnidispatch.*"
+               excludes="*.lib,*.a"/>
+    </copy>
+    <!-- Include both dynamic and static library variants for all operating systems in the GraalVM JAR. -->
+    <mkdir dir="${classes-graalvm}/${native.path}"/>
+    <copy todir="${classes-graalvm}/${native.path}">
+      <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
+      <fileset dir="${build.native}/libffi/.libs"
+               includes="ffi.lib,libffi.a"/>
     </copy>
     <!-- For web start, native libraries may be provided in the root of -->
     <!-- an included jar file -->
     <jar jarfile="${build}/${native.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
-      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
+      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*" excludes="*.a,*.lib"/>
+      <manifest>
+        <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
+        <attribute name="Specification-Version" value="${jni.version}"/>
+      </manifest>
+    </jar>
+    <jar jarfile="${build}/${native-static.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
+      <fileset dir="${build.native}" includes="jnidispatch.lib,libjnidispatch.a"/>
+      <fileset dir="${build.native}/libffi/.libs" includes="libffi.a"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
@@ -1038,6 +1144,7 @@ cd ..
     </jar>
     <copy todir="${lib.native}">
       <fileset dir="${build}" includes="${native.jar}"/>
+      <fileset dir="${build}" includes="${native-static.jar}"/>
     </copy>
   </target>
 
@@ -1294,6 +1401,54 @@ cd ..
     <echo>Reports generated in ${reports.clover}</echo>
   </target>
 
+  <target name="javadoc-graalvm" depends="-setup,compile-graalvm">
+    <path id="javadoc.graalvm.src.path">
+      <path refid="src.graalvm" />
+    </path>
+    <path id="javadoc.graalvm.compile.path">
+      <path refid="compile.path"/>
+      <pathelement location="${classes-graalvm}"/>
+      <pathelement location="${classes}"/>
+    </path>
+    <property name="header"
+              value="&lt;b&gt;JNA GraalVM Integration&lt;/&gt;&lt;font size=&quot;-1&quot;&gt; ${jna.version}&lt;/font&gt;"/>
+    <property name="footer"
+              value="&lt;center&gt;&lt;i&gt;${copyright}&lt;/i&gt;&lt;/center&gt;"/>
+
+    <mkdir dir="${javadoc-graalvm}"/>
+    <condition property="javadoc.graalvm.opts" value="-Xdoclint:none" else="">
+      <not><matches pattern="^1.[0-7]$" string="${ant.java.version}"/></not>
+    </condition>
+    <javadoc package="true"
+             windowtitle="JNA GraalVM Integration"
+             encoding="UTF-8"
+             sourcepathref="javadoc.graalvm.src.path"
+             classpathref="javadoc.graalvm.compile.path"
+             maxmemory="256m"
+             packagenames="com.sun.jna"
+             additionalparam="${javadoc.graalvm.opts}"
+             destdir="${javadoc-graalvm}">
+      <!-- stylesheetfile="${stylesheet}" -->
+      <doctitle>JNA GraalVM Integration</doctitle>
+      <header>${header}</header>
+      <bottom>${footer}</bottom>
+      <link href="http://download.oracle.com/javase/${javac.release}/docs/api/"/>
+      <link href="https://java-native-access.github.io/jna/${jni.version}/" />
+
+      <packageset dir="${src}" defaultexcludes="yes">
+        <patternset>
+          <include name="com/sun/jna/**/*"/>
+        </patternset>
+      </packageset>
+
+      <group title="Java Native Access" packages="com.sun.jna"/>
+      <arg value="-notimestamp"/>
+    </javadoc>
+    <jar jarfile="${maven-graalvm-javadoc-jar}" createUnicodeExtraFields="never" encoding="UTF-8">
+      <fileset dir="${javadoc-graalvm}" />
+    </jar>
+  </target>
+
   <target name="javadoc" depends="-setup">
     <path id="javadoc.src.path">
       <path refid="src.path"/>
@@ -1353,7 +1508,7 @@ cd ..
   <target name="dist" depends="jar,aar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}" force="true" overwrite="true">
-      <fileset dir="${build}" includes="${jar},${minjar},${aar},${jar-jpms}"/>
+      <fileset dir="${build}" includes="${jar},${minjar},${aar},${jar-jpms},${jar-graalvm}"/>
       <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar,jna-platform-jpms.jar"/>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
@@ -1367,6 +1522,9 @@ cd ..
     </copy>
     <jar jarfile="${maven-javadoc-jar}" createUnicodeExtraFields="never" encoding="UTF-8">
         <fileset dir="${javadoc}" />
+    </jar>
+    <jar jarfile="${maven-graalvm-javadoc-jar}" createUnicodeExtraFields="never" encoding="UTF-8">
+        <fileset dir="${javadoc-graalvm}" />
     </jar>
 
     <zip zipfile="${dist}/doc.zip">
@@ -1435,6 +1593,12 @@ cd ..
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
+      <arg value="-DpomFile=${pom-graalvm}"/>
+      <arg value="-Dfile=${dist-jar-graalvm}"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
       <arg value="-Dsources=${platform-sources-jar}"/>
@@ -1480,6 +1644,17 @@ cd ..
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom-jpms}"/>
       <arg value="-Dfile=${dist-jar-jpms}"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom-graalvm}"/>
+      <arg value="-Dfile=${dist-jar-graalvm}"/>
       <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
       <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dclassifiers=sources,javadoc"/>
@@ -1540,6 +1715,19 @@ cd ..
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
+    <!-- sign and deploy the graalvm artifact -->
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=${pom-graalvm}"/>
+      <arg value="-Dfile=${dist-jar-graalvm}"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+      <arg value="-Dgpg.useagent=true"/>
+    </artifact:mvn>
+
     <!-- sign and deploy the platform artifact -->
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
@@ -1555,6 +1743,7 @@ cd ..
   </target>
 
   <target name="-bootstrap-maven">
+      <artifact:remoteRepository id="central" url="https://repo1.maven.org/maven2/" />
       <artifact:remoteRepository id="remote.mavenCentral" url="https://repo1.maven.org/maven2/" />
       <artifact:dependencies pathId="dependency.dummy">
           <remoteRepository refid="remote.mavenCentral" />
@@ -1582,5 +1771,48 @@ cd ..
       <checkstyle config="checkstyle.xml">
           <fileset dir="." includes="**/*.java"/>
       </checkstyle>
+  </target>
+
+  <target name="nativeImage">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
+      <arg value="${basedir}/samples/graalvm-native-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
+  <target name="nativeImageStatic">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-static-jna" failonerror="true">
+      <arg value="${basedir}/samples/graalvm-native-static-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
+  <target name="nativeImageStaticDebug">
+    <exec executable="/bin/bash" dir="${basedir}/samples/graalvm-native-static-jna" failonerror="true">
+      <arg value="${basedir}/samples/graalvm-native-static-jna/gradlew"/>
+      <arg value="-PjnaVersion=${jna.version}"/>
+      <arg value="-PgraalvmVersion=${graalvm.version}"/>
+      <arg value="-PnativeImageDebug=true"/>
+      <arg value="build"/>
+      <arg value="nativeCompile"/>
+    </exec>
+  </target>
+
+  <target name="nativeRun" depends="nativeImage">
+    <exec executable="${basedir}/samples/graalvm-native-jna/build/native/nativeCompile/graalvm-native-jna" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
+      <arg value="testing-123"/>
+    </exec>
+  </target>
+
+  <target name="nativeRunStatic" depends="nativeImageStatic">
+    <exec executable="${basedir}/samples/graalvm-native-static-jna/build/native/nativeCompile/graalvm-native-static-jna" dir="${basedir}/samples/graalvm-native-jna" failonerror="true">
+      <arg value="testing-123"/>
+    </exec>
   </target>
 </project>
