@@ -7,6 +7,7 @@ Next Release (5.16.0)
 
 Features
 --------
+* [#1626](https://github.com/java-native-access/jna/pull/1626): Add caching of field list and field validation in `Structure` along with more efficient reentrant read-write locking instead of synchronized() blocks - [@BrettWooldridge](https://github.com/brettwooldridge)
 
 Bug Fixes
 ---------
