@@ -89,6 +89,7 @@ LD=$(CC)
 LIBS=
 # Default to Sun recommendations for JNI compilation
 COPT=-O2 -fno-omit-frame-pointer -fno-strict-aliasing
+COPT+=-Wno-implicit-function-declaration
 CASM=-S
 ifeq ($(DEBUG),true)
 CDEBUG=-g
