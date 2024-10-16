@@ -36,7 +36,7 @@ jobs:
           distribution: 'zulu'
       - name: Linux requirements
         if: contains(matrix.os, 'ubuntu')
-        run: sudo apt-get -y install texinfo
+        run: sudo apt-get install -yq --force-yes zip unzip libtool automake libltdl-dev texinfo ant ant-optional debhelper-compat default-jdk javahelper libasm-java libffi-dev libx11-dev libxt-dev maven-repo-helper pkg-config
       - name: macOS requirements
         if: contains(matrix.os, 'macos')
         run: |
