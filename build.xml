@@ -398,6 +398,10 @@ com/sun/jna/freebsd-x86-64/libjnidispatch.so;
 processor=x86-64;osname=freebsd,
 com/sun/jna/freebsd-aarch64/libjnidispatch.so;
 processor=aarch64;osname=freebsd,
+com/sun/jna/freebsd-ppc64le/libjnidispatch.so;
+processor=ppc64le;osname=freebsd,
+com/sun/jna/freebsd-ppc64/libjnidispatch.so;
+processor=ppc64;osname=freebsd,
 
 com/sun/jna/openbsd-x86/libjnidispatch.so;
 processor=x86;osname=openbsd,
@@ -535,6 +539,12 @@ osname=macosx;processor=aarch64
       <zipfileset src="${lib.native}/freebsd-aarch64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-aarch64"/>
+      <zipfileset src="${lib.native}/freebsd-ppc64le.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/freebsd-ppc64le"/>
+      <zipfileset src="${lib.native}/freebsd-ppc64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/freebsd-ppc64"/>
       <zipfileset src="${lib.native}/openbsd-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/openbsd-x86"/>
@@ -725,6 +735,8 @@ osname=macosx;processor=aarch64
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-aarch64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-ppc64le.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-ppc64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86.jar" overwrite="true"/>
