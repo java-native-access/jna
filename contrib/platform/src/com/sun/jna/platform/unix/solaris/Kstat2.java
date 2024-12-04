@@ -272,10 +272,10 @@ public interface Kstat2 extends Library {
          *         {@link Kstat2Map} is returned.
          *         <p>
          *         If the value is of type {@link Kstat2#KSTAT2_NVVT_INT}, a
-         *         {@link long} is returned.
+         *         {@code long} is returned.
          *         <p>
          *         If the value is of type {@link Kstat2#KSTAT2_NVVT_INTS}, an array of
-         *         {@link long} is returned.
+         *         {@code long} is returned.
          *         <p>
          *         If the value is of type {@link Kstat2#KSTAT2_NVVT_STR}, a
          *         {@link String} is returned.

@@ -1305,10 +1305,8 @@ cd ..
       <path refid="compile.path"/>
       <pathelement location="${classes}"/>
     </path>
-    <property name="header"
-              value="&lt;b&gt;JNA API&lt;/&gt;&lt;font size=&quot;-1&quot;&gt; ${jna.version}&lt;/font&gt;"/>
-    <property name="footer"
-              value="&lt;center&gt;&lt;i&gt;${copyright}&lt;/i&gt;&lt;/center&gt;"/>
+    <property name="header" value="JNA API - ${jna.version}"/>
+    <property name="footer" value="${copyright}"/>
 
     <mkdir dir="${javadoc}"/>
     <condition property="javadoc.opts" value="-Xdoclint:none" else="">
@@ -1328,7 +1326,6 @@ cd ..
       <doctitle>JNA API Documentation</doctitle>
       <header>${header}</header>
       <bottom>${footer}</bottom>
-      <link href="http://download.oracle.com/javase/${javac.release}/docs/api/"/>
 
       <packageset dir="${src}" defaultexcludes="yes">
         <patternset>
