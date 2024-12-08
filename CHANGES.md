@@ -9,6 +9,7 @@ Features
 --------
 * [#1671](https://github.com/java-native-access/jna/pull/1671): Add `isRISCV` to `c.s.j.Platform` - [@Glavo](https://github.com/Glavo).
 * [#1672](https://github.com/java-native-access/jna/pull/1672): Add `CFLocale`, `CFLocaleCopyCurrent`, `CFCFDateFormatter`, `CFDateFormatterStyle`, `CFDateFormatterCreate` and `CFDateFormatterGetFormat` to `c.s.j.p.mac.CoreFoundation` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1636](https://github.com/java-native-access/jna/issues/1636): Drop hard dependency on java.lang.SecurityManager/java.security.AccessController - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
@@ -31,7 +32,7 @@ Release 5.16.0
 
 Features
 --------
-* [#1626](https://github.com/java-native-access/jna/pull/1626): Add caching of field list and field validation in `Structure` along with more efficient reentrant read-write locking instead of synchronized() blocks - [@BrettWooldridge](https://github.com/brettwooldridge)
+* [#1626](https://github.com/java-native-access/jna/pull/1626): Add caching of field list and field validation in `Structure` along with more efficient reentrant read-write locking instead of synchronized() blocks - [@BrettWooldridge](https://github.com/brettwooldridge).
 
 Bug Fixes
 ---------
