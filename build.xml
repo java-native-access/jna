@@ -1344,6 +1344,13 @@ cd ..
 
       <arg value="-notimestamp"/>
     </javadoc>
+    <!--
+    Create an empty resources/fonts/dejavu.css - the file is reference by default
+    javadoc output, yet not provided by it. People seem to be irritated by the
+    generated 404, so provide an empty file.
+    -->
+    <mkdir dir="${javadoc}/resources/fonts/" />
+    <echo file="${javadoc}/resources/fonts/dejavu.css">/* Intentionally left empty */</echo>
     <jar jarfile="${platform-javadoc-jar}" createUnicodeExtraFields="never" encoding="UTF-8">
       <fileset dir="${javadoc}" />
     </jar>
