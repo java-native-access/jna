@@ -29,6 +29,8 @@ import com.sun.jna.platform.linux.Udev.UdevContext;
 import com.sun.jna.platform.linux.Udev.UdevDevice;
 import com.sun.jna.platform.linux.Udev.UdevEnumerate;
 import com.sun.jna.platform.linux.Udev.UdevListEntry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -36,6 +38,8 @@ import junit.framework.TestCase;
  * Exercise the {@link Udev} class.
  */
 public class UdevTest extends TestCase {
+
+    private static final Pattern SCSI_DISK_PATTERN = Pattern.compile(".*/sd[a-z](\\d+)$");
 
     @Test
     public void testEnumerateDevices() {
@@ -74,7 +78,10 @@ public class UdevTest extends TestCase {
                                     // No additional reference is acquired from getParent
                                     if (parent != null && parent2 != null) {
                                         // Devnode should match same parent without restricting to block and disk
-                                        assertEquals("Partition parent should match with and without filter",
+                                        assertEquals(String.format(
+                                                "Partition parent should match with and without filter (%s)",
+                                                devnode
+                                                ),
                                                 parent.getDevnode(), parent2.getDevnode());
                                         // Save the size and major
                                         parentSize = parent.getSysattrValue("size");
@@ -82,21 +89,29 @@ public class UdevTest extends TestCase {
                                     }
                                 }
                                 String size = device.getSysattrValue("size");
-                                assertTrue("Size must be nonnegative", 0 <= Long.parseLong(size));
+                                assertTrue(String.format("Size must be nonnegative (%s)", devnode), 0 <= Long.parseLong(size));
                                 if (parentSize != null) {
-                                    assertTrue("Partition can't be bigger than its disk",
+                                    assertTrue(String.format("Partition can't be bigger than its disk (%s)", devnode),
                                             Long.parseLong(size) <= Long.parseLong(parentSize));
                                 }
                                 String major = device.getPropertyValue("MAJOR");
-                                assertTrue("Major value must be nonnegative", 0 <= Long.parseLong(major));
+                                assertTrue(String.format("Major value must be nonnegative (%s)", devnode), 0 <= Long.parseLong(major));
                                 if (parentMajor != null) {
-                                    assertEquals("Partition and its parent disk should have same major number", major,
-                                            parentMajor);
+                                    // For scsi disks only the first 15 Partitions have the
+                                    // same major as their disk
+                                    Matcher scsiMatcher = SCSI_DISK_PATTERN.matcher(devnode);
+                                    boolean scsiDiskDynamicMinor = scsiMatcher.matches() && Integer.parseInt(scsiMatcher.group(1)) > 15;
+                                    if(! scsiDiskDynamicMinor) {
+                                        assertEquals(
+                                                String.format("Partition and its parent disk should have same major number (%s)", devnode),
+                                                major, parentMajor
+                                        );
+                                    }
                                 }
-                                assertEquals("DevType mismatch", devType, device.getDevtype());
-                                assertEquals("Subsystem mismatch", "block", device.getSubsystem());
-                                assertEquals("Syspath mismatch", syspath, device.getSyspath());
-                                assertTrue("Syspath should end with name", syspath.endsWith(device.getSysname()));
+                                assertEquals(String.format("DevType mismatch (%s)", devnode), devType, device.getDevtype());
+                                assertEquals(String.format("Subsystem mismatch (%s)", devnode), "block", device.getSubsystem());
+                                assertEquals(String.format("Syspath mismatch (%s)", devnode), syspath, device.getSyspath());
+                                assertTrue(String.format("Syspath should end with name (%s)", devnode), syspath.endsWith(device.getSysname()));
                             }
                         } finally {
                             // Release the reference and iterate to the next device
