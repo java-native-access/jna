@@ -181,7 +181,7 @@ COPT+=-fpic -ffunction-sections -funwind-tables -fno-short-enums
 JAVA_INCLUDES=
 CINCLUDES+=-I"$(NDK_PLATFORM)/arch-$(AARCH)/usr/include" # -I/usr/include
 LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-$(AARCH)$(ALIBDIR)/" -lgcc -lc -ldl -lm
-LDFLAGS+=-Wl,-shared,-Bsymbolic -Wl,--build-id=sha1 -Wl,-z,max-page-size=16384
+LDFLAGS+=-Wl,-shared,-Bsymbolic -Wl,--build-id=sha1 -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
 FFI_ENV=CPP="$(CPP)" CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) $(CINCLUDES)" CPPFLAGS="$(CDEFINES) $(CINCLUDES)" LIBS="$(LIBS)" RANLIB="$(RANLIB)"
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=$(HOST)
 endif

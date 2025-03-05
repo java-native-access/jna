@@ -10,6 +10,7 @@ Features
 
 Bug Fixes
 ---------
+* [#1647](https://github.com/java-native-access/jna/issues/1647): Fix calls to jnidispatch on Android with 16KB page size (part 2) - [@BugsBeGone](https://github.com/BugsBeGone).
 
 
 Release 5.16.0
