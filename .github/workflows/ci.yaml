@@ -19,6 +19,9 @@ jobs:
         java: [8, 11, 17, 21, 23]
         # macos-13 is x86, macos-latest is aarch64
         os: [ubuntu-latest, macos-13, macos-latest]
+        include:
+          - java: 17
+            os: 'ubuntu-24.04-arm'
       # Run all tests even if one fails
       fail-fast: false
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
@@ -32,7 +35,9 @@ jobs:
           distribution: 'zulu'
       - name: Linux requirements
         if: contains(matrix.os, 'ubuntu')
-        run: sudo apt-get install -yq --force-yes zip unzip libtool automake libltdl-dev texinfo ant ant-optional debhelper-compat default-jdk javahelper libasm-java libffi-dev libx11-dev libxt-dev maven-repo-helper pkg-config
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq --allow-downgrades zip unzip libtool automake libltdl-dev texinfo ant ant-optional debhelper-compat default-jdk javahelper libasm-java libffi-dev libx11-dev libxt-dev maven-repo-helper pkg-config
       - name: macOS requirements
         if: contains(matrix.os, 'macos')
         run: |
