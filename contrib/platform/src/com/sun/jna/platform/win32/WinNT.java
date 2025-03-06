@@ -4420,4 +4420,6 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     class TOKEN_ELEVATION extends Structure {
         public int TokenIsElevated;
     }
+
+    Guid.GUID GUID_CONSOLE_DISPLAY_STATE = new Guid.GUID("6FE69556-704A-47A0-8F24-C28D936FDA47");
 }

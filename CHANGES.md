@@ -7,7 +7,8 @@ Next Release (5.17.0)
 
 Features
 --------
-
+* [#1658](https://github.com/java-native-access/jna/pull/1658):  Add win32 power event constants, types, and functions - [@eranl](https://github.com/eranl).
+  
 Bug Fixes
 ---------
 
