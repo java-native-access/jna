@@ -7,7 +7,8 @@ Next Release (5.17.0)
 
 Features
 --------
-
+* [#1658](https://github.com/java-native-access/jna/pull/1658):  Add win32 power event constants, types, and functions - [@eranl](https://github.com/eranl).
+  
 Bug Fixes
 ---------
 * [#1647](https://github.com/java-native-access/jna/issues/1647): Fix calls to jnidispatch on Android with 16KB page size (part 2) - [@BugsBeGone](https://github.com/BugsBeGone).

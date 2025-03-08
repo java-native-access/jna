@@ -596,4 +596,12 @@ public class User32Test extends AbstractWin32TestSupport {
         // which is in an undefined state at test execution and may change arbitrarily
         // during the test.
     }
+
+    @Test
+    public void testRegisterPowerSettingNotification() {
+        WinUser.HPOWERNOTIFY hpowernotify = INSTANCE.RegisterPowerSettingNotification(
+                new HWND(), WinNT.GUID_CONSOLE_DISPLAY_STATE, User32.DEVICE_NOTIFY_WINDOW_HANDLE);
+        assertNotNull(hpowernotify);
+        assertNotEquals(0, INSTANCE.UnregisterPowerSettingNotification(hpowernotify));
+    }
 }

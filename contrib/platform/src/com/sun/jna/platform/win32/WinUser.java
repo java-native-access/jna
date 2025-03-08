@@ -30,7 +30,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.WinDef.HKL;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -2088,4 +2087,79 @@ public interface WinUser extends WinDef {
      * Bitmask for the RESERVED2 key modifier.
      */
     int MODIFIER_RESERVED2_MASK = 32;
+
+    class HPOWERNOTIFY extends PVOID {
+        public HPOWERNOTIFY() {
+        }
+
+        public HPOWERNOTIFY(Pointer pointer) {
+            super(pointer);
+        }
+    }
+
+    /**
+     * Registers the application to receive power setting notifications for the specific power setting event.
+     * @param hRecipient Handle indicating where the power setting notifications are to be sent.
+     *                   For interactive applications, the Flags parameter should be DEVICE_NOTIFY_WINDOW_HANDLE,
+     *                   and the hRecipient parameter should be a window handle.
+     *                   For services, the Flags parameter should be DEVICE_NOTIFY_SERVICE_HANDLE, and the hRecipient
+     *                   parameter should be a SERVICE_STATUS_HANDLE as returned from RegisterServiceCtrlHandlerEx.
+     * @param PowerSettingGuid The GUID of the power setting for which notifications are to be sent.
+     * @param Flags
+     *   <li>DEVICE_NOTIFY_WINDOW_HANDLE - Notifications are sent using WM_POWERBROADCAST messages
+     *   with a wParam parameter of PBT_POWERSETTINGCHANGE.
+     *   <li>DEVICE_NOTIFY_SERVICE_HANDLE - Notifications are sent to the HandlerEx callback function with a dwControl
+     *   parameter of SERVICE_CONTROL_POWEREVENT and a dwEventType of PBT_POWERSETTINGCHANGE.
+     * @return a notification handle for unregistering for power notifications. If the function fails, the return
+     * value is NULL. To get extended error information, call GetLastError.
+     */
+    HPOWERNOTIFY RegisterPowerSettingNotification(
+            /*[in]*/ HANDLE hRecipient,
+            /*[in]*/ Guid.GUID PowerSettingGuid,
+            /*[in]*/ int Flags);
+
+    /**
+     * Unregisters the power setting notification.
+     * @param Handle The handle returned from the RegisterPowerSettingNotification function.
+     * @return If the function succeeds, the return value is nonzero.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    BOOL UnregisterPowerSettingNotification(
+            /*[in]*/ HPOWERNOTIFY Handle
+    );
+
+    int WM_POWERBROADCAST = 0x0218;
+
+    int PBT_APMQUERYSUSPEND = 0x0000;
+    int PBT_APMQUERYSTANDBY = 0x0001;
+    int PBT_APMQUERYSUSPENDFAILED = 0x0002;
+    int PBT_APMQUERYSTANDBYFAILED = 0x0003;
+    int PBT_APMSUSPEND = 0x0004;
+    int PBT_APMSTANDBY = 0x0005;
+    int PBT_APMRESUMECRITICAL = 0x0006;
+    int PBT_APMRESUMESUSPEND = 0x0007;
+    int PBT_APMRESUMESTANDBY = 0x0008;
+    int PBT_APMBATTERYLOW = 0x0009;
+    int PBT_APMPOWERSTATUSCHANGE = 0x000A;
+    int PBT_APMOEMEVENT = 0x000B;
+    int PBT_APMRESUMEAUTOMATIC = 0x0012;
+    int PBT_POWERSETTINGCHANGE = 0x8013;
+
+    @FieldOrder({"PowerSetting", "DataLength", "Data"})
+    class POWERBROADCAST_SETTING extends Structure {
+        public Guid.GUID PowerSetting;
+        public int DataLength;
+        public byte Data[] = new byte[1];
+
+        public POWERBROADCAST_SETTING(Pointer p) {
+            super(p);
+            read();
+        }
+
+        @Override
+        public final void read() {
+            Data = new byte[getPointer().getInt(fieldOffset("DataLength"))];
+            super.read();
+        }
+    }
 }
