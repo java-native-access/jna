@@ -121,41 +121,41 @@ ifeq ($(OS),android)
 AARCH=$(ARCH)
 ALIBDIR=/usr/lib
 ifeq ($(ARCH),arm)
-PREFIX=arm-linux-androideabi-
+PREFIX=arm-linux-androideabi
 COPT+= -mthumb-interwork -march=armv5te -mtune=xscale -msoft-float -fstack-protector 
 HOST=arm-linux-eabi
 else
 ifeq ($(ARCH),armv7)
-PREFIX=arm-linux-androideabi-
-COPT+= -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -Wl,--fix-cortex-a8
-HOST=arm-linux-eabi
+PREFIX=armv7a-linux-androideabi
+COPT+= -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
+HOST=armv7a-linux-androideabi
 AARCH=arm
 else
 ifeq ($(ARCH),aarch64)
-PREFIX=aarch64-linux-android-
+PREFIX=aarch64-linux-android
 HOST=aarch64-linux-android
 AARCH=arm64
 ALIBDIR=/usr/lib64
 else
 ifeq ($(ARCH),x86)
-PREFIX=i686-linux-android-
+PREFIX=i686-linux-android
 COPT+= -march=i686
 HOST=i686-linux-android
 else
 ifeq ($(ARCH),x86-64)
-PREFIX=x86_64-linux-android-
+PREFIX=x86_64-linux-android
 COPT+= -m64
 HOST=x86_64-linux-android
 AARCH=x86_64
 ALIBDIR=/usr/lib64
 else
 ifeq ($(ARCH),mips)
-PREFIX=mipsel-linux-android-
+PREFIX=mipsel-linux-android
 HOST=mipsel-linux-android
 COPT+=
 else
 ifeq ($(ARCH),mips64)
-PREFIX=mips64el-linux-android-
+PREFIX=mips64el-linux-android
 HOST=mips64el-linux-android
 COPT+=
 ALIBDIR=/usr/lib64
@@ -169,19 +169,61 @@ endif
 endif
 endif
 NDK?=/Developer/Applications/android-ndk-r10e
-NDK_PLATFORM?=$(NDK)/platforms/android-21
-SYSROOT=$(NDK_PLATFORM)/arch-$(AARCH)
-CC=$(PREFIX)gcc --sysroot $(SYSROOT)
-CPP=$(PREFIX)cpp
+NDK_PLATFORM?=21
+
+# If using standalone toolchains, NDK_VER must be manually set to the major
+# version, since there is no copy of source.properties and prior to r16,
+# __NDK_MAJOR__ is not defined either.
+ifndef NDK_VER
+NDK_PROPS = $(NDK)/source.properties
+ifneq (,$(wildcard $(NDK_PROPS)))
+NDK_VER = $(shell sed -En 's/^Pkg.Revision[ \t]*=[ \t]*([0-9]+).*/\1/p' $(NDK_PROPS))
+else
+ERROR = $(error "Unknown NDK Pkg.Revision")
+endif
+endif
+
+# Check NDK > 16
+NDK_GT_16 = $(shell [ ${NDK_VER} -gt 16 ] && echo true)
+ifeq ($(NDK_GT_16),true)
+ifeq ($(ARCH),arm)
+ERROR = $(error "Incompatible NDK, no longer supports armv5")
+else
+ifneq (,$(findstring mips,$(ARCH)))
+ERROR = $(error "Incompatible NDK, no longer supports mips")
+endif
+endif
+endif
+
+# Check NDK < 18
+NDK_LT_18 = $(shell [ ${NDK_VER} -lt 18 ] && echo true)
+ifeq ($(NDK_LT_18),true) # Use gcc & binutils
+ifeq ($(ARCH),armv7)
+  PREFIX = arm-linux-androideabi
+  COPT += -Wl,--fix-cortex-a8
+  HOST = arm-linux-eabi
+endif
+SYSROOT = $(NDK)/platforms/android-$(NDK_PLATFORM)/arch-$(AARCH)
+CC = $(PREFIX)-gcc --sysroot $(SYSROOT)
+CPP = $(PREFIX)-cpp
+RANLIB = $(PREFIX)-ranlib
+STRIP = $(PREFIX)-strip -x
+CINCLUDES += -I"$(SYSROOT)/usr/include" # -I/usr/include
+LIBS = -nostdlib -L"$(SYSROOT)$(ALIBDIR)/" -lgcc
+LDFLAGS += -Wl,-z,common-page-size=16384
+else # NDK >= 18, use clang & llvm
+CC = clang --target=$(PREFIX)$(NDK_PLATFORM)
+CPP = clang++ --target=$(PREFIX)$(NDK_PLATFORM)
+RANLIB = llvm-ranlib
+STRIP = llvm-strip -x
+endif
+
 LD=$(CC)
-RANLIB=$(PREFIX)ranlib
-STRIP=$(PREFIX)strip -x
 CDEFINES=-DFFI_STATIC_BUILD -DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0 -Dmalloc_getpagesize='getpagesize()'
 COPT+=-fpic -ffunction-sections -funwind-tables -fno-short-enums
 JAVA_INCLUDES=
-CINCLUDES+=-I"$(NDK_PLATFORM)/arch-$(AARCH)/usr/include" # -I/usr/include
-LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-$(AARCH)$(ALIBDIR)/" -lgcc -lc -ldl -lm
-LDFLAGS+=-Wl,-shared,-Bsymbolic -Wl,--build-id=sha1 -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
+LIBS+=-lc -ldl -lm
+LDFLAGS+=-Wl,-shared,-Bsymbolic,--build-id=sha1,-z,max-page-size=16384
 FFI_ENV=CPP="$(CPP)" CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) $(CINCLUDES)" CPPFLAGS="$(CDEFINES) $(CINCLUDES)" LIBS="$(LIBS)" RANLIB="$(RANLIB)"
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=$(HOST)
 endif
