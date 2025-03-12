@@ -7,6 +7,7 @@ Next Release (5.20.0)
 
 Features
 --------
+* [#1659](https://github.com/java-native-access/jna/issues/1659): Support building jnidispatch with Android NDK 18+ - [@BugsBeGone](https://github.com/BugsBeGone).
 
 Bug Fixes
 ---------
