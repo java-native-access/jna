@@ -2,13 +2,13 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Next Release (5.17.0)
-=====================
+Release (5.17.0)
+================
 
 Features
 --------
 * [#1658](https://github.com/java-native-access/jna/pull/1658):  Add win32 power event constants, types, and functions - [@eranl](https://github.com/eranl).
-  
+
 Bug Fixes
 ---------
 * [#1647](https://github.com/java-native-access/jna/issues/1647): Fix calls to jnidispatch on Android with 16KB page size (part 2) - [@BugsBeGone](https://github.com/BugsBeGone).
