@@ -317,6 +317,10 @@ com.sun.jna.platform.wince;version=&quot;${osgi.version}&quot;;uses:=&quot;com.s
         <propertyref name="w32.ascii"/>
       </propertyset>
       <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
+        <!-- let JVM ignore unknown flags -->
+        <jvmarg value="-XX:+IgnoreUnrecognizedVMOptions" />
+        <!-- enable JNI on JDK 24+ -->
+        <jvmarg value="--enable-native-access=ALL-UNNAMED" />
         <jvmarg if:set="test.jdwp" value="${test.jdwp}" />
         <!-- optionally run headless -->
         <syspropertyset refid="headless"/>

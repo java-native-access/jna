@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        java: [8, 11, 17, 21, 23]
+        java: [8, 11, 17, 21, 24]
         # macos-13 is x86, macos-latest is aarch64
         os: [ubuntu-latest, macos-13, macos-latest]
         include:
