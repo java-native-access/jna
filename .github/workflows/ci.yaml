@@ -16,12 +16,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        java: [8, 11, 17, 21, 23]
+        java: [8, 21, 24]
         # macos-13 is x86, macos-latest is aarch64
-        os: [ubuntu-latest, macos-13, macos-latest]
-        include:
-          - java: 17
-            os: 'ubuntu-24.04-arm'
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-13]
       # Run all tests even if one fails
       fail-fast: false
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}

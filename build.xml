@@ -1235,6 +1235,10 @@ cd ..
       <propertyref prefix="java.awt.headless"/>
     </propertyset>
     <junit fork="${test.fork}" forkmode="${test.forkmode}" failureproperty="testfailure" tempdir="${build}">
+      <!-- let JVM ignore unknown flags -->
+      <jvmarg value="-XX:+IgnoreUnrecognizedVMOptions" />
+      <!-- enable JNI on JDK 24+ -->
+      <jvmarg value="--enable-native-access=ALL-UNNAMED" />
       <jvmarg if:set="test.jdwp" value="${test.jdwp}" />
       <!-- optionally run headless -->
       <syspropertyset refid="headless"/>
