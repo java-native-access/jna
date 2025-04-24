@@ -424,6 +424,7 @@ osname=macosx;processor=aarch64
               <attribute name="Multi-Release" value="true"/>
           </manifest>
           <manifest file="@{target}" mode="update" unless:true="@{module-info}">
+              <attribute name="ModuleMainClass" value="com.sun.jna.Native"/>
               <attribute name="Automatic-Module-Name" value="com.sun.jna"/>
           </manifest>
       </sequential>
@@ -433,6 +434,7 @@ osname=macosx;processor=aarch64
     <build-manifest target="${build}/manifest/module.mf" module-info="true"/>
     <build-manifest target="${build}/manifest/automatic.mf" module-info="false"/>
     <ModuleGenerator
+        mainClass="com.sun.jna.Native"
         targetFile="${build}/manifest/module-info.class"
         name="com.sun.jna"
         version="${jna.major}.${jna.minor}.${jna.revision}"
