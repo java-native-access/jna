@@ -1321,6 +1321,7 @@ cd ..
     <javadoc package="true"
              windowtitle="JNA API"
              encoding="UTF-8"
+             locale="en_US"
              sourcepathref="javadoc.src.path"
              classpathref="javadoc.compile.path"
              maxmemory="256m"
@@ -1349,6 +1350,8 @@ cd ..
       <group title="Platform Specific" packages="com.sun.jna.platform.*"/>
 
       <arg value="-notimestamp"/>
+      <!-- force locale to be "en_US", as Javadoc tool ignores locale parameter for some texts -->
+      <arg line="-J-Duser.language=en -J-Duser.country=US"/>
     </javadoc>
     <!--
     Create an empty resources/fonts/dejavu.css - the file is reference by default
