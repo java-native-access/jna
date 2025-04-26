@@ -29,6 +29,9 @@ additional JNI or native code.
 <h2>Table of Contents</h2>
 <ul>
 <li><a href="#loading">Loading JNA</a>
+  <ul>
+  <li><a href="#loading-jdk24">Special considerations for JDK24+</a>
+  </ul>
 <li><a href="#library-mapping">Library Mapping</a>
 <li><a href="#function-mapping">Function Mapping</a>
 <li><a href="#marshalling">Type Mapping</a>
@@ -81,6 +84,53 @@ or if your system must store different versions of the JNA shared
 library (e.g. for different architectures) in the same directory.
 <p/>
 
+<a href=#navbar_top>Top</a>
+<a name="loading-jdk24"></a>
+<h3>Special considerations for JDK24+</h3>
+The JDK moves to "safe by default" or "Integrity by Default" settings. Settings
+that might compromise the integrity provided by the JVM are off by default.
+Since JDK 24 this also affects the usage of Java Native Interface (JNI). This
+is part of the foundation JNA is built upon. For JDK 24 this is a warning, in
+the future JNI will be restricted to explicitly enabled modules.
+<p/>
+To fix the warnings and prepare for the future, the applications using JNA need
+to be modified. The java launcher will need to be instructed to allow JNI for
+the module JNA was loaded from. In the most basic case JNA is loaded from the
+classpath. For example, the built in mini-check of JNA can be invoked as:
+
+<blockquote><code><pre>
+java -jar jna.jar
+</blockquote></code></pre>
+
+This will need to be modified to:
+
+<blockquote><code><pre>
+java --enable-native-access=ALL-UNNAMED -jar jna.jar
+</blockquote></code></pre>
+
+If JNA is loaded from the modulepath
+
+<blockquote><code><pre>
+java -p jna-jpms.jar -m com.sun.jna
+</blockquote></code></pre>
+
+That will need to be modified to:
+
+<blockquote><code><pre>
+java --enable-native-access=com.sun.jna -p jna-jpms.jar -m com.sun.jna
+</blockquote></code></pre>
+
+For executable JARs the manifest attribute <code>Enable-Native-Access</code> can
+be set to the value <code>ALL-UNNAMED</code> to enable native access for this
+case.
+<p/>
+How these changes are applied to the concrete project is highly dependending on
+the setup of that project and thus no general advise can be presented here.
+<p/>
+More information can be found on the page describing <a
+href="https://openjdk.org/jeps/472" target="_blank">JEP 472: Prepare to Restrict
+the Use of JNI</a>
+<p/>
 <a href=#navbar_top>Top</a>
 <a name="library-mapping"></a>
 <h2>Library Mapping</h2>
