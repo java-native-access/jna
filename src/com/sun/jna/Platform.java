@@ -246,6 +246,10 @@ public final class Platform {
         return ARCH.startsWith("loongarch");
     }
 
+    public static final boolean isRISCV() {
+        return ARCH.startsWith("riscv");
+    }
+
     static String getCanonicalArchitecture(String arch, int platform) {
         arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {

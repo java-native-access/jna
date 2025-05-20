@@ -7,6 +7,7 @@ Next Release (5.18.0)
 
 Features
 --------
+* [#1671](https://github.com/java-native-access/jna/pull/1671): Add `isRISCV` to `c.s.j.Platform` - [@Glavo](https://github.com/Glavo).
 
 Bug Fixes
 ---------
