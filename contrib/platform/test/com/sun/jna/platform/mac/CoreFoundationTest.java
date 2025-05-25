@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import com.sun.jna.platform.mac.CoreFoundation.CFDateFormatterStyle;
 import com.sun.jna.platform.mac.CoreFoundation.CFDictionaryRef;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,7 +50,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.CoreFoundation.CFAllocatorRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFArrayRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFDataRef;
+import com.sun.jna.platform.mac.CoreFoundation.CFDateFormatter;
 import com.sun.jna.platform.mac.CoreFoundation.CFIndex;
+import com.sun.jna.platform.mac.CoreFoundation.CFLocale;
 import com.sun.jna.platform.mac.CoreFoundation.CFMutableDictionaryRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberRef;
 import com.sun.jna.platform.mac.CoreFoundation.CFNumberType;
@@ -379,5 +382,30 @@ public class CoreFoundationTest {
         CF.CFRelease(s1);
         CF.CFRelease(s1_the_same);
         CF.CFRelease(s2);
+    }
+
+    @Test
+    public void testLocaleFormat() {
+        CFIndex style = CFDateFormatterStyle.kCFDateFormatterNoStyle.index();
+        assertEquals("", getLocaleDateTimeFormat(style));
+        style = CFDateFormatterStyle.kCFDateFormatterShortStyle.index();
+        assertTrue(getLocaleDateTimeFormat(style).contains("y"));
+    }
+
+    private static String getLocaleDateTimeFormat(CFIndex style) {
+        CFLocale locale = CF.CFLocaleCopyCurrent();
+        try {
+            CFDateFormatter formatter = CF.CFDateFormatterCreate(null, locale, style, style);
+            assertNotNull(formatter);
+            try {
+                CFStringRef format = CF.CFDateFormatterGetFormat(formatter);
+                assertNotNull(format);
+                return format.stringValue();
+            } finally {
+                CF.CFRelease(formatter);
+            }
+        } finally {
+            CF.CFRelease(locale);
+        }
     }
 }
