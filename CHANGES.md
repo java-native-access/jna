@@ -8,6 +8,7 @@ Next Release (5.18.0)
 Features
 --------
 * [#1671](https://github.com/java-native-access/jna/pull/1671): Add `isRISCV` to `c.s.j.Platform` - [@Glavo](https://github.com/Glavo).
+* [#1672](https://github.com/java-native-access/jna/pull/1672): Add `CFLocale`, `CFLocaleCopyCurrent`, `CFCFDateFormatter`, `CFDateFormatterStyle`, `CFDateFormatterCreate` and `CFDateFormatterGetFormat` to `c.s.j.p.mac.CoreFoundation` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
