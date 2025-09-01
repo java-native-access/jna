@@ -1,0 +1,8 @@
+pandas
+numpy
+ibapi
+backtesting
+scikit-learn
+lightgbm
+xgboost
+tensorflow
