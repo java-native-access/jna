@@ -156,10 +156,7 @@ public abstract class Structure {
     //public static final int ALIGN_8 = 6;
 
     protected static final int CALCULATE_SIZE = -1;
-    static final ReentrantReadWriteLock layoutInfoLock = new ReentrantReadWriteLock();
-    static final ReentrantReadWriteLock fieldOrderLock = new ReentrantReadWriteLock();
-    static final ReentrantReadWriteLock fieldListLock = new ReentrantReadWriteLock();
-    static final ReentrantReadWriteLock validationLock = new ReentrantReadWriteLock();
+    static final ReentrantReadWriteLock cacheStructureLock = new ReentrantReadWriteLock();
     static final Map<Class<?>, LayoutInfo> layoutInfo = new WeakHashMap<>();
     static final Map<Class<?>, List<String>> fieldOrder = new WeakHashMap<>();
     static final Map<Class<?>, List<Field>> fieldList = new WeakHashMap<>();
@@ -1024,18 +1021,18 @@ public abstract class Structure {
     protected List<Field> getFieldList() {
         Class<?> clazz = getClass();
         // Try to read the value under the read lock
-        fieldListLock.readLock().lock();
+        cacheStructureLock.readLock().lock();
         try {
             List<Field> fields = fieldList.get(clazz);
             if (fields != null) {
                 return fields; // Return the cached result if found
             }
         } finally {
-            fieldListLock.readLock().unlock();
+            cacheStructureLock.readLock().unlock();
         }
 
         // If not found, compute the value under the write lock
-        fieldListLock.writeLock().lock();
+        cacheStructureLock.writeLock().lock();
         try {
             // Double-check if another thread has computed the value before we do
             return fieldList.computeIfAbsent(clazz, (c) -> {
@@ -1057,7 +1054,7 @@ public abstract class Structure {
                 return flist;
             });
         } finally {
-            fieldListLock.writeLock().unlock();
+            cacheStructureLock.writeLock().unlock();
         }
     }
 
@@ -1067,23 +1064,23 @@ public abstract class Structure {
     private List<String> fieldOrder() {
         Class<?> clazz = getClass();
         // Try to read the value under the read lock
-        fieldOrderLock.readLock().lock();
+        cacheStructureLock.readLock().lock();
         try {
             List<String> order = fieldOrder.get(clazz);
             if (order != null) {
                 return order; // Return the cached result if found
             }
         } finally {
-            fieldOrderLock.readLock().unlock();
+            cacheStructureLock.readLock().unlock();
         }
 
         // If not found, compute the value under the write lock
-        fieldOrderLock.writeLock().lock();
+        cacheStructureLock.writeLock().lock();
         try {
             // Double-check if another thread has computed the value before we do (see JavaDoc)
             return fieldOrder.computeIfAbsent(clazz, (c) -> getFieldOrder());
         } finally {
-            fieldOrderLock.writeLock().unlock();
+            cacheStructureLock.writeLock().unlock();
         }
     }
 
@@ -1198,11 +1195,11 @@ public abstract class Structure {
      */
     static <T extends Structure> int size(Class<T> type, T value) {
         LayoutInfo info;
-        layoutInfoLock.readLock().lock();
+        cacheStructureLock.readLock().lock();
         try {
             info = layoutInfo.get(type);
         } finally {
-            layoutInfoLock.readLock().unlock();
+            cacheStructureLock.readLock().unlock();
         }
         int sz = (info != null && !info.variable) ? info.size : CALCULATE_SIZE;
         if (sz == CALCULATE_SIZE) {
@@ -1225,11 +1222,11 @@ public abstract class Structure {
         int size = CALCULATE_SIZE;
         Class<?> clazz = getClass();
         LayoutInfo info;
-        layoutInfoLock.readLock().lock();
+        cacheStructureLock.readLock().lock();
         try {
             info = layoutInfo.get(clazz);
         } finally {
-            layoutInfoLock.readLock().unlock();
+            cacheStructureLock.readLock().unlock();
         }
         if (info == null
             || this.alignType != info.alignType
@@ -1241,7 +1238,7 @@ public abstract class Structure {
             this.structFields = info.fields;
 
             if (!info.variable) {
-                layoutInfoLock.readLock().lock();
+                cacheStructureLock.readLock().lock();
                 try {
                     // If we've already cached it, only override layout if
                     // we're using non-default values for alignment and/or
@@ -1252,17 +1249,17 @@ public abstract class Structure {
                         || this.alignType != ALIGN_DEFAULT
                         || this.typeMapper != null) {
                         // Must release read lock before acquiring write lock (see JavaDoc lock escalation example)
-                        layoutInfoLock.readLock().unlock();
-                        layoutInfoLock.writeLock().lock();
+                        cacheStructureLock.readLock().unlock();
+                        cacheStructureLock.writeLock().lock();
 
                         layoutInfo.put(clazz, info);
 
                         // Downgrade by acquiring read lock before releasing write lock (again, see JavaDoc)
-                        layoutInfoLock.readLock().lock();
-                        layoutInfoLock.writeLock().unlock();;
+                        cacheStructureLock.readLock().lock();
+                        cacheStructureLock.writeLock().unlock();;
                     }
                 } finally {
-                    layoutInfoLock.readLock().unlock();
+                    cacheStructureLock.readLock().unlock();
                 }
             }
             size = info.size;
@@ -1307,17 +1304,17 @@ public abstract class Structure {
     /** ensure all fields are of valid type. */
     private void validateFields() {
         // Try to read the value under the read lock
-        validationLock.readLock().lock();
+        cacheStructureLock.readLock().lock();
         try {
             if (validationMap.containsKey(getClass())) {
                 return; // Return because this Structure has already been validated
             }
         } finally {
-            validationLock.readLock().unlock();
+            cacheStructureLock.readLock().unlock();
         }
 
         // If not found, perform validation and update the cache under the write lock
-        validationLock.writeLock().lock();
+        cacheStructureLock.writeLock().lock();
         try {
             // Double-check if another thread has computed the value before we do (see JavaDoc)
             validationMap.computeIfAbsent(getClass(), (cls) -> {
@@ -1327,7 +1324,7 @@ public abstract class Structure {
                 return true;
             });
         } finally {
-            validationLock.writeLock().unlock();
+            cacheStructureLock.writeLock().unlock();
         }
     }
 
@@ -2214,9 +2211,7 @@ public abstract class Structure {
         /** Obtain a pointer to the native FFI type descriptor for the given object. */
         static FFIType get(Object obj) {
             if (obj == null)
-                synchronized (typeInfoMap) {
-                    return getTypeInfo(Pointer.class, 0);
-                }
+                return getTypeInfo(Pointer.class, 0);
             if (obj instanceof Class)
                 return get(null, (Class<?>)obj);
             return get(obj, obj.getClass());
@@ -2230,13 +2225,14 @@ public abstract class Structure {
                     cls = nc.nativeType();
                 }
             }
-            synchronized(typeInfoMap) {
-                FFIType o = getTypeInfo(cls, cls.isArray() ? Array.getLength(obj) : 0);
-                if (o != null) {
-                    return o;
-                }
+            FFIType o = getTypeInfo(cls, cls.isArray() ? Array.getLength(obj) : 0);
+            if (o != null) {
+                return o;
+            }
+            cacheStructureLock.writeLock().lock();
+            try {
                 if ((Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(cls))
-                    || Callback.class.isAssignableFrom(cls)) {
+                        || Callback.class.isAssignableFrom(cls)) {
                     typeInfoMap.put(cls, typeInfoMap.get(Pointer.class));
                     return typeInfoMap.get(Pointer.class).get(0);
                 }
@@ -2246,30 +2242,42 @@ public abstract class Structure {
                         typeInfoMap.put(cls, typeInfoMap.get(Pointer.class));
                         return typeInfoMap.get(Pointer.class).get(0);
                     }
-                    FFIType type = new FFIType((Structure)obj);
+                    FFIType type = new FFIType((Structure) obj);
                     storeTypeInfo(cls, type);
                     return type;
                 }
-                if (NativeMapped.class.isAssignableFrom(cls)) {
-                    NativeMappedConverter c = NativeMappedConverter.getInstance(cls);
-                    return get(c.toNative(obj, new ToNativeContext()), c.nativeType());
-                }
-                if (cls.isArray()) {
-                    FFIType type = new FFIType(obj, cls);
-                    // Store it in the map to prevent premature GC of type info
-                    storeTypeInfo(cls, Array.getLength(obj), type);
-                    return type;
-                }
-                throw new IllegalArgumentException("Unsupported type " + cls);
             }
+            finally {
+                cacheStructureLock.writeLock().unlock();
+            }
+
+            if (NativeMapped.class.isAssignableFrom(cls)) {
+                NativeMappedConverter c = NativeMappedConverter.getInstance(cls);
+                return get(c.toNative(obj, new ToNativeContext()), c.nativeType());
+            }
+
+            if (cls.isArray()) {
+                FFIType type = new FFIType(obj, cls);
+                // Store it in the map to prevent premature GC of type info
+                storeTypeInfo(cls, Array.getLength(obj), type);
+                return type;
+            }
+
+            throw new IllegalArgumentException("Unsupported type " + cls);
         }
 
         private static FFIType getTypeInfo(Class clazz, int elementCount) {
-            Map<Integer,FFIType> typeMap = typeInfoMap.get(clazz);
-            if(typeMap != null) {
-                return typeMap.get(elementCount);
-            } else {
-                return null;
+            cacheStructureLock.readLock().lock();
+            try {
+                Map<Integer, FFIType> typeMap = typeInfoMap.get(clazz);
+                if (typeMap != null) {
+                    return typeMap.get(elementCount);
+                } else {
+                    return null;
+                }
+            }
+            finally {
+                cacheStructureLock.readLock().unlock();
             }
         }
 
@@ -2278,13 +2286,13 @@ public abstract class Structure {
         }
 
         private static void storeTypeInfo(Class clazz, int elementCount, FFIType type) {
-            synchronized (typeInfoMap) {
-                Map<Integer,FFIType> typeMap = typeInfoMap.get(clazz);
-                if(typeMap == null) {
-                    typeMap = new HashMap<>();
-                    typeInfoMap.put(clazz, typeMap);
-                }
+            cacheStructureLock.writeLock().lock();
+            try {
+                Map<Integer, FFIType> typeMap = typeInfoMap.computeIfAbsent(clazz, k -> new HashMap<>());
                 typeMap.put(elementCount, type);
+            }
+            finally {
+                cacheStructureLock.writeLock().unlock();
             }
         }
     }
