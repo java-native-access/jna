@@ -27,6 +27,10 @@ package com.sun.jna.internal;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,102 +49,65 @@ public class Cleaner {
     }
 
     private final ReferenceQueue<Object> referenceQueue;
-    private Thread cleanerThread;
-    private CleanerRef firstCleanable;
+    private final Set<CleanerRef> uncleaned;
+    private final AtomicBoolean cleanerRunning;
 
     private Cleaner() {
         referenceQueue = new ReferenceQueue<>();
+        uncleaned = ConcurrentHashMap.newKeySet();
+        cleanerRunning = new AtomicBoolean(false);
     }
 
-    public synchronized Cleanable register(Object obj, Runnable cleanupTask) {
+    public Cleanable register(Object obj, Runnable cleanupTask) {
         // The important side effect is the PhantomReference, that is yielded
         // after the referent is GCed
-        return add(new CleanerRef(this, obj, referenceQueue, cleanupTask));
+        Cleanable cleanable = add(new CleanerRef(obj, referenceQueue, cleanupTask));
+
+        if (cleanerRunning.compareAndSet(false, true)) {
+            Logger.getLogger(Cleaner.class.getName()).log(Level.FINE, "Starting CleanerThread");
+            Thread cleanerThread = new CleanerThread();
+            cleanerThread.start();
+        }
+
+        return cleanable;
     }
 
-    private synchronized CleanerRef add(CleanerRef ref) {
-        synchronized (referenceQueue) {
-            if (firstCleanable == null) {
-                firstCleanable = ref;
-            } else {
-                ref.setNext(firstCleanable);
-                firstCleanable.setPrevious(ref);
-                firstCleanable = ref;
-            }
-            if (cleanerThread == null) {
-                Logger.getLogger(Cleaner.class.getName()).log(Level.FINE, "Starting CleanerThread");
-                cleanerThread = new CleanerThread();
-                cleanerThread.start();
-            }
-            return ref;
-        }
+    private CleanerRef add(final CleanerRef toAdd) {
+        uncleaned.add(toAdd);
+        return toAdd;
     }
 
-    private synchronized boolean remove(CleanerRef ref) {
-        synchronized (referenceQueue) {
-            boolean inChain = false;
-            if (ref == firstCleanable) {
-                firstCleanable = ref.getNext();
-                inChain = true;
-            }
-            if (ref.getPrevious() != null) {
-                ref.getPrevious().setNext(ref.getNext());
-            }
-            if (ref.getNext() != null) {
-                ref.getNext().setPrevious(ref.getPrevious());
-            }
-            if (ref.getPrevious() != null || ref.getNext() != null) {
-                inChain = true;
-            }
-            ref.setNext(null);
-            ref.setPrevious(null);
-            return inChain;
-        }
+    // Remove by node reference
+    private void remove(final CleanerRef node) {
+        uncleaned.remove(node);
     }
 
     private static class CleanerRef extends PhantomReference<Object> implements Cleanable {
-        private final Cleaner cleaner;
         private final Runnable cleanupTask;
-        private CleanerRef previous;
-        private CleanerRef next;
+        private final AtomicBoolean cleaned;
 
-        public CleanerRef(Cleaner cleaner, Object referent, ReferenceQueue<? super Object> q, Runnable cleanupTask) {
+        CleanerRef(Object referent, ReferenceQueue<? super Object> q, Runnable cleanupTask) {
             super(referent, q);
-            this.cleaner = cleaner;
             this.cleanupTask = cleanupTask;
+            this.cleaned = new AtomicBoolean(false);
         }
 
         @Override
         public void clean() {
-            if(cleaner.remove(this)) {
+            if (cleaned.compareAndSet(false, true)) {
+                INSTANCE.remove(this);
                 cleanupTask.run();
             }
         }
-
-        CleanerRef getPrevious() {
-            return previous;
-        }
-
-        void setPrevious(CleanerRef previous) {
-            this.previous = previous;
-        }
-
-        CleanerRef getNext() {
-            return next;
-        }
-
-        void setNext(CleanerRef next) {
-            this.next = next;
-        }
     }
 
-    public static interface Cleanable {
-        public void clean();
+    public interface Cleanable {
+        void clean();
     }
 
     private class CleanerThread extends Thread {
 
-        private static final long CLEANER_LINGER_TIME = 30000;
+        private final long CLEANER_LINGER_TIME = TimeUnit.SECONDS.toMillis(30L);
 
         public CleanerThread() {
             super("JNA Cleaner");
@@ -151,26 +118,23 @@ public class Cleaner {
         public void run() {
             while (true) {
                 try {
-                    Reference<? extends Object> ref = referenceQueue.remove(CLEANER_LINGER_TIME);
+                    Reference<?> ref = referenceQueue.remove(CLEANER_LINGER_TIME);
                     if (ref instanceof CleanerRef) {
                         ((CleanerRef) ref).clean();
                     } else if (ref == null) {
-                        synchronized (referenceQueue) {
-                            Logger logger = Logger.getLogger(Cleaner.class.getName());
-                            if (firstCleanable == null) {
-                                cleanerThread = null;
-                                logger.log(Level.FINE, "Shutting down CleanerThread");
-                                break;
-                            } else if (logger.isLoggable(Level.FINER)) {
-                                StringBuilder registeredCleaners = new StringBuilder();
-                                for(CleanerRef cleanerRef = firstCleanable; cleanerRef != null; cleanerRef = cleanerRef.next) {
-                                    if(registeredCleaners.length() != 0) {
-                                        registeredCleaners.append(", ");
-                                    }
-                                    registeredCleaners.append(cleanerRef.cleanupTask.toString());
+                        Logger logger = Logger.getLogger(Cleaner.class.getName());
+                        if (cleanerRunning.compareAndSet(uncleaned.isEmpty(), false)) {
+                            logger.log(Level.FINE, "Shutting down CleanerThread");
+                            break;
+                        } else if (logger.isLoggable(Level.FINER)) {
+                            StringBuilder registeredCleaners = new StringBuilder();
+                            uncleaned.forEach((cleanerRef) -> {
+                                if (registeredCleaners.length() != 0) {
+                                    registeredCleaners.append(", ");
                                 }
-                                logger.log(Level.FINER, "Registered Cleaners: {0}", registeredCleaners.toString());
-                            }
+                                registeredCleaners.append(cleanerRef.cleanupTask.toString());
+                            });
+                            logger.log(Level.FINER, "Registered Cleaners: {0}", registeredCleaners.toString());
                         }
                     }
                 } catch (InterruptedException ex) {
