@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JNA-Common" default="default" basedir=".">
     <property name="name" value="jna"/>
-    <property name="year" value="2024"/>
+    <property name="year" value="2025"/>
     <property name="copyright" value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
     <property name="vendor" value="JNA Development Team"/>
     <buildnumber/>

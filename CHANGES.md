@@ -2,8 +2,8 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Next Release (5.18.0)
-=====================
+Release 5.18.0
+==============
 
 Features
 --------
@@ -17,8 +17,8 @@ Bug Fixes
 * [#1683](https://github.com/java-native-access/jna/pull/1683): Fix native build error on Xcode 16.3 / Apple Clang 17 - [@brettwooldridge](https://github.com/brettwooldridge).
 
 
-Release (5.17.0)
-================
+Release 5.17.0
+==============
 
 Features
 --------
