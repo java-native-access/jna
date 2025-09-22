@@ -9,9 +9,12 @@ Features
 --------
 * [#1671](https://github.com/java-native-access/jna/pull/1671): Add `isRISCV` to `c.s.j.Platform` - [@Glavo](https://github.com/Glavo).
 * [#1672](https://github.com/java-native-access/jna/pull/1672): Add `CFLocale`, `CFLocaleCopyCurrent`, `CFCFDateFormatter`, `CFDateFormatterStyle`, `CFDateFormatterCreate` and `CFDateFormatterGetFormat` to `c.s.j.p.mac.CoreFoundation` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1669](https://github.com/java-native-access/jna/pull/1669): Document requirement for running on JDK 24+ - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
+* [#1681](https://github.com/java-native-access/jna/issues/1681): Fix deadlock in Structure constructor introduced in 5.16.0 - [@brettwooldridge](https://github.com/brettwooldridge).
+* [#1683](https://github.com/java-native-access/jna/pull/1683): Fix native build error on Xcode 16.3 / Apple Clang 17 - [@brettwooldridge](https://github.com/brettwooldridge).
 
 
 Release (5.17.0)
