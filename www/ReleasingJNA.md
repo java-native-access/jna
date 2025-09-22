@@ -18,7 +18,8 @@ JNA Release Process
 
 * Commit and push generated files in `dist`, `CHANGES.md` and `README.md`.
 
-* Login to https://oss.sonatype.org and release the maven artifacts
+* Login to https://central.sonatype.com/ and create a new deployment using the
+  file `build/maven-artifacts.zip`.
 
 * Tag
   * Tag using the new version number (e.g. `git tag 4.2.1`)

@@ -4,32 +4,33 @@ Publishing JNA to Maven Central
 One Time
 --------
 
-* Create an account in the [sonatype jira](https://issues.sonatype.org/secure/Signup!default.jspa)
+* Create an account for the maven central repository
+  ([Register to Publish Via the Central Portal](https://central.sonatype.org/register/central-portal/))
 * Get the account enabled for publishing to the net.java.dev.jna groupId
   (contact an existing uploader for this)
 * Set up your gpg keys as described [here](http://central.sonatype.org/pages/working-with-pgp-signatures.html). Make sure you distribute your public key.
 * Make sure you have a settings.xml file (in directory: ${user.home}/.m2/).
-  For example (Replace *myossrhuser* and *myossrhpwd* with the account credentials):
+  For example (Replace *central-user* and *central-password* with the
+  credentials you can create via "View Account" -> "Generate User Token"):
   ```xml
   <settings>
   ...
       <servers>
       ...
           <server>
-              <id>oss.sonatype.org</id>
-              <username>myossrhuser</username>
-              <password>myossrhpwd</password>
+              <id>sonatype-central-portal-snapshots</id>
+              <username>central-user</username>
+              <password>central-password</password>
           </server>
       ...
       </servers>
   ...
   <settings>
   ```
-  
-  The binaries are hosted in the Sonatype OSSRH (OSS Repository Hosting) system,
-  and mirrored from there to maven central.
 
-  See [OSSRH Guide](http://central.sonatype.org/pages/ossrh-guide.html) for more info.
+  These settings are only used for uploading SNAPSHOTs. See:
+  [Publishing -SNAPSHOT Releases](https://central.sonatype.org/publish/publish-portal-snapshots/)
+  for more info.
 
 Publish Snapshot
 ----------------
@@ -39,9 +40,7 @@ Publish Snapshot
 Before doing a full jna release, we can publish a development SNAPSHOT of the "next" release for people to test. The
 SNAPSHOT will be published in the staging repository:
 
-   [https://oss.sonatype.org/content/repositories/snapshots/](https://oss.sonatype.org/content/repositories/snapshots/)
-
-see: [https://oss.sonatype.org/content/repositories/snapshots/net/java/dev/jna/](https://oss.sonatype.org/content/repositories/snapshots/net/java/dev/jna/) for the various jars.
+   [https://central.sonatype.com/repository/maven-snapshots/](https://central.sonatype.com/repository/maven-snapshots/)
 
 To publish a development SNAPSHOT do the following:
 
@@ -58,5 +57,7 @@ Publish Release
 * Verify the &lt;version> tags in [pom-jna.xml](https://github.com/java-native-access/jna/blob/master/pom-jna.xml) 
   and [pom-jna-platform.xml](https://github.com/java-native-access/jna/blob/master/pom-jna-platform.xml)
   match the version (jna.version) in [build.xml](https://github.com/java-native-access/jna/blob/master/build.xml).
-* Run `ant -Dmaven-release=true stage`. This uploads current checkout to [oss.sonatype.org](https://oss.sonatype.org).
-* Follow steps from [Releasing the Deployment](http://central.sonatype.org/pages/releasing-the-deployment.html).
+* Run `ant -Dmaven-release=true stage`. This builds JNA and creates a ZIP file `build/maven-artifacts.zip`.
+  That file can be used to deploy to maven central using the manual
+  [Publishing By Uploading a Bundle](https://central.sonatype.org/publish/publish-portal-upload/)
+  process.
