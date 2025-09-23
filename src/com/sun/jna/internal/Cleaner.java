@@ -58,15 +58,25 @@ public class Cleaner {
         cleanerRunning = new AtomicBoolean(false);
     }
 
-    public Cleanable register(Object obj, Runnable cleanupTask) {
+    public Cleanable register(Object referent, Runnable cleanupTask) {
         // The important side effect is the PhantomReference, that is yielded
         // after the referent is GCed
-        Cleanable cleanable = add(new CleanerRef(obj, referenceQueue, cleanupTask));
+        Cleanable cleanable = add(new CleanerRef(referent, referenceQueue, cleanupTask));
 
         if (cleanerRunning.compareAndSet(false, true)) {
             Logger.getLogger(Cleaner.class.getName()).log(Level.FINE, "Starting CleanerThread");
             Thread cleanerThread = new CleanerThread();
             cleanerThread.start();
+        }
+
+        // NOTE: This is a "pointless" check in the conventional sense, however it serves to guarantee that the
+        // referent is not garbage collected before the CleanerRef is fully constructed which can happen due
+        // to reordering of instructions by the compiler or the CPU. In Java 9+ Reference.reachabilityFence() was
+        // introduced to provide this guarantee, but we want to stay compatible with Java 8, so this is the common
+        // idiom to achieve the same effect, by ensuring that the referent is still strongly reachable at
+        // this point.
+        if (referent == null) {
+            throw new IllegalArgumentException("The referent object must not be null");
         }
 
         return cleanable;
@@ -83,13 +93,12 @@ public class Cleaner {
     }
 
     private static class CleanerRef extends PhantomReference<Object> implements Cleanable {
-        private final Runnable cleanupTask;
-        private final AtomicBoolean cleaned;
+        private volatile Runnable cleanupTask;
+        private AtomicBoolean cleaned = new AtomicBoolean(false);
 
         CleanerRef(Object referent, ReferenceQueue<? super Object> q, Runnable cleanupTask) {
             super(referent, q);
             this.cleanupTask = cleanupTask;
-            this.cleaned = new AtomicBoolean(false);
         }
 
         @Override
