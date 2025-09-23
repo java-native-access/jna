@@ -1240,6 +1240,7 @@ cd ..
       <!-- enable JNI on JDK 24+ -->
       <jvmarg value="--enable-native-access=ALL-UNNAMED" />
       <jvmarg if:set="test.jdwp" value="${test.jdwp}" />
+      <jvmarg value="-Xmx64m" />
       <!-- optionally run headless -->
       <syspropertyset refid="headless"/>
       <!-- avoid VM conflicts with JNA protected mode -->
