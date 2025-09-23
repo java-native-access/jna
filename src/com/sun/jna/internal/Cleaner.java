@@ -88,13 +88,12 @@ public class Cleaner {
     }
 
     // Remove by node reference
-    private void remove(final CleanerRef node) {
-        uncleaned.remove(node);
+    private boolean remove(final CleanerRef node) {
+        return uncleaned.remove(node);
     }
 
     private static class CleanerRef extends PhantomReference<Object> implements Cleanable {
         private volatile Runnable cleanupTask;
-        private AtomicBoolean cleaned = new AtomicBoolean(false);
 
         CleanerRef(Object referent, ReferenceQueue<? super Object> q, Runnable cleanupTask) {
             super(referent, q);
@@ -103,8 +102,7 @@ public class Cleaner {
 
         @Override
         public void clean() {
-            if (cleaned.compareAndSet(false, true)) {
-                INSTANCE.remove(this);
+            if (INSTANCE.remove(this)) {
                 cleanupTask.run();
             }
         }
