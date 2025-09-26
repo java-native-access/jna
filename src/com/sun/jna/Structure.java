@@ -161,6 +161,7 @@ public abstract class Structure {
     static final Map<Class<?>, List<String>> fieldOrder = new WeakHashMap<>();
     static final Map<Class<?>, List<Field>> fieldList = new WeakHashMap<>();
     static final Map<Class<?>, Boolean> validationMap = new WeakHashMap<>();
+    static final Map<Class<?>, Boolean> sortedFields = new WeakHashMap<>();
 
     // This field is accessed by native code
     private Pointer memory;
@@ -1002,16 +1003,43 @@ public abstract class Structure {
      * @param names list of names representing the desired sort order
      */
     protected void sortFields(List<Field> fields, List<String> names) {
-        for (int i=0;i < names.size();i++) {
-            String name = names.get(i);
-            for (int f=0;f < fields.size();f++) {
-                Field field = fields.get(f);
-                if (name.equals(field.getName())) {
-                    Collections.swap(fields, i, f);
-                    break;
+        // Read sortedFields the value under the read lock
+        cacheStructureLock.readLock().lock();
+        try {
+            if (sortedFields.containsKey(getClass())) {
+                return; // Return because the fields have already been sorted
+            }
+        } finally {
+            cacheStructureLock.readLock().unlock();
+        }
+
+        // If not found, sort the fields under the write lock.
+        // This prevent us from changing the list while another thread is using it.
+        cacheStructureLock.writeLock().lock();
+        try {
+            // Double-check if another thread has sorted the fields before we do (see JavaDoc)
+            if (sortedFields.containsKey(getClass())) {
+                return;
+            }
+
+            // Perform the actual sorting
+            for (int i=0;i < names.size();i++) {
+                String name = names.get(i);
+                for (int f=0;f < fields.size();f++) {
+                    Field field = fields.get(f);
+                    if (name.equals(field.getName())) {
+                        Collections.swap(fields, i, f);
+                        break;
+                    }
                 }
             }
+
+            // Set our key in `sortedFields` to indicate that the fields have been sorted.
+            sortedFields.put(getClass(), true);
+        } finally {
+            cacheStructureLock.writeLock().unlock();
         }
+
     }
 
     /** Look up all fields in this class and superclasses.
