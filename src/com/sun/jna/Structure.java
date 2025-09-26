@@ -1002,15 +1002,20 @@ public abstract class Structure {
      * @param names list of names representing the desired sort order
      */
     protected void sortFields(List<Field> fields, List<String> names) {
-        for (int i=0;i < names.size();i++) {
-            String name = names.get(i);
-            for (int f=0;f < fields.size();f++) {
-                Field field = fields.get(f);
-                if (name.equals(field.getName())) {
-                    Collections.swap(fields, i, f);
-                    break;
+        cacheStructureLock.writeLock().lock();
+        try {
+            for (int i=0;i < names.size();i++) {
+                String name = names.get(i);
+                for (int f=0;f < fields.size();f++) {
+                    Field field = fields.get(f);
+                    if (name.equals(field.getName())) {
+                        Collections.swap(fields, i, f);
+                        break;
+                    }
                 }
             }
+        } finally {
+            cacheStructureLock.writeLock().unlock();
         }
     }
 
