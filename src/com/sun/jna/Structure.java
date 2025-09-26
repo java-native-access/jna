@@ -1125,7 +1125,7 @@ public abstract class Structure {
         and can't be generated automatically.
     **/
     protected List<Field> getFields(boolean force) {
-        List<Field> flist = getFieldList();
+        List<Field> flist = new ArrayList<>(getFieldList());
         Set<String> names = new HashSet<>();
         for (Field f : flist) {
             names.add(f.getName());
