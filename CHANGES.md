@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1686](https://github.com/java-native-access/jna/issues/1686): Fix `sortFields` race condition while getting fields
 
 Release 5.18.0
 ==============
