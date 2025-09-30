@@ -218,6 +218,7 @@ If you're using Proguard, you should also add the following to your Proguard rul
 ```
 -dontwarn java.awt.*
 -keep class com.sun.jna.* { *; }
+-keep class * extends com.sun.jna.* { *; }
 -keepclassmembers class * extends com.sun.jna.* { public *; }
 ```
 
