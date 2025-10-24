@@ -55,21 +55,28 @@ public class Cleaner {
         referenceQueue = new ReferenceQueue<>();
     }
 
-    public synchronized Cleanable register(final Object obj, final Runnable cleanupTask) {
+    public Cleanable register(final Object obj, final Runnable cleanupTask) {
         // The important side effect is the PhantomReference, that is yielded after the referent is GCed
         final CleanerRef ref = new CleanerRef(obj, referenceQueue, cleanupTask);
 
-        if (firstCleanable != null) {
-            ref.setNext(firstCleanable);
-            firstCleanable.setPrevious(ref);
-        }
-        firstCleanable = ref;
+        synchronized (this) {
+            if (firstCleanable != null) {
+                ref.setNext(firstCleanable);
+                firstCleanable.setPrevious(ref);
+            }
+            firstCleanable = ref;
 
-        if (!cleanerRunning) {
-            logger.log(Level.FINE, "Starting CleanerThread");
-            Thread cleanerThread = new CleanerThread();
-            cleanerThread.start();
-            cleanerRunning = true;
+            if (!cleanerRunning) {
+                logger.log(Level.FINE, "Starting CleanerThread");
+                Thread cleanerThread = new CleanerThread();
+                cleanerThread.start();
+                cleanerRunning = true;
+            }
+        }
+
+        // Ensure that obj is referencable past the enqueue point.
+        if (obj == null) {
+            throw new IllegalArgumentException("Cleaner object cannot be null");
         }
 
         return ref;
