@@ -22,16 +22,15 @@
  */
 package com.sun.jna;
 
+import com.sun.jna.internal.Cleaner;
+import com.sun.jna.internal.ConcurrentLongHashMap;
+
 import java.io.Closeable;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.sun.jna.internal.Cleaner;
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a
@@ -53,8 +52,8 @@ import com.sun.jna.internal.Cleaner;
  */
 public class Memory extends Pointer implements Closeable {
     /** Keep track of all allocated memory so we can dispose of it before unloading. */
-    private static final Map<Long, Reference<Memory>> allocatedMemory =
-            new ConcurrentHashMap<>();
+    private static final ConcurrentLongHashMap<Reference<Memory>> allocatedMemory =
+            new ConcurrentLongHashMap<>();
 
     private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
