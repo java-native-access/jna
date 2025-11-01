@@ -35,7 +35,7 @@ jobs:
           ant -Dos.prefix=darwin-aarch64
           ant -Dos.prefix=darwin-x86-64
       - name: Upload mac OS binaries
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: darwin-native
           path: |
