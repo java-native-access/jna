@@ -1298,25 +1298,26 @@ public class WindowUtils {
                     pid.getValue());
 
             if (process == null) {
-                int lastError = Kernel32.INSTANCE.GetLastError();
-                if (lastError == WinNT.ERROR_ACCESS_DENIED
-                        || lastError == WinError.ERROR_INVALID_PARAMETER) {
-                    process = Kernel32.INSTANCE.OpenProcess( 
-                            WinNT.PROCESS_QUERY_LIMITED_INFORMATION, 
-                            false, 
-                            pid.getValue());
-
-                    if (process == null) {
-                        lastError = Kernel32.INSTANCE.GetLastError();
-                        if (lastError == WinNT.ERROR_ACCESS_DENIED
-                                || lastError == WinError.ERROR_INVALID_PARAMETER) {
-                            return "";
-                        } 
-                        throw new Win32Exception(lastError);
-                    }
-                } else {
-                    throw new Win32Exception(lastError);
-                } 
+                switch (Kernel32.INSTANCE.GetLastError()) {
+                    case WinNT.ERROR_ACCESS_DENIED:
+                    case WinError.ERROR_INVALID_PARAMETER:
+                        process = Kernel32.INSTANCE.OpenProcess(
+                                WinNT.PROCESS_QUERY_LIMITED_INFORMATION,
+                                false,
+                                pid.getValue());
+                        if (process == null) {
+                            switch (Kernel32.INSTANCE.GetLastError()) {
+                                case WinNT.ERROR_ACCESS_DENIED:
+                                case WinError.ERROR_INVALID_PARAMETER:
+                                    return "";
+                                default:
+                                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                            }
+                        }
+                        break;
+                    default:
+                        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                }
             }
 
             try {
