@@ -1305,16 +1305,15 @@ public class WindowUtils {
                                 WinNT.PROCESS_QUERY_LIMITED_INFORMATION,
                                 false,
                                 pid.getValue());
-                        if (process == null) {
-                            switch (Kernel32.INSTANCE.GetLastError()) {
-                                case WinNT.ERROR_ACCESS_DENIED:
-                                case WinError.ERROR_INVALID_PARAMETER:
-                                    return "";
-                                default:
-                                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                            }
+                        if (process != null) {
+                            break;
                         }
-                        break;
+                        switch (Kernel32.INSTANCE.GetLastError()) {
+                            case WinNT.ERROR_ACCESS_DENIED:
+                            case WinError.ERROR_INVALID_PARAMETER:
+                                return "";
+                        }
+                        /* if above didn't already break or return, fall through to default */
                     default:
                         throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                 }
