@@ -1311,6 +1311,7 @@ public class WindowUtils {
                         switch (Kernel32.INSTANCE.GetLastError()) {
                             case WinNT.ERROR_ACCESS_DENIED:
                             case WinError.ERROR_INVALID_PARAMETER:
+                                // Ignore windows, that can't be accessed
                                 return "";
                         }
                         /* if above didn't already break or return, fall through to default */
