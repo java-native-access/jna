@@ -11,7 +11,7 @@ Features
 
 Bug Fixes
 ---------
-* [#1700](https://github.com/java-native-access/jna/issues/1700): Windows: treat `ERROR_INVALID_PARAMETER` from `OpenProcess` in `c.s.j.p.WindowUtils#getProcessFilePath` like `ERROR_ACCESS_DENIED` to avoid spurious `Win32Exception` when enumerating windows whose processes have exited or are otherwise inaccessible.
+* [#1700](https://github.com/java-native-access/jna/issues/1700): Windows: treat `ERROR_INVALID_PARAMETER` from `OpenProcess` in `c.s.j.p.WindowUtils#getProcessFilePath` like `ERROR_ACCESS_DENIED` to avoid spurious `Win32Exception` when enumerating windows whose processes have exited or are otherwise inaccessible - [marktech0813](https://github.com/marktech0813).
 
 
 Release 5.18.1
