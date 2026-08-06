@@ -1303,22 +1303,25 @@ public class WindowUtils {
                     pid.getValue());
 
             if (process == null) {
-                if(Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_ACCESS_DENIED) {
-                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                } else {
-                    process = Kernel32.INSTANCE.OpenProcess(
-                            WinNT.PROCESS_QUERY_LIMITED_INFORMATION,
-                            false,
-                            pid.getValue());
-
-                    if (process == null) {
-                        if (Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_ACCESS_DENIED) {
-                            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                        } else {
-                            // Ignore windows, that can't be accessed
-                            return "";
+                switch (Kernel32.INSTANCE.GetLastError()) {
+                    case WinNT.ERROR_ACCESS_DENIED:
+                    case WinError.ERROR_INVALID_PARAMETER:
+                        process = Kernel32.INSTANCE.OpenProcess(
+                                WinNT.PROCESS_QUERY_LIMITED_INFORMATION,
+                                false,
+                                pid.getValue());
+                        if (process != null) {
+                            break;
                         }
-                    }
+                        switch (Kernel32.INSTANCE.GetLastError()) {
+                            case WinNT.ERROR_ACCESS_DENIED:
+                            case WinError.ERROR_INVALID_PARAMETER:
+                                // Ignore windows, that can't be accessed
+                                return "";
+                        }
+                        /* if above didn't already break or return, fall through to default */
+                    default:
+                        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                 }
             }
 
