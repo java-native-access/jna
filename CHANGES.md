@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1633](https://github.com/java-native-access/jna/issues/1633): Do not register class-cached `FFIType` native memory with the JNA Cleaner, so the cleaner thread can exit after Structure instances are collected - [@arimu1](https://github.com/arimu1).
 
 Release 5.19.1
 ==============
