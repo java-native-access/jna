@@ -272,6 +272,7 @@
 
   <target name=":jar">
     <uptodate property="-jar" targetfile="${build}/${jar}">
+      <srcfiles dir="." includes="build.xml,LICENSE,LGPL2.1,AL2.0"/>
       <srcfiles dir="${classes}">
         <patternset id="jar-compiled">
           <include name="com/sun/jna/*"/>
@@ -981,6 +982,7 @@ zip ../${os.prefix}.jar libjnidispatch.so jnidispatch.dll libjnidispatch.a
 cd ..
     </echo>
     <jar jarfile="${build}/${os.prefix}.jar" createUnicodeExtraFields="never" encoding="UTF-8">
+      <zipfileset dir="." includes="LICENSE" prefix="META-INF"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
@@ -1044,6 +1046,7 @@ cd ..
     <!-- For web start, native libraries may be provided in the root of -->
     <!-- an included jar file -->
     <jar jarfile="${build}/${native.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
+      <zipfileset dir="." includes="LICENSE" prefix="META-INF"/>
       <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
@@ -1161,6 +1164,7 @@ cd ..
     <copy todir="${build}/jws" file="lib/junit.jar"/>
     <copy todir="${build}/jws" file="lib/clover.jar"/>
     <jar jarfile="${build}/jws/jnidispatch.jar" createUnicodeExtraFields="never" encoding="UTF-8">
+      <zipfileset dir="." includes="LICENSE" prefix="META-INF"/>
       <fileset dir="${build.native}" includes="*jnidispatch.*"/>
     </jar>
     <!-- To allow JNLP tests to run, import the JNA testing certificate as a CA -->
