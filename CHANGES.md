@@ -10,7 +10,12 @@ Features
 
 Bug Fixes
 ---------
+* [#1740](https://github.com/java-native-access/jna/issues/1740): Fix `c.s.j.p.unix.solaris.LibKstat.KstatCtl` mapping `kc_chain` as an inline `Kstat` instead of a pointer, which made every call taking a `KstatCtl` write past the end of the structure `kstat_open()` allocated, and map the `Kstat` function pointers `ks_update` and `ks_snapshot` as `Pointer` instead of `int` - [@dbwiddis](https://github.com/dbwiddis).
 
+Breaking Changes
+----------------
+* `c.s.j.p.unix.solaris.LibKstat.KstatCtl#kc_chain` is now a `Pointer` instead of a `Kstat`. Use `KstatCtl#chain()` to get the head of the kstat chain as a `Kstat`. The previous mapping never returned usable data: the inline `Kstat` decoded the native chain pointer as its `ks_crtime` timestamp, and every following field from bytes past the end of the native structure, so code that read this field could not have relied on it.
+* `c.s.j.p.unix.solaris.LibKstat.Kstat#ks_update` and `Kstat#ks_snapshot` are now `Pointer` instead of `int`, matching the native function pointers. The structure layout is unchanged, but the previous mapping held only half of a kernel-only address, which has no meaning in user space.
 
 Release 5.19.1
 ==============

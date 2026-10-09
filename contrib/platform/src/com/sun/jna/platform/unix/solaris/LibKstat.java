@@ -132,22 +132,28 @@ public interface LibKstat extends Library {
         public long ks_snaptime; // time of last data snapshot
 
         // Fields relevant to kernel only
-        public int ks_update; // dynamic update function
+        public Pointer ks_update; // dynamic update function
 
         public Pointer ks_private; // provider-private data
 
-        public int ks_snapshot; // snapshot function
+        public Pointer ks_snapshot; // snapshot function
 
         public Pointer ks_lock; // protects this kstat's data
+
+        public Kstat() {
+            super();
+        }
+
+        public Kstat(Pointer p) {
+            super(p);
+            read();
+        }
 
         public Kstat next() {
             if (ks_next == null) {
                 return null;
             }
-            Kstat n = new Kstat();
-            n.useMemory(ks_next);
-            n.read();
-            return n;
+            return new Kstat(ks_next);
         }
     }
 
@@ -350,16 +356,28 @@ public interface LibKstat extends Library {
     /**
      * A kstat control structure. Only one thread may actively use a KstatCtl
      * value at any time. Synchronization is left to the application.
+     * <p>
+     * Oracle Solaris 11.4 appends a fourth field, {@code void **kc_private},
+     * which is private to libkstat. It is deliberately not mapped: this
+     * structure only ever wraps the pointer returned by {@code kstat_open()},
+     * so mapping the three public fields reads and writes a prefix of the
+     * native structure on every release, and leaves the private field alone.
      */
     @FieldOrder({"kc_chain_id", "kc_chain", "kc_kd"})
     class KstatCtl extends Structure {
 
         public int kc_chain_id; // current kstat chain ID
 
-        public Kstat kc_chain; // pointer to kstat chain
+        public Pointer kc_chain; // pointer to kstat chain
 
         public int kc_kd; // /dev/kstat descriptor - not public interface
 
+        public Kstat chain() {
+            if (kc_chain == null) {
+                return null;
+            }
+            return new Kstat(kc_chain);
+        }
     }
 
     /**
