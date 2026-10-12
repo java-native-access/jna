@@ -272,6 +272,7 @@
 
   <target name=":jar">
     <uptodate property="-jar" targetfile="${build}/${jar}">
+      <srcfiles dir="${src}" includes="META-INF/proguard/*.pro"/>
       <srcfiles dir="${classes}">
         <patternset id="jar-compiled">
           <include name="com/sun/jna/*"/>
@@ -450,6 +451,7 @@ osname=macosx;processor=aarch64
         <requires module="java.desktop" />
     </ModuleGenerator>
     <jar jarfile="${build}/${jar}" duplicate="preserve" createUnicodeExtraFields="never" encoding="UTF-8" manifest="${build}/manifest/automatic.mf">
+      <zipfileset dir="${src}" includes="META-INF/proguard/*.pro"/>
       <fileset dir="${classes}" excludes="${jar.omitted}">
         <patternset refid="jar-compiled"/>
       </fileset>
@@ -587,6 +589,7 @@ osname=macosx;processor=aarch64
     <!-- Dummy entries in R.txt and the string resources are needed or a grails
          build using this library will fail (tested with Android Studio 2.2.3 -->
     <mkdir dir="${build.aar}/res/values" />
+    <copy file="${src}/META-INF/proguard/jna.pro" tofile="${build.aar}/proguard.txt"/>
     <echo file="${build.aar}/res/values/values.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="jna_library_appname">JNA bindings</string>

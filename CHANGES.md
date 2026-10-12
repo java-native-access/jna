@@ -10,6 +10,8 @@ Features
 
 Bug Fixes
 ---------
+
+* Allow discarded library class loaders to be collected on JVMs by associating cached options with their classes. Android retains the existing cache for compatibility with runtimes without `ClassValue`. See [#1742](https://github.com/java-native-access/jna/issues/1742).
 * [#1740](https://github.com/java-native-access/jna/issues/1740): Fix `c.s.j.p.unix.solaris.LibKstat.KstatCtl` mapping `kc_chain` as an inline `Kstat` instead of a pointer, which made every call taking a `KstatCtl` write past the end of the structure `kstat_open()` allocated, and map the `Kstat` function pointers `ks_update` and `ks_snapshot` as `Pointer` instead of `int` - [@dbwiddis](https://github.com/dbwiddis).
 
 Breaking Changes
