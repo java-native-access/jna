@@ -2131,6 +2131,34 @@ public abstract class Structure {
 
         public FFIType() {}
 
+        /**
+         * Native {@code ffi_type} descriptors are cached for the lifetime of
+         * the corresponding {@link Class} (see {@link #typeInfoMap}).
+         * Registering that storage with {@link com.sun.jna.internal.Cleaner}
+         * would keep the cleaner thread alive until the Class is unloaded,
+         * which typically never happens.
+         */
+        static class TypeInfoMemory extends Memory {
+            TypeInfoMemory(long size) {
+                super();
+                this.size = size;
+                if (size <= 0) {
+                    throw new IllegalArgumentException("Allocation size must be greater than zero");
+                }
+                peer = malloc(size);
+                if (peer == 0) {
+                    throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
+                }
+            }
+        }
+
+        @Override
+        protected Memory autoAllocate(int size) {
+            TypeInfoMemory memory = new TypeInfoMemory(size);
+            memory.clear();
+            return memory;
+        }
+
         public FFIType(Structure ref) {
             Pointer[] els;
             ref.ensureAllocated(true);
@@ -2203,7 +2231,7 @@ public abstract class Structure {
         }
 
         private void init(Pointer[] els) {
-            elements = new Memory(Native.POINTER_SIZE * els.length);
+            elements = new TypeInfoMemory(Native.POINTER_SIZE * els.length);
             elements.write(0, els, 0, els.length);
             write();
         }

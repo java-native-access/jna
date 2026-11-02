@@ -12,6 +12,7 @@ Features
 Bug Fixes
 ---------
 * [#1740](https://github.com/java-native-access/jna/issues/1740): Fix `c.s.j.p.unix.solaris.LibKstat.KstatCtl` mapping `kc_chain` as an inline `Kstat` instead of a pointer, which made every call taking a `KstatCtl` write past the end of the structure `kstat_open()` allocated, and map the `Kstat` function pointers `ks_update` and `ks_snapshot` as `Pointer` instead of `int` - [@dbwiddis](https://github.com/dbwiddis).
+* [#1633](https://github.com/java-native-access/jna/issues/1633): Do not register class-cached `FFIType` native memory with the JNA Cleaner, so the cleaner thread can exit after Structure instances are collected - [@arimu1](https://github.com/arimu1).
 
 Breaking Changes
 ----------------
