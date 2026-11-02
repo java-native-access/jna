@@ -1158,6 +1158,10 @@ public final class Native implements Version {
      * @throws IOException if resource not found
      */
     public static File extractFromResourcePath(String name, ClassLoader loader) throws IOException {
+        return extractFromResourcePath(name, loader, Platform.LIBC);
+    }
+
+    public static File extractFromResourcePath(String name, ClassLoader loader, Platform.LibC libc) throws IOException {
 
         final Level DEBUG = (DEBUG_LOAD
             || (DEBUG_JNA_LOAD && name.contains("jnidispatch"))) ? Level.INFO : Level.FINE;
@@ -1174,7 +1178,14 @@ public final class Native implements Version {
         if (resourcePath.startsWith("/")) {
             resourcePath = resourcePath.substring(1);
         }
-        URL url = loader.getResource(resourcePath);
+        URL url = null;
+        if (!name.startsWith("/") && Platform.isLinux() && libc != Platform.LibC.UNKNOWN) {
+            String variant = Platform.RESOURCE_PREFIX + "-" + libc.name().toLowerCase();
+            url = loader.getResource(variant + "/" + libname);
+        }
+        if (url == null) {
+            url = loader.getResource(resourcePath);
+        }
         if (url == null) {
             if (resourcePath.startsWith(Platform.RESOURCE_PREFIX)) {
                 // Fallback for legacy darwin behaviour: darwin was in the past

@@ -23,6 +23,10 @@
  */
 package com.sun.jna;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
 import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
@@ -115,6 +119,77 @@ public class PlatformTest extends TestCase {
         assertTrue(demoOverride.equals(Platform.getNativeLibraryResourcePrefix()));
 
         System.clearProperty("jna.prefix");
+    }
+    
+    private static String mapLine(String pathname) {
+        return "7f000000-7f001000 r-xp 00000000 08:01 123 " + pathname + "\n";
+    }
+
+    private static Platform.LibC detectLibC(String maps) {
+        return Platform.getLibC(new StringReader(maps));
+    }
+
+    public void testGetLibCDetectsGlibcFromLibcMapping() {
+        String maps = mapLine("/lib/x86_64-linux-gnu/libc.so.6");
+
+        assertEquals(Platform.LibC.GLIBC, detectLibC(maps));
+    }
+
+    public void testGetLibCDetectsGlibcFromDynamicLinker() {
+        String maps = mapLine("/lib64/ld-linux-x86-64.so.2");
+
+        assertEquals(Platform.LibC.GLIBC, detectLibC(maps));
+    }
+
+    public void testGetLibCDetectsMuslFromLibcMapping() {
+        String maps = mapLine("/lib/libc.musl-x86_64.so.1");
+
+        assertEquals(Platform.LibC.MUSL, detectLibC(maps));
+    }
+
+    public void testGetLibCDetectsMuslFromDynamicLinker() {
+        String maps = mapLine("/lib/ld-musl-x86_64.so.1");
+
+        assertEquals(Platform.LibC.MUSL, detectLibC(maps));
+    }
+
+    public void testGetLibCReturnsUnknownWhenNoLibcIsDetected() {
+        String maps = mapLine("/usr/lib/libpthread.so.0") + mapLine("/usr/lib/libjvm.so") + mapLine("[heap]");
+
+        assertEquals(Platform.LibC.UNKNOWN, detectLibC(maps));
+    }
+
+    public void testGetLibCReturnsUnknownWhenBothLibcsAreDetected() {
+        String maps = mapLine("/lib/libc.so.6") + mapLine("/lib/ld-musl-x86_64.so.1");
+
+        assertEquals(Platform.LibC.UNKNOWN, detectLibC(maps));
+    }
+
+    public void testGetLibCIgnoresLibcNamesInParentDirectories() {
+        String maps = mapLine("/opt/libc.so.6/my-application.jar");
+
+        assertEquals(Platform.LibC.UNKNOWN, detectLibC(maps));
+    }
+
+    public void testGetLibCHandlesDeletedMappings() {
+        String maps = mapLine("/lib/ld-musl-x86_64.so.1 (deleted)");
+
+        assertEquals(Platform.LibC.MUSL, detectLibC(maps));
+    }
+
+    public void testGetLibCReturnsUnknownWhenReadingFails() {
+        Reader failingReader = new Reader() {
+            @Override
+            public int read(char[] buffer, int offset, int length) throws IOException {
+                throw new IOException("Simulated read failure");
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+
+        assertEquals(Platform.LibC.UNKNOWN, Platform.getLibC(failingReader));
     }
 
     public static void main(String[] args) {

@@ -22,13 +22,24 @@
  */
 package com.sun.jna;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** Provide simplified platform information. */
 public final class Platform {
+	
+    public enum LibC {
+        GLIBC,
+        MUSL,
+        UNKNOWN
+    }
+
     public static final int UNSPECIFIED = -1;
     public static final int MAC = 0;
     public static final int LINUX = 1;
@@ -68,6 +79,9 @@ public final class Platform {
     private static final int osType;
     /** Current platform architecture. */
     public static final String ARCH;
+    
+    /** The C library implementation used by the current platform. */
+    public static final LibC LIBC;
 
     static {
         String osName = System.getProperty("os.name");
@@ -137,6 +151,7 @@ public final class Platform {
         // Windows aarch64 callbacks disabled via ASMFN_OFF (no mingw support)
         HAS_DLL_CALLBACKS = osType == WINDOWS && !ARCH.startsWith("aarch");
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
+        LIBC = getLibC();
     }
     private Platform() { }
     public static final int getOSType() {
@@ -295,6 +310,87 @@ public final class Platform {
             Logger.getLogger(Platform.class.getName()).log(Level.INFO, "SecurityException while analysing '/proc/self/exe' or the target binary.", ex);
         }
         return false;
+    }
+
+    static LibC getLibC() {
+        if (!isLinux()) {
+            return LibC.UNKNOWN;
+        }
+
+        try {
+            return getLibC(new FileReader("/proc/self/maps"));
+        } catch (IOException ex) {
+            return LibC.UNKNOWN;
+        } catch (SecurityException ex) {
+            return LibC.UNKNOWN;
+        }
+    }
+
+    /**
+     * Determines the libc implementation from process memory mappings. The supplied
+     * reader is consumed and closed.
+     */
+    static LibC getLibC(Reader mapsReader) {
+        boolean glibc = false;
+        boolean musl = false;
+
+        try (BufferedReader reader = new BufferedReader(mapsReader)) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String filename = getMappedFileName(line);
+
+                if (filename == null) {
+                    continue;
+                }
+
+                String lower = filename.toLowerCase(Locale.ROOT);
+
+                if (lower.startsWith("libc.musl-") || lower.startsWith("ld-musl-")) {
+                    musl = true;
+                }
+
+                if ("libc.so.6".equals(lower) || lower.startsWith("ld-linux")) {
+                    glibc = true;
+                }
+
+                if (glibc && musl) {
+                    return LibC.UNKNOWN;
+                }
+            }
+        } catch (IOException ex) {
+            return LibC.UNKNOWN;
+        } catch (SecurityException ex) {
+            return LibC.UNKNOWN;
+        }
+
+        if (glibc == musl) {
+            return LibC.UNKNOWN;
+        }
+
+        return musl ? LibC.MUSL : LibC.GLIBC;
+    }
+
+    private static String getMappedFileName(String line) {
+        // /proc/self/maps:
+        // address perms offset dev inode pathname
+        String[] fields = line.split("\\s+", 6);
+
+        if (fields.length < 6) {
+            return null;
+        }
+
+        String pathname = fields[5];
+        String deletedSuffix = " (deleted)";
+
+        if (pathname.endsWith(deletedSuffix)) {
+            pathname = pathname.substring(0, pathname.length() - deletedSuffix.length());
+        }
+
+        int lastSlash = pathname.lastIndexOf('/');
+        String filename = pathname.substring(lastSlash + 1);
+
+        return filename.isEmpty() ? null : filename;
     }
 
     /** Generate a canonical String prefix based on the current OS
