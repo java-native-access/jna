@@ -272,6 +272,7 @@
 
   <target name=":jar">
     <uptodate property="-jar" targetfile="${build}/${jar}">
+      <srcfiles dir="." includes="build.xml,LICENSE,LGPL2.1,AL2.0,NOTICE"/>
       <srcfiles dir="${classes}">
         <patternset id="jar-compiled">
           <include name="com/sun/jna/*"/>
@@ -571,7 +572,7 @@ osname=macosx;processor=aarch64
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
       <zipfileset dir="."
-                  includes="LICENSE,LGPL2.1,AL2.0"
+                  includes="LICENSE,LGPL2.1,AL2.0,NOTICE"
                   prefix="META-INF"/>
     </jar>
     <zip zipfile="${build}/${minjar}">
@@ -609,26 +610,29 @@ osname=macosx;processor=aarch64
           <globmapper from="*" to="classes.jar"/>
         </mappedresources>
         <zipfileset src="${lib.native}/android-aarch64.jar"
-                  includes="*jnidispatch*"
-                  prefix="jni/arm64-v8a"/>
+                    includes="*jnidispatch*"
+                    prefix="jni/arm64-v8a"/>
         <zipfileset src="${lib.native}/android-arm.jar"
-                  includes="*jnidispatch*"
-                  prefix="jni/armeabi"/>
+                    includes="*jnidispatch*"
+                    prefix="jni/armeabi"/>
         <zipfileset src="${lib.native}/android-armv7.jar"
-                  includes="*jnidispatch*"
-                  prefix="jni/armeabi-v7a"/>
+                    includes="*jnidispatch*"
+                    prefix="jni/armeabi-v7a"/>
         <zipfileset src="${lib.native}/android-mips.jar"
-                  includes="*jnidispatch*"
-                  prefix="jni/mips"/>
+                    includes="*jnidispatch*"
+                    prefix="jni/mips"/>
         <zipfileset src="${lib.native}/android-mips64.jar"
-                  includes="*jnidispatch*"
-                  prefix="jni/mips64"/>
+                    includes="*jnidispatch*"
+                    prefix="jni/mips64"/>
         <zipfileset src="${lib.native}/android-x86-64.jar"
-                  includes="*jnidispatch*"
-                  prefix="jni/x86_64"/>
+                    includes="*jnidispatch*"
+                    prefix="jni/x86_64"/>
         <zipfileset src="${lib.native}/android-x86.jar"
-                  includes="*jnidispatch*"
-                  prefix="jni/x86"/>
+                    includes="*jnidispatch*"
+                    prefix="jni/x86"/>
+        <zipfileset dir="."
+                    includes="LICENSE,LGPL2.1,AL2.0,NOTICE"
+                    prefix="META-INF"/>
         <fileset dir="${build.aar}"/>
     </zip>
   </target>
@@ -981,6 +985,7 @@ zip ../${os.prefix}.jar libjnidispatch.so jnidispatch.dll libjnidispatch.a
 cd ..
     </echo>
     <jar jarfile="${build}/${os.prefix}.jar" createUnicodeExtraFields="never" encoding="UTF-8">
+      <zipfileset dir="." includes="LICENSE,LGPL2.1,AL2.0,NOTICE" prefix="META-INF"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
@@ -1044,6 +1049,7 @@ cd ..
     <!-- For web start, native libraries may be provided in the root of -->
     <!-- an included jar file -->
     <jar jarfile="${build}/${native.jar}" createUnicodeExtraFields="never" encoding="UTF-8">
+      <zipfileset dir="." includes="LICENSE,LGPL2.1,AL2.0,NOTICE" prefix="META-INF"/>
       <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
@@ -1161,6 +1167,7 @@ cd ..
     <copy todir="${build}/jws" file="lib/junit.jar"/>
     <copy todir="${build}/jws" file="lib/clover.jar"/>
     <jar jarfile="${build}/jws/jnidispatch.jar" createUnicodeExtraFields="never" encoding="UTF-8">
+      <zipfileset dir="." includes="LICENSE,LGPL2.1,AL2.0,NOTICE" prefix="META-INF"/>
       <fileset dir="${build.native}" includes="*jnidispatch.*"/>
     </jar>
     <!-- To allow JNLP tests to run, import the JNA testing certificate as a CA -->
