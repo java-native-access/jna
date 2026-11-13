@@ -23,7 +23,11 @@
  */
 package com.sun.jna;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -37,6 +41,126 @@ import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
+
+
+    public interface CollectibleLibrary extends Library {
+        int abs(int value);
+
+        class Mapper extends DefaultTypeMapper {
+        }
+
+        @Structure.FieldOrder({"value"})
+        class Value extends Structure {
+            public int value;
+        }
+    }
+
+    private static class CollectibleClassLoader extends ClassLoader {
+        CollectibleClassLoader() {
+            super(NativeTest.class.getClassLoader());
+        }
+
+        @Override
+        protected synchronized Class<?> loadClass(String name, boolean resolve)
+                throws ClassNotFoundException {
+            if (!name.startsWith(CollectibleLibrary.class.getName())) {
+                return super.loadClass(name, resolve);
+            }
+            Class<?> type = findLoadedClass(name);
+            if (type == null) {
+                String resource = "/" + name.replace('.', '/') + ".class";
+                try (InputStream stream = NativeTest.class.getResourceAsStream(resource)) {
+                    if (stream == null) {
+                        throw new ClassNotFoundException(name);
+                    }
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = stream.read(buffer)) != -1) {
+                        bytes.write(buffer, 0, length);
+                    }
+                    byte[] content = bytes.toByteArray();
+                    type = defineClass(name, content, 0, content.length);
+                } catch (IOException e) {
+                    throw new ClassNotFoundException(name, e);
+                }
+            }
+            if (resolve) {
+                resolveClass(type);
+            }
+            return type;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private WeakReference<ClassLoader> loadCollectibleLibrary(boolean withMapper,
+                                                             boolean withLoader) throws Exception {
+        ClassLoader loader = new CollectibleClassLoader();
+        Class<? extends Library> type = (Class<? extends Library>)
+                loader.loadClass(CollectibleLibrary.class.getName());
+        Map<String, Object> options = new HashMap<>();
+        if (withMapper) {
+            Object mapper = loader.loadClass(CollectibleLibrary.Mapper.class.getName())
+                    .getDeclaredConstructor().newInstance();
+            assertSame(loader, mapper.getClass().getClassLoader());
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        }
+        if (withLoader) {
+            options.put(Library.OPTION_CLASSLOADER, loader);
+        }
+        Library library = Native.load(Platform.C_LIBRARY_NAME, type, options);
+        assertEquals(7, type.getMethod("abs", int.class).invoke(library, -7));
+        Class<?> nested = loader.loadClass(CollectibleLibrary.Value.class.getName());
+        assertSame(loader, type.getClassLoader());
+        assertSame(loader, nested.getClassLoader());
+        assertSame(Native.getLibraryOptions(type), Native.getLibraryOptions(nested));
+        assertSame(type, Native.findEnclosingLibraryClass(nested));
+        assertSame(options.get(Library.OPTION_TYPE_MAPPER), Native.getTypeMapper(nested));
+        return new WeakReference<>(loader);
+    }
+
+    private void assertClassLoaderCollected(WeakReference<ClassLoader> loader) throws Exception {
+        for (int i = 0; i < 100 && loader.get() != null; i++) {
+            System.gc();
+            Thread.sleep(50);
+        }
+        assertNull("Discarded library class loader is retained by cached options", loader.get());
+    }
+
+    public void testDiscardedLibraryClassLoader() throws Exception {
+        assertClassLoaderCollected(loadCollectibleLibrary(false, false));
+    }
+
+    public void testDiscardedLibraryClassLoaderWithTypeMapper() throws Exception {
+        assertClassLoaderCollected(loadCollectibleLibrary(true, false));
+    }
+
+    public void testDiscardedLibraryClassLoaderWithLoaderOption() throws Exception {
+        assertClassLoaderCollected(loadCollectibleLibrary(false, true));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testLibraryOptionsRetainedWhileClassIsLive() throws Exception {
+        ClassLoader loader = new CollectibleClassLoader();
+        Class<? extends Library> type = (Class<? extends Library>)
+                loader.loadClass(CollectibleLibrary.class.getName());
+        Object mapper = loader.loadClass(CollectibleLibrary.Mapper.class.getName())
+                .getDeclaredConstructor().newInstance();
+        Map<String, Object> options = new HashMap<>();
+        options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        Library library = Native.load(Platform.C_LIBRARY_NAME, type, options);
+        Class<?> nested = loader.loadClass(CollectibleLibrary.Value.class.getName());
+        Map<String, Object> cached = Native.getLibraryOptions(type);
+        assertSame(cached, Native.getLibraryOptions(nested));
+        for (int i = 0; i < 3; i++) {
+            System.gc();
+            assertSame(cached, Native.getLibraryOptions(type));
+            assertSame(cached, Native.getLibraryOptions(nested));
+            assertSame(mapper, Native.getTypeMapper(nested));
+            assertSame(type, Native.findEnclosingLibraryClass(nested));
+            assertEquals(7, type.getMethod("abs", int.class).invoke(library, -7));
+        }
+    }
 
     private static final String UNICODE = "[\u0444]";
 

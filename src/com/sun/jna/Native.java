@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -147,7 +148,56 @@ public final class Native implements Version {
 
     // Used by tests, do not remove
     static String jnidispatchPath = null;
-    private static final Map<Class<?>, Map<String, Object>> typeOptions = Collections.synchronizedMap(new WeakHashMap<Class<?>, Map<String, Object>>());
+    private static final TypeOptions typeOptions = TypeOptionsCache.create(Platform.isAndroid());
+
+    private interface TypeOptions {
+        Map<String, Object> get(Class<?> type);
+        void put(Class<?> type, Map<String, Object> options);
+    }
+
+    private static class TypeOptionsCache {
+        static TypeOptions create(boolean android) {
+            // Older Android runtimes do not provide java.lang.ClassValue.
+            return android ? new WeakMapTypeOptions() : new ClassValueTypeOptions();
+        }
+    }
+
+    private static class WeakMapTypeOptions implements TypeOptions {
+        private final Map<Class<?>, Map<String, Object>> options =
+                Collections.synchronizedMap(new WeakHashMap<Class<?>, Map<String, Object>>());
+
+        @Override
+        public Map<String, Object> get(Class<?> type) {
+            return options.get(type);
+        }
+
+        @Override
+        public void put(Class<?> type, Map<String, Object> value) {
+            options.put(type, value);
+        }
+    }
+
+    private static class ClassValueTypeOptions implements TypeOptions {
+        // Values may refer to the class or its loader (e.g. a custom TypeMapper).
+        // ClassValue keeps that cycle local to the class, rather than in a static map.
+        private final ClassValue<AtomicReference<Map<String, Object>>> options =
+            new ClassValue<AtomicReference<Map<String, Object>>>() {
+                @Override
+                protected AtomicReference<Map<String, Object>> computeValue(Class<?> type) {
+                    return new AtomicReference<>();
+                }
+            };
+
+        @Override
+        public Map<String, Object> get(Class<?> type) {
+            return options.get(type).get();
+        }
+
+        @Override
+        public void put(Class<?> type, Map<String, Object> value) {
+            options.get(type).set(value);
+        }
+    }
     private static final Map<Class<?>, Reference<?>> libraries = Collections.synchronizedMap(new WeakHashMap<Class<?>, Reference<?>>());
     private static final String _OPTION_ENCLOSING_LIBRARY = "enclosing-library";
     private static final UncaughtExceptionHandler DEFAULT_HANDLER =
