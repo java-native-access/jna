@@ -2326,6 +2326,21 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         Returns nonzero if successful or zero otherwise. To get extended
      *         error information, call GetLastError.
      */
+    boolean SetCursorPos(int x, int y);
+
+    /**
+     * Moves the cursor to the specified screen coordinates.
+     *
+     * @param x
+     *            The new x-coordinate of the cursor.
+     * @param y
+     *            The new y-coordinate of the cursor.
+     * @return Whether the call succeeded.
+     * @deprecated Windows expects 32-bit coordinates, so this declaration has
+     *             the wrong calling convention on 32-bit Windows. Use
+     *             {@link #SetCursorPos(int, int)} instead.
+     */
+    @Deprecated
     boolean SetCursorPos(long x, long y);
 
     /**

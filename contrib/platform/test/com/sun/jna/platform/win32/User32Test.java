@@ -110,7 +110,9 @@ public class User32Test extends AbstractWin32TestSupport {
                 // has 2 overloads since the original API accepts both MONITORINFO and MONITORINFOEX
                 "GetMonitorInfo" // has 2 overloads since there was a broken binding for MonitorFromPoint
                 ,
-                "MonitorFromPoint"
+                "MonitorFromPoint",
+                // Keep the deprecated long overload for binary compatibility.
+                "SetCursorPos"
             }) {
                 dupSet.remove(name);
             }
@@ -414,6 +416,14 @@ public class User32Test extends AbstractWin32TestSupport {
     }
 
     @Test
+    public void testSetCursorPosNativeSignature() throws NoSuchMethodException {
+        assertEquals(boolean.class,
+                User32.class.getMethod("SetCursorPos", int.class, int.class).getReturnType());
+        assertTrue(User32.class.getMethod("SetCursorPos", long.class, long.class)
+                .isAnnotationPresent(Deprecated.class));
+    }
+
+    @Test
     public void testSetCursorPos() {
         POINT cursorPos = new POINT();
         boolean result = User32.INSTANCE.GetCursorPos(cursorPos);
@@ -432,6 +442,8 @@ public class User32Test extends AbstractWin32TestSupport {
                 ),
                 cursorPos2.x == cursorPos.x + 20
         );
+        assertEquals("Y coordinate should be preserved after SetCursorPos",
+                cursorPos.y, cursorPos2.y);
     }
 
     @Test
