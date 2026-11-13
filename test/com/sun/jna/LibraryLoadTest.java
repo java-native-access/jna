@@ -34,6 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
+import java.util.UUID;
 
 import junit.framework.TestCase;
 
@@ -78,6 +79,194 @@ public class LibraryLoadTest extends TestCase implements Paths {
     public void testExtractFromResourcePathWithNullClassLoader() throws Exception {
         // doesn't actually load the resource
         assertNotNull(Native.extractFromResourcePath("/com/sun/jna/LibraryLoadTest.class", null));
+    }
+
+    private static final String LIBC_SELECTION_LIBRARY = "jna-libc-selection-test";
+    private static final String LIBC_GLIBC_MARKER = "glibc variant";
+    private static final String LIBC_MUSL_MARKER = "musl variant";
+    private static final String LIBC_LEGACY_MARKER = "legacy variant";
+
+    private File createLibcSelectionClasspath() throws IOException {
+        File root = new File(Native.getTempDir(), "jna-libc-selection-" + UUID.randomUUID());
+
+        assertTrue("Could not create test classpath directory", root.mkdirs());
+
+        return root;
+    }
+
+    private void writeLibcSelectionResource(File root, String prefix, String marker) throws IOException {
+        String libraryName = NativeLibrary.mapSharedLibraryName(LIBC_SELECTION_LIBRARY);
+        File resource = new File(new File(root, prefix), libraryName);
+
+        assertTrue("Could not create test resource directory",
+                resource.getParentFile().exists() || resource.getParentFile().mkdirs());
+
+        FileOutputStream output = new FileOutputStream(resource);
+
+        try {
+            output.write(marker.getBytes("UTF-8"));
+        } finally {
+            output.close();
+        }
+    }
+
+    private String readLibcSelectionMarker(File resource) throws IOException {
+        FileInputStream input = new FileInputStream(resource);
+        try {
+            byte[] buffer = new byte[64];
+            int length = input.read(buffer);
+            return length < 0 ? "" : new String(buffer, 0, length, "UTF-8");
+        } finally {
+            input.close();
+        }
+    }
+
+    private void deleteRecursively(File file) {
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursively(child);
+                }
+            }
+        }
+        file.delete();
+    }
+
+    private URLClassLoader createLibcSelectionLoader(File root) throws MalformedURLException {
+        return new URLClassLoader(new URL[] { root.toURI().toURL() }, new CloverLoader());
+    }
+
+    private void assertLibcSelection(File root, Platform.LibC libc, String expectedMarker) throws Exception {
+        URLClassLoader loader = createLibcSelectionLoader(root);
+
+        try {
+            File extracted = Native.extractFromResourcePath(LIBC_SELECTION_LIBRARY, loader, libc);
+
+            assertEquals(expectedMarker, readLibcSelectionMarker(extracted));
+        } finally {
+            loader.close();
+        }
+    }
+
+    private void assertLibcSelectionFails(File root, Platform.LibC libc) throws Exception {
+        URLClassLoader loader = createLibcSelectionLoader(root);
+
+        try {
+            try {
+                Native.extractFromResourcePath(LIBC_SELECTION_LIBRARY, loader, libc);
+
+                fail("Expected IOException when no compatible resource exists for libc " + libc);
+            } catch (IOException expected) {
+                // No compatible resource is available.
+            }
+        } finally {
+            loader.close();
+        }
+    }
+
+    public void testExtractPrefersMuslVariant() throws Exception {
+        File root = createLibcSelectionClasspath();
+        try {
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-glibc", LIBC_GLIBC_MARKER);
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-musl", LIBC_MUSL_MARKER);
+
+            assertLibcSelection(root, Platform.LibC.MUSL, LIBC_MUSL_MARKER);
+        } finally {
+            deleteRecursively(root);
+        }
+    }
+
+    public void testExtractPrefersGlibcVariant() throws Exception {
+        File root = createLibcSelectionClasspath();
+
+        try {
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-glibc", LIBC_GLIBC_MARKER);
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-musl", LIBC_MUSL_MARKER);
+
+            assertLibcSelection(root, Platform.LibC.GLIBC, LIBC_GLIBC_MARKER);
+        } finally {
+            deleteRecursively(root);
+        }
+    }
+
+    public void testExtractFallsBackToLegacyResource() throws Exception {
+        File root = createLibcSelectionClasspath();
+
+        try {
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX, LIBC_LEGACY_MARKER);
+
+            assertLibcSelection(root, Platform.LibC.MUSL, LIBC_LEGACY_MARKER);
+        } finally {
+            deleteRecursively(root);
+        }
+    }
+
+    public void testExtractSpecificVariantPrecedesLegacyResource() throws Exception {
+        File root = createLibcSelectionClasspath();
+
+        try {
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-musl", LIBC_MUSL_MARKER);
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX, LIBC_LEGACY_MARKER);
+
+            assertLibcSelection(root, Platform.LibC.MUSL, LIBC_MUSL_MARKER);
+        } finally {
+            deleteRecursively(root);
+        }
+    }
+
+    public void testExtractFallsBackToLegacyWhenRequestedVariantIsMissing() throws Exception {
+        File root = createLibcSelectionClasspath();
+
+        try {
+            // A GLIBC variant must not be selected for a MUSL request.
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-glibc", LIBC_GLIBC_MARKER);
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX, LIBC_LEGACY_MARKER);
+
+            assertLibcSelection(root, Platform.LibC.MUSL, LIBC_LEGACY_MARKER);
+        } finally {
+            deleteRecursively(root);
+        }
+    }
+
+    public void testExtractUnknownLibcFallsBackToLegacyResource() throws Exception {
+        File root = createLibcSelectionClasspath();
+
+        try {
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-glibc", LIBC_GLIBC_MARKER);
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-musl", LIBC_MUSL_MARKER);
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX, LIBC_LEGACY_MARKER);
+
+            assertLibcSelection(root, Platform.LibC.UNKNOWN, LIBC_LEGACY_MARKER);
+        } finally {
+            deleteRecursively(root);
+        }
+    }
+
+    public void testExtractUnknownLibcDoesNotSelectVariant() throws Exception {
+        File root = createLibcSelectionClasspath();
+
+        try {
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-musl", LIBC_MUSL_MARKER);
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-glibc", LIBC_GLIBC_MARKER);
+
+            assertLibcSelectionFails(root, Platform.LibC.UNKNOWN);
+        } finally {
+            deleteRecursively(root);
+        }
+    }
+
+    public void testExtractDoesNotSelectOtherLibcVariant() throws Exception {
+        File root = createLibcSelectionClasspath();
+
+        try {
+            // Only GLIBC is available; MUSL must not select it.
+            writeLibcSelectionResource(root, Platform.RESOURCE_PREFIX + "-glibc", LIBC_GLIBC_MARKER);
+
+            assertLibcSelectionFails(root, Platform.LibC.MUSL);
+        } finally {
+            deleteRecursively(root);
+        }
     }
 
     public void testLoadFromJNALibraryPath() {

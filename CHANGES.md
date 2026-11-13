@@ -14,6 +14,10 @@ Bug Fixes
 * [#1745](https://github.com/java-native-access/jna/issues/1745): Add correctly typed `User32.SetCursorPos(int, int)` mapping and deprecate the previous `long` overload, retained for binary compatibility - [@OKAN-SOFTWARE](https://github.com/OKAN-SOFTWARE).
 * [#1740](https://github.com/java-native-access/jna/issues/1740): Fix `c.s.j.p.unix.solaris.LibKstat.KstatCtl` mapping `kc_chain` as an inline `Kstat` instead of a pointer, which made every call taking a `KstatCtl` write past the end of the structure `kstat_open()` allocated, and map the `Kstat` function pointers `ks_update` and `ks_snapshot` as `Pointer` instead of `int` - [@dbwiddis](https://github.com/dbwiddis).
 
+Features
+--------
+* [#1694](https://github.com/java-native-access/jna/issues/1694): Add support for multiple Linux native library variants by detecting the process libc and selecting the matching `glibc` or `musl` resource, falling back to the legacy resource when the libc is unknown or the matching variant is unavailable - [@EduardoRadieske](https://github.com/EduardoRadieske).
+
 Breaking Changes
 ----------------
 * `c.s.j.p.unix.solaris.LibKstat.KstatCtl#kc_chain` is now a `Pointer` instead of a `Kstat`. Use `KstatCtl#chain()` to get the head of the kstat chain as a `Kstat`. The previous mapping never returned usable data: the inline `Kstat` decoded the native chain pointer as its `ks_crtime` timestamp, and every following field from bytes past the end of the native structure, so code that read this field could not have relied on it.
