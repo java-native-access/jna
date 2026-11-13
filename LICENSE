@@ -4,7 +4,8 @@ Java Native Access (JNA) is licensed under the LGPL, version 2.1
 or later, or (from version 4.0 onward) the Apache License,
 version 2.0.
 
-You can freely decide which license you want to apply to the project.
+You can freely decide which of these licenses to apply to JNA's own code.
+Bundled third-party code retains its own license, please also see NOTICE file.
 
 You may obtain a copy of the LGPL License at:
 
